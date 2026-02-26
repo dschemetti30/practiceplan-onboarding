@@ -154,7 +154,7 @@ const createEmptyLocation = (type, name = '') => ({
   contactName: '',
   contactEmail: '',
   photos: [],
-  assets: [createEmptyAsset('', type)],
+  assets: [],
 });
 
 const duplicateLocation = (location) => ({
@@ -1907,16 +1907,43 @@ function LocationCard({ location, handlers, canRemove, isMobile, errors, contact
                 <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>
                   Rentable Spaces{location.name ? ` at ${location.name}` : ''}
                 </h3>
-                <span style={{ padding: '4px 12px', borderRadius: '100px', background: `rgba(0, 118, 187, 0.1)`, color: colors.blue, fontSize: '12px', fontWeight: 600 }}>{location.assets.length}</span>
+                {location.assets.length > 0 && (
+                  <span style={{ padding: '4px 12px', borderRadius: '100px', background: `rgba(0, 118, 187, 0.1)`, color: colors.blue, fontSize: '12px', fontWeight: 600 }}>{location.assets.length}</span>
+                )}
               </div>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <button onClick={() => setShowBulkAdd(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 14px', borderRadius: '10px', border: '1px solid rgba(0, 118, 187, 0.2)', background: 'white', color: colors.blue, fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}><Layers size={16} />Bulk Add</button>
-                <button onClick={() => handlers.addAsset(location.id)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', borderRadius: '10px', border: `1px solid rgba(0, 168, 79, 0.3)`, background: `rgba(0, 168, 79, 0.08)`, color: colors.green, fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}><Plus size={16} />Add Space</button>
-              </div>
+              {location.assets.length > 0 && (
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button onClick={() => setShowBulkAdd(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 14px', borderRadius: '10px', border: '1px solid rgba(0, 118, 187, 0.2)', background: 'white', color: colors.blue, fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}><Layers size={16} />Bulk Add</button>
+                  <button onClick={() => handlers.addAsset(location.id)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', borderRadius: '10px', border: `1px solid rgba(0, 168, 79, 0.3)`, background: `rgba(0, 168, 79, 0.08)`, color: colors.green, fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}><Plus size={16} />Add Space</button>
+                </div>
+              )}
             </div>
             
+            {/* Empty state for spaces */}
+            {location.assets.length === 0 && !showBulkAdd && (
+              <div style={{ textAlign: 'center', padding: isMobile ? '32px 20px' : '48px 40px', background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', border: '2px dashed rgba(0, 118, 187, 0.2)', marginBottom: '16px' }}>
+                <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(0, 118, 187, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                  <Building2 size={28} color={colors.blue} />
+                </div>
+                <h4 style={{ margin: '0 0 8px', fontSize: '16px', fontWeight: 700, color: '#1e293b' }}>Add your rentable spaces</h4>
+                <p style={{ margin: '0 0 20px', fontSize: '14px', color: '#64748b', maxWidth: '320px', marginLeft: 'auto', marginRight: 'auto' }}>
+                  What spaces can people rent here? Gyms, fields, meeting rooms, auditoriums, etc.
+                </p>
+                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <button onClick={() => handlers.addAsset(location.id)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px', borderRadius: '10px', border: 'none', background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`, color: 'white', fontSize: '14px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 16px rgba(0, 118, 187, 0.25)' }}>
+                    <Plus size={18} />
+                    Add a Space
+                  </button>
+                  <button onClick={() => setShowBulkAdd(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px', borderRadius: '10px', border: '1px solid rgba(0, 118, 187, 0.2)', background: 'white', color: colors.blue, fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>
+                    <Layers size={18} />
+                    Bulk Add
+                  </button>
+                </div>
+              </div>
+            )}
+            
             {/* Copy settings from another location */}
-            {otherLocations.length > 0 && (
+            {otherLocations.length > 0 && location.assets.length > 0 && (
               <div style={{ marginBottom: '16px', padding: '12px 16px', background: 'rgba(0, 118, 187, 0.04)', borderRadius: '10px', border: '1px solid rgba(0, 118, 187, 0.1)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
                   <span style={{ fontSize: '13px', color: '#64748b' }}>Copy approvers, hours & add-ons from another location?</span>
@@ -1989,7 +2016,7 @@ function LocationCard({ location, handlers, canRemove, isMobile, errors, contact
 }
 
 function LocationsStep({ locations, setLocations, isMobile, errors, contactInfo }) {
-  const [showAddModal, setShowAddModal] = useState(locations.length === 0); // Auto-show if no locations
+  const [showAddModal, setShowAddModal] = useState(false);
   const [showBulkAddLocations, setShowBulkAddLocations] = useState(false);
   const [bulkLocationNames, setBulkLocationNames] = useState('');
   const [bulkLocationType, setBulkLocationType] = useState('school');
