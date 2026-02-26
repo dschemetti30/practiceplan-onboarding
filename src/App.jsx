@@ -3592,7 +3592,7 @@ export default function PracticePlanOnboarding() {
                   <h2 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: isMobile ? '28px' : '36px', fontWeight: 800, margin: '0 0 16px', color: '#0f172a', background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>You're All Set!</h2>
                   
                   <p style={{ fontSize: isMobile ? '16px' : '18px', color: '#64748b', margin: '0 0 32px', maxWidth: '500px', marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.7 }}>
-                    Thanks for submitting your facility information, {contactInfo.fullName?.split(' ')[0] || 'there'}! Our team will review everything and reach out within 1-2 business days.
+                    Thanks for submitting your facility information, {contactInfo.fullName?.split(' ')[0] || 'there'}! Our team will review everything and get your dashboard ready.
                   </p>
                   
                   {/* Summary cards */}
@@ -3618,13 +3618,19 @@ export default function PracticePlanOnboarding() {
                       <strong style={{ color: '#334155' }}>What happens next?</strong>
                     </p>
                     <p style={{ fontSize: '14px', color: '#64748b', margin: 0, lineHeight: 1.6 }}>
-                      We'll send a confirmation email to <strong style={{ color: colors.blue }}>{contactInfo.email}</strong> with next steps and login credentials for your PracticePlan dashboard.
+                      We'll reach out to you at <strong style={{ color: colors.blue }}>{contactInfo.email}</strong> about next steps once your dashboard is ready.
                     </p>
                   </div>
                   
-                  <p style={{ fontSize: '14px', color: '#94a3b8', margin: '24px 0 0' }}>
-                    Questions? Email us at <a href="mailto:support@practiceplan.com" style={{ color: colors.blue, textDecoration: 'none', fontWeight: 600 }}>support@practiceplan.com</a>
-                  </p>
+                  <div style={{ marginTop: '24px', padding: '20px', background: 'white', borderRadius: '12px', border: '1px solid rgba(0, 0, 0, 0.06)', maxWidth: '500px', margin: '24px auto 0' }}>
+                    <p style={{ fontSize: '13px', color: '#94a3b8', margin: '0 0 8px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 600 }}>Questions? Contact</p>
+                    <p style={{ fontSize: '16px', fontWeight: 600, color: '#334155', margin: '0 0 4px' }}>Jessica DiFiore</p>
+                    <p style={{ fontSize: '13px', color: '#64748b', margin: '0 0 12px' }}>Client Success</p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
+                      <a href="mailto:jessica.difiore@practiceplan.io" style={{ color: colors.blue, textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>jessica.difiore@practiceplan.io</a>
+                      <a href="tel:9725040255" style={{ color: colors.blue, textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>972.504.0255</a>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
