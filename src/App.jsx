@@ -965,22 +965,10 @@ function WelcomeStep({ onContinue, isMobile }) {
 // ===========================================
 // GOOGLE FORM CONFIGURATION
 // ===========================================
-const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/YOUR_FORM_ID_HERE/formResponse';
-
-const GOOGLE_FORM_FIELDS = {
-  fullName: 'entry.XXXXXXXXXX',
-  jobTitle: 'entry.XXXXXXXXXX',
-  organization: 'entry.XXXXXXXXXX',
-  email: 'entry.XXXXXXXXXX',
-  phone: 'entry.XXXXXXXXXX',
-  cancellationDays: 'entry.XXXXXXXXXX',
-  weatherRefund: 'entry.XXXXXXXXXX',
-  requireInsurance: 'entry.XXXXXXXXXX',
-  timeIncrement: 'entry.XXXXXXXXXX',
-  waiverText: 'entry.XXXXXXXXXX',
-  facilityAgreement: 'entry.XXXXXXXXXX',
-  allData: 'entry.XXXXXXXXXX',
-};
+// ===========================================
+// GOOGLE APPS SCRIPT CONFIGURATION
+// ===========================================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxY4cTJeIBwjbCV77vSDpn1OiP2mrs5h6phU4rJazR9rAYbrQLYJF37W8d7l_QndcMB/exec';
 // ===========================================
 
 function ContactInfoStep({ data, update, errors, isMobile }) {
@@ -3425,22 +3413,26 @@ export default function PracticePlanOnboarding() {
 
   const submitToGoogleForm = async () => {
     setIsSubmitting(true);
-    const fullData = { contactInfo, policies, locations, submittedAt: new Date().toISOString() };
-    const formData = new URLSearchParams();
-    formData.append(GOOGLE_FORM_FIELDS.fullName, contactInfo.fullName);
-    formData.append(GOOGLE_FORM_FIELDS.jobTitle, contactInfo.jobTitle);
-    formData.append(GOOGLE_FORM_FIELDS.organization, contactInfo.organization);
-    formData.append(GOOGLE_FORM_FIELDS.email, contactInfo.email);
-    formData.append(GOOGLE_FORM_FIELDS.phone, contactInfo.phone);
-    formData.append(GOOGLE_FORM_FIELDS.cancellationDays, policies.cancellationDays);
-    formData.append(GOOGLE_FORM_FIELDS.weatherRefund, policies.weatherRefund);
-    formData.append(GOOGLE_FORM_FIELDS.requireInsurance, policies.requireInsurance);
-    formData.append(GOOGLE_FORM_FIELDS.timeIncrement, policies.timeIncrement);
-    formData.append(GOOGLE_FORM_FIELDS.waiverText, policies.waiverText || '(none)');
-    formData.append(GOOGLE_FORM_FIELDS.facilityAgreement, policies.facilityAgreement || '(none)');
-    formData.append(GOOGLE_FORM_FIELDS.allData, JSON.stringify(fullData, null, 2));
+    
+    // Prepare the full data payload
+    const fullData = { 
+      contactInfo, 
+      policies, 
+      locations, 
+      submittedAt: new Date().toISOString() 
+    };
+    
     try {
-      await fetch(GOOGLE_FORM_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: formData.toString() });
+      const response = await fetch(APPS_SCRIPT_URL, { 
+        method: 'POST', 
+        mode: 'no-cors', // Apps Script doesn't support CORS properly, but submission still works
+        headers: { 
+          'Content-Type': 'application/json' 
+        }, 
+        body: JSON.stringify(fullData) 
+      });
+      
+      // Note: With no-cors mode, we can't read the response, but the submission still goes through
       localStorage.removeItem('practiceplan_draft'); // Clear saved draft
       setSubmitSuccess(true);
       window.scrollTo(0, 0);
