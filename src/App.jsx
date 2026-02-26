@@ -3414,12 +3414,30 @@ export default function PracticePlanOnboarding() {
   const submitToGoogleForm = async () => {
     setIsSubmitting(true);
     
-    // Prepare the full data payload
+    // Create a clean copy without base64 file data (too large for form POST)
+    const cleanLocations = locations.map(loc => ({
+      ...loc,
+      photos: loc.photos ? loc.photos.map(p => ({ name: p.name, type: p.type, hasData: !!p.data })) : [],
+      assets: loc.assets ? loc.assets.map(asset => ({
+        ...asset,
+        photos: asset.photos ? asset.photos.map(p => ({ name: p.name, type: p.type, hasData: !!p.data })) : []
+      })) : []
+    }));
+    
+    const cleanPolicies = {
+      ...policies,
+      waiverFile: policies.waiverFile ? { name: policies.waiverFile.name, type: policies.waiverFile.type, hasData: !!policies.waiverFile.data } : null,
+      facilityAgreementFile: policies.facilityAgreementFile ? { name: policies.facilityAgreementFile.name, type: policies.facilityAgreementFile.type, hasData: !!policies.facilityAgreementFile.data } : null
+    };
+    
+    // Prepare the data payload (without large base64 strings)
     const fullData = { 
       contactInfo, 
-      policies, 
-      locations, 
-      submittedAt: new Date().toISOString() 
+      policies: cleanPolicies, 
+      locations: cleanLocations, 
+      submittedAt: new Date().toISOString(),
+      hasFileUploads: !!(policies.waiverFile?.data || policies.facilityAgreementFile?.data || 
+        locations.some(l => l.photos?.some(p => p.data) || l.assets?.some(a => a.photos?.some(p => p.data))))
     };
     
     try {
