@@ -3423,16 +3423,35 @@ export default function PracticePlanOnboarding() {
     };
     
     try {
-      const response = await fetch(APPS_SCRIPT_URL, { 
-        method: 'POST', 
-        mode: 'no-cors', // Apps Script doesn't support CORS properly, but submission still works
-        headers: { 
-          'Content-Type': 'application/json' 
-        }, 
-        body: JSON.stringify(fullData) 
-      });
+      // Use a form submission approach that works with Apps Script
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = APPS_SCRIPT_URL;
+      form.target = 'hidden_iframe';
       
-      // Note: With no-cors mode, we can't read the response, but the submission still goes through
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'data';
+      input.value = JSON.stringify(fullData);
+      form.appendChild(input);
+      
+      // Create hidden iframe to receive response (avoids page redirect)
+      let iframe = document.getElementById('hidden_iframe');
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.name = 'hidden_iframe';
+        iframe.id = 'hidden_iframe';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+      }
+      
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
+      
+      // Wait a moment for submission to process
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       localStorage.removeItem('practiceplan_draft'); // Clear saved draft
       setSubmitSuccess(true);
       window.scrollTo(0, 0);
