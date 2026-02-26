@@ -708,11 +708,26 @@ const FormGroup = ({ label, hint, children, required, error, tooltip }) => (
 // Photo upload component
 const PhotoUpload = ({ photos = [], onAdd, onRemove, maxPhotos = 5, isMobile, hideLabel = false }) => {
   const fileInputRef = useRef(null);
+  const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB per image
   
   const handleFileSelect = (e) => {
     const files = Array.from(e.target.files);
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    
     files.forEach(file => {
-      if (file.type.startsWith('image/') && photos.length < maxPhotos) {
+      // Validate file type
+      if (!allowedTypes.includes(file.type)) {
+        alert(`"${file.name}" is not a supported format. Please use JPG, PNG, or WebP.`);
+        return;
+      }
+      
+      // Validate file size
+      if (file.size > MAX_IMAGE_SIZE) {
+        alert(`"${file.name}" is too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum size is 5MB per image.`);
+        return;
+      }
+      
+      if (photos.length < maxPhotos) {
         const reader = new FileReader();
         reader.onload = (event) => {
           onAdd({
@@ -803,7 +818,7 @@ const PhotoUpload = ({ photos = [], onAdd, onRemove, maxPhotos = 5, isMobile, hi
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept=".jpg,.jpeg,.png,.webp"
               multiple
               onChange={handleFileSelect}
               style={{ display: 'none' }}
@@ -825,7 +840,7 @@ const PhotoUpload = ({ photos = [], onAdd, onRemove, maxPhotos = 5, isMobile, hi
       </div>
       
       <p style={{ margin: '8px 0 0', fontSize: '11px', color: '#94a3b8' }}>
-        {photos.length}/{maxPhotos} photos • JPG, PNG, or HEIC
+        {photos.length}/{maxPhotos} photos • JPG, PNG, or WebP • Max 5MB each
       </p>
     </div>
   );
@@ -1007,6 +1022,7 @@ function ContactInfoStep({ data, update, errors, isMobile }) {
 function PoliciesStep({ data, update, isMobile }) {
   const [showCustomCancellation, setShowCustomCancellation] = useState(data.cancellationDays === 'custom');
   const [showCustomIncrement, setShowCustomIncrement] = useState(data.timeIncrement === 'custom');
+  const MAX_DOC_SIZE = 5 * 1024 * 1024; // 5MB per document
   
   const handleCancellationChange = (value) => {
     update('cancellationDays', value);
@@ -1020,6 +1036,22 @@ function PoliciesStep({ data, update, isMobile }) {
 
   const handleFileUpload = (field, file) => {
     if (file) {
+      // Validate file type
+      const allowedTypes = ['application/pdf'];
+      const allowedExtensions = ['.pdf'];
+      const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+      
+      if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExt)) {
+        alert(`"${file.name}" is not a supported format. Please upload a PDF file.`);
+        return;
+      }
+      
+      // Validate file size
+      if (file.size > MAX_DOC_SIZE) {
+        alert(`"${file.name}" is too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum size is 5MB.`);
+        return;
+      }
+      
       // Store file name and create a data URL for the file
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -1052,7 +1084,7 @@ function PoliciesStep({ data, update, isMobile }) {
         <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', padding: '24px 16px', background: 'rgba(0, 118, 187, 0.03)', borderRadius: '12px', border: '2px dashed rgba(0, 118, 187, 0.2)', cursor: 'pointer', transition: 'all 0.2s' }}>
           <input 
             type="file" 
-            accept=".pdf,.doc,.docx,.txt"
+            accept=".pdf"
             onChange={(e) => handleFileUpload(field, e.target.files[0])}
             style={{ display: 'none' }}
           />
@@ -1061,7 +1093,7 @@ function PoliciesStep({ data, update, isMobile }) {
           </div>
           <div style={{ textAlign: 'center' }}>
             <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: colors.blue }}>Click to upload {label}</p>
-            <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#94a3b8' }}>PDF, DOC, DOCX, or TXT</p>
+            <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#94a3b8' }}>PDF only • Max 5MB</p>
           </div>
         </label>
       )}
@@ -3411,66 +3443,95 @@ export default function PracticePlanOnboarding() {
   
   const prevStep = () => { setCurrentStep(prev => Math.max(prev - 1, 0)); window.scrollTo(0, 0); };
 
+  // File upload constraints
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB per file
+  const MAX_TOTAL_SIZE = 20 * 1024 * 1024; // 20MB total
+  const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+  const ALLOWED_DOC_TYPES = ['application/pdf'];
+
+  const compressImage = async (base64Data, maxWidth = 1600, quality = 0.8) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = base64Data;
+    });
+  };
+
   const submitToGoogleForm = async () => {
     setIsSubmitting(true);
     
-    // Create a clean copy without base64 file data (too large for form POST)
-    const cleanLocations = locations.map(loc => ({
-      ...loc,
-      photos: loc.photos ? loc.photos.map(p => ({ name: p.name, type: p.type, hasData: !!p.data })) : [],
-      assets: loc.assets ? loc.assets.map(asset => ({
-        ...asset,
-        photos: asset.photos ? asset.photos.map(p => ({ name: p.name, type: p.type, hasData: !!p.data })) : []
-      })) : []
-    }));
-    
-    const cleanPolicies = {
-      ...policies,
-      waiverFile: policies.waiverFile ? { name: policies.waiverFile.name, type: policies.waiverFile.type, hasData: !!policies.waiverFile.data } : null,
-      facilityAgreementFile: policies.facilityAgreementFile ? { name: policies.facilityAgreementFile.name, type: policies.facilityAgreementFile.type, hasData: !!policies.facilityAgreementFile.data } : null
-    };
-    
-    // Prepare the data payload (without large base64 strings)
-    const fullData = { 
-      contactInfo, 
-      policies: cleanPolicies, 
-      locations: cleanLocations, 
-      submittedAt: new Date().toISOString(),
-      hasFileUploads: !!(policies.waiverFile?.data || policies.facilityAgreementFile?.data || 
-        locations.some(l => l.photos?.some(p => p.data) || l.assets?.some(a => a.photos?.some(p => p.data))))
-    };
-    
     try {
-      // Use a form submission approach that works with Apps Script
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = APPS_SCRIPT_URL;
-      form.target = 'hidden_iframe';
+      // Process and compress images
+      const processedLocations = await Promise.all(locations.map(async (loc) => {
+        const processedPhotos = await Promise.all((loc.photos || []).map(async (photo) => {
+          if (photo.data && ALLOWED_IMAGE_TYPES.includes(photo.type)) {
+            const compressed = await compressImage(photo.data);
+            return { ...photo, data: compressed, type: 'image/jpeg' };
+          }
+          return photo;
+        }));
+        
+        const processedAssets = await Promise.all((loc.assets || []).map(async (asset) => {
+          const assetPhotos = await Promise.all((asset.photos || []).map(async (photo) => {
+            if (photo.data && ALLOWED_IMAGE_TYPES.includes(photo.type)) {
+              const compressed = await compressImage(photo.data);
+              return { ...photo, data: compressed, type: 'image/jpeg' };
+            }
+            return photo;
+          }));
+          return { ...asset, photos: assetPhotos };
+        }));
+        
+        return { ...loc, photos: processedPhotos, assets: processedAssets };
+      }));
       
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = 'data';
-      input.value = JSON.stringify(fullData);
-      form.appendChild(input);
+      // Build the full data payload
+      const fullData = { 
+        contactInfo, 
+        policies, 
+        locations: processedLocations, 
+        submittedAt: new Date().toISOString() 
+      };
       
-      // Create hidden iframe to receive response (avoids page redirect)
-      let iframe = document.getElementById('hidden_iframe');
-      if (!iframe) {
-        iframe = document.createElement('iframe');
-        iframe.name = 'hidden_iframe';
-        iframe.id = 'hidden_iframe';
-        iframe.style.display = 'none';
-        document.body.appendChild(iframe);
+      // Calculate total payload size
+      const payloadStr = JSON.stringify(fullData);
+      const payloadSize = new Blob([payloadStr]).size;
+      
+      if (payloadSize > MAX_TOTAL_SIZE) {
+        alert('Your uploaded files are too large. Please reduce file sizes or upload fewer files. Maximum total is 20MB.');
+        setIsSubmitting(false);
+        return;
       }
       
-      document.body.appendChild(form);
-      form.submit();
-      document.body.removeChild(form);
+      // Send via fetch with text/plain to avoid CORS preflight issues
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+        body: payloadStr
+      });
       
-      // Wait a moment for submission to process
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // With no-cors we can't read response, give it time to process
+      await new Promise(resolve => setTimeout(resolve, 3000));
       
-      localStorage.removeItem('practiceplan_draft'); // Clear saved draft
+      localStorage.removeItem('practiceplan_draft');
       setSubmitSuccess(true);
       window.scrollTo(0, 0);
     } catch (error) {
