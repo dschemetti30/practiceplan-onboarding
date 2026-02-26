@@ -3476,59 +3476,54 @@ export default function PracticePlanOnboarding() {
     setIsSubmitting(true);
     
     try {
-      // Process and compress images
-      const processedLocations = await Promise.all(locations.map(async (loc) => {
-        const processedPhotos = await Promise.all((loc.photos || []).map(async (photo) => {
-          if (photo.data && ALLOWED_IMAGE_TYPES.includes(photo.type)) {
-            const compressed = await compressImage(photo.data);
-            return { ...photo, data: compressed, type: 'image/jpeg' };
-          }
-          return photo;
-        }));
-        
-        const processedAssets = await Promise.all((loc.assets || []).map(async (asset) => {
-          const assetPhotos = await Promise.all((asset.photos || []).map(async (photo) => {
-            if (photo.data && ALLOWED_IMAGE_TYPES.includes(photo.type)) {
-              const compressed = await compressImage(photo.data);
-              return { ...photo, data: compressed, type: 'image/jpeg' };
-            }
-            return photo;
-          }));
-          return { ...asset, photos: assetPhotos };
-        }));
-        
-        return { ...loc, photos: processedPhotos, assets: processedAssets };
-      }));
-      
-      // Build the full data payload
+      // Build the full data payload WITH file data
       const fullData = { 
         contactInfo, 
         policies, 
-        locations: processedLocations, 
-        submittedAt: new Date().toISOString() 
+        locations, 
+        submittedAt: new Date().toISOString()
       };
       
-      // Calculate total payload size
+      // Check payload size
       const payloadStr = JSON.stringify(fullData);
       const payloadSize = new Blob([payloadStr]).size;
+      const payloadMB = (payloadSize / 1024 / 1024).toFixed(1);
+      
+      console.log('Payload size:', payloadMB, 'MB');
       
       if (payloadSize > MAX_TOTAL_SIZE) {
-        alert('Your uploaded files are too large. Please reduce file sizes or upload fewer files. Maximum total is 20MB.');
+        alert(`Your uploaded files are too large (${payloadMB}MB). Please reduce file sizes or upload fewer files. Maximum total is 20MB.`);
         setIsSubmitting(false);
         return;
       }
       
-      // Send via fetch with text/plain to avoid CORS preflight issues
-      await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'text/plain',
-        },
-        body: payloadStr
-      });
+      // Use form POST method
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = APPS_SCRIPT_URL;
+      form.target = 'hidden_iframe';
       
-      // With no-cors we can't read response, give it time to process
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'data';
+      input.value = payloadStr;
+      form.appendChild(input);
+      
+      // Create hidden iframe to receive response
+      let iframe = document.getElementById('hidden_iframe');
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.name = 'hidden_iframe';
+        iframe.id = 'hidden_iframe';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+      }
+      
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
+      
+      // Wait for submission to process
       await new Promise(resolve => setTimeout(resolve, 3000));
       
       localStorage.removeItem('practiceplan_draft');
