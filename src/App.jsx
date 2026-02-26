@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Check, ChevronRight, ChevronLeft, ChevronUp, ChevronDown, Building2, FileText, Shield, Clock, Users, DollarSign, Plus, Trash2, MapPin, Mail, User, X, School, Copy, Sparkles, PartyPopper, HelpCircle, AlertCircle, Crown, Save, Eye, Layers, Church, Landmark, Building, Home, Upload, File, Camera, Image, RotateCcw } from 'lucide-react';
+import { Check, ChevronRight, ChevronLeft, ChevronUp, ChevronDown, Building2, FileText, Shield, Clock, Users, DollarSign, Plus, Trash2, MapPin, Mail, User, X, School, Copy, Sparkles, PartyPopper, HelpCircle, AlertCircle, Crown, Save, Eye, Layers, Church, Landmark, Building, Home, Upload, File, Camera, Image, RotateCcw, CloudRain, Zap, RefreshCw, Lock, SkipForward } from 'lucide-react';
 
 // Mobile detection hook
 const useIsMobile = () => {
@@ -654,18 +654,23 @@ function WelcomeStep({ onContinue, isMobile }) {
       
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr', gap: isMobile ? '12px' : '20px', maxWidth: '600px', margin: '0 auto 32px' }}>
         {[
-          { icon: '⚡', title: 'Quick Setup', desc: 'Just 5-10 minutes' },
-          { icon: '🔄', title: 'Easy Duplicating', desc: 'Copy settings across facilities' },
-          { icon: '✨', title: 'We Handle the Rest', desc: 'Our team sets everything up' },
-        ].map((item, i) => (
-          <div key={i} style={{ padding: isMobile ? '16px' : '24px 16px', background: 'rgba(0, 118, 187, 0.04)', borderRadius: '16px', border: '1px solid rgba(0, 118, 187, 0.08)', display: isMobile ? 'flex' : 'block', alignItems: 'center', gap: '16px', textAlign: isMobile ? 'left' : 'center' }}>
-            <div style={{ fontSize: isMobile ? '24px' : '32px', marginBottom: isMobile ? 0 : '12px' }}>{item.icon}</div>
-            <div>
-              <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', margin: '0 0 4px' }}>{item.title}</h3>
-              <p style={{ fontSize: '13px', color: '#64748b', margin: 0 }}>{item.desc}</p>
+          { icon: Zap, title: 'Quick Setup', desc: 'Just 5-10 minutes' },
+          { icon: RefreshCw, title: 'Easy Duplicating', desc: 'Copy settings across facilities' },
+          { icon: Sparkles, title: 'We Handle the Rest', desc: 'Our team sets everything up' },
+        ].map((item, i) => {
+          const IconComponent = item.icon;
+          return (
+            <div key={i} style={{ padding: isMobile ? '16px' : '24px 16px', background: 'rgba(0, 118, 187, 0.04)', borderRadius: '16px', border: '1px solid rgba(0, 118, 187, 0.08)', display: isMobile ? 'flex' : 'block', alignItems: 'center', gap: '16px', textAlign: isMobile ? 'left' : 'center' }}>
+              <div style={{ width: isMobile ? '40px' : '48px', height: isMobile ? '40px' : '48px', borderRadius: '12px', background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: isMobile ? 0 : '12px', marginLeft: isMobile ? 0 : 'auto', marginRight: isMobile ? 0 : 'auto' }}>
+                <IconComponent size={isMobile ? 20 : 24} color="white" />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', margin: '0 0 4px' }}>{item.title}</h3>
+                <p style={{ fontSize: '13px', color: '#64748b', margin: 0 }}>{item.desc}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <button onClick={onContinue} style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: isMobile ? '16px 32px' : '18px 40px', borderRadius: '14px', border: 'none', background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`, color: 'white', fontSize: isMobile ? '16px' : '17px', fontWeight: 700, cursor: 'pointer', boxShadow: '0 8px 30px rgba(0, 118, 187, 0.35)', transition: 'all 0.2s', width: isMobile ? '100%' : 'auto', justifyContent: 'center' }}>
@@ -725,7 +730,9 @@ function ContactInfoStep({ data, update, errors, isMobile }) {
         </div>
       </CardSection>
       <div style={{ padding: isMobile ? '16px' : '20px 24px', background: 'rgba(0, 118, 187, 0.04)', borderRadius: '12px', border: '1px solid rgba(0, 118, 187, 0.1)', display: 'flex', alignItems: 'center', gap: '16px' }}>
-        <div style={{ fontSize: '24px', flexShrink: 0 }}>🔒</div>
+        <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(0, 118, 187, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <Lock size={20} color={colors.blue} />
+        </div>
         <p style={{ margin: 0, fontSize: '14px', color: '#64748b' }}>Your information is secure and will only be used to communicate about your PracticePlan setup.</p>
       </div>
     </div>
@@ -852,7 +859,7 @@ function PoliciesStep({ data, update, isMobile }) {
         </CardSection>
         <CardSection isMobile={isMobile}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-            <span style={{ fontSize: '18px' }}>🌧️</span>
+            <CloudRain size={18} color={colors.blue} />
             <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Weather Policy</h3>
             <Tooltip text="If you cancel a rental due to weather (rain, lightning, etc.), should the renter receive a refund or credit?"><span /></Tooltip>
           </div>
@@ -1983,6 +1990,23 @@ function LocationCard({ location, handlers, canRemove, isMobile, errors, contact
 
 function LocationsStep({ locations, setLocations, isMobile, errors, contactInfo }) {
   const [showAddModal, setShowAddModal] = useState(locations.length === 0); // Auto-show if no locations
+  const [showBulkAddLocations, setShowBulkAddLocations] = useState(false);
+  const [bulkLocationNames, setBulkLocationNames] = useState('');
+  const [bulkLocationType, setBulkLocationType] = useState('school');
+
+  const handleBulkAddLocations = () => {
+    const names = bulkLocationNames.split('\n').map(n => n.trim()).filter(n => n);
+    if (names.length === 0) return;
+    
+    const newLocations = names.map(name => ({
+      ...createEmptyLocation(bulkLocationType),
+      name: name,
+    }));
+    
+    setLocations(prev => [...prev, ...newLocations]);
+    setBulkLocationNames('');
+    setShowBulkAddLocations(false);
+  };
 
   const handlers = {
     addLocation: (type) => { setLocations(prev => [...prev, createEmptyLocation(type)]); setShowAddModal(false); },
@@ -2148,7 +2172,10 @@ function LocationsStep({ locations, setLocations, isMobile, errors, contactInfo 
             <p style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: '#1e293b' }}>{locations.length} {locations.length === 1 ? 'Location' : 'Locations'} • {locations.reduce((sum, c) => sum + c.assets.length, 0)} Spaces</p>
             <p style={{ margin: '2px 0 0', fontSize: '13px', color: '#64748b' }}>Set up one location fully, then duplicate it!</p>
           </div>
-          <button onClick={() => setShowAddModal(true)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '12px 20px', borderRadius: '10px', border: 'none', background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`, color: 'white', fontSize: '14px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 16px rgba(0, 118, 187, 0.25)' }}><Plus size={18} />Add Location</button>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button onClick={() => setShowBulkAddLocations(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '12px 16px', borderRadius: '10px', border: '1px solid rgba(0, 118, 187, 0.2)', background: 'white', color: colors.blue, fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}><Layers size={16} />Bulk Add</button>
+            <button onClick={() => setShowAddModal(true)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '12px 20px', borderRadius: '10px', border: 'none', background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`, color: 'white', fontSize: '14px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 16px rgba(0, 118, 187, 0.25)' }}><Plus size={18} />Add Location</button>
+          </div>
         </div>
       )}
       
@@ -2202,6 +2229,95 @@ function LocationsStep({ locations, setLocations, isMobile, errors, contactInfo 
           </div>
         </div>
       )}
+      
+      {/* Bulk Add Locations Modal */}
+      {showBulkAddLocations && (
+        <div className="animate-fade-in" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: isMobile ? 'flex-end' : 'center', justifyContent: 'center', zIndex: 1000, padding: isMobile ? 0 : '20px' }} onClick={() => setShowBulkAddLocations(false)}>
+          <div onClick={(e) => e.stopPropagation()} className={isMobile ? 'animate-fade-in-up' : 'animate-scale-in'} style={{ 
+            background: 'white', 
+            borderRadius: isMobile ? '20px 20px 0 0' : '20px', 
+            padding: isMobile ? '20px 20px 32px' : '32px', 
+            width: isMobile ? '100%' : '480px',
+            maxHeight: isMobile ? '85vh' : '90vh', 
+            overflow: 'auto',
+            boxShadow: isMobile ? 'none' : '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+          }}>
+            {isMobile && (
+              <div style={{ width: '40px', height: '4px', background: '#e2e8f0', borderRadius: '2px', margin: '0 auto 20px' }} />
+            )}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <h3 style={{ margin: 0, fontSize: isMobile ? '20px' : '22px', fontWeight: 700, color: '#0f172a' }}>Add Multiple Locations</h3>
+              <button onClick={() => setShowBulkAddLocations(false)} style={{ padding: '8px', borderRadius: '8px', border: 'none', background: 'rgba(0,0,0,0.05)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={20} color="#64748b" /></button>
+            </div>
+            <p style={{ margin: '0 0 20px', fontSize: '14px', color: '#64748b' }}>Enter one location name per line. You can add spaces and details to each location after.</p>
+            
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#334155', marginBottom: '8px' }}>Location Type</label>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {locationTypes.map(type => {
+                  const TypeIcon = type.icon;
+                  return (
+                    <button
+                      key={type.value}
+                      onClick={() => setBulkLocationType(type.value)}
+                      style={{
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        border: bulkLocationType === type.value ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)',
+                        background: bulkLocationType === type.value ? 'rgba(0, 118, 187, 0.08)' : 'white',
+                        color: bulkLocationType === type.value ? colors.blue : '#64748b',
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      <TypeIcon size={14} />
+                      {type.label.split(' ')[0]}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#334155', marginBottom: '8px' }}>Location Names</label>
+              <textarea 
+                value={bulkLocationNames}
+                onChange={(e) => setBulkLocationNames(e.target.value)}
+                placeholder={"Lincoln High School\nWashington Middle School\nJefferson Elementary\nCommunity Center"}
+                style={{ ...inputStyle, minHeight: '120px', resize: 'vertical' }}
+              />
+              <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#94a3b8' }}>One location per line</p>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button onClick={() => setShowBulkAddLocations(false)} style={{ flex: 1, padding: '14px', borderRadius: '10px', border: '1px solid rgba(0,0,0,0.1)', background: 'white', color: '#64748b', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+              <button 
+                onClick={handleBulkAddLocations} 
+                disabled={!bulkLocationNames.trim()} 
+                style={{ 
+                  flex: 1, 
+                  padding: '14px', 
+                  borderRadius: '10px', 
+                  border: 'none', 
+                  background: bulkLocationNames.trim() ? `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)` : '#e2e8f0', 
+                  color: bulkLocationNames.trim() ? 'white' : '#94a3b8', 
+                  fontSize: '14px', 
+                  fontWeight: 600, 
+                  cursor: bulkLocationNames.trim() ? 'pointer' : 'default',
+                  boxShadow: bulkLocationNames.trim() ? '0 4px 16px rgba(0, 118, 187, 0.25)' : 'none'
+                }}
+              >
+                Add {bulkLocationNames.split('\n').filter(n => n.trim()).length || 0} Locations
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {locations.map((location, idx) => (
         <LocationCard 
           key={location.id} 
@@ -2548,9 +2664,9 @@ export default function PracticePlanOnboarding() {
       <div style={{ position: 'relative', zIndex: 1 }}>
         <header style={{ padding: isMobile ? '16px 20px' : '24px 48px', background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(0, 118, 187, 0.08)', position: 'sticky', top: 0, zIndex: 100 }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ width: isMobile ? '60px' : '100px' }} /> {/* Spacer for centering */}
+            <div style={{ width: isMobile ? '60px' : '100px', flexShrink: 0 }} /> {/* Spacer for centering */}
             <PracticePlanLogo width={isMobile ? 180 : 240} />
-            <div style={{ width: isMobile ? '60px' : '100px', display: 'flex', justifyContent: 'flex-end', gap: '8px', alignItems: 'center' }}>
+            <div style={{ minWidth: isMobile ? '60px' : '100px', display: 'flex', justifyContent: 'flex-end', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
               {currentStep > 0 && !submitSuccess && (
                 <button 
                   onClick={clearForm}
@@ -2567,7 +2683,8 @@ export default function PracticePlanOnboarding() {
                     gap: '4px',
                     fontSize: '11px',
                     fontWeight: 500,
-                    transition: 'all 0.2s'
+                    transition: 'all 0.2s',
+                    whiteSpace: 'nowrap'
                   }}
                 >
                   <RotateCcw size={12} />
@@ -2575,7 +2692,7 @@ export default function PracticePlanOnboarding() {
                 </button>
               )}
               {currentStep > 0 && !submitSuccess && lastSaved && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '20px', background: isSaving ? 'rgba(0, 118, 187, 0.08)' : 'rgba(0, 168, 79, 0.08)', transition: 'all 0.3s' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '20px', background: isSaving ? 'rgba(0, 118, 187, 0.08)' : 'rgba(0, 168, 79, 0.08)', transition: 'all 0.3s', whiteSpace: 'nowrap' }}>
                   {isSaving ? (
                     <div style={{ width: '12px', height: '12px', border: '2px solid rgba(0, 118, 187, 0.3)', borderTopColor: colors.blue, borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
                   ) : (
@@ -2637,10 +2754,10 @@ export default function PracticePlanOnboarding() {
                   <div style={{ textAlign: 'center', marginBottom: '16px' }}>
                     <button 
                       onClick={() => { setCurrentStep(2); window.scrollTo(0, 0); }}
-                      style={{ padding: '10px 20px', borderRadius: '8px', border: '1px dashed rgba(0, 118, 187, 0.3)', background: 'transparent', color: '#64748b', fontSize: '14px', fontWeight: 500, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                      style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: 'transparent', color: '#94a3b8', fontSize: '13px', fontWeight: 500, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}
                     >
-                      <ChevronRight size={16} />
-                      Skip for now - I'll add my info later
+                      Skip for now
+                      <ChevronRight size={14} />
                     </button>
                   </div>
                 )}
@@ -2649,10 +2766,10 @@ export default function PracticePlanOnboarding() {
                   <div style={{ textAlign: 'center', marginBottom: '16px' }}>
                     <button 
                       onClick={() => { setCurrentStep(3); window.scrollTo(0, 0); }}
-                      style={{ padding: '10px 20px', borderRadius: '8px', border: '1px dashed rgba(0, 118, 187, 0.3)', background: 'transparent', color: '#64748b', fontSize: '14px', fontWeight: 500, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                      style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: 'transparent', color: '#94a3b8', fontSize: '13px', fontWeight: 500, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}
                     >
-                      <ChevronRight size={16} />
-                      Skip policies for now - use defaults
+                      Skip for now
+                      <ChevronRight size={14} />
                     </button>
                   </div>
                 )}
@@ -2661,10 +2778,10 @@ export default function PracticePlanOnboarding() {
                   <div style={{ textAlign: 'center', marginBottom: '16px' }}>
                     <button 
                       onClick={() => { setCurrentStep(4); window.scrollTo(0, 0); }}
-                      style={{ padding: '10px 20px', borderRadius: '8px', border: '1px dashed rgba(0, 118, 187, 0.3)', background: 'transparent', color: '#64748b', fontSize: '14px', fontWeight: 500, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                      style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: 'transparent', color: '#94a3b8', fontSize: '13px', fontWeight: 500, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}
                     >
-                      <ChevronRight size={16} />
-                      Skip for now - I'll add locations later
+                      Skip for now
+                      <ChevronRight size={14} />
                     </button>
                   </div>
                 )}
