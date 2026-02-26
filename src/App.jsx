@@ -1,4 +1,4 @@
- import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Check, ChevronRight, ChevronLeft, ChevronUp, ChevronDown, Building2, FileText, Shield, Clock, Users, DollarSign, Plus, Trash2, MapPin, Mail, User, X, School, Copy, Sparkles, PartyPopper, HelpCircle, AlertCircle, Crown, Save, Eye, Layers, Church, Landmark, Building, Home, Upload, File, Camera, Image } from 'lucide-react';
 
 // Mobile detection hook
@@ -1859,7 +1859,9 @@ function LocationCard({ location, handlers, canRemove, isMobile, errors, contact
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <Building2 size={18} color={colors.blue} />
-                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Rentable Spaces</h3>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>
+                  Rentable Spaces{location.name ? ` at ${location.name}` : ''}
+                </h3>
                 <span style={{ padding: '4px 12px', borderRadius: '100px', background: `rgba(0, 118, 187, 0.1)`, color: colors.blue, fontSize: '12px', fontWeight: 600 }}>{location.assets.length}</span>
               </div>
               <div style={{ display: 'flex', gap: '8px' }}>
