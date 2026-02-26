@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Check, ChevronRight, ChevronLeft, ChevronUp, ChevronDown, Building2, FileText, Shield, Clock, Users, DollarSign, Plus, Trash2, MapPin, Mail, User, X, School, Copy, Sparkles, PartyPopper, HelpCircle, AlertCircle, Crown, Save, Eye, Layers, Church, Landmark, Building, Home, Upload, File, Camera, Image, RotateCcw, CloudRain, Zap, RefreshCw, Lock, SkipForward } from 'lucide-react';
+import { Check, ChevronRight, ChevronLeft, ChevronUp, ChevronDown, Building2, FileText, Shield, Clock, Users, DollarSign, Plus, Trash2, MapPin, Mail, User, X, School, Copy, Sparkles, PartyPopper, HelpCircle, AlertCircle, Crown, Save, Eye, Layers, Church, Landmark, Building, Home, Upload, File, Camera, Image, RotateCcw, CloudRain, Zap, RefreshCw, Lock, SkipForward, Sun, Ruler, Tag, ListChecks, Calendar, Bell, Rocket, Globe, TrendingUp, Headphones } from 'lucide-react';
 
 // Mobile detection hook
 const useIsMobile = () => {
@@ -118,6 +118,207 @@ const emptyApprover = { name: '', email: '' };
 const emptyNotification = { name: '', email: '' };
 const emptyAmenity = { name: '', price: '', isCustom: true };
 
+// Reservation types organized by category
+const reservationTypeCategories = [
+  {
+    name: 'Basketball',
+    types: [
+      { id: 'basketball_game_full', name: 'Game - Full Court', spaces: ['gymnasium', 'court'] },
+      { id: 'basketball_game_half', name: 'Game - Half Court', spaces: ['gymnasium', 'court'] },
+      { id: 'basketball_practice_full', name: 'Practice - Full Court', spaces: ['gymnasium', 'court'] },
+      { id: 'basketball_practice_half', name: 'Practice - Half Court', spaces: ['gymnasium', 'court'] },
+    ]
+  },
+  {
+    name: 'Soccer',
+    types: [
+      { id: 'soccer', name: 'Game', spaces: ['field'] },
+      { id: 'soccer_practice_full', name: 'Practice - Full Field', spaces: ['field'] },
+      { id: 'soccer_practice_half', name: 'Practice - Half Field', spaces: ['field'] },
+    ]
+  },
+  {
+    name: 'Football',
+    types: [
+      { id: 'football', name: 'Game', spaces: ['field'] },
+      { id: 'football_practice_full', name: 'Practice - Full Field', spaces: ['field'] },
+      { id: 'football_practice_half', name: 'Practice - Half Field', spaces: ['field'] },
+      { id: 'flag_football', name: 'Flag Football', spaces: ['field'] },
+    ]
+  },
+  {
+    name: 'Court Sports',
+    types: [
+      { id: 'volleyball', name: 'Volleyball', spaces: ['gymnasium', 'court'] },
+      { id: 'sand_volleyball', name: 'Sand Volleyball', spaces: ['field', 'court'] },
+      { id: 'pickleball', name: 'Pickleball', spaces: ['gymnasium', 'court'] },
+      { id: 'tennis', name: 'Tennis', spaces: ['court'] },
+      { id: 'spikeball', name: 'Spikeball', spaces: ['gymnasium', 'field'] },
+      { id: 'futsal', name: 'Futsal', spaces: ['gymnasium'] },
+    ]
+  },
+  {
+    name: 'Field Sports',
+    types: [
+      { id: 'lacrosse', name: 'Lacrosse', spaces: ['field'] },
+      { id: 'field_hockey', name: 'Field Hockey', spaces: ['field'] },
+      { id: 'baseball', name: 'Baseball', spaces: ['field'] },
+      { id: 'softball', name: 'Softball', spaces: ['field'] },
+      { id: 'cricket', name: 'Cricket', spaces: ['field'] },
+    ]
+  },
+  {
+    name: 'Aquatic',
+    types: [
+      { id: 'swimming', name: 'Swimming', spaces: ['pool'] },
+      { id: 'lap_swimming', name: 'Lap Swimming', spaces: ['pool'] },
+      { id: 'diving', name: 'Diving', spaces: ['pool'] },
+    ]
+  },
+  {
+    name: 'Track & Field',
+    types: [
+      { id: 'running', name: 'Running', spaces: ['field', 'track'] },
+      { id: 'throwing', name: 'Throwing', spaces: ['field'] },
+    ]
+  },
+  {
+    name: 'Training & Cages',
+    types: [
+      { id: 'hitting', name: 'Hitting', spaces: ['field', 'gymnasium'] },
+      { id: 'hitting_cage', name: 'Hitting Cage', spaces: ['field', 'gymnasium'] },
+      { id: 'pitching_cage', name: 'Pitching Cage', spaces: ['field', 'gymnasium'] },
+    ]
+  },
+  {
+    name: 'Fitness & Dance',
+    types: [
+      { id: 'fitness', name: 'Fitness', spaces: ['gymnasium', 'weight'] },
+      { id: 'exercise_class', name: 'Exercise Class', spaces: ['gymnasium', 'weight', 'meeting'] },
+      { id: 'wrestling', name: 'Wrestling', spaces: ['gymnasium'] },
+      { id: 'cheerleading_dance', name: 'Cheerleading / Dance', spaces: ['gymnasium', 'auditorium'] },
+    ]
+  },
+  {
+    name: 'Performing Arts',
+    types: [
+      { id: 'theater', name: 'Theater', spaces: ['auditorium'] },
+      { id: 'band_practice', name: 'Band Practice', spaces: ['auditorium'] },
+    ]
+  },
+  {
+    name: 'Meetings & Classes',
+    types: [
+      { id: 'meetings', name: 'Meetings', spaces: ['meeting', 'classroom', 'auditorium'] },
+      { id: 'class', name: 'Class', spaces: ['classroom', 'meeting'] },
+      { id: 'lessons', name: 'Lessons', spaces: ['gymnasium', 'meeting', 'classroom'] },
+    ]
+  },
+  {
+    name: 'Events & Gatherings',
+    types: [
+      { id: 'banquet', name: 'Banquet', spaces: ['auditorium', 'kitchen'] },
+      { id: 'birthday_party', name: 'Birthday Party', spaces: ['meeting', 'pavilion'] },
+      { id: 'family_outing', name: 'Family Outing', spaces: ['pavilion', 'field'] },
+    ]
+  },
+  {
+    name: 'Other',
+    types: [
+      { id: 'ice_hockey', name: 'Ice Hockey', spaces: ['other'] },
+      { id: 'rv_space', name: 'RV Space Rental', spaces: ['other'] },
+      { id: 'horse_stall', name: 'Horse Stall Rental', spaces: ['other'] },
+    ]
+  },
+];
+
+// Flatten for easy lookup
+const allReservationTypes = reservationTypeCategories.flatMap(cat => 
+  cat.types.map(t => ({ ...t, category: cat.name }))
+);
+
+// Facility features organized by category
+const facilityFeatureCategories = [
+  {
+    name: 'Surface Type',
+    features: [
+      { id: 'turf', name: 'Turf' },
+      { id: 'grass', name: 'Grass' },
+      { id: 'concrete', name: 'Concrete/Paved' },
+      { id: 'clay', name: 'Clay' },
+      { id: 'sand', name: 'Sand' },
+    ]
+  },
+  {
+    name: 'Infield & Outfield',
+    features: [
+      { id: 'dirt_infield', name: 'Dirt Infield' },
+      { id: 'grass_infield', name: 'Grass Infield' },
+      { id: 'turf_infield', name: 'Turf Infield' },
+      { id: 'grass_outfield', name: 'Grass Outfield' },
+      { id: 'turf_outfield', name: 'Turf Outfield' },
+    ]
+  },
+  {
+    name: 'Lines & Markings',
+    features: [
+      { id: 'court_lines', name: 'Court Lines' },
+      { id: 'field_lines', name: 'Field Lines' },
+    ]
+  },
+  {
+    name: 'Goals & Nets',
+    features: [
+      { id: 'goals', name: 'Goals' },
+      { id: 'adjustable_goals', name: 'Adjustable Height Goals' },
+      { id: 'goal_posts', name: 'Goal Posts' },
+      { id: 'net', name: 'Net' },
+    ]
+  },
+  {
+    name: 'Baseball/Softball',
+    features: [
+      { id: 'bases', name: 'Bases' },
+      { id: 'mound', name: 'Mound' },
+      { id: 'removable_mound', name: 'Removable Mound' },
+      { id: 'dugouts', name: 'Dugouts' },
+      { id: 'l_screens', name: 'L-Screens' },
+      { id: 'pitching_machine', name: 'Permanent Pitching Machine' },
+    ]
+  },
+  {
+    name: 'Equipment',
+    features: [
+      { id: 'balls', name: 'Balls' },
+      { id: 'scoreboard', name: 'Scoreboard' },
+    ]
+  },
+  {
+    name: 'Seating & Furniture',
+    features: [
+      { id: 'bleachers', name: 'Bleachers' },
+      { id: 'chairs', name: 'Chairs' },
+      { id: 'dining_tables', name: 'Dining Tables' },
+    ]
+  },
+  {
+    name: 'Amenities',
+    features: [
+      { id: 'covered', name: 'Covered' },
+      { id: 'parking', name: 'Parking' },
+      { id: 'restrooms', name: 'Accessible Restrooms' },
+      { id: 'electricity', name: 'Access To Electricity' },
+      { id: 'water', name: 'Access to Water' },
+      { id: 'wifi', name: 'Free WiFi' },
+    ]
+  },
+];
+
+// Flatten for easy lookup  
+const allFacilityFeatures = facilityFeatureCategories.flatMap(cat => 
+  cat.features.map(f => ({ ...f, category: cat.name }))
+);
+
 const createEmptyAsset = (type = '', locationType = '') => {
   // Get default add-ons based on location type
   const defaultIds = defaultAddOnsByType[locationType] || [];
@@ -129,8 +330,14 @@ const createEmptyAsset = (type = '', locationType = '') => {
   return {
     type,
     name: '',
+    indoorOutdoor: '', // 'indoor', 'outdoor', 'both'
+    squareFootage: '',
+    maxCapacity: '',
+    reservationTypes: [],
+    features: [],
     weekdayAvailability: { start: '15:00', end: '22:00' },
     weekendAvailability: { start: '08:00', end: '22:00' },
+    availabilityNotes: '',
     blackoutOption: 'none',
     blackoutDates: '',
     approvers: [{ ...emptyApprover }],
@@ -181,7 +388,7 @@ const spaceTypes = [
   { value: 'meeting', label: 'Meeting Room', icon: 'meeting' },
   { value: 'classroom', label: 'Classroom', icon: 'classroom' },
   { value: 'kitchen', label: 'Kitchen / Cafeteria', icon: 'kitchen' },
-  { value: 'outdoor', label: 'Outdoor / Pavilion', icon: 'outdoor' },
+  { value: 'pavilion', label: 'Pavilion / Shelter', icon: 'outdoor' },
   { value: 'track', label: 'Track', icon: 'track' },
   { value: 'weight', label: 'Weight Room / Fitness', icon: 'weight' },
   { value: 'other', label: 'Other', icon: 'other' },
@@ -499,7 +706,7 @@ const FormGroup = ({ label, hint, children, required, error, tooltip }) => (
 );
 
 // Photo upload component
-const PhotoUpload = ({ photos = [], onAdd, onRemove, maxPhotos = 5, isMobile }) => {
+const PhotoUpload = ({ photos = [], onAdd, onRemove, maxPhotos = 5, isMobile, hideLabel = false }) => {
   const fileInputRef = useRef(null);
   
   const handleFileSelect = (e) => {
@@ -524,11 +731,13 @@ const PhotoUpload = ({ photos = [], onAdd, onRemove, maxPhotos = 5, isMobile }) 
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-        <Camera size={16} color={colors.blue} />
-        <span style={{ fontSize: '14px', fontWeight: 600, color: '#64748b' }}>Photos</span>
-        <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
-      </div>
+      {!hideLabel && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+          <Camera size={16} color={colors.blue} />
+          <span style={{ fontSize: '14px', fontWeight: 600, color: '#64748b' }}>Photos</span>
+          <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
+        </div>
+      )}
       
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
         {/* Existing photos */}
@@ -640,11 +849,79 @@ const MobileProgressBar = ({ currentStep, totalSteps }) => (
 );
 
 function WelcomeStep({ onContinue, isMobile }) {
+  // Calendar with checkmark icon - gradient
+  const CalendarCheckIcon = () => (
+    <svg width={isMobile ? 36 : 44} height={isMobile ? 36 : 44} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gradCalendar" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#0077bc" />
+          <stop offset="100%" stopColor="#00a84f" />
+        </linearGradient>
+      </defs>
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="url(#gradCalendar)" strokeWidth="2" fill="none" />
+      <line x1="16" y1="2" x2="16" y2="6" stroke="url(#gradCalendar)" strokeWidth="2" strokeLinecap="round" />
+      <line x1="8" y1="2" x2="8" y2="6" stroke="url(#gradCalendar)" strokeWidth="2" strokeLinecap="round" />
+      <line x1="3" y1="10" x2="21" y2="10" stroke="url(#gradCalendar)" strokeWidth="2" />
+      <path d="M9 16l2 2 4-4" stroke="url(#gradCalendar)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </svg>
+  );
+
+  // Gradient outline icons for cards
+  const QuickSetupIcon = () => (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gradQuick" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#0077bc" />
+          <stop offset="100%" stopColor="#00a84f" />
+        </linearGradient>
+      </defs>
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" stroke="url(#gradQuick)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </svg>
+  );
+
+  const DuplicateIcon = () => (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gradDupe" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#0077bc" />
+          <stop offset="100%" stopColor="#00a84f" />
+        </linearGradient>
+      </defs>
+      <path d="M17 1l4 4-4 4" stroke="url(#gradDupe)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <path d="M3 11V9a4 4 0 0 1 4-4h14" stroke="url(#gradDupe)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <path d="M7 23l-4-4 4-4" stroke="url(#gradDupe)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <path d="M21 13v2a4 4 0 0 1-4 4H3" stroke="url(#gradDupe)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </svg>
+  );
+
+  const TeamIcon = () => (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gradTeam" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#0077bc" />
+          <stop offset="100%" stopColor="#00a84f" />
+        </linearGradient>
+      </defs>
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="url(#gradTeam)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <circle cx="9" cy="7" r="4" stroke="url(#gradTeam)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="url(#gradTeam)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="url(#gradTeam)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </svg>
+  );
+
   return (
     <div style={{ textAlign: 'center', padding: isMobile ? '10px 0' : '20px 0' }}>
+      {/* Calendar with checkmark icon in gradient rounded square */}
       <div style={{ width: isMobile ? '64px' : '80px', height: isMobile ? '64px' : '80px', borderRadius: isMobile ? '16px' : '20px', background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', boxShadow: '0 12px 40px rgba(0, 118, 187, 0.3)' }}>
-        <Sparkles size={isMobile ? 32 : 40} color="white" />
+        <svg width={isMobile ? 32 : 40} height={isMobile ? 32 : 40} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="white" strokeWidth="2" fill="none" />
+          <line x1="16" y1="2" x2="16" y2="6" stroke="white" strokeWidth="2" strokeLinecap="round" />
+          <line x1="8" y1="2" x2="8" y2="6" stroke="white" strokeWidth="2" strokeLinecap="round" />
+          <line x1="3" y1="10" x2="21" y2="10" stroke="white" strokeWidth="2" />
+          <path d="M9 16l2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        </svg>
       </div>
+      
       <h1 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: isMobile ? '28px' : '36px', fontWeight: 800, margin: '0 0 16px', color: '#0f172a', lineHeight: 1.2 }}>
         Welcome to PracticePlan!
       </h1>
@@ -654,15 +931,15 @@ function WelcomeStep({ onContinue, isMobile }) {
       
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr', gap: isMobile ? '12px' : '20px', maxWidth: '600px', margin: '0 auto 32px' }}>
         {[
-          { icon: Zap, title: 'Quick Setup', desc: 'Just 5-10 minutes' },
-          { icon: RefreshCw, title: 'Easy Duplicating', desc: 'Copy settings across facilities' },
-          { icon: Sparkles, title: 'We Handle the Rest', desc: 'Our team sets everything up' },
+          { icon: QuickSetupIcon, title: 'Quick Setup', desc: 'Just 5-10 minutes' },
+          { icon: DuplicateIcon, title: 'Easy Duplicating', desc: 'Copy settings to quickly add facilities' },
+          { icon: TeamIcon, title: 'We Handle the Rest', desc: 'Our team will finalize everything from here' },
         ].map((item, i) => {
           const IconComponent = item.icon;
           return (
-            <div key={i} style={{ padding: isMobile ? '16px' : '24px 16px', background: 'rgba(0, 118, 187, 0.04)', borderRadius: '16px', border: '1px solid rgba(0, 118, 187, 0.08)', display: isMobile ? 'flex' : 'block', alignItems: 'center', gap: '16px', textAlign: isMobile ? 'left' : 'center' }}>
-              <div style={{ width: isMobile ? '40px' : '48px', height: isMobile ? '40px' : '48px', borderRadius: '12px', background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: isMobile ? 0 : '12px', marginLeft: isMobile ? 0 : 'auto', marginRight: isMobile ? 0 : 'auto' }}>
-                <IconComponent size={isMobile ? 20 : 24} color="white" />
+            <div key={i} style={{ padding: isMobile ? '16px' : '24px 16px', background: 'white', borderRadius: '16px', border: '1px solid rgba(0, 0, 0, 0.06)', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)', display: isMobile ? 'flex' : 'block', alignItems: 'center', gap: '16px', textAlign: isMobile ? 'left' : 'center' }}>
+              <div style={{ marginBottom: isMobile ? 0 : '12px', marginLeft: isMobile ? 0 : 'auto', marginRight: isMobile ? 0 : 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <IconComponent />
               </div>
               <div>
                 <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', margin: '0 0 4px' }}>{item.title}</h3>
@@ -711,7 +988,7 @@ function ContactInfoStep({ data, update, errors, isMobile }) {
     <div>
       <SectionTitle icon={User} title="Let's Start With You" subtitle="Tell us a bit about yourself so we can keep you updated on your setup." isMobile={isMobile} />
       <CardSection isMobile={isMobile}>
-        <div style={{ maxWidth: '500px' }}>
+        <div style={{ maxWidth: '600px' }}>
           <FormGroup label="Full Name" required error={errors.fullName}>
             <input type="text" value={data.fullName} onChange={(e) => update('fullName', e.target.value)} style={errors.fullName ? inputErrorStyle : inputStyle} placeholder="e.g., John Smith" />
           </FormGroup>
@@ -806,34 +1083,44 @@ function PoliciesStep({ data, update, isMobile }) {
   return (
     <div>
       <SectionTitle icon={FileText} title="Set Your Ground Rules" subtitle="These policies will apply across all your locations - you can always change them later!" isMobile={isMobile} />
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '16px' : '24px' }}>
-        <CardSection isMobile={isMobile}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-            <Clock size={18} color={colors.blue} />
-            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Cancellation Policy</h3>
-            <Tooltip text="This is how far in advance renters must cancel to receive a refund. After this window, their payment is non-refundable."><span /></Tooltip>
-          </div>
-          <FormGroup label="Cancellation Window">
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: showCustomCancellation ? '12px' : 0 }}>
+      
+      {/* Booking Period Section - Full Width */}
+      <CardSection isMobile={isMobile} style={{ marginBottom: isMobile ? '16px' : '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+          <Calendar size={18} color={colors.blue} />
+          <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Booking Period</h3>
+          <Tooltip text="When do you want to start accepting bookings, and how far in advance can people book?"><span /></Tooltip>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+          <FormGroup label="When do you want to go live?" tooltip="The date you want to start allowing the public to make bookings on PracticePlan.">
+            <input 
+              type="date" 
+              value={data.goLiveDate || ''} 
+              onChange={(e) => update('goLiveDate', e.target.value)}
+              style={inputStyle}
+              min={new Date().toISOString().split('T')[0]}
+            />
+          </FormGroup>
+          <FormGroup label="How far in advance can people book?" tooltip="The maximum number of months into the future that renters can reserve your spaces.">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {[
-                { value: '3', label: '3 days' },
-                { value: '7', label: '7 days' },
-                { value: '14', label: '14 days' },
-                { value: '30', label: '30 days' },
-                { value: 'custom', label: 'Custom' },
-                { value: 'unsure', label: 'Not sure yet' },
+                { value: '1', label: '1 month' },
+                { value: '3', label: '3 months' },
+                { value: '6', label: '6 months' },
+                { value: '12', label: '12 months' },
+                { value: 'other', label: 'Other' },
               ].map(opt => (
                 <button 
                   key={opt.value} 
-                  onClick={() => handleCancellationChange(opt.value)} 
+                  onClick={() => update('bookingWindowMonths', opt.value)} 
                   style={{ 
                     padding: '10px 14px', 
                     borderRadius: '8px', 
                     cursor: 'pointer', 
                     transition: 'all 0.2s', 
-                    border: (data.cancellationDays === opt.value || (showCustomCancellation && opt.value === 'custom')) ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)', 
-                    background: (data.cancellationDays === opt.value || (showCustomCancellation && opt.value === 'custom')) ? `rgba(0, 118, 187, 0.08)` : 'white', 
-                    color: (data.cancellationDays === opt.value || (showCustomCancellation && opt.value === 'custom')) ? colors.blue : '#64748b', 
+                    border: data.bookingWindowMonths === opt.value ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)', 
+                    background: data.bookingWindowMonths === opt.value ? `rgba(0, 118, 187, 0.08)` : 'white', 
+                    color: data.bookingWindowMonths === opt.value ? colors.blue : '#64748b', 
                     fontSize: '13px', 
                     fontWeight: 600 
                   }}
@@ -842,91 +1129,126 @@ function PoliciesStep({ data, update, isMobile }) {
                 </button>
               ))}
             </div>
-            {showCustomCancellation && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {data.bookingWindowMonths === 'other' && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px' }}>
                 <input 
                   type="number" 
-                  value={data.customCancellationDays || ''} 
-                  onChange={(e) => update('customCancellationDays', e.target.value)}
+                  value={data.customBookingWindowMonths || ''} 
+                  onChange={(e) => update('customBookingWindowMonths', e.target.value)}
                   style={{ ...inputStyle, width: '80px' }}
                   placeholder="0"
                   min="1"
+                  max="24"
                 />
-                <span style={{ fontSize: '14px', color: '#64748b' }}>days before booking</span>
+                <span style={{ fontSize: '14px', color: '#64748b' }}>months</span>
               </div>
             )}
           </FormGroup>
-        </CardSection>
-        <CardSection isMobile={isMobile}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-            <CloudRain size={18} color={colors.blue} />
-            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Weather Policy</h3>
-            <Tooltip text="If you cancel a rental due to weather (rain, lightning, etc.), should the renter receive a refund or credit?"><span /></Tooltip>
-          </div>
-          <FormGroup label="Weather Cancellations">
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              {[
-                { value: 'yes', label: 'Yes, refund' },
-                { value: 'credit', label: 'Credit only' },
-                { value: 'no', label: 'No refunds' },
-                { value: 'unsure', label: 'Not sure yet' },
-              ].map(opt => (
+        </div>
+      </CardSection>
+      
+      {/* Approval & Notifications Section - Full Width */}
+      <CardSection isMobile={isMobile} style={{ marginBottom: isMobile ? '16px' : '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+          <Crown size={18} color={colors.blue} />
+          <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Approvals & Notifications</h3>
+        </div>
+        <div style={{ display: 'grid', gap: '16px' }}>
+          {/* Require Approval Toggle */}
+          <div style={{ padding: '16px', background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', border: '1px solid rgba(0, 118, 187, 0.08)' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
+              <div style={{ flex: 1 }}>
+                <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#1e293b' }}>Require approval before reservations are confirmed?</p>
+                <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#64748b' }}>
+                  If yes, an approver must approve each reservation within 7 days, or it will be automatically rejected.
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
                 <button 
-                  key={opt.value} 
-                  onClick={() => update('weatherRefund', opt.value)} 
+                  onClick={() => update('requireApproval', 'yes')} 
                   style={{ 
-                    padding: '10px 14px', 
+                    padding: '8px 16px', 
                     borderRadius: '8px', 
                     cursor: 'pointer', 
-                    transition: 'all 0.2s', 
-                    border: data.weatherRefund === opt.value ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)', 
-                    background: data.weatherRefund === opt.value ? `rgba(0, 118, 187, 0.08)` : 'white', 
-                    color: data.weatherRefund === opt.value ? colors.blue : '#64748b', 
+                    border: data.requireApproval === 'yes' ? `2px solid ${colors.green}` : '1px solid rgba(0, 0, 0, 0.1)', 
+                    background: data.requireApproval === 'yes' ? `rgba(0, 168, 79, 0.08)` : 'white', 
+                    color: data.requireApproval === 'yes' ? colors.green : '#64748b', 
                     fontSize: '13px', 
                     fontWeight: 600 
                   }}
                 >
-                  {opt.label}
+                  Yes
                 </button>
-              ))}
-            </div>
-          </FormGroup>
-        </CardSection>
-        <CardSection isMobile={isMobile}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-            <Shield size={18} color={colors.blue} />
-            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Liability Insurance</h3>
-            <Tooltip text="Many organizations require renters to provide a Certificate of Insurance (COI) naming your organization as additionally insured."><span /></Tooltip>
-          </div>
-          <FormGroup label="Require Insurance?">
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              {[
-                { value: 'yes', label: 'Yes, require it' },
-                { value: 'sometimes', label: 'Case by case' },
-                { value: 'no', label: 'Not required' },
-                { value: 'unsure', label: 'Not sure yet' },
-              ].map(opt => (
                 <button 
-                  key={opt.value} 
-                  onClick={() => update('requireInsurance', opt.value)} 
+                  onClick={() => update('requireApproval', 'no')} 
                   style={{ 
-                    padding: '10px 14px', 
+                    padding: '8px 16px', 
                     borderRadius: '8px', 
                     cursor: 'pointer', 
-                    transition: 'all 0.2s', 
-                    border: data.requireInsurance === opt.value ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)', 
-                    background: data.requireInsurance === opt.value ? `rgba(0, 118, 187, 0.08)` : 'white', 
-                    color: data.requireInsurance === opt.value ? colors.blue : '#64748b', 
+                    border: data.requireApproval === 'no' ? `2px solid ${colors.blue}` : '1px solid rgba(0, 0, 0, 0.1)', 
+                    background: data.requireApproval === 'no' ? `rgba(0, 118, 187, 0.08)` : 'white', 
+                    color: data.requireApproval === 'no' ? colors.blue : '#64748b', 
                     fontSize: '13px', 
                     fontWeight: 600 
                   }}
                 >
-                  {opt.label}
+                  No
                 </button>
-              ))}
+              </div>
             </div>
-          </FormGroup>
-        </CardSection>
+          </div>
+          
+          {/* Notification Toggle */}
+          <div style={{ padding: '16px', background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', border: '1px solid rgba(0, 118, 187, 0.08)' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Bell size={16} color={colors.blue} />
+                  <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#1e293b' }}>Receive notifications when a reservation is submitted?</p>
+                </div>
+                <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#64748b' }}>
+                  Get notified when someone submits a reservation for approval. This is separate from confirmation notifications.
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+                <button 
+                  onClick={() => update('notifyOnBooking', 'yes')} 
+                  style={{ 
+                    padding: '8px 16px', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer', 
+                    border: data.notifyOnBooking === 'yes' ? `2px solid ${colors.green}` : '1px solid rgba(0, 0, 0, 0.1)', 
+                    background: data.notifyOnBooking === 'yes' ? `rgba(0, 168, 79, 0.08)` : 'white', 
+                    color: data.notifyOnBooking === 'yes' ? colors.green : '#64748b', 
+                    fontSize: '13px', 
+                    fontWeight: 600 
+                  }}
+                >
+                  Yes
+                </button>
+                <button 
+                  onClick={() => update('notifyOnBooking', 'no')} 
+                  style={{ 
+                    padding: '8px 16px', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer', 
+                    border: data.notifyOnBooking === 'no' ? `2px solid ${colors.blue}` : '1px solid rgba(0, 0, 0, 0.1)', 
+                    background: data.notifyOnBooking === 'no' ? `rgba(0, 118, 187, 0.08)` : 'white', 
+                    color: data.notifyOnBooking === 'no' ? colors.blue : '#64748b', 
+                    fontSize: '13px', 
+                    fontWeight: 600 
+                  }}
+                >
+                  No
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardSection>
+      
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '16px' : '24px' }}>
+        {/* 1. Booking Increments - First */}
         <CardSection isMobile={isMobile}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
             <Clock size={18} color={colors.blue} />
@@ -978,7 +1300,135 @@ function PoliciesStep({ data, update, isMobile }) {
             )}
           </FormGroup>
         </CardSection>
+        
+        {/* 2. Liability Insurance - Second */}
+        <CardSection isMobile={isMobile}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+            <Shield size={18} color={colors.blue} />
+            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Liability Insurance</h3>
+            <Tooltip text="Many organizations require renters to provide a Certificate of Insurance (COI) naming your organization as additionally insured."><span /></Tooltip>
+          </div>
+          <FormGroup label="Require Insurance?">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              {[
+                { value: 'yes', label: 'Yes, require it' },
+                { value: 'sometimes', label: 'Case by case' },
+                { value: 'no', label: 'Not required' },
+                { value: 'unsure', label: 'Not sure yet' },
+              ].map(opt => (
+                <button 
+                  key={opt.value} 
+                  onClick={() => update('requireInsurance', opt.value)} 
+                  style={{ 
+                    padding: '10px 14px', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer', 
+                    transition: 'all 0.2s', 
+                    border: data.requireInsurance === opt.value ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)', 
+                    background: data.requireInsurance === opt.value ? `rgba(0, 118, 187, 0.08)` : 'white', 
+                    color: data.requireInsurance === opt.value ? colors.blue : '#64748b', 
+                    fontSize: '13px', 
+                    fontWeight: 600 
+                  }}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </FormGroup>
+        </CardSection>
+        
+        {/* 3. Cancellation Policy - Third */}
+        <CardSection isMobile={isMobile}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+            <Clock size={18} color={colors.blue} />
+            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Cancellation Policy</h3>
+            <Tooltip text="This is how far in advance renters must cancel to receive a refund. After this window, their payment is non-refundable."><span /></Tooltip>
+          </div>
+          <FormGroup label="Cancellation Window">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: showCustomCancellation ? '12px' : 0 }}>
+              {[
+                { value: '3', label: '3 days' },
+                { value: '7', label: '7 days' },
+                { value: '14', label: '14 days' },
+                { value: '30', label: '30 days' },
+                { value: 'custom', label: 'Custom' },
+                { value: 'unsure', label: 'Not sure yet' },
+              ].map(opt => (
+                <button 
+                  key={opt.value} 
+                  onClick={() => handleCancellationChange(opt.value)} 
+                  style={{ 
+                    padding: '10px 14px', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer', 
+                    transition: 'all 0.2s', 
+                    border: (data.cancellationDays === opt.value || (showCustomCancellation && opt.value === 'custom')) ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)', 
+                    background: (data.cancellationDays === opt.value || (showCustomCancellation && opt.value === 'custom')) ? `rgba(0, 118, 187, 0.08)` : 'white', 
+                    color: (data.cancellationDays === opt.value || (showCustomCancellation && opt.value === 'custom')) ? colors.blue : '#64748b', 
+                    fontSize: '13px', 
+                    fontWeight: 600 
+                  }}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+            {showCustomCancellation && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <input 
+                  type="number" 
+                  value={data.customCancellationDays || ''} 
+                  onChange={(e) => update('customCancellationDays', e.target.value)}
+                  style={{ ...inputStyle, width: '80px' }}
+                  placeholder="0"
+                  min="1"
+                />
+                <span style={{ fontSize: '14px', color: '#64748b' }}>days before booking</span>
+              </div>
+            )}
+          </FormGroup>
+        </CardSection>
+        
+        {/* 4. Weather Policy - Fourth */}
+        <CardSection isMobile={isMobile}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+            <CloudRain size={18} color={colors.blue} />
+            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Weather Policy</h3>
+            <Tooltip text="If you cancel a rental due to weather (rain, lightning, etc.), should the renter receive a refund or credit?"><span /></Tooltip>
+          </div>
+          <FormGroup label="Weather Cancellations">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              {[
+                { value: 'yes', label: 'Yes, refund' },
+                { value: 'credit', label: 'Credit only' },
+                { value: 'no', label: 'No refunds' },
+                { value: 'unsure', label: 'Not sure yet' },
+              ].map(opt => (
+                <button 
+                  key={opt.value} 
+                  onClick={() => update('weatherRefund', opt.value)} 
+                  style={{ 
+                    padding: '10px 14px', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer', 
+                    transition: 'all 0.2s', 
+                    border: data.weatherRefund === opt.value ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)', 
+                    background: data.weatherRefund === opt.value ? `rgba(0, 118, 187, 0.08)` : 'white', 
+                    color: data.weatherRefund === opt.value ? colors.blue : '#64748b', 
+                    fontSize: '13px', 
+                    fontWeight: 600 
+                  }}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </FormGroup>
+        </CardSection>
       </div>
+      
+      {/* Waivers & Agreements */}
       <CardSection isMobile={isMobile}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
           <FileText size={18} color={colors.blue} />
@@ -993,12 +1443,14 @@ function PoliciesStep({ data, update, isMobile }) {
             <p style={{ margin: '0 0 8px', fontSize: '13px', fontWeight: 600, color: '#64748b' }}>Upload Document</p>
             <FileUploadBox field="waiverFile" value={data.waiverFile} label="waiver" />
           </div>
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             <p style={{ margin: '0 0 8px', fontSize: '13px', fontWeight: 600, color: '#64748b' }}>Or Paste Text</p>
-            <textarea value={data.waiverText || ''} onChange={(e) => update('waiverText', e.target.value)} style={{ ...textareaStyle, minHeight: '140px' }} placeholder="Paste your waiver or liability release language here..." />
+            <textarea value={data.waiverText || ''} onChange={(e) => update('waiverText', e.target.value)} style={{ ...textareaStyle, flex: 1, minHeight: '134px' }} placeholder="Paste your waiver or liability release language here..." />
           </div>
         </div>
       </CardSection>
+      
+      {/* Rental Policy Document */}
       <CardSection isMobile={isMobile}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
           <FileText size={18} color={colors.blue} />
@@ -1013,9 +1465,9 @@ function PoliciesStep({ data, update, isMobile }) {
             <p style={{ margin: '0 0 8px', fontSize: '13px', fontWeight: 600, color: '#64748b' }}>Upload Document</p>
             <FileUploadBox field="facilityAgreementFile" value={data.facilityAgreementFile} label="policy" />
           </div>
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             <p style={{ margin: '0 0 8px', fontSize: '13px', fontWeight: 600, color: '#64748b' }}>Or Paste Text</p>
-            <textarea value={data.facilityAgreement || ''} onChange={(e) => update('facilityAgreement', e.target.value)} style={{ ...textareaStyle, minHeight: '140px' }} placeholder="Paste your facility use policy or rental agreement here..." />
+            <textarea value={data.facilityAgreement || ''} onChange={(e) => update('facilityAgreement', e.target.value)} style={{ ...textareaStyle, flex: 1, minHeight: '134px' }} placeholder="Paste your facility use policy or rental agreement here..." />
           </div>
         </div>
       </CardSection>
@@ -1134,7 +1586,6 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
                     flexDirection: 'column',
                     alignItems: 'center',
                     gap: '8px',
-                    transition: 'all 0.2s ease',
                     transition: 'all 0.15s',
                   }}
                 >
@@ -1154,8 +1605,314 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
             </FormGroup>
           </div>
           
+          {/* Indoor/Outdoor, Square Footage, and Max Capacity */}
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <Sun size={16} color={colors.blue} />
+                <label style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>Indoor or Outdoor?</label>
+                <span style={{ fontSize: '11px', color: '#ef4444' }}>*</span>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', height: '46px' }}>
+                {[
+                  { value: 'indoor', label: 'Indoor' },
+                  { value: 'outdoor', label: 'Outdoor' },
+                  { value: 'both', label: 'Both' },
+                ].map(opt => (
+                  <button
+                    key={opt.value}
+                    onClick={() => updateAsset(locationId, assetIndex, 'indoorOutdoor', opt.value)}
+                    style={{
+                      flex: 1,
+                      height: '100%',
+                      borderRadius: '10px',
+                      border: asset.indoorOutdoor === opt.value ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)',
+                      background: asset.indoorOutdoor === opt.value ? 'rgba(0, 118, 187, 0.08)' : 'white',
+                      color: asset.indoorOutdoor === opt.value ? colors.blue : '#64748b',
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.15s'
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <Ruler size={16} color={colors.blue} />
+                <label style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>Estimated Size</label>
+                <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', height: '46px' }}>
+                <input
+                  type="number"
+                  value={asset.squareFootage || ''}
+                  onChange={(e) => updateAsset(locationId, assetIndex, 'squareFootage', e.target.value)}
+                  style={{ ...inputStyle, flex: 1, height: '100%' }}
+                  placeholder="e.g., 5000"
+                  inputMode="numeric"
+                  min="0"
+                />
+                <span style={{ fontSize: '14px', color: '#64748b', whiteSpace: 'nowrap' }}>sq ft</span>
+              </div>
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <Users size={16} color={colors.blue} />
+                <label style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>Max Capacity</label>
+                <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', height: '46px' }}>
+                <input
+                  type="number"
+                  value={asset.maxCapacity || ''}
+                  onChange={(e) => updateAsset(locationId, assetIndex, 'maxCapacity', e.target.value)}
+                  style={{ ...inputStyle, flex: 1, height: '100%' }}
+                  placeholder="e.g., 100"
+                  inputMode="numeric"
+                  min="0"
+                />
+                <span style={{ fontSize: '14px', color: '#64748b', whiteSpace: 'nowrap' }}>people</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* Reservation Types - Add-ons style UI */}
+          <div style={{ marginBottom: '20px', background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', border: '1px solid rgba(0, 118, 187, 0.06)', overflow: 'hidden' }}>
+            <div style={{ padding: isMobile ? '16px' : '20px', borderBottom: (asset.reservationTypes || []).length > 0 ? '1px solid rgba(0, 118, 187, 0.08)' : 'none' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                <Tag size={16} color={colors.blue} />
+                <h5 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#334155' }}>Types of Reservations</h5>
+                <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
+              </div>
+              <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8' }}>What activities can this space be used for?</p>
+            </div>
+            
+            {/* Selected reservation types summary */}
+            {(asset.reservationTypes || []).length > 0 && (
+              <div style={{ padding: '12px 16px', background: 'rgba(0, 168, 79, 0.06)', borderBottom: '1px solid rgba(0, 168, 79, 0.1)' }}>
+                <p style={{ margin: '0 0 8px', fontSize: '12px', fontWeight: 600, color: colors.green }}>
+                  {(asset.reservationTypes || []).length} selected
+                </p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  {(asset.reservationTypes || []).map(typeId => {
+                    const resType = allReservationTypes.find(t => t.id === typeId);
+                    return resType ? (
+                      <span key={typeId} style={{ 
+                        padding: '4px 8px 4px 10px', 
+                        borderRadius: '6px', 
+                        background: 'white', 
+                        border: '1px solid rgba(0, 168, 79, 0.2)', 
+                        fontSize: '12px', 
+                        color: '#1e293b',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}>
+                        {resType.category}: {resType.name}
+                        <button
+                          onClick={() => {
+                            const newTypes = (asset.reservationTypes || []).filter(t => t !== typeId);
+                            updateAsset(locationId, assetIndex, 'reservationTypes', newTypes);
+                          }}
+                          style={{ width: '16px', height: '16px', borderRadius: '50%', border: 'none', background: 'rgba(0, 0, 0, 0.08)', color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+                        >
+                          <X size={10} />
+                        </button>
+                      </span>
+                    ) : null;
+                  })}
+                </div>
+              </div>
+            )}
+            
+            {/* Categorized reservation types */}
+            <div style={{ padding: '0' }}>
+              {reservationTypeCategories.map(category => {
+                const selectedInCategory = category.types.filter(t => 
+                  (asset.reservationTypes || []).includes(t.id)
+                ).length;
+                const [isOpen, setIsOpen] = React.useState(false);
+                
+                return (
+                  <div key={category.name} style={{ borderBottom: '1px solid rgba(0, 118, 187, 0.06)' }}>
+                    <button
+                      onClick={() => setIsOpen(!isOpen)}
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'background 0.15s'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>{category.name}</span>
+                        {selectedInCategory > 0 && (
+                          <span style={{ padding: '2px 8px', borderRadius: '10px', background: 'rgba(0, 168, 79, 0.1)', color: colors.green, fontSize: '11px', fontWeight: 600 }}>
+                            {selectedInCategory}
+                          </span>
+                        )}
+                      </div>
+                      <ChevronDown size={18} color="#64748b" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
+                    </button>
+                    {isOpen && (
+                      <div style={{ padding: '0 16px 12px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        {category.types.map(type => {
+                          const isSelected = (asset.reservationTypes || []).includes(type.id);
+                          return (
+                            <label key={type.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', borderRadius: '8px', border: isSelected ? `2px solid ${colors.green}` : '1px solid rgba(0, 0, 0, 0.1)', background: isSelected ? 'rgba(0, 168, 79, 0.06)' : 'white', cursor: 'pointer', transition: 'all 0.15s' }}>
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => {
+                                  const newTypes = isSelected 
+                                    ? (asset.reservationTypes || []).filter(t => t !== type.id)
+                                    : [...(asset.reservationTypes || []), type.id];
+                                  updateAsset(locationId, assetIndex, 'reservationTypes', newTypes);
+                                }}
+                                style={{ width: '16px', height: '16px', accentColor: colors.green }}
+                              />
+                              <span style={{ fontSize: '13px', fontWeight: 500, color: isSelected ? colors.green : '#334155' }}>{type.name}</span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          
+          {/* Facility Features - Add-ons style UI */}
+          <div style={{ marginBottom: '20px', background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', border: '1px solid rgba(0, 118, 187, 0.06)', overflow: 'hidden' }}>
+            <div style={{ padding: isMobile ? '16px' : '20px', borderBottom: (asset.features || []).length > 0 ? '1px solid rgba(0, 118, 187, 0.08)' : 'none' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                <ListChecks size={16} color={colors.blue} />
+                <h5 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#334155' }}>Facility Features</h5>
+                <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
+              </div>
+              <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8' }}>What features does this space have?</p>
+            </div>
+            
+            {/* Selected features summary */}
+            {(asset.features || []).length > 0 && (
+              <div style={{ padding: '12px 16px', background: 'rgba(0, 118, 187, 0.06)', borderBottom: '1px solid rgba(0, 118, 187, 0.1)' }}>
+                <p style={{ margin: '0 0 8px', fontSize: '12px', fontWeight: 600, color: colors.blue }}>
+                  {(asset.features || []).length} selected
+                </p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  {(asset.features || []).map(featureId => {
+                    const feature = allFacilityFeatures.find(f => f.id === featureId);
+                    return feature ? (
+                      <span key={featureId} style={{ 
+                        padding: '4px 8px 4px 10px', 
+                        borderRadius: '6px', 
+                        background: 'white', 
+                        border: '1px solid rgba(0, 118, 187, 0.2)', 
+                        fontSize: '12px', 
+                        color: '#1e293b',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}>
+                        {feature.name}
+                        <button
+                          onClick={() => {
+                            const newFeatures = (asset.features || []).filter(f => f !== featureId);
+                            updateAsset(locationId, assetIndex, 'features', newFeatures);
+                          }}
+                          style={{ width: '16px', height: '16px', borderRadius: '50%', border: 'none', background: 'rgba(0, 0, 0, 0.08)', color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+                        >
+                          <X size={10} />
+                        </button>
+                      </span>
+                    ) : null;
+                  })}
+                </div>
+              </div>
+            )}
+            
+            {/* Categorized features */}
+            <div style={{ padding: '0' }}>
+              {facilityFeatureCategories.map(category => {
+                const selectedInCategory = category.features.filter(f => 
+                  (asset.features || []).includes(f.id)
+                ).length;
+                const [isOpen, setIsOpen] = React.useState(false);
+                
+                return (
+                  <div key={category.name} style={{ borderBottom: '1px solid rgba(0, 118, 187, 0.06)' }}>
+                    <button
+                      onClick={() => setIsOpen(!isOpen)}
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'background 0.15s'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>{category.name}</span>
+                        {selectedInCategory > 0 && (
+                          <span style={{ padding: '2px 8px', borderRadius: '10px', background: 'rgba(0, 118, 187, 0.1)', color: colors.blue, fontSize: '11px', fontWeight: 600 }}>
+                            {selectedInCategory}
+                          </span>
+                        )}
+                      </div>
+                      <ChevronDown size={18} color="#64748b" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
+                    </button>
+                    {isOpen && (
+                      <div style={{ padding: '0 16px 12px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        {category.features.map(feature => {
+                          const isSelected = (asset.features || []).includes(feature.id);
+                          return (
+                            <label key={feature.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', borderRadius: '8px', border: isSelected ? `2px solid ${colors.blue}` : '1px solid rgba(0, 0, 0, 0.1)', background: isSelected ? 'rgba(0, 118, 187, 0.06)' : 'white', cursor: 'pointer', transition: 'all 0.15s' }}>
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => {
+                                  const newFeatures = isSelected 
+                                    ? (asset.features || []).filter(f => f !== feature.id)
+                                    : [...(asset.features || []), feature.id];
+                                  updateAsset(locationId, assetIndex, 'features', newFeatures);
+                                }}
+                                style={{ width: '16px', height: '16px', accentColor: colors.blue }}
+                              />
+                              <span style={{ fontSize: '13px', fontWeight: 500, color: isSelected ? colors.blue : '#334155' }}>{feature.name}</span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          
           {/* Space Photos */}
           <div style={{ marginBottom: '20px', padding: isMobile ? '16px' : '20px', background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', border: '1px solid rgba(0, 118, 187, 0.06)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+              <Camera size={16} color={colors.blue} />
+              <span style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>
+                {asset.name ? `Photos of ${asset.name}` : 'Space Photos'}
+              </span>
+              <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
+            </div>
             <PhotoUpload
               photos={asset.photos || []}
               onAdd={(photo) => {
@@ -1168,6 +1925,7 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
               }}
               maxPhotos={8}
               isMobile={isMobile}
+              hideLabel={true}
             />
             <p style={{ margin: '8px 0 0', fontSize: '12px', color: '#64748b' }}>
               Show renters what this space looks like - courts, fields, seating, equipment, etc.
@@ -1245,6 +2003,20 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
                   We'll block standard US holidays (New Year's, Memorial Day, July 4th, Labor Day, Thanksgiving, Christmas). You can customize this later.
                 </p>
               )}
+            </div>
+            
+            {/* Additional Availability Notes */}
+            <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px dashed rgba(0, 118, 187, 0.15)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                <span style={{ fontSize: '14px', fontWeight: 600, color: '#64748b' }}>Additional Details</span>
+                <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
+              </div>
+              <textarea 
+                value={asset.availabilityNotes || ''} 
+                onChange={(e) => updateAsset(locationId, assetIndex, 'availabilityNotes', e.target.value)}
+                style={{ ...inputStyle, minHeight: '70px', resize: 'vertical', fontSize: '13px' }}
+                placeholder="Any additional details about availability, seasonal hours, or special scheduling notes for this space..."
+              />
             </div>
           </div>
           <div style={{ background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', padding: isMobile ? '16px' : '20px', marginBottom: '20px', border: '1px solid rgba(0, 118, 187, 0.06)' }}>
@@ -1623,7 +2395,9 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
 
 function LocationCard({ location, handlers, canRemove, isMobile, errors, contactInfo, allLocations, onCopySettings, initiallyCollapsed = false, isFirstLocation = false }) {
   const [isExpanded, setIsExpanded] = useState(!initiallyCollapsed);
-  const [expandedAsset, setExpandedAsset] = useState(0);
+  // Start with no space expanded if any spaces were bulk added, otherwise expand first one
+  const hasBulkAddedSpaces = location.assets.some(a => a.bulkAdded);
+  const [expandedAsset, setExpandedAsset] = useState(hasBulkAddedSpaces ? -1 : (location.assets.length > 0 ? 0 : -1));
   const [contactMode, setContactMode] = useState(null); // null = choosing, 'self' = use own info, 'other' = new contact
   const [showBulkAdd, setShowBulkAdd] = useState(false);
   const [bulkNames, setBulkNames] = useState('');
@@ -1690,6 +2464,7 @@ function LocationCard({ location, handlers, canRemove, isMobile, errors, contact
       const newAsset = createEmptyAsset('', location.type);
       newAsset.name = name;
       newAsset.pricing = bulkPrice;
+      newAsset.bulkAdded = true; // Mark as bulk added to keep collapsed
       handlers.addAssetWithData(location.id, newAsset);
     });
     
@@ -1827,6 +2602,13 @@ function LocationCard({ location, handlers, canRemove, isMobile, errors, contact
             
             {/* Location Photos */}
             <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid rgba(0, 118, 187, 0.08)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                <Camera size={16} color={colors.blue} />
+                <span style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>
+                  {location.name ? `Photos of ${location.name}` : 'Location Photos'}
+                </span>
+                <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
+              </div>
               <PhotoUpload
                 photos={location.photos || []}
                 onAdd={(photo) => {
@@ -1839,6 +2621,7 @@ function LocationCard({ location, handlers, canRemove, isMobile, errors, contact
                 }}
                 maxPhotos={5}
                 isMobile={isMobile}
+                hideLabel={true}
               />
               <p style={{ margin: '8px 0 0', fontSize: '12px', color: '#64748b' }}>
                 Add photos of the building exterior, parking, or general facility. These help renters know they're in the right place.
@@ -2028,6 +2811,7 @@ function LocationsStep({ locations, setLocations, isMobile, errors, contactInfo 
     const newLocations = names.map(name => ({
       ...createEmptyLocation(bulkLocationType),
       name: name,
+      bulkAdded: true, // Mark as bulk added to keep collapsed
     }));
     
     setLocations(prev => [...prev, ...newLocations]);
@@ -2355,7 +3139,7 @@ function LocationsStep({ locations, setLocations, isMobile, errors, contactInfo 
           errors={errors?.[idx]} 
           contactInfo={contactInfo} 
           allLocations={locations}
-          initiallyCollapsed={false}
+          initiallyCollapsed={location.bulkAdded === true}
           isFirstLocation={idx === 0}
         />
       ))}
@@ -2498,7 +3282,18 @@ export default function PracticePlanOnboarding() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [contactInfo, setContactInfo] = useState({ fullName: '', jobTitle: '', organization: '', email: '', phone: '' });
-  const [policies, setPolicies] = useState({ cancellationDays: '7', weatherRefund: 'yes', requireInsurance: 'yes', waiverText: '', facilityAgreement: '', timeIncrement: '60' });
+  const [policies, setPolicies] = useState({ 
+    goLiveDate: '', 
+    bookingWindowMonths: '3', 
+    requireApproval: 'yes', 
+    notifyOnBooking: 'yes',
+    cancellationDays: '7', 
+    weatherRefund: 'yes', 
+    requireInsurance: 'yes', 
+    waiverText: '', 
+    facilityAgreement: '', 
+    timeIncrement: '60' 
+  });
   const [locations, setLocations] = useState([]);
   const [errors, setErrors] = useState({});
   const [lastSaved, setLastSaved] = useState(null);
@@ -2547,7 +3342,18 @@ export default function PracticePlanOnboarding() {
   const clearForm = () => {
     if (window.confirm('Are you sure you want to clear the form? All entered data will be lost.')) {
       setContactInfo({ fullName: '', jobTitle: '', organization: '', email: '', phone: '' });
-      setPolicies({ cancellationDays: '7', weatherRefund: 'yes', requireInsurance: 'yes', waiverText: '', facilityAgreement: '', timeIncrement: '60' });
+      setPolicies({ 
+        goLiveDate: '', 
+        bookingWindowMonths: '3', 
+        requireApproval: 'yes', 
+        notifyOnBooking: 'yes',
+        cancellationDays: '7', 
+        weatherRefund: 'yes', 
+        requireInsurance: 'yes', 
+        waiverText: '', 
+        facilityAgreement: '', 
+        timeIncrement: '60' 
+      });
       setLocations([]);
       setErrors({});
       setCurrentStep(0);
@@ -2760,15 +3566,52 @@ export default function PracticePlanOnboarding() {
               {currentStep === 3 && <LocationsStep locations={locations} setLocations={setLocations} isMobile={isMobile} errors={errors.locations} contactInfo={contactInfo} />}
               {currentStep === 4 && !submitSuccess && <ReviewStep policies={policies} locations={locations} contactInfo={contactInfo} isMobile={isMobile} />}
               {currentStep === 4 && submitSuccess && (
-                <div className="animate-fade-in-up" style={{ textAlign: 'center', padding: isMobile ? '20px 0' : '40px 0' }}>
-                  <div className="animate-success-pulse" style={{ width: isMobile ? '64px' : '80px', height: isMobile ? '64px' : '80px', borderRadius: '50%', background: `linear-gradient(135deg, ${colors.green} 0%, ${colors.greenLight} 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', boxShadow: '0 12px 40px rgba(0, 168, 79, 0.3)' }}>
-                    <AnimatedCheck size={isMobile ? 32 : 40} color="white" />
+                <div className="animate-fade-in-up" style={{ textAlign: 'center', padding: isMobile ? '40px 20px' : '60px 40px' }}>
+                  {/* Confetti-like decorative elements */}
+                  <div style={{ position: 'relative', display: 'inline-block', marginBottom: '32px' }}>
+                    <div style={{ position: 'absolute', top: '-20px', left: '-30px', width: '12px', height: '12px', borderRadius: '50%', background: colors.blue, opacity: 0.6, animation: 'fadeInUp 0.6s ease-out' }} />
+                    <div style={{ position: 'absolute', top: '10px', right: '-25px', width: '8px', height: '8px', borderRadius: '50%', background: colors.green, opacity: 0.7, animation: 'fadeInUp 0.8s ease-out' }} />
+                    <div style={{ position: 'absolute', bottom: '-10px', left: '-20px', width: '10px', height: '10px', borderRadius: '2px', background: colors.greenLight, opacity: 0.5, transform: 'rotate(45deg)', animation: 'fadeInUp 0.7s ease-out' }} />
+                    <div style={{ position: 'absolute', bottom: '20px', right: '-35px', width: '14px', height: '14px', borderRadius: '3px', background: colors.blueLight, opacity: 0.5, transform: 'rotate(30deg)', animation: 'fadeInUp 0.9s ease-out' }} />
+                    <div className="animate-success-pulse" style={{ width: isMobile ? '80px' : '100px', height: isMobile ? '80px' : '100px', borderRadius: '50%', background: `linear-gradient(135deg, ${colors.green} 0%, ${colors.greenLight} 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 16px 48px rgba(0, 168, 79, 0.35)' }}>
+                      <AnimatedCheck size={isMobile ? 40 : 50} color="white" />
+                    </div>
                   </div>
-                  <h2 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: isMobile ? '24px' : '32px', fontWeight: 800, margin: '0 0 16px', color: '#0f172a' }}>You're All Set!</h2>
-                  <p style={{ fontSize: isMobile ? '15px' : '17px', color: '#64748b', margin: '0 0 12px', maxWidth: '450px', marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.6 }}>
-                    Thanks for submitting your facility information. Our team will review everything and reach out soon to finalize your setup.
+                  
+                  <h2 style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', fontSize: isMobile ? '28px' : '36px', fontWeight: 800, margin: '0 0 16px', color: '#0f172a', background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>You're All Set!</h2>
+                  
+                  <p style={{ fontSize: isMobile ? '16px' : '18px', color: '#64748b', margin: '0 0 32px', maxWidth: '500px', marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.7 }}>
+                    Thanks for submitting your facility information, {contactInfo.fullName?.split(' ')[0] || 'there'}! Our team will review everything and reach out within 1-2 business days.
                   </p>
-                  <p style={{ fontSize: '15px', color: '#94a3b8', margin: 0 }}>
+                  
+                  {/* Summary cards */}
+                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '16px', maxWidth: '600px', margin: '0 auto 32px' }}>
+                    <div style={{ padding: '20px', background: 'white', borderRadius: '12px', border: '1px solid rgba(0, 118, 187, 0.1)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                      <div style={{ fontSize: '28px', fontWeight: 700, color: colors.blue }}>{locations.length}</div>
+                      <div style={{ fontSize: '13px', color: '#64748b' }}>Location{locations.length !== 1 ? 's' : ''}</div>
+                    </div>
+                    <div style={{ padding: '20px', background: 'white', borderRadius: '12px', border: '1px solid rgba(0, 168, 79, 0.1)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                      <div style={{ fontSize: '28px', fontWeight: 700, color: colors.green }}>{locations.reduce((sum, loc) => sum + loc.assets.length, 0)}</div>
+                      <div style={{ fontSize: '13px', color: '#64748b' }}>Rentable Space{locations.reduce((sum, loc) => sum + loc.assets.length, 0) !== 1 ? 's' : ''}</div>
+                    </div>
+                    <div style={{ padding: '20px', background: 'white', borderRadius: '12px', border: '1px solid rgba(0, 118, 187, 0.1)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                      <div style={{ fontSize: '28px', fontWeight: 700, color: colors.blue }}>
+                        <Check size={28} style={{ verticalAlign: 'middle' }} />
+                      </div>
+                      <div style={{ fontSize: '13px', color: '#64748b' }}>Ready to Go</div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ padding: '20px', background: 'rgba(0, 118, 187, 0.04)', borderRadius: '12px', maxWidth: '500px', margin: '0 auto' }}>
+                    <p style={{ fontSize: '14px', color: '#64748b', margin: '0 0 8px' }}>
+                      <strong style={{ color: '#334155' }}>What happens next?</strong>
+                    </p>
+                    <p style={{ fontSize: '14px', color: '#64748b', margin: 0, lineHeight: 1.6 }}>
+                      We'll send a confirmation email to <strong style={{ color: colors.blue }}>{contactInfo.email}</strong> with next steps and login credentials for your PracticePlan dashboard.
+                    </p>
+                  </div>
+                  
+                  <p style={{ fontSize: '14px', color: '#94a3b8', margin: '24px 0 0' }}>
                     Questions? Email us at <a href="mailto:support@practiceplan.com" style={{ color: colors.blue, textDecoration: 'none', fontWeight: 600 }}>support@practiceplan.com</a>
                   </p>
                 </div>
