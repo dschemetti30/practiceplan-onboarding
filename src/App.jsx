@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Check, ChevronRight, ChevronLeft, ChevronUp, ChevronDown, Building2, FileText, Shield, Clock, Users, DollarSign, Plus, Trash2, MapPin, Mail, User, X, School, Copy, Sparkles, PartyPopper, HelpCircle, AlertCircle, Crown, Save, Eye, Layers, Church, Landmark, Building, Home, Upload, File, Camera, Image } from 'lucide-react';
+import { Check, ChevronRight, ChevronLeft, ChevronUp, ChevronDown, Building2, FileText, Shield, Clock, Users, DollarSign, Plus, Trash2, MapPin, Mail, User, X, School, Copy, Sparkles, PartyPopper, HelpCircle, AlertCircle, Crown, Save, Eye, Layers, Church, Landmark, Building, Home, Upload, File, Camera, Image, RotateCcw } from 'lucide-react';
 
 // Mobile detection hook
 const useIsMobile = () => {
@@ -367,11 +367,11 @@ const allAmenities = amenityCategories.flatMap(cat => cat.items);
 
 // Smart defaults for add-ons based on location type
 const defaultAddOnsByType = {
-  school: ['audio_system', 'scoreboard_op', 'field_lights', 'locker_rooms', 'bleachers'],
-  recreation: ['tables_chairs', 'projector', 'hvac', 'custodial'],
-  church: ['tables_chairs', 'projector', 'wireless_mics', 'hvac'],
-  municipal: ['tables_chairs', 'projector', 'audio_system', 'parking'],
-  private: ['projector', 'tables_chairs', 'wifi'],
+  school: [],
+  recreation: [],
+  church: [],
+  municipal: [],
+  private: [],
   other: [],
 };
 
@@ -1384,8 +1384,46 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
                 </p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                   {asset.amenities.filter(a => a.name && !a.isCustom).map(a => (
-                    <span key={a.id} style={{ padding: '4px 10px', borderRadius: '6px', background: 'white', border: '1px solid rgba(0, 168, 79, 0.2)', fontSize: '12px', color: '#1e293b' }}>
+                    <span 
+                      key={a.id} 
+                      style={{ 
+                        padding: '4px 8px 4px 10px', 
+                        borderRadius: '6px', 
+                        background: 'white', 
+                        border: '1px solid rgba(0, 168, 79, 0.2)', 
+                        fontSize: '12px', 
+                        color: '#1e293b',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
                       {a.name} {a.price && <span style={{ color: colors.green }}>+${a.price}</span>}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const newAmenities = asset.amenities.filter(am => am.id !== a.id);
+                          updateAsset(locationId, assetIndex, 'amenities', newAmenities.length > 0 ? newAmenities : [{ name: '', price: '', isCustom: true }]);
+                        }}
+                        style={{
+                          width: '16px',
+                          height: '16px',
+                          borderRadius: '50%',
+                          border: 'none',
+                          background: 'rgba(0, 0, 0, 0.08)',
+                          color: '#64748b',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          padding: 0,
+                          marginLeft: '2px',
+                          transition: 'all 0.15s'
+                        }}
+                        title={`Remove ${a.name}`}
+                      >
+                        <X size={10} />
+                      </button>
                     </span>
                   ))}
                 </div>
@@ -2088,21 +2126,6 @@ function LocationsStep({ locations, setLocations, isMobile, errors, contactInfo 
     <div>
       <SectionTitle icon={Building2} title="Add Your Locations" subtitle="Tell us about each location and the spaces available for rent." isMobile={isMobile} />
       
-      {/* First-time guidance */}
-      {locations.length === 1 && !locations[0].name && (
-        <div style={{ marginBottom: '20px', padding: '16px 20px', background: 'linear-gradient(135deg, rgba(0, 118, 187, 0.06) 0%, rgba(0, 168, 79, 0.06) 100%)', borderRadius: '12px', border: '1px solid rgba(0, 118, 187, 0.15)', display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-          <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 2px 6px rgba(0, 118, 187, 0.1)' }}>
-            <Sparkles size={18} color={colors.blue} />
-          </div>
-          <div>
-            <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#1e293b' }}>How this works</p>
-            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#64748b', lineHeight: 1.5 }}>
-              We've created your first location below. Click to expand it and add your details - location name, address, and the spaces you want to rent out (gyms, fields, rooms, etc.). Once you've set one up, you can easily duplicate it for other locations.
-            </p>
-          </div>
-        </div>
-      )}
-      
       {locations.length === 0 ? (
         /* Empty state - prompt to add first location */
         <div style={{ textAlign: 'center', padding: isMobile ? '40px 20px' : '60px 40px', background: 'linear-gradient(135deg, rgba(0, 118, 187, 0.04) 0%, rgba(0, 168, 79, 0.04) 100%)', borderRadius: '16px', border: '2px dashed rgba(0, 118, 187, 0.2)' }}>
@@ -2189,7 +2212,7 @@ function LocationsStep({ locations, setLocations, isMobile, errors, contactInfo 
           errors={errors?.[idx]} 
           contactInfo={contactInfo} 
           allLocations={locations}
-          initiallyCollapsed={idx === 0 && locations.length === 1}
+          initiallyCollapsed={false}
           isFirstLocation={idx === 0}
         />
       ))}
@@ -2378,6 +2401,18 @@ export default function PracticePlanOnboarding() {
   const updateContactInfo = (field, value) => { setContactInfo(prev => ({ ...prev, [field]: value })); setErrors(prev => ({ ...prev, contact: { ...prev.contact, [field]: undefined } })); };
   const updatePolicies = (field, value) => setPolicies(prev => ({ ...prev, [field]: value }));
   
+  const clearForm = () => {
+    if (window.confirm('Are you sure you want to clear the form? All entered data will be lost.')) {
+      setContactInfo({ fullName: '', jobTitle: '', organization: '', email: '', phone: '' });
+      setPolicies({ cancellationDays: '7', weatherRefund: 'yes', requireInsurance: 'yes', waiverText: '', facilityAgreement: '', timeIncrement: '60' });
+      setLocations([]);
+      setErrors({});
+      setCurrentStep(0);
+      setLastSaved(null);
+      localStorage.removeItem('practiceplan_draft');
+    }
+  };
+  
   const steps = [{ id: 'welcome', title: 'Welcome', icon: Sparkles }, { id: 'contact', title: 'Your Info', icon: User }, { id: 'policies', title: 'Policies', icon: FileText }, { id: 'locations', title: 'Locations', icon: Building2 }, { id: 'review', title: 'Review', icon: Check }];
 
   // Validation functions
@@ -2515,7 +2550,30 @@ export default function PracticePlanOnboarding() {
           <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ width: isMobile ? '60px' : '100px' }} /> {/* Spacer for centering */}
             <PracticePlanLogo width={isMobile ? 180 : 240} />
-            <div style={{ width: isMobile ? '60px' : '100px', display: 'flex', justifyContent: 'flex-end' }}>
+            <div style={{ width: isMobile ? '60px' : '100px', display: 'flex', justifyContent: 'flex-end', gap: '8px', alignItems: 'center' }}>
+              {currentStep > 0 && !submitSuccess && (
+                <button 
+                  onClick={clearForm}
+                  title="Clear form and start over"
+                  style={{ 
+                    padding: '6px 10px', 
+                    borderRadius: '6px', 
+                    border: '1px solid rgba(0, 0, 0, 0.1)', 
+                    background: 'white', 
+                    color: '#64748b', 
+                    cursor: 'pointer', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '4px',
+                    fontSize: '11px',
+                    fontWeight: 500,
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <RotateCcw size={12} />
+                  {!isMobile && <span>Clear</span>}
+                </button>
+              )}
               {currentStep > 0 && !submitSuccess && lastSaved && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '20px', background: isSaving ? 'rgba(0, 118, 187, 0.08)' : 'rgba(0, 168, 79, 0.08)', transition: 'all 0.3s' }}>
                   {isSaving ? (
