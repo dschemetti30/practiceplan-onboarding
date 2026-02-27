@@ -2097,7 +2097,7 @@ const OverviewPanel = ({ isOpen, onClose, locations, setLocations, onLocationCli
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: '14px', fontWeight: 600, color: '#1e293b' }}>{contactInfo.fullName}</div>
-                <div style={{ fontSize: '13px', color: '#64748b' }}>{contactInfo.jobTitle}{contactInfo.organization ? ` · ${contactInfo.organization}` : ''}</div>
+                <div style={{ fontSize: '13px', color: '#64748b' }}>{contactInfo.organization}</div>
               </div>
               <div style={{ fontSize: '13px', color: '#64748b' }}>{contactInfo.email}</div>
             </div>
@@ -2402,7 +2402,44 @@ function WelcomeStep({ onContinue, isMobile }) {
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxY4cTJeIBwjbCV77vSDpn1OiP2mrs5h6phU4rJazR9rAYbrQLYJF37W8d7l_QndcMB/exec';
 // ===========================================
 
-function ContactInfoStep({ data, update, errors, isMobile }) {
+function ContactInfoStep({ data, update, errors, isMobile, onDraftFound, isCheckingDraft }) {
+  const [showDraftPrompt, setShowDraftPrompt] = useState(false);
+  const [foundDraft, setFoundDraft] = useState(null);
+  const [checkingEmail, setCheckingEmail] = useState(false);
+  
+  const handleEmailBlur = async () => {
+    const email = data.email?.trim();
+    if (!email || !email.includes('@')) return;
+    
+    setCheckingEmail(true);
+    try {
+      const response = await fetch(`${APPS_SCRIPT_URL}?action=getDraft&email=${encodeURIComponent(email)}`);
+      const result = await response.json();
+      
+      if (result.success && result.found && result.draft) {
+        setFoundDraft(result.draft);
+        setShowDraftPrompt(true);
+      }
+    } catch (error) {
+      console.error('Error checking for draft:', error);
+    } finally {
+      setCheckingEmail(false);
+    }
+  };
+  
+  const handleRestoreDraft = () => {
+    if (foundDraft && onDraftFound) {
+      onDraftFound(foundDraft);
+    }
+    setShowDraftPrompt(false);
+    setFoundDraft(null);
+  };
+  
+  const handleStartFresh = () => {
+    setShowDraftPrompt(false);
+    setFoundDraft(null);
+  };
+  
   return (
     <div>
       <SectionTitle icon={User} title="Let's Start With You" subtitle="Tell us a bit about yourself so we can keep you updated on your setup." isMobile={isMobile} />
@@ -2411,21 +2448,106 @@ function ContactInfoStep({ data, update, errors, isMobile }) {
           <FormGroup label="Full Name" required error={errors.fullName}>
             <input type="text" value={data.fullName} onChange={(e) => update('fullName', e.target.value)} style={errors.fullName ? inputErrorStyle : inputStyle} placeholder="e.g., John Smith" />
           </FormGroup>
-          <FormGroup label="Job Title" required error={errors.jobTitle}>
-            <input type="text" value={data.jobTitle} onChange={(e) => update('jobTitle', e.target.value)} style={errors.jobTitle ? inputErrorStyle : inputStyle} placeholder="e.g., Athletic Director, Facilities Manager" />
-          </FormGroup>
           <FormGroup label="Organization Name" required error={errors.organization}>
             <input type="text" value={data.organization} onChange={(e) => update('organization', e.target.value)} style={errors.organization ? inputErrorStyle : inputStyle} placeholder="e.g., Springfield School District, First Baptist Church" />
           </FormGroup>
           <FormGroup label="Email Address" required error={errors.email}>
-            <input type="email" value={data.email} onChange={(e) => update('email', e.target.value)} style={errors.email ? inputErrorStyle : inputStyle} placeholder="you@example.org" autoCapitalize="none" />
+            <div style={{ position: 'relative' }}>
+              <input 
+                type="email" 
+                value={data.email} 
+                onChange={(e) => update('email', e.target.value)} 
+                onBlur={handleEmailBlur}
+                style={errors.email ? inputErrorStyle : inputStyle} 
+                placeholder="you@example.org" 
+                autoCapitalize="none" 
+              />
+              {checkingEmail && (
+                <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)' }}>
+                  <div style={{ width: '16px', height: '16px', border: '2px solid rgba(0, 118, 187, 0.3)', borderTopColor: colors.blue, borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                </div>
+              )}
+            </div>
           </FormGroup>
           <FormGroup label="Mobile Phone" required error={errors.phone}>
             <input type="tel" value={data.phone} onChange={(e) => update('phone', e.target.value)} style={errors.phone ? inputErrorStyle : inputStyle} placeholder="(555) 123-4567" />
           </FormGroup>
         </div>
       </CardSection>
-      <div style={{ padding: isMobile ? '16px' : '20px 24px', background: 'rgba(0, 118, 187, 0.04)', borderRadius: '12px', border: '1px solid rgba(0, 118, 187, 0.1)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+      
+      {/* Draft Found Prompt */}
+      {showDraftPrompt && foundDraft && (
+        <div style={{ 
+          marginTop: '16px',
+          padding: '20px', 
+          background: 'linear-gradient(135deg, rgba(0, 118, 187, 0.08) 0%, rgba(0, 168, 79, 0.08) 100%)', 
+          borderRadius: '16px', 
+          border: `2px solid ${colors.blue}`,
+          animation: 'fadeIn 0.3s ease-out'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
+            <div style={{ 
+              width: '48px', 
+              height: '48px', 
+              borderRadius: '12px', 
+              background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0
+            }}>
+              <RefreshCw size={24} color="white" />
+            </div>
+            <div style={{ flex: 1 }}>
+              <h4 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 700, color: '#1e293b' }}>
+                Welcome back!
+              </h4>
+              <p style={{ margin: '0 0 12px', fontSize: '14px', color: '#64748b' }}>
+                We found your previous progress from {new Date(foundDraft.lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}. 
+                {foundDraft.formData?.locations?.length > 0 && ` You had ${foundDraft.formData.locations.length} location${foundDraft.formData.locations.length > 1 ? 's' : ''} configured.`}
+              </p>
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={handleRestoreDraft}
+                  style={{
+                    padding: '10px 20px',
+                    borderRadius: '10px',
+                    border: 'none',
+                    background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`,
+                    color: 'white',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  <RefreshCw size={16} />
+                  Restore My Progress
+                </button>
+                <button
+                  onClick={handleStartFresh}
+                  style={{
+                    padding: '10px 20px',
+                    borderRadius: '10px',
+                    border: '1px solid rgba(0, 0, 0, 0.1)',
+                    background: 'white',
+                    color: '#64748b',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
+                >
+                  Start Fresh
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      <div style={{ marginTop: '16px', padding: isMobile ? '16px' : '20px 24px', background: 'rgba(0, 118, 187, 0.04)', borderRadius: '12px', border: '1px solid rgba(0, 118, 187, 0.1)', display: 'flex', alignItems: 'center', gap: '16px' }}>
         <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(0, 118, 187, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <Lock size={20} color={colors.blue} />
         </div>
@@ -4667,7 +4789,7 @@ function ReviewStep({ policies, locations, contactInfo, isMobile }) {
 
       <ReviewSection title="Your Information">
         <ReviewItem label="Name" value={contactInfo.fullName} />
-        <ReviewItem label="Title" value={contactInfo.jobTitle} />
+        <ReviewItem label="Organization" value={contactInfo.organization} />
         <ReviewItem label="Organization" value={contactInfo.organization} />
         <ReviewItem label="Email" value={contactInfo.email} />
         <ReviewItem label="Phone" value={contactInfo.phone} />
@@ -4753,7 +4875,7 @@ export default function PracticePlanOnboarding() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [contactInfo, setContactInfo] = useState({ fullName: '', jobTitle: '', organization: '', email: '', phone: '' });
+  const [contactInfo, setContactInfo] = useState({ fullName: '', organization: '', email: '', phone: '' });
   const [policies, setPolicies] = useState({ 
     goLiveDate: '', 
     bookingWindowMonths: '3', 
@@ -4813,19 +4935,58 @@ export default function PracticePlanOnboarding() {
     };
   }, [contactInfo, policies, locations, currentStep]);
   
-  // Warn before leaving with unsaved changes
+  // Warn before leaving with unsaved changes and save draft
   useEffect(() => {
     const handleBeforeUnload = (e) => {
-      if (currentStep > 0 && !submitSuccess) {
+      if (currentStep > 0 && !submitSuccess && contactInfo.email?.trim()) {
+        // Try to save draft (best effort - may not complete)
+        const formData = { contactInfo, policies, locations };
+        const payload = {
+          action: 'saveDraft',
+          email: contactInfo.email,
+          currentStep,
+          completionPct: locations.length > 0 
+            ? Math.round(locations.reduce((sum, loc) => sum + calculateCompletionScore(loc).score, 0) / locations.length)
+            : 0,
+          formData
+        };
+        // Use sendBeacon for best chance of completing
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon(APPS_SCRIPT_URL, JSON.stringify(payload));
+        }
+        
         e.preventDefault();
         e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
         return e.returnValue;
       }
     };
     
+    // Save when tab becomes hidden (switching tabs, minimizing, etc.)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden' && currentStep > 0 && !submitSuccess && contactInfo.email?.trim()) {
+        const formData = { contactInfo, policies, locations };
+        const payload = {
+          action: 'saveDraft',
+          email: contactInfo.email,
+          currentStep,
+          completionPct: locations.length > 0 
+            ? Math.round(locations.reduce((sum, loc) => sum + calculateCompletionScore(loc).score, 0) / locations.length)
+            : 0,
+          formData
+        };
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon(APPS_SCRIPT_URL, JSON.stringify(payload));
+        }
+      }
+    };
+    
     window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [currentStep, submitSuccess]);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [currentStep, submitSuccess, contactInfo, policies, locations]);
   
   // Check for saved draft on mount and show resume modal
   useEffect(() => {
@@ -4883,7 +5044,7 @@ export default function PracticePlanOnboarding() {
   
   const clearForm = () => {
     if (window.confirm('Are you sure you want to clear the form? All entered data will be lost.')) {
-      setContactInfo({ fullName: '', jobTitle: '', organization: '', email: '', phone: '' });
+      setContactInfo({ fullName: '', organization: '', email: '', phone: '' });
       setPolicies({ 
         goLiveDate: '', 
         bookingWindowMonths: '3', 
@@ -4910,7 +5071,6 @@ export default function PracticePlanOnboarding() {
   const validateContactInfo = () => {
     const errs = {};
     if (!contactInfo.fullName.trim()) errs.fullName = 'Please enter your name';
-    if (!contactInfo.jobTitle.trim()) errs.jobTitle = 'Please enter your job title';
     if (!contactInfo.organization.trim()) errs.organization = 'Please enter your organization';
     if (!contactInfo.email.trim()) errs.email = 'Please enter your email';
     else if (!isValidEmail(contactInfo.email)) errs.email = 'Please enter a valid email address';
@@ -4943,6 +5103,44 @@ export default function PracticePlanOnboarding() {
     return locationErrors;
   };
 
+  // Save draft to Google Sheets
+  const saveDraftToServer = async () => {
+    if (!contactInfo.email?.trim()) return; // Need email to save draft
+    
+    try {
+      const formData = { contactInfo, policies, locations };
+      const payload = {
+        action: 'saveDraft',
+        email: contactInfo.email,
+        currentStep,
+        completionPct: locations.length > 0 
+          ? Math.round(locations.reduce((sum, loc) => sum + calculateCompletionScore(loc).score, 0) / locations.length)
+          : 0,
+        formData
+      };
+      
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(payload)
+      });
+    } catch (error) {
+      console.error('Error saving draft:', error);
+    }
+  };
+  
+  // Handle draft restoration from ContactInfoStep
+  const handleDraftFound = (draft) => {
+    if (draft.formData) {
+      if (draft.formData.contactInfo) setContactInfo(draft.formData.contactInfo);
+      if (draft.formData.policies) setPolicies(draft.formData.policies);
+      if (draft.formData.locations) setLocations(draft.formData.locations);
+      if (draft.currentStep && draft.currentStep > 1) setCurrentStep(draft.currentStep);
+      setLastSaved(new Date());
+    }
+  };
+
   const nextStep = () => {
     // Validate current step before proceeding
     if (currentStep === 1) {
@@ -4959,11 +5157,20 @@ export default function PracticePlanOnboarding() {
         return;
       }
     }
+    
+    // Save draft to server when moving forward (if email exists)
+    saveDraftToServer();
+    
     setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
     window.scrollTo(0, 0);
   };
   
-  const prevStep = () => { setCurrentStep(prev => Math.max(prev - 1, 0)); window.scrollTo(0, 0); };
+  const prevStep = () => { 
+    // Save draft to server when moving back (if email exists)
+    saveDraftToServer();
+    setCurrentStep(prev => Math.max(prev - 1, 0)); 
+    window.scrollTo(0, 0); 
+  };
 
   // Handle clicking a location from the overview panel
   const handleOverviewLocationClick = (locationId, spaceIndex = null) => {
@@ -5217,7 +5424,7 @@ export default function PracticePlanOnboarding() {
             )}
             <div key={currentStep} className="animate-fade-in-up" style={{ padding: isMobile ? (currentStep === 0 ? '32px 20px' : '24px 20px') : (currentStep === 0 ? '60px 48px' : '48px') }}>
               {currentStep === 0 && <WelcomeStep onContinue={nextStep} isMobile={isMobile} />}
-              {currentStep === 1 && <ContactInfoStep data={contactInfo} update={updateContactInfo} errors={errors.contact || {}} isMobile={isMobile} />}
+              {currentStep === 1 && <ContactInfoStep data={contactInfo} update={updateContactInfo} errors={errors.contact || {}} isMobile={isMobile} onDraftFound={handleDraftFound} />}
               {currentStep === 2 && <PoliciesStep data={policies} update={updatePolicies} isMobile={isMobile} />}
               {currentStep === 3 && <LocationsStep locations={locations} setLocations={setLocations} isMobile={isMobile} errors={errors.locations} contactInfo={contactInfo} highlightedLocationId={highlightedLocationId} expandSpaceIndex={expandSpaceIndex} onOpenTableEditor={() => setOverviewOpen(true)} />}
               {currentStep === 4 && !submitSuccess && <ReviewStep policies={policies} locations={locations} contactInfo={contactInfo} isMobile={isMobile} />}
