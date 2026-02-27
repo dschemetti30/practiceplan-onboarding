@@ -4869,7 +4869,7 @@ function ReviewStep({ policies, locations, contactInfo, isMobile }) {
   );
 }
 
-export default function PracticePlanOnboarding() {
+export default function App() {
   const isMobile = useIsMobile();
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -5567,5 +5567,3 @@ export default function PracticePlanOnboarding() {
     </div>
   );
 }
-
-export default App;
