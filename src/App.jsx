@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Check, ChevronRight, ChevronLeft, ChevronUp, ChevronDown, Building2, FileText, Shield, Clock, Users, DollarSign, Plus, Trash2, MapPin, Mail, User, X, School, Copy, Sparkles, PartyPopper, HelpCircle, AlertCircle, Crown, Save, Eye, Layers, Church, Landmark, Building, Home, Upload, File, Camera, Image, RotateCcw, CloudRain, Zap, RefreshCw, Lock, SkipForward, Sun, Ruler, Tag, ListChecks, Calendar, Bell, Rocket, Globe, TrendingUp, Headphones } from 'lucide-react';
+import { Check, ChevronRight, ChevronLeft, ChevronUp, ChevronDown, Building2, FileText, Shield, Clock, Users, DollarSign, Plus, Trash2, MapPin, Mail, User, X, School, Copy, Sparkles, PartyPopper, HelpCircle, AlertCircle, Crown, Save, Eye, Layers, Church, Landmark, Building, Home, Upload, File, Camera, Image, RotateCcw, CloudRain, Zap, RefreshCw, Lock, SkipForward, Sun, Ruler, Tag, ListChecks, Calendar, Bell, Rocket, Globe, TrendingUp, Headphones, ClipboardList, ArrowRight, Table, BarChart3 } from 'lucide-react';
 
 // Mobile detection hook
 const useIsMobile = () => {
@@ -850,15 +850,1431 @@ const CardSection = ({ children, style = {}, isMobile }) => (
   <div style={{ background: 'rgba(248, 250, 252, 0.6)', borderRadius: isMobile ? '12px' : '16px', border: '1px solid rgba(0, 118, 187, 0.08)', padding: isMobile ? '16px' : '24px', marginBottom: isMobile ? '16px' : '24px', ...style }}>{children}</div>
 );
 
-// Progress indicator for mobile
-const MobileProgressBar = ({ currentStep, totalSteps }) => (
-  <div style={{ padding: '16px 20px', background: 'white', borderBottom: '1px solid rgba(0, 118, 187, 0.08)' }}>
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-      <span style={{ fontSize: '13px', fontWeight: 600, color: '#64748b' }}>Step {currentStep} of {totalSteps}</span>
-      <span style={{ fontSize: '13px', fontWeight: 600, color: colors.blue }}>{Math.round((currentStep / totalSteps) * 100)}%</span>
+// Progress indicator for mobile - with integrated actions
+const MobileProgressBar = ({ currentStep, totalSteps, onViewProgress, showViewProgress, isSaving, lastSaved }) => (
+  <div style={{ padding: '12px 20px', background: 'white', borderBottom: '1px solid rgba(0, 118, 187, 0.08)' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      {/* Progress section */}
+      <div style={{ flex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>Step {currentStep} of {totalSteps}</span>
+          {lastSaved && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              {isSaving ? (
+                <div style={{ width: '10px', height: '10px', border: '2px solid rgba(0, 118, 187, 0.3)', borderTopColor: colors.blue, borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+              ) : (
+                <Check size={12} color={colors.green} />
+              )}
+              <span style={{ fontSize: '11px', color: isSaving ? colors.blue : colors.green }}>{isSaving ? 'Saving' : 'Saved'}</span>
+            </div>
+          )}
+        </div>
+        <div style={{ height: '6px', background: 'rgba(0, 118, 187, 0.1)', borderRadius: '3px', overflow: 'hidden' }}>
+          <div style={{ height: '100%', width: `${(currentStep / totalSteps) * 100}%`, background: `linear-gradient(90deg, ${colors.blue}, ${colors.green})`, borderRadius: '3px', transition: 'width 0.3s ease' }} />
+        </div>
+      </div>
+      
+      {/* View Progress button */}
+      {showViewProgress && (
+        <button
+          onClick={onViewProgress}
+          style={{
+            padding: '8px 12px',
+            borderRadius: '8px',
+            border: 'none',
+            background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`,
+            color: 'white',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            fontSize: '12px',
+            fontWeight: 600,
+            whiteSpace: 'nowrap',
+            boxShadow: '0 2px 8px rgba(0, 118, 187, 0.25)',
+            flexShrink: 0
+          }}
+        >
+          <ClipboardList size={14} />
+          <span>Progress</span>
+        </button>
+      )}
     </div>
-    <div style={{ height: '6px', background: 'rgba(0, 118, 187, 0.1)', borderRadius: '3px', overflow: 'hidden' }}>
-      <div style={{ height: '100%', width: `${(currentStep / totalSteps) * 100}%`, background: `linear-gradient(90deg, ${colors.blue}, ${colors.green})`, borderRadius: '3px', transition: 'width 0.3s ease' }} />
+  </div>
+);
+
+// Overview Panel Component
+// Completion Score Calculator
+const calculateCompletionScore = (location) => {
+  if (!location) return { score: 0, required: 0, optional: 0, details: {} };
+  
+  let requiredPoints = 0;
+  let requiredMax = 0;
+  let optionalPoints = 0;
+  let optionalMax = 0;
+  const details = {};
+  
+  // Location-level required: name (10 points)
+  requiredMax += 10;
+  if (location.name?.trim()) {
+    requiredPoints += 10;
+    details.name = true;
+  } else {
+    details.name = false;
+  }
+  
+  // Location-level optional: photos (5 points)
+  optionalMax += 5;
+  if (location.photos && location.photos.length > 0) {
+    optionalPoints += 5;
+    details.locationPhotos = true;
+  } else {
+    details.locationPhotos = false;
+  }
+  
+  // Must have at least one space
+  if (!location.assets || location.assets.length === 0) {
+    return { 
+      score: Math.round((requiredPoints / (requiredMax + 40)) * 100), // 40 = min space points
+      required: Math.round((requiredPoints / (requiredMax + 40)) * 100),
+      optional: 0,
+      details,
+      hasSpaces: false
+    };
+  }
+  
+  // Per-space scoring
+  location.assets.forEach((space, idx) => {
+    const spaceKey = `space_${idx}`;
+    details[spaceKey] = {};
+    
+    // Required fields per space (40 points total per space)
+    requiredMax += 40;
+    
+    // Name (8 points)
+    if (space.name?.trim()) {
+      requiredPoints += 8;
+      details[spaceKey].name = true;
+    } else {
+      details[spaceKey].name = false;
+    }
+    
+    // Type (8 points)
+    if (space.type) {
+      requiredPoints += 8;
+      details[spaceKey].type = true;
+    } else {
+      details[spaceKey].type = false;
+    }
+    
+    // Indoor/Outdoor (8 points)
+    if (space.indoorOutdoor) {
+      requiredPoints += 8;
+      details[spaceKey].indoorOutdoor = true;
+    } else {
+      details[spaceKey].indoorOutdoor = false;
+    }
+    
+    // Pricing (8 points)
+    if (space.pricing?.trim()) {
+      requiredPoints += 8;
+      details[spaceKey].pricing = true;
+    } else {
+      details[spaceKey].pricing = false;
+    }
+    
+    // Approver (8 points)
+    if (space.approvers && space.approvers.length > 0 && space.approvers[0]?.email?.trim()) {
+      requiredPoints += 8;
+      details[spaceKey].approver = true;
+    } else {
+      details[spaceKey].approver = false;
+    }
+    
+    // Optional fields per space (35 points total per space)
+    optionalMax += 35;
+    
+    // Photos (5 points)
+    if (space.photos && space.photos.length > 0) {
+      optionalPoints += 5;
+      details[spaceKey].photos = true;
+    } else {
+      details[spaceKey].photos = false;
+    }
+    
+    // Square footage (5 points)
+    if (space.squareFootage?.trim()) {
+      optionalPoints += 5;
+      details[spaceKey].squareFootage = true;
+    } else {
+      details[spaceKey].squareFootage = false;
+    }
+    
+    // Max capacity (5 points)
+    if (space.maxCapacity?.trim()) {
+      optionalPoints += 5;
+      details[spaceKey].maxCapacity = true;
+    } else {
+      details[spaceKey].maxCapacity = false;
+    }
+    
+    // Amenities (5 points)
+    if (space.amenities && space.amenities.length > 0) {
+      optionalPoints += 5;
+      details[spaceKey].amenities = true;
+    } else {
+      details[spaceKey].amenities = false;
+    }
+    
+    // Features (5 points)
+    if (space.features && space.features.length > 0) {
+      optionalPoints += 5;
+      details[spaceKey].features = true;
+    } else {
+      details[spaceKey].features = false;
+    }
+    
+    // Reservation types (5 points)
+    if (space.reservationTypes && space.reservationTypes.length > 0) {
+      optionalPoints += 5;
+      details[spaceKey].reservationTypes = true;
+    } else {
+      details[spaceKey].reservationTypes = false;
+    }
+    
+    // Multiple approvers (5 points)
+    if (space.approvers && space.approvers.length > 1) {
+      optionalPoints += 5;
+      details[spaceKey].multipleApprovers = true;
+    } else {
+      details[spaceKey].multipleApprovers = false;
+    }
+  });
+  
+  const totalMax = requiredMax + optionalMax;
+  const totalPoints = requiredPoints + optionalPoints;
+  
+  return {
+    score: totalMax > 0 ? Math.round((totalPoints / totalMax) * 100) : 0,
+    required: requiredMax > 0 ? Math.round((requiredPoints / requiredMax) * 100) : 0,
+    optional: optionalMax > 0 ? Math.round((optionalPoints / optionalMax) * 100) : 0,
+    details,
+    hasSpaces: true
+  };
+};
+
+// Status dot component
+const StatusDot = ({ status, size = 10 }) => {
+  const color = status === 'complete' ? colors.green : status === 'partial' ? '#f59e0b' : '#ef4444';
+  return (
+    <div style={{
+      width: size,
+      height: size,
+      borderRadius: '50%',
+      background: color,
+      flexShrink: 0
+    }} />
+  );
+};
+
+// Edge Tab Trigger for Desktop
+const ProgressEdgeTab = ({ onClick, incompleteCount, overallScore }) => (
+  <button
+    onClick={onClick}
+    style={{
+      position: 'fixed',
+      right: 0,
+      top: '50%',
+      transform: 'translateY(-50%)',
+      width: '48px',
+      height: '120px',
+      background: `linear-gradient(180deg, ${colors.blue} 0%, ${colors.green} 100%)`,
+      border: 'none',
+      borderRadius: '12px 0 0 12px',
+      cursor: 'pointer',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '8px',
+      boxShadow: '-4px 0 20px rgba(0, 0, 0, 0.15)',
+      zIndex: 100,
+      transition: 'width 0.2s ease'
+    }}
+    onMouseEnter={(e) => e.currentTarget.style.width = '56px'}
+    onMouseLeave={(e) => e.currentTarget.style.width = '48px'}
+  >
+    <ClipboardList size={22} color="white" />
+    <div style={{
+      width: '32px',
+      height: '32px',
+      borderRadius: '50%',
+      background: 'rgba(255, 255, 255, 0.2)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: '12px',
+      fontWeight: 700,
+      color: 'white'
+    }}>
+      {overallScore}%
+    </div>
+    {incompleteCount > 0 && (
+      <div style={{
+        position: 'absolute',
+        top: '8px',
+        right: '8px',
+        width: '18px',
+        height: '18px',
+        borderRadius: '50%',
+        background: '#ef4444',
+        color: 'white',
+        fontSize: '10px',
+        fontWeight: 700,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        {incompleteCount}
+      </div>
+    )}
+  </button>
+);
+
+// Editable Table Cell Component
+const EditableCell = ({ value, onChange, type = 'text', options = [], placeholder = '', isRequired = false, isEmpty = false }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [localValue, setLocalValue] = useState(value || '');
+  const inputRef = useRef(null);
+  
+  useEffect(() => {
+    setLocalValue(value || '');
+  }, [value]);
+  
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      if (type === 'text' || type === 'number' || type === 'email') {
+        inputRef.current.select();
+      }
+    }
+  }, [isEditing, type]);
+  
+  const handleBlur = () => {
+    setIsEditing(false);
+    if (localValue !== value) {
+      onChange(localValue);
+    }
+  };
+  
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleBlur();
+    } else if (e.key === 'Escape') {
+      setLocalValue(value || '');
+      setIsEditing(false);
+    } else if (e.key === 'Tab') {
+      handleBlur();
+    }
+  };
+  
+  const cellStyle = {
+    padding: '8px 10px',
+    fontSize: '13px',
+    color: isEmpty && isRequired ? '#94a3b8' : '#1e293b',
+    background: isEmpty && isRequired ? 'rgba(245, 158, 11, 0.08)' : 'transparent',
+    cursor: 'pointer',
+    minHeight: '36px',
+    display: 'flex',
+    alignItems: 'center',
+    borderRadius: '4px',
+    transition: 'all 0.15s',
+    fontStyle: isEmpty ? 'italic' : 'normal'
+  };
+  
+  const inputStyle = {
+    width: '100%',
+    padding: '6px 8px',
+    fontSize: '13px',
+    border: `2px solid ${colors.blue}`,
+    borderRadius: '4px',
+    outline: 'none',
+    background: 'white'
+  };
+  
+  if (type === 'select') {
+    return (
+      <select
+        value={value || ''}
+        onChange={(e) => onChange(e.target.value)}
+        style={{
+          ...inputStyle,
+          border: isEmpty && isRequired ? '1px solid #f59e0b' : '1px solid rgba(0,0,0,0.1)',
+          background: isEmpty && isRequired ? 'rgba(245, 158, 11, 0.08)' : 'white',
+          cursor: 'pointer',
+          padding: '8px'
+        }}
+      >
+        <option value="">{placeholder || 'Select...'}</option>
+        {options.map(opt => (
+          <option key={opt.value} value={opt.value}>{opt.label}</option>
+        ))}
+      </select>
+    );
+  }
+  
+  if (isEditing) {
+    return (
+      <input
+        ref={inputRef}
+        type={type}
+        value={localValue}
+        onChange={(e) => setLocalValue(e.target.value)}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+        style={inputStyle}
+        placeholder={placeholder}
+      />
+    );
+  }
+  
+  return (
+    <div 
+      onClick={() => setIsEditing(true)}
+      style={cellStyle}
+      onMouseEnter={(e) => e.currentTarget.style.background = isEmpty && isRequired ? 'rgba(245, 158, 11, 0.15)' : 'rgba(0, 118, 187, 0.05)'}
+      onMouseLeave={(e) => e.currentTarget.style.background = isEmpty && isRequired ? 'rgba(245, 158, 11, 0.08)' : 'transparent'}
+    >
+      {value || <span style={{ color: '#94a3b8' }}>{placeholder || '—'}</span>}
+    </div>
+  );
+};
+
+// Table Editor Component - Clean spreadsheet-style editing
+const TableEditor = ({ locations, setLocations, onClose, onEditDetails, isMobile, onDone }) => {
+  const [saveMessage, setSaveMessage] = useState(null);
+  
+  const updateLocation = (locationId, field, value) => {
+    setLocations(prev => prev.map(loc => 
+      loc.id === locationId ? { ...loc, [field]: value } : loc
+    ));
+  };
+  
+  const updateSpace = (locationId, spaceIndex, field, value) => {
+    setLocations(prev => prev.map(loc => {
+      if (loc.id !== locationId) return loc;
+      const newAssets = [...loc.assets];
+      newAssets[spaceIndex] = { ...newAssets[spaceIndex], [field]: value };
+      return { ...loc, assets: newAssets };
+    }));
+  };
+  
+  const updateApprover = (locationId, spaceIndex, field, value) => {
+    setLocations(prev => prev.map(loc => {
+      if (loc.id !== locationId) return loc;
+      const newAssets = [...loc.assets];
+      const space = newAssets[spaceIndex];
+      const approvers = space.approvers && space.approvers.length > 0 
+        ? [...space.approvers] 
+        : [{ name: '', email: '', title: '' }];
+      approvers[0] = { ...approvers[0], [field]: value };
+      newAssets[spaceIndex] = { ...space, approvers };
+      return { ...loc, assets: newAssets };
+    }));
+  };
+  
+  const addLocation = () => {
+    const newLocation = {
+      id: Date.now(),
+      name: '',
+      type: 'school',
+      address: '',
+      assets: [],
+      photos: [],
+      documents: []
+    };
+    setLocations(prev => [...prev, newLocation]);
+  };
+  
+  const addSpace = (locationId) => {
+    setLocations(prev => prev.map(loc => {
+      if (loc.id !== locationId) return loc;
+      const newSpace = {
+        id: Date.now(),
+        type: '',
+        name: '',
+        indoorOutdoor: '',
+        squareFootage: '',
+        maxCapacity: '',
+        reservationTypes: [],
+        features: [],
+        weekdayAvailability: { start: '15:00', end: '22:00' },
+        weekendAvailability: { start: '08:00', end: '22:00' },
+        availabilityNotes: '',
+        blackoutOption: 'none',
+        blackoutDates: '',
+        approvers: [{ name: '', email: '' }],
+        notifications: [{ name: '', email: '' }],
+        pricing: '',
+        amenities: [],
+        photos: []
+      };
+      return { ...loc, assets: [...loc.assets, newSpace] };
+    }));
+  };
+  
+  const deleteSpace = (locationId, spaceIndex) => {
+    setLocations(prev => prev.map(loc => {
+      if (loc.id !== locationId) return loc;
+      const newAssets = loc.assets.filter((_, idx) => idx !== spaceIndex);
+      return { ...loc, assets: newAssets };
+    }));
+  };
+  
+  const deleteLocation = (locationId) => {
+    if (window.confirm('Delete this location and all its spaces?')) {
+      setLocations(prev => prev.filter(loc => loc.id !== locationId));
+    }
+  };
+  
+  const handleSave = () => {
+    try {
+      const existing = JSON.parse(localStorage.getItem('practiceplan_draft') || '{}');
+      localStorage.setItem('practiceplan_draft', JSON.stringify({ ...existing, locations, savedAt: new Date().toISOString() }));
+      setSaveMessage('Saved!');
+      setTimeout(() => setSaveMessage(null), 2000);
+    } catch (e) {
+      setSaveMessage('Save failed');
+      setTimeout(() => setSaveMessage(null), 2000);
+    }
+  };
+  
+  const indoorOutdoorOptions = [
+    { value: 'indoor', label: 'Indoor' },
+    { value: 'outdoor', label: 'Outdoor' }
+  ];
+  
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#f8fafc' }}>
+      {/* Instructions */}
+      <div style={{ padding: '12px 24px', background: 'rgba(0, 118, 187, 0.04)', borderBottom: '1px solid rgba(0, 0, 0, 0.05)', fontSize: '12px', color: '#64748b', display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+        <span><strong>Click</strong> cell to edit</span>
+        <span><strong>Tab</strong> to move</span>
+        <span><strong>Enter</strong> to save</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <div style={{ width: '12px', height: '12px', background: 'rgba(245, 158, 11, 0.3)', borderRadius: '2px' }} />
+          Required empty
+        </span>
+      </div>
+      
+      {/* Table Container */}
+      <div style={{ flex: 1, overflow: 'auto', padding: '16px 24px' }}>
+        {locations.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(0, 118, 187, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <MapPin size={28} color={colors.blue} />
+            </div>
+            <p style={{ fontSize: '16px', fontWeight: 600, color: '#334155', margin: '0 0 8px' }}>No locations yet</p>
+            <p style={{ fontSize: '14px', color: '#64748b', margin: '0 0 20px' }}>Add your first location to get started</p>
+            <button onClick={addLocation} style={{ padding: '12px 24px', borderRadius: '10px', border: 'none', background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`, color: 'white', fontSize: '14px', fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <Plus size={18} />
+              Add Location
+            </button>
+          </div>
+        ) : (
+          <div style={{ background: 'white', borderRadius: '12px', border: '1px solid rgba(0, 0, 0, 0.08)', overflow: 'hidden' }}>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: isMobile ? '800px' : '1200px' }}>
+                <thead>
+                  <tr style={{ background: 'rgba(0, 0, 0, 0.02)', borderBottom: '2px solid rgba(0, 0, 0, 0.08)' }}>
+                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', minWidth: '140px' }}>Location</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', minWidth: '140px' }}>Space Name</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', minWidth: '130px' }}>Type</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', minWidth: '100px' }}>In/Out</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', minWidth: '80px' }}>$/Hr</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', minWidth: '70px' }}>Cap</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', minWidth: '70px' }}>SqFt</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', minWidth: '180px' }}>Approver Email</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', minWidth: '70px' }}>Amenities</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', minWidth: '70px' }}>Features</th>
+                    <th style={{ padding: '12px 8px', textAlign: 'center', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', minWidth: '70px' }}>More</th>
+                    <th style={{ padding: '12px 8px', textAlign: 'center', fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', minWidth: '40px' }}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {locations.map((location, locIndex) => (
+                    <React.Fragment key={location.id}>
+                      {location.assets.length === 0 ? (
+                        <tr style={{ borderBottom: '1px solid rgba(0, 0, 0, 0.05)' }}>
+                          <td style={{ padding: '4px 8px', verticalAlign: 'middle' }}>
+                            <EditableCell value={location.name} onChange={(val) => updateLocation(location.id, 'name', val)} placeholder="Location name" isRequired={true} isEmpty={!location.name?.trim()} />
+                          </td>
+                          <td colSpan={10} style={{ padding: '12px 16px', color: '#94a3b8', fontSize: '13px', fontStyle: 'italic' }}>No spaces added yet</td>
+                          <td style={{ padding: '4px 8px', textAlign: 'center' }}>
+                            <button onClick={() => deleteLocation(location.id)} style={{ padding: '6px', borderRadius: '6px', border: 'none', background: 'transparent', color: '#94a3b8', cursor: 'pointer' }} title="Delete location"><Trash2 size={14} /></button>
+                          </td>
+                        </tr>
+                      ) : (
+                        location.assets.map((space, spaceIndex) => (
+                          <tr key={space.id || spaceIndex} style={{ borderBottom: '1px solid rgba(0, 0, 0, 0.05)', background: spaceIndex % 2 === 1 ? 'rgba(0, 0, 0, 0.01)' : 'transparent' }}>
+                            {spaceIndex === 0 ? (
+                              <td rowSpan={location.assets.length} style={{ padding: '4px 8px', verticalAlign: 'top', borderRight: '2px solid rgba(0, 118, 187, 0.1)', background: 'rgba(0, 118, 187, 0.02)' }}>
+                                <EditableCell value={location.name} onChange={(val) => updateLocation(location.id, 'name', val)} placeholder="Location name" isRequired={true} isEmpty={!location.name?.trim()} />
+                                <button onClick={() => deleteLocation(location.id)} style={{ marginTop: '8px', padding: '4px 8px', borderRadius: '4px', border: 'none', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', cursor: 'pointer', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }} title="Delete location"><Trash2 size={10} />Delete</button>
+                              </td>
+                            ) : null}
+                            <td style={{ padding: '4px 8px' }}><EditableCell value={space.name} onChange={(val) => updateSpace(location.id, spaceIndex, 'name', val)} placeholder="Space name" isRequired={true} isEmpty={!space.name?.trim()} /></td>
+                            <td style={{ padding: '4px 8px' }}><EditableCell type="select" value={space.type} onChange={(val) => updateSpace(location.id, spaceIndex, 'type', val)} options={spaceTypes} placeholder="Select type" isRequired={true} isEmpty={!space.type} /></td>
+                            <td style={{ padding: '4px 8px' }}><EditableCell type="select" value={space.indoorOutdoor} onChange={(val) => updateSpace(location.id, spaceIndex, 'indoorOutdoor', val)} options={indoorOutdoorOptions} placeholder="Select" isRequired={true} isEmpty={!space.indoorOutdoor} /></td>
+                            <td style={{ padding: '4px 8px' }}><EditableCell type="number" value={space.pricing} onChange={(val) => updateSpace(location.id, spaceIndex, 'pricing', val)} placeholder="$0" isRequired={true} isEmpty={!space.pricing?.trim()} /></td>
+                            <td style={{ padding: '4px 8px' }}><EditableCell type="number" value={space.maxCapacity} onChange={(val) => updateSpace(location.id, spaceIndex, 'maxCapacity', val)} placeholder="—" /></td>
+                            <td style={{ padding: '4px 8px' }}><EditableCell type="number" value={space.squareFootage} onChange={(val) => updateSpace(location.id, spaceIndex, 'squareFootage', val)} placeholder="—" /></td>
+                            <td style={{ padding: '4px 8px' }}><EditableCell type="email" value={space.approvers?.[0]?.email || ''} onChange={(val) => updateApprover(location.id, spaceIndex, 'email', val)} placeholder="email@..." isRequired={true} isEmpty={!space.approvers?.[0]?.email?.trim()} /></td>
+                            <td style={{ padding: '4px 8px', textAlign: 'center' }}>
+                              <span style={{ 
+                                padding: '2px 8px', 
+                                borderRadius: '10px', 
+                                fontSize: '11px', 
+                                fontWeight: 600,
+                                background: space.amenities?.length > 0 ? 'rgba(0, 168, 79, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+                                color: space.amenities?.length > 0 ? colors.green : '#94a3b8'
+                              }}>
+                                {space.amenities?.length || 0}
+                              </span>
+                            </td>
+                            <td style={{ padding: '4px 8px', textAlign: 'center' }}>
+                              <span style={{ 
+                                padding: '2px 8px', 
+                                borderRadius: '10px', 
+                                fontSize: '11px', 
+                                fontWeight: 600,
+                                background: space.features?.length > 0 ? 'rgba(0, 168, 79, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+                                color: space.features?.length > 0 ? colors.green : '#94a3b8'
+                              }}>
+                                {space.features?.length || 0}
+                              </span>
+                            </td>
+                            <td style={{ padding: '4px 8px', textAlign: 'center' }}>
+                              <button onClick={() => onEditDetails(location.id, spaceIndex)} style={{ padding: '4px 8px', borderRadius: '4px', border: 'none', background: 'rgba(0, 118, 187, 0.08)', color: colors.blue, cursor: 'pointer', fontSize: '11px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }} title="Edit additional details in form view">
+                                <ArrowRight size={10} />Details
+                              </button>
+                            </td>
+                            <td style={{ padding: '4px 8px', textAlign: 'center' }}>
+                              <button onClick={() => deleteSpace(location.id, spaceIndex)} style={{ padding: '6px', borderRadius: '6px', border: 'none', background: 'transparent', color: '#94a3b8', cursor: 'pointer' }} title="Delete space"><X size={14} /></button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                      <tr style={{ borderBottom: locIndex < locations.length - 1 ? '3px solid rgba(0, 118, 187, 0.15)' : 'none', background: 'rgba(0, 168, 79, 0.03)' }}>
+                        <td></td>
+                        <td colSpan={11} style={{ padding: '8px 16px' }}>
+                          <button onClick={() => addSpace(location.id)} style={{ padding: '6px 12px', borderRadius: '6px', border: '1px dashed rgba(0, 168, 79, 0.4)', background: 'transparent', color: colors.green, cursor: 'pointer', fontSize: '12px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <Plus size={14} />Add Space to {location.name || 'this location'}
+                          </button>
+                        </td>
+                      </tr>
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div style={{ padding: '16px', borderTop: '1px solid rgba(0, 0, 0, 0.05)', background: 'rgba(0, 118, 187, 0.02)' }}>
+              <button onClick={addLocation} style={{ padding: '10px 20px', borderRadius: '8px', border: '1px dashed rgba(0, 118, 187, 0.4)', background: 'transparent', color: colors.blue, cursor: 'pointer', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Plus size={16} />Add New Location
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+      
+      {/* Footer */}
+      <div style={{ padding: '16px 24px', background: 'white', borderTop: '1px solid rgba(0, 0, 0, 0.08)', display: 'flex', gap: '12px', alignItems: 'center', justifyContent: 'space-between' }}>
+        <p style={{ margin: 0, fontSize: '13px', color: '#64748b' }}>Changes auto-save</p>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          {saveMessage && <span style={{ fontSize: '12px', fontWeight: 600, color: saveMessage === 'Saved!' ? colors.green : '#ef4444', display: 'flex', alignItems: 'center', gap: '4px' }}>{saveMessage === 'Saved!' && <Check size={14} />}{saveMessage}</span>}
+          <button onClick={handleSave} style={{ padding: '10px 16px', borderRadius: '8px', border: '1px solid rgba(0, 0, 0, 0.1)', background: 'white', color: '#334155', fontSize: '13px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}><Save size={14} />Save</button>
+          <button onClick={onDone} style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`, color: 'white', fontSize: '13px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>Done<Check size={14} /></button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const OverviewPanel = ({ isOpen, onClose, locations, setLocations, onLocationClick, isMobile, onClearForm, policies, contactInfo }) => {
+  const [filter, setFilter] = useState('all'); // 'all' or 'incomplete'
+  const [viewMode, setViewMode] = useState('table'); // 'table' or 'status'
+  
+  // Calculate completion for each location
+  const locationScores = locations.map(loc => ({
+    ...loc,
+    completion: calculateCompletionScore(loc)
+  }));
+  
+  // Overall stats
+  const overallScore = locations.length > 0 
+    ? Math.round(locationScores.reduce((sum, l) => sum + l.completion.score, 0) / locations.length)
+    : 0;
+  
+  const stats = {
+    totalLocations: locations.length,
+    totalSpaces: locations.reduce((sum, l) => sum + (l.assets?.length || 0), 0),
+    completeLocations: locationScores.filter(l => l.completion.required === 100).length,
+    incompleteCount: locationScores.filter(l => l.completion.required < 100).length,
+    indoorSpaces: locations.reduce((sum, l) => sum + (l.assets?.filter(a => a.indoorOutdoor === 'indoor').length || 0), 0),
+    outdoorSpaces: locations.reduce((sum, l) => sum + (l.assets?.filter(a => a.indoorOutdoor === 'outdoor').length || 0), 0),
+    totalAmenities: locations.reduce((sum, l) => sum + (l.assets?.reduce((s, a) => s + (a.amenities?.length || 0), 0) || 0), 0),
+    totalFeatures: locations.reduce((sum, l) => sum + (l.assets?.reduce((s, a) => s + (a.features?.length || 0), 0) || 0), 0),
+    spacesWithPhotos: locations.reduce((sum, l) => sum + (l.assets?.filter(a => a.photos?.length > 0).length || 0), 0),
+    avgPrice: (() => {
+      const prices = locations.flatMap(l => l.assets?.map(a => parseFloat(a.pricing) || 0) || []).filter(p => p > 0);
+      return prices.length > 0 ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length) : 0;
+    })()
+  };
+  
+  // Format go-live date
+  const formatGoLiveDate = () => {
+    if (!policies?.goLiveDate) return 'Not set';
+    const date = new Date(policies.goLiveDate);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  };
+  
+  // Get booking window text
+  const getBookingWindow = () => {
+    if (!policies?.bookingWindowMonths) return 'Not set';
+    if (policies.bookingWindowMonths === 'other') return policies.customBookingWindow || 'Custom';
+    return `${policies.bookingWindowMonths} months`;
+  };
+  
+  // Filter locations
+  const filteredLocations = filter === 'all' 
+    ? locationScores 
+    : locationScores.filter(l => l.completion.required < 100);
+  
+  // Get status for a field
+  const getFieldStatus = (value, isArray = false) => {
+    if (isArray) return value && value.length > 0 ? 'complete' : 'incomplete';
+    return value ? 'complete' : 'incomplete';
+  };
+  
+  // Get pricing range
+  const getPricingRange = (location) => {
+    if (!location.assets || location.assets.length === 0) return '—';
+    const prices = location.assets.map(a => parseFloat(a.pricing) || 0).filter(p => p > 0);
+    if (prices.length === 0) return '—';
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+    if (min === max) return `$${min}`;
+    return `$${min}-${max}`;
+  };
+  
+  // Count indoor/outdoor
+  const getIndoorOutdoorCount = (location) => {
+    if (!location.assets) return { indoor: 0, outdoor: 0 };
+    const indoor = location.assets.filter(a => a.indoorOutdoor === 'indoor').length;
+    const outdoor = location.assets.filter(a => a.indoorOutdoor === 'outdoor').length;
+    return { indoor, outdoor };
+  };
+  
+  // Check if location has specific field filled
+  const hasPhotos = (location) => {
+    if (location.photos?.length > 0) return true;
+    return location.assets?.some(a => a.photos?.length > 0) || false;
+  };
+  
+  const hasCapacity = (location) => location.assets?.some(a => a.maxCapacity?.trim()) || false;
+  const hasSize = (location) => location.assets?.some(a => a.squareFootage?.trim()) || false;
+  const hasAmenities = (location) => location.assets?.some(a => a.amenities?.length > 0) || false;
+  const hasFeatures = (location) => location.assets?.some(a => a.features?.length > 0) || false;
+  const hasReservationTypes = (location) => location.assets?.some(a => a.reservationTypes?.length > 0) || false;
+  const hasApprovalChain = (location) => location.assets?.some(a => a.approvers?.length > 1) || false;
+  
+  if (!isOpen) return null;
+  
+  return (
+    <>
+      {/* Backdrop */}
+      <div 
+        onClick={onClose}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.4)',
+          backdropFilter: 'blur(4px)',
+          zIndex: 1000,
+          animation: 'fadeIn 0.2s ease-out'
+        }}
+      />
+      
+      {/* Panel */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        right: 0,
+        bottom: 0,
+        width: isMobile ? '100%' : 'calc(100% - 60px)',
+        maxWidth: isMobile ? '100%' : '1400px',
+        background: '#f8fafc',
+        boxShadow: '-8px 0 32px rgba(0, 0, 0, 0.15)',
+        zIndex: 1001,
+        display: 'flex',
+        flexDirection: 'column',
+        animation: 'slideInRight 0.3s ease-out'
+      }}>
+        {/* Header */}
+        <div style={{ 
+          padding: '20px 24px', 
+          background: 'white',
+          borderBottom: '1px solid rgba(0, 0, 0, 0.08)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '16px',
+              background: `conic-gradient(${colors.green} ${overallScore * 3.6}deg, rgba(0,0,0,0.08) 0deg)`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'relative'
+            }}>
+              <div style={{
+                width: '44px',
+                height: '44px',
+                borderRadius: '12px',
+                background: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '16px',
+                fontWeight: 700,
+                color: overallScore === 100 ? colors.green : overallScore >= 70 ? '#f59e0b' : '#64748b'
+              }}>
+                {overallScore}%
+              </div>
+            </div>
+            <div>
+              <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 700, color: '#0f172a' }}>
+                {viewMode === 'status' ? 'Setup Progress' : 'Table Editor'}
+              </h3>
+              <p style={{ margin: '4px 0 0', fontSize: '14px', color: '#64748b' }}>
+                {stats.totalLocations} location{stats.totalLocations !== 1 ? 's' : ''} · {stats.totalSpaces} space{stats.totalSpaces !== 1 ? 's' : ''}
+                {stats.incompleteCount > 0 && ` · ${stats.incompleteCount} need attention`}
+              </p>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {/* View Mode Toggle */}
+            <div style={{
+              display: 'flex',
+              background: 'rgba(0, 0, 0, 0.05)',
+              borderRadius: '8px',
+              padding: '3px'
+            }}>
+              <button
+                onClick={() => setViewMode('status')}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  background: viewMode === 'status' ? 'white' : 'transparent',
+                  color: viewMode === 'status' ? colors.blue : '#64748b',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  boxShadow: viewMode === 'status' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
+                }}
+                title="View status"
+              >
+                <BarChart3 size={14} />
+                Status
+              </button>
+              <button
+                onClick={() => setViewMode('table')}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  background: viewMode === 'table' ? 'white' : 'transparent',
+                  color: viewMode === 'table' ? colors.blue : '#64748b',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  boxShadow: viewMode === 'table' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
+                }}
+                title="Edit in table"
+              >
+                <Table size={14} />
+                Edit
+              </button>
+            </div>
+            <button 
+              onClick={onClose}
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '10px',
+                border: 'none',
+                background: 'rgba(0, 0, 0, 0.05)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <X size={20} color="#64748b" />
+            </button>
+          </div>
+        </div>
+        
+        {/* Conditional Content based on viewMode */}
+        {viewMode === 'table' ? (
+          <TableEditor 
+            locations={locations}
+            setLocations={setLocations}
+            onClose={onClose}
+            onEditDetails={(locationId, spaceIndex) => {
+              // Close panel and jump to location/space in form
+              onClose();
+              onLocationClick(locationId, spaceIndex);
+            }}
+            isMobile={isMobile}
+            onDone={() => setViewMode('status')}
+          />
+        ) : (
+        <>
+        {/* Dashboard Summary */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
+          {/* Top Row - Key Metrics */}
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)', 
+            gap: '16px', 
+            marginBottom: '24px' 
+          }}>
+            {/* Go-Live Date */}
+            <div style={{ 
+              background: 'white', 
+              borderRadius: '16px', 
+              padding: '20px', 
+              border: '1px solid rgba(0, 0, 0, 0.06)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: `linear-gradient(135deg, ${colors.blue}15 0%, ${colors.green}15 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Rocket size={18} color={colors.blue} />
+                </div>
+                <span style={{ fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Go-Live</span>
+              </div>
+              <span style={{ fontSize: '20px', fontWeight: 700, color: policies?.goLiveDate ? '#1e293b' : '#94a3b8' }}>
+                {formatGoLiveDate()}
+              </span>
+            </div>
+            
+            {/* Booking Window */}
+            <div style={{ 
+              background: 'white', 
+              borderRadius: '16px', 
+              padding: '20px', 
+              border: '1px solid rgba(0, 0, 0, 0.06)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(0, 118, 187, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Calendar size={18} color={colors.blue} />
+                </div>
+                <span style={{ fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Book Ahead</span>
+              </div>
+              <span style={{ fontSize: '20px', fontWeight: 700, color: policies?.bookingWindowMonths ? '#1e293b' : '#94a3b8' }}>
+                {getBookingWindow()}
+              </span>
+            </div>
+            
+            {/* Approval Required */}
+            <div style={{ 
+              background: 'white', 
+              borderRadius: '16px', 
+              padding: '20px', 
+              border: '1px solid rgba(0, 0, 0, 0.06)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: policies?.requireApproval === 'yes' ? 'rgba(0, 168, 79, 0.08)' : 'rgba(0, 118, 187, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Shield size={18} color={policies?.requireApproval === 'yes' ? colors.green : colors.blue} />
+                </div>
+                <span style={{ fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Approval</span>
+              </div>
+              <span style={{ fontSize: '20px', fontWeight: 700, color: '#1e293b' }}>
+                {policies?.requireApproval === 'yes' ? 'Required' : 'Auto-approve'}
+              </span>
+            </div>
+            
+            {/* Overall Completion */}
+            <div style={{ 
+              background: 'white', 
+              borderRadius: '16px', 
+              padding: '20px', 
+              border: '1px solid rgba(0, 0, 0, 0.06)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ 
+                  width: '36px', 
+                  height: '36px', 
+                  borderRadius: '10px', 
+                  background: `conic-gradient(${overallScore === 100 ? colors.green : overallScore >= 70 ? '#f59e0b' : colors.blue} ${overallScore * 3.6}deg, rgba(0,0,0,0.06) 0deg)`,
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center'
+                }}>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '7px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ fontSize: '10px', fontWeight: 700, color: overallScore === 100 ? colors.green : overallScore >= 70 ? '#f59e0b' : colors.blue }}>{overallScore}%</span>
+                  </div>
+                </div>
+                <span style={{ fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Complete</span>
+              </div>
+              <span style={{ fontSize: '20px', fontWeight: 700, color: overallScore === 100 ? colors.green : '#1e293b' }}>
+                {stats.completeLocations}/{stats.totalLocations} Ready
+              </span>
+            </div>
+          </div>
+          
+          {/* Second Row - Inventory Summary */}
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', 
+            gap: '16px', 
+            marginBottom: '24px' 
+          }}>
+            {/* Locations & Spaces */}
+            <div style={{ 
+              background: 'white', 
+              borderRadius: '16px', 
+              padding: '24px', 
+              border: '1px solid rgba(0, 0, 0, 0.06)'
+            }}>
+              <h4 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Building2 size={16} color={colors.blue} /> Inventory
+              </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div style={{ textAlign: 'center', padding: '12px', background: 'rgba(0, 118, 187, 0.04)', borderRadius: '10px' }}>
+                  <div style={{ fontSize: '28px', fontWeight: 700, color: colors.blue }}>{stats.totalLocations}</div>
+                  <div style={{ fontSize: '12px', color: '#64748b' }}>Locations</div>
+                </div>
+                <div style={{ textAlign: 'center', padding: '12px', background: 'rgba(0, 168, 79, 0.04)', borderRadius: '10px' }}>
+                  <div style={{ fontSize: '28px', fontWeight: 700, color: colors.green }}>{stats.totalSpaces}</div>
+                  <div style={{ fontSize: '12px', color: '#64748b' }}>Spaces</div>
+                </div>
+                <div style={{ textAlign: 'center', padding: '12px', background: 'rgba(0, 0, 0, 0.02)', borderRadius: '10px' }}>
+                  <div style={{ fontSize: '20px', fontWeight: 700, color: '#64748b' }}>{stats.indoorSpaces}</div>
+                  <div style={{ fontSize: '11px', color: '#94a3b8' }}>Indoor</div>
+                </div>
+                <div style={{ textAlign: 'center', padding: '12px', background: 'rgba(0, 0, 0, 0.02)', borderRadius: '10px' }}>
+                  <div style={{ fontSize: '20px', fontWeight: 700, color: '#64748b' }}>{stats.outdoorSpaces}</div>
+                  <div style={{ fontSize: '11px', color: '#94a3b8' }}>Outdoor</div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Pricing & Content */}
+            <div style={{ 
+              background: 'white', 
+              borderRadius: '16px', 
+              padding: '24px', 
+              border: '1px solid rgba(0, 0, 0, 0.06)'
+            }}>
+              <h4 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <DollarSign size={16} color={colors.green} /> Pricing & Content
+              </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div style={{ textAlign: 'center', padding: '12px', background: 'rgba(0, 168, 79, 0.04)', borderRadius: '10px' }}>
+                  <div style={{ fontSize: '24px', fontWeight: 700, color: colors.green }}>${stats.avgPrice || '—'}</div>
+                  <div style={{ fontSize: '12px', color: '#64748b' }}>Avg $/Hour</div>
+                </div>
+                <div style={{ textAlign: 'center', padding: '12px', background: 'rgba(0, 118, 187, 0.04)', borderRadius: '10px' }}>
+                  <div style={{ fontSize: '24px', fontWeight: 700, color: colors.blue }}>{stats.spacesWithPhotos}</div>
+                  <div style={{ fontSize: '12px', color: '#64748b' }}>With Photos</div>
+                </div>
+                <div style={{ textAlign: 'center', padding: '12px', background: 'rgba(0, 0, 0, 0.02)', borderRadius: '10px' }}>
+                  <div style={{ fontSize: '20px', fontWeight: 700, color: '#64748b' }}>{stats.totalAmenities}</div>
+                  <div style={{ fontSize: '11px', color: '#94a3b8' }}>Amenities</div>
+                </div>
+                <div style={{ textAlign: 'center', padding: '12px', background: 'rgba(0, 0, 0, 0.02)', borderRadius: '10px' }}>
+                  <div style={{ fontSize: '20px', fontWeight: 700, color: '#64748b' }}>{stats.totalFeatures}</div>
+                  <div style={{ fontSize: '11px', color: '#94a3b8' }}>Features</div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Ground Rules Summary */}
+            <div style={{ 
+              background: 'white', 
+              borderRadius: '16px', 
+              padding: '24px', 
+              border: '1px solid rgba(0, 0, 0, 0.06)'
+            }}>
+              <h4 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <FileText size={16} color={colors.blue} /> Policies
+              </h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: 'rgba(0, 0, 0, 0.02)', borderRadius: '8px' }}>
+                  <span style={{ fontSize: '13px', color: '#64748b' }}>Cancellation</span>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#1e293b' }}>
+                    {policies?.cancellationDays === 'unsure' ? 'TBD' : `${policies?.cancellationDays || '7'} days`}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: 'rgba(0, 0, 0, 0.02)', borderRadius: '8px' }}>
+                  <span style={{ fontSize: '13px', color: '#64748b' }}>Insurance</span>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#1e293b' }}>
+                    {policies?.requireInsurance === 'yes' ? 'Required' : policies?.requireInsurance === 'sometimes' ? 'Sometimes' : 'Not required'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: 'rgba(0, 0, 0, 0.02)', borderRadius: '8px' }}>
+                  <span style={{ fontSize: '13px', color: '#64748b' }}>Weather Refund</span>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#1e293b' }}>
+                    {policies?.weatherRefund === 'yes' ? 'Yes' : policies?.weatherRefund === 'credit' ? 'Credit' : 'No'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: 'rgba(0, 0, 0, 0.02)', borderRadius: '8px' }}>
+                  <span style={{ fontSize: '13px', color: '#64748b' }}>Time Slots</span>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#1e293b' }}>
+                    {policies?.timeIncrement === '60' ? '1 hour' : policies?.timeIncrement === '30' ? '30 min' : `${policies?.timeIncrement || '60'} min`}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Locations Table - Compact */}
+          {locations.length > 0 && (
+            <div style={{ 
+              background: 'white', 
+              borderRadius: '16px', 
+              border: '1px solid rgba(0, 0, 0, 0.06)',
+              overflow: 'hidden'
+            }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(0, 0, 0, 0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <MapPin size={16} color={colors.blue} /> Location Status
+                </h4>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    onClick={() => setFilter('all')}
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      background: filter === 'all' ? colors.blue : 'rgba(0, 0, 0, 0.04)',
+                      color: filter === 'all' ? 'white' : '#64748b',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    All ({locations.length})
+                  </button>
+                  {stats.incompleteCount > 0 && (
+                    <button
+                      onClick={() => setFilter('incomplete')}
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: '6px',
+                        border: 'none',
+                        background: filter === 'incomplete' ? '#f59e0b' : 'rgba(0, 0, 0, 0.04)',
+                        color: filter === 'incomplete' ? 'white' : '#64748b',
+                        fontSize: '12px',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Needs Attention ({stats.incompleteCount})
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                {filteredLocations.map((location, index) => {
+                  const typeInfo = locationTypes.find(t => t.value === location.type) || locationTypes[5];
+                  const completion = location.completion;
+                  return (
+                    <div 
+                      key={location.id}
+                      onClick={() => onLocationClick(location.id, index)}
+                      style={{ 
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '12px 20px',
+                        borderBottom: index < filteredLocations.length - 1 ? '1px solid rgba(0, 0, 0, 0.04)' : 'none',
+                        cursor: 'pointer',
+                        transition: 'background 0.15s'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0, 118, 187, 0.03)'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
+                        <div style={{ 
+                          width: '32px', 
+                          height: '32px', 
+                          borderRadius: '8px', 
+                          background: `linear-gradient(135deg, ${colors.blue}15 0%, ${colors.green}15 100%)`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0
+                        }}>
+                          {React.createElement(typeInfo.icon, { size: 16, color: colors.blue })}
+                        </div>
+                        <div style={{ minWidth: 0 }}>
+                          <div style={{ fontSize: '14px', fontWeight: 600, color: '#1e293b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {location.name || 'Unnamed'}
+                          </div>
+                          <div style={{ fontSize: '12px', color: '#64748b' }}>
+                            {location.assets?.length || 0} space{location.assets?.length !== 1 ? 's' : ''} · {getPricingRange(location)}
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{
+                          width: '60px',
+                          height: '6px',
+                          background: 'rgba(0,0,0,0.08)',
+                          borderRadius: '3px',
+                          overflow: 'hidden'
+                        }}>
+                          <div style={{
+                            width: `${completion.score}%`,
+                            height: '100%',
+                            background: completion.score === 100 ? colors.green : completion.score >= 70 ? '#f59e0b' : '#ef4444',
+                            borderRadius: '3px'
+                          }} />
+                        </div>
+                        <span style={{ fontSize: '12px', fontWeight: 600, color: completion.score === 100 ? colors.green : '#64748b', minWidth: '35px' }}>
+                          {completion.score}%
+                        </span>
+                        <ChevronRight size={16} color="#94a3b8" />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          
+          {/* Contact Info */}
+          {contactInfo?.fullName && (
+            <div style={{ 
+              marginTop: '16px',
+              background: 'white', 
+              borderRadius: '16px', 
+              padding: '16px 20px', 
+              border: '1px solid rgba(0, 0, 0, 0.06)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px'
+            }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <User size={20} color="white" />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: '#1e293b' }}>{contactInfo.fullName}</div>
+                <div style={{ fontSize: '13px', color: '#64748b' }}>{contactInfo.jobTitle}{contactInfo.organization ? ` · ${contactInfo.organization}` : ''}</div>
+              </div>
+              <div style={{ fontSize: '13px', color: '#64748b' }}>{contactInfo.email}</div>
+            </div>
+          )}
+        </div>
+        
+        {/* Footer */}
+        <div style={{ 
+          padding: '16px 24px', 
+          background: 'white',
+          borderTop: '1px solid rgba(0, 0, 0, 0.08)',
+          display: 'flex',
+          gap: '12px',
+          alignItems: 'center',
+          justifyContent: isMobile ? 'center' : 'space-between'
+        }}>
+          {!isMobile && (
+            <p style={{ margin: 0, fontSize: '13px', color: '#64748b' }}>
+              Click any location to jump to it in the form
+            </p>
+          )}
+          {isMobile && (
+            <button
+              onClick={() => {
+                onClearForm();
+                onClose();
+              }}
+              style={{
+                padding: '10px 16px',
+                borderRadius: '8px',
+                border: '1px solid rgba(0, 0, 0, 0.1)',
+                background: 'white',
+                color: '#64748b',
+                fontSize: '13px',
+                fontWeight: 500,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              <RotateCcw size={14} />
+              Clear & Restart
+            </button>
+          )}
+          <button
+            onClick={onClose}
+            style={{
+              padding: '10px 20px',
+              borderRadius: '8px',
+              border: 'none',
+              background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`,
+              color: 'white',
+              fontSize: '13px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            Continue Editing
+            <ArrowRight size={14} />
+          </button>
+        </div>
+        </>
+        )}
+        )}
+      </div>
+      
+      <style>{`
+        @keyframes slideInRight {
+          from { transform: translateX(100%); }
+          to { transform: translateX(0); }
+        }
+      `}</style>
+    </>
+  );
+};
+
+// Resume Draft Modal
+const ResumeDraftModal = ({ savedDate, onResume, onStartFresh, isMobile }) => (
+  <div style={{
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0, 0, 0, 0.5)',
+    backdropFilter: 'blur(8px)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 2000,
+    padding: '20px'
+  }}>
+    <div style={{
+      background: 'white',
+      borderRadius: '20px',
+      padding: isMobile ? '32px 24px' : '40px',
+      maxWidth: '440px',
+      width: '100%',
+      textAlign: 'center',
+      boxShadow: '0 20px 60px rgba(0, 0, 0, 0.2)',
+      animation: 'scaleIn 0.3s ease-out'
+    }}>
+      <div style={{
+        width: '64px',
+        height: '64px',
+        borderRadius: '16px',
+        background: `linear-gradient(135deg, ${colors.blue}20 0%, ${colors.green}20 100%)`,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: '0 auto 20px'
+      }}>
+        <Save size={28} color={colors.blue} />
+      </div>
+      
+      <h3 style={{ 
+        margin: '0 0 8px', 
+        fontSize: '22px', 
+        fontWeight: 700, 
+        color: '#0f172a' 
+      }}>
+        Welcome Back!
+      </h3>
+      
+      <p style={{ 
+        margin: '0 0 24px', 
+        fontSize: '15px', 
+        color: '#64748b',
+        lineHeight: 1.6
+      }}>
+        You have a saved draft from<br />
+        <strong style={{ color: '#334155' }}>{savedDate}</strong>
+      </p>
+      
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <button
+          onClick={onResume}
+          style={{
+            padding: '14px 24px',
+            borderRadius: '12px',
+            border: 'none',
+            background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`,
+            color: 'white',
+            fontSize: '15px',
+            fontWeight: 600,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            boxShadow: '0 4px 16px rgba(0, 118, 187, 0.3)'
+          }}
+        >
+          <RefreshCw size={18} />
+          Resume Draft
+        </button>
+        
+        <button
+          onClick={onStartFresh}
+          style={{
+            padding: '14px 24px',
+            borderRadius: '12px',
+            border: '1px solid rgba(0, 0, 0, 0.1)',
+            background: 'white',
+            color: '#64748b',
+            fontSize: '15px',
+            fontWeight: 600,
+            cursor: 'pointer'
+          }}
+        >
+          Start Fresh
+        </button>
+      </div>
     </div>
   </div>
 );
@@ -1504,7 +2920,7 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
   const isComplete = asset.name && asset.pricing && asset.type;
   
   return (
-    <div className="animate-fade-in-up" style={{ background: 'white', borderRadius: '16px', marginBottom: '16px', overflow: 'hidden', transition: 'all 0.3s ease', border: isExpanded ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.1)', boxShadow: isExpanded ? '0 8px 32px rgba(0, 118, 187, 0.12)' : '0 2px 8px rgba(0, 0, 0, 0.02)' }}>
+    <div id={`space-${locationId}-${assetIndex}`} className="animate-fade-in-up" style={{ background: 'white', borderRadius: '16px', marginBottom: '16px', overflow: 'hidden', transition: 'all 0.3s ease', border: isExpanded ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.1)', boxShadow: isExpanded ? '0 8px 32px rgba(0, 118, 187, 0.12)' : '0 2px 8px rgba(0, 0, 0, 0.02)', scrollMarginTop: '120px' }}>
       <div onClick={onToggle} style={{ padding: isMobile ? '16px' : '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', background: isExpanded ? `rgba(0, 118, 187, 0.03)` : 'transparent', transition: 'background 0.2s ease' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '12px' : '16px', flex: 1, minWidth: 0 }}>
           <div style={{ width: isMobile ? '40px' : '48px', height: isMobile ? '40px' : '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: spaceTypeInfo ? `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)` : 'rgba(0, 118, 187, 0.08)', flexShrink: 0, transition: 'all 0.3s ease' }}>
@@ -1962,17 +3378,17 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
               <div>
                 <p style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: 600, color: '#94a3b8' }}>Weekdays (Mon-Fri)</p>
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                  <input type="time" value={asset.weekdayAvailability.start} onChange={(e) => updateAsset(locationId, assetIndex, 'weekdayAvailability', { ...asset.weekdayAvailability, start: e.target.value })} style={{ ...inputStyle, flex: 1 }} />
+                  <input type="time" value={asset.weekdayAvailability?.start || '15:00'} onChange={(e) => updateAsset(locationId, assetIndex, 'weekdayAvailability', { ...(asset.weekdayAvailability || {}), start: e.target.value })} style={{ ...inputStyle, flex: 1 }} />
                   <span style={{ color: '#94a3b8', fontWeight: 500 }}>to</span>
-                  <input type="time" value={asset.weekdayAvailability.end} onChange={(e) => updateAsset(locationId, assetIndex, 'weekdayAvailability', { ...asset.weekdayAvailability, end: e.target.value })} style={{ ...inputStyle, flex: 1 }} />
+                  <input type="time" value={asset.weekdayAvailability?.end || '22:00'} onChange={(e) => updateAsset(locationId, assetIndex, 'weekdayAvailability', { ...(asset.weekdayAvailability || {}), end: e.target.value })} style={{ ...inputStyle, flex: 1 }} />
                 </div>
               </div>
               <div>
                 <p style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: 600, color: '#94a3b8' }}>Weekends (Sat-Sun)</p>
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                  <input type="time" value={asset.weekendAvailability.start} onChange={(e) => updateAsset(locationId, assetIndex, 'weekendAvailability', { ...asset.weekendAvailability, start: e.target.value })} style={{ ...inputStyle, flex: 1 }} />
+                  <input type="time" value={asset.weekendAvailability?.start || '08:00'} onChange={(e) => updateAsset(locationId, assetIndex, 'weekendAvailability', { ...(asset.weekendAvailability || {}), start: e.target.value })} style={{ ...inputStyle, flex: 1 }} />
                   <span style={{ color: '#94a3b8', fontWeight: 500 }}>to</span>
-                  <input type="time" value={asset.weekendAvailability.end} onChange={(e) => updateAsset(locationId, assetIndex, 'weekendAvailability', { ...asset.weekendAvailability, end: e.target.value })} style={{ ...inputStyle, flex: 1 }} />
+                  <input type="time" value={asset.weekendAvailability?.end || '22:00'} onChange={(e) => updateAsset(locationId, assetIndex, 'weekendAvailability', { ...(asset.weekendAvailability || {}), end: e.target.value })} style={{ ...inputStyle, flex: 1 }} />
                 </div>
               </div>
             </div>
@@ -2146,7 +3562,7 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
             </div>
             <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#94a3b8' }}>Get notified about bookings but don't need to approve.</p>
             <div style={{ display: 'grid', gap: '8px' }}>
-              {asset.notifications.map((notif, i) => (
+              {(asset.notifications || []).map((notif, i) => (
                 <div key={i} style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr auto' : '1fr 1fr auto', gap: '8px', alignItems: 'center' }}>
                   {isMobile ? (
                     <>
@@ -2154,13 +3570,13 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
                         <input type="text" value={notif.name} onChange={(e) => updateNotification(locationId, assetIndex, i, 'name', e.target.value)} style={inputStyle} placeholder="Name" />
                         <input type="email" value={notif.email} onChange={(e) => updateNotification(locationId, assetIndex, i, 'email', e.target.value)} style={inputStyle} placeholder="Email" autoCapitalize="none" />
                       </div>
-                      {asset.notifications.length > 1 && <button onClick={() => removeNotification(locationId, assetIndex, i)} style={{ padding: '8px', borderRadius: '6px', border: 'none', background: 'transparent', color: '#94a3b8', cursor: 'pointer', alignSelf: 'start', marginTop: '8px' }}><Trash2 size={16} /></button>}
+                      {(asset.notifications || []).length > 1 && <button onClick={() => removeNotification(locationId, assetIndex, i)} style={{ padding: '8px', borderRadius: '6px', border: 'none', background: 'transparent', color: '#94a3b8', cursor: 'pointer', alignSelf: 'start', marginTop: '8px' }}><Trash2 size={16} /></button>}
                     </>
                   ) : (
                     <>
                       <input type="text" value={notif.name} onChange={(e) => updateNotification(locationId, assetIndex, i, 'name', e.target.value)} style={inputStyle} placeholder="Name" />
                       <input type="email" value={notif.email} onChange={(e) => updateNotification(locationId, assetIndex, i, 'email', e.target.value)} style={inputStyle} placeholder="Email" autoCapitalize="none" />
-                      {asset.notifications.length > 1 && <button onClick={() => removeNotification(locationId, assetIndex, i)} style={{ padding: '8px', borderRadius: '6px', border: 'none', background: 'transparent', color: '#94a3b8', cursor: 'pointer' }}><Trash2 size={16} /></button>}
+                      {(asset.notifications || []).length > 1 && <button onClick={() => removeNotification(locationId, assetIndex, i)} style={{ padding: '8px', borderRadius: '6px', border: 'none', background: 'transparent', color: '#94a3b8', cursor: 'pointer' }}><Trash2 size={16} /></button>}
                     </>
                   )}
                 </div>
@@ -2413,8 +3829,8 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
   );
 }
 
-function LocationCard({ location, handlers, canRemove, isMobile, errors, contactInfo, allLocations, onCopySettings, initiallyCollapsed = false, isFirstLocation = false }) {
-  const [isExpanded, setIsExpanded] = useState(!initiallyCollapsed);
+function LocationCard({ location, handlers, canRemove, isMobile, errors, contactInfo, allLocations, onCopySettings, initiallyCollapsed = false, isFirstLocation = false, isHighlighted = false, expandSpaceIndex = null }) {
+  const [isExpanded, setIsExpanded] = useState(!initiallyCollapsed || isHighlighted);
   // Start with no space expanded if any spaces were bulk added, otherwise expand first one
   const hasBulkAddedSpaces = location.assets.some(a => a.bulkAdded);
   const [expandedAsset, setExpandedAsset] = useState(hasBulkAddedSpaces ? -1 : (location.assets.length > 0 ? 0 : -1));
@@ -2427,6 +3843,23 @@ function LocationCard({ location, handlers, canRemove, isMobile, errors, contact
   const typeInfo = locationTypes.find(t => t.value === location.type) || locationTypes[5];
   const Icon = typeInfo.icon;
   const locationErrors = errors || {};
+  
+  // Auto-expand when highlighted and expand specific space
+  useEffect(() => {
+    if (isHighlighted) {
+      setIsExpanded(true);
+      if (expandSpaceIndex !== null && expandSpaceIndex >= 0) {
+        setExpandedAsset(expandSpaceIndex);
+        // Scroll to the specific space after a brief delay for expansion animation
+        setTimeout(() => {
+          const spaceElement = document.getElementById(`space-${location.id}-${expandSpaceIndex}`);
+          if (spaceElement) {
+            spaceElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 300);
+      }
+    }
+  }, [isHighlighted, expandSpaceIndex, location.id]);
   
   // Track when user expands for the first time
   const handleToggle = () => {
@@ -2499,7 +3932,20 @@ function LocationCard({ location, handlers, canRemove, isMobile, errors, contact
     (location.contactName || contactMode === 'self') && allSpacesComplete;
 
   return (
-    <div className="animate-fade-in-up" style={{ background: 'white', borderRadius: isMobile ? '16px' : '20px', border: isLocationComplete ? `2px solid ${colors.green}` : '1px solid rgba(0, 118, 187, 0.1)', marginBottom: isMobile ? '16px' : '24px', overflow: 'hidden', boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)', transition: 'all 0.3s ease' }}>
+    <div 
+      id={`location-${location.id}`}
+      className="animate-fade-in-up" 
+      style={{ 
+        background: 'white', 
+        borderRadius: isMobile ? '16px' : '20px', 
+        border: isHighlighted ? `3px solid ${colors.blue}` : isLocationComplete ? `2px solid ${colors.green}` : '1px solid rgba(0, 118, 187, 0.1)', 
+        marginBottom: isMobile ? '16px' : '24px', 
+        overflow: 'hidden', 
+        boxShadow: isHighlighted ? `0 0 0 4px rgba(0, 118, 187, 0.15), 0 8px 32px rgba(0, 118, 187, 0.2)` : '0 4px 16px rgba(0, 0, 0, 0.04)', 
+        transition: 'all 0.3s ease',
+        animation: isHighlighted ? 'highlightPulse 1s ease-out' : undefined
+      }}
+    >
       <div onClick={handleToggle} style={{ padding: isMobile ? '16px' : '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', background: isLocationComplete ? 'rgba(0, 168, 79, 0.04)' : `linear-gradient(135deg, rgba(0, 118, 187, 0.03) 0%, rgba(0, 168, 79, 0.03) 100%)`, borderBottom: isExpanded ? '1px solid rgba(0, 118, 187, 0.08)' : 'none', transition: 'background 0.3s ease' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '12px' : '16px', flex: 1, minWidth: 0 }}>
           <div style={{ width: isMobile ? '44px' : '52px', height: isMobile ? '44px' : '52px', borderRadius: '14px', background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'transform 0.2s' }}><Icon size={isMobile ? 22 : 26} color="white" /></div>
@@ -2818,7 +4264,7 @@ function LocationCard({ location, handlers, canRemove, isMobile, errors, contact
   );
 }
 
-function LocationsStep({ locations, setLocations, isMobile, errors, contactInfo }) {
+function LocationsStep({ locations, setLocations, isMobile, errors, contactInfo, highlightedLocationId, expandSpaceIndex, onOpenTableEditor }) {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showBulkAddLocations, setShowBulkAddLocations] = useState(false);
   const [bulkLocationNames, setBulkLocationNames] = useState('');
@@ -3003,9 +4449,13 @@ function LocationsStep({ locations, setLocations, isMobile, errors, contactInfo 
             <p style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: '#1e293b' }}>{locations.length} {locations.length === 1 ? 'Location' : 'Locations'} • {locations.reduce((sum, c) => sum + c.assets.length, 0)} Spaces</p>
             <p style={{ margin: '2px 0 0', fontSize: '13px', color: '#64748b' }}>Set up one location fully, then duplicate it!</p>
           </div>
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <button onClick={onOpenTableEditor} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '12px 16px', borderRadius: '10px', border: 'none', background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`, color: 'white', fontSize: '14px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 16px rgba(0, 118, 187, 0.25)' }}>
+              <Table size={16} />
+              Quick Edit All
+            </button>
             <button onClick={() => setShowBulkAddLocations(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '12px 16px', borderRadius: '10px', border: '1px solid rgba(0, 118, 187, 0.2)', background: 'white', color: colors.blue, fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}><Layers size={16} />Bulk Add</button>
-            <button onClick={() => setShowAddModal(true)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '12px 20px', borderRadius: '10px', border: 'none', background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`, color: 'white', fontSize: '14px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 16px rgba(0, 118, 187, 0.25)' }}><Plus size={18} />Add Location</button>
+            <button onClick={() => setShowAddModal(true)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '12px 20px', borderRadius: '10px', border: '1px solid rgba(0, 168, 79, 0.3)', background: 'rgba(0, 168, 79, 0.08)', color: colors.green, fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}><Plus size={18} />Add Location</button>
           </div>
         </div>
       )}
@@ -3161,6 +4611,8 @@ function LocationsStep({ locations, setLocations, isMobile, errors, contactInfo 
           allLocations={locations}
           initiallyCollapsed={location.bulkAdded === true}
           isFirstLocation={idx === 0}
+          isHighlighted={highlightedLocationId === location.id}
+          expandSpaceIndex={highlightedLocationId === location.id ? expandSpaceIndex : null}
         />
       ))}
     </div>
@@ -3318,43 +4770,113 @@ export default function PracticePlanOnboarding() {
   const [errors, setErrors] = useState({});
   const [lastSaved, setLastSaved] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [overviewOpen, setOverviewOpen] = useState(false);
+  const [highlightedLocationId, setHighlightedLocationId] = useState(null);
+  const [expandSpaceIndex, setExpandSpaceIndex] = useState(null);
+  const [showResumeDraftModal, setShowResumeDraftModal] = useState(false);
+  const [savedDraftDate, setSavedDraftDate] = useState(null);
+  const [pendingDraftData, setPendingDraftData] = useState(null);
   
-  // Auto-save to localStorage
+  // Calculate overall completion score
+  const overallScore = locations.length > 0 
+    ? Math.round(locations.reduce((sum, loc) => sum + calculateCompletionScore(loc).score, 0) / locations.length)
+    : 0;
+  
+  const incompleteCount = locations.filter(loc => calculateCompletionScore(loc).required < 100).length;
+  
+  // Auto-save to localStorage with interval backup
   useEffect(() => {
     if (currentStep === 0) return; // Don't save on welcome screen
     
     const saveData = () => {
       setIsSaving(true);
-      const data = { contactInfo, policies, locations, currentStep };
+      const now = new Date();
+      const data = { contactInfo, policies, locations, currentStep, savedAt: now.toISOString() };
       try {
         localStorage.setItem('practiceplan_draft', JSON.stringify(data));
-        setLastSaved(new Date());
+        setLastSaved(now);
       } catch (e) {
         console.error('Failed to save draft:', e);
       }
       setTimeout(() => setIsSaving(false), 500);
     };
     
-    const timer = setTimeout(saveData, 1000); // Debounce saves
-    return () => clearTimeout(timer);
+    // Debounced save on changes
+    const timer = setTimeout(saveData, 1000);
+    
+    // Also save every 30 seconds as backup
+    const intervalTimer = setInterval(saveData, 30000);
+    
+    return () => {
+      clearTimeout(timer);
+      clearInterval(intervalTimer);
+    };
   }, [contactInfo, policies, locations, currentStep]);
   
-  // Load saved draft on mount
+  // Warn before leaving with unsaved changes
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (currentStep > 0 && !submitSuccess) {
+        e.preventDefault();
+        e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        return e.returnValue;
+      }
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [currentStep, submitSuccess]);
+  
+  // Check for saved draft on mount and show resume modal
   useEffect(() => {
     try {
       const saved = localStorage.getItem('practiceplan_draft');
       if (saved) {
         const data = JSON.parse(saved);
-        if (data.contactInfo) setContactInfo(data.contactInfo);
-        if (data.policies) setPolicies(data.policies);
-        if (data.locations) setLocations(data.locations);
-        if (data.currentStep) setCurrentStep(data.currentStep);
-        setLastSaved(new Date());
+        // Only show modal if there's meaningful data
+        const hasData = data.contactInfo?.fullName || data.locations?.length > 0;
+        if (hasData && data.savedAt) {
+          const savedDate = new Date(data.savedAt);
+          setSavedDraftDate(savedDate.toLocaleString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            hour: 'numeric', 
+            minute: '2-digit',
+            hour12: true 
+          }));
+          setPendingDraftData(data);
+          setShowResumeDraftModal(true);
+        } else if (hasData) {
+          // Legacy draft without date - just load it
+          if (data.contactInfo) setContactInfo(data.contactInfo);
+          if (data.policies) setPolicies(data.policies);
+          if (data.locations) setLocations(data.locations);
+          if (data.currentStep) setCurrentStep(data.currentStep);
+          setLastSaved(new Date());
+        }
       }
     } catch (e) {
       console.error('Failed to load draft:', e);
     }
   }, []);
+  
+  const handleResumeDraft = () => {
+    if (pendingDraftData) {
+      if (pendingDraftData.contactInfo) setContactInfo(pendingDraftData.contactInfo);
+      if (pendingDraftData.policies) setPolicies(pendingDraftData.policies);
+      if (pendingDraftData.locations) setLocations(pendingDraftData.locations);
+      if (pendingDraftData.currentStep) setCurrentStep(pendingDraftData.currentStep);
+      setLastSaved(new Date());
+    }
+    setShowResumeDraftModal(false);
+    setPendingDraftData(null);
+  };
+  
+  const handleStartFresh = () => {
+    localStorage.removeItem('practiceplan_draft');
+    setShowResumeDraftModal(false);
+    setPendingDraftData(null);
+  };
   
   const updateContactInfo = (field, value) => { setContactInfo(prev => ({ ...prev, [field]: value })); setErrors(prev => ({ ...prev, contact: { ...prev.contact, [field]: undefined } })); };
   const updatePolicies = (field, value) => setPolicies(prev => ({ ...prev, [field]: value }));
@@ -3442,6 +4964,33 @@ export default function PracticePlanOnboarding() {
   };
   
   const prevStep = () => { setCurrentStep(prev => Math.max(prev - 1, 0)); window.scrollTo(0, 0); };
+
+  // Handle clicking a location from the overview panel
+  const handleOverviewLocationClick = (locationId, spaceIndex = null) => {
+    setOverviewOpen(false);
+    
+    // Navigate to Locations step if not already there
+    if (currentStep !== 3) {
+      setCurrentStep(3);
+    }
+    
+    // Set the space to expand (can be null for just location, or a number for specific space)
+    setExpandSpaceIndex(spaceIndex);
+    
+    // Highlight the location and scroll to it after a brief delay
+    setTimeout(() => {
+      setHighlightedLocationId(locationId);
+      const locationElement = document.getElementById(`location-${locationId}`);
+      if (locationElement) {
+        locationElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      // Remove highlight after animation
+      setTimeout(() => {
+        setHighlightedLocationId(null);
+        setExpandSpaceIndex(null);
+      }, 2000);
+    }, 100);
+  };
 
   // File upload constraints
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB per file
@@ -3556,6 +5105,7 @@ export default function PracticePlanOnboarding() {
         @keyframes checkmark { 0% { stroke-dashoffset: 24; } 100% { stroke-dashoffset: 0; } }
         @keyframes greenFlash { 0% { background-color: rgba(0, 168, 79, 0.15); } 100% { background-color: transparent; } }
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        @keyframes highlightPulse { 0% { box-shadow: 0 0 0 4px rgba(0, 118, 187, 0.4), 0 8px 32px rgba(0, 118, 187, 0.3); } 100% { box-shadow: 0 0 0 4px rgba(0, 118, 187, 0.15), 0 8px 32px rgba(0, 118, 187, 0.2); } }
         
         .animate-fade-in { animation: fadeIn 0.3s ease-out; }
         .animate-fade-in-up { animation: fadeInUp 0.4s ease-out; }
@@ -3580,51 +5130,23 @@ export default function PracticePlanOnboarding() {
       `}</style>
       <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: `radial-gradient(circle at 20% 20%, rgba(0, 118, 187, 0.03) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(0, 168, 79, 0.03) 0%, transparent 50%)`, pointerEvents: 'none' }} />
       <div style={{ position: 'relative', zIndex: 1 }}>
-        <header style={{ padding: isMobile ? '16px 20px' : '24px 48px', background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(0, 118, 187, 0.08)', position: 'sticky', top: 0, zIndex: 100 }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ width: isMobile ? '60px' : '100px', flexShrink: 0 }} /> {/* Spacer for centering */}
-            <PracticePlanLogo width={isMobile ? 180 : 240} />
-            <div style={{ minWidth: isMobile ? '60px' : '100px', display: 'flex', justifyContent: 'flex-end', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
-              {currentStep > 0 && !submitSuccess && (
-                <button 
-                  onClick={clearForm}
-                  title="Clear form and start over"
-                  style={{ 
-                    padding: '6px 10px', 
-                    borderRadius: '6px', 
-                    border: '1px solid rgba(0, 0, 0, 0.1)', 
-                    background: 'white', 
-                    color: '#64748b', 
-                    cursor: 'pointer', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '4px',
-                    fontSize: '11px',
-                    fontWeight: 500,
-                    transition: 'all 0.2s',
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  <RotateCcw size={12} />
-                  {!isMobile && <span>Clear</span>}
-                </button>
-              )}
-              {currentStep > 0 && !submitSuccess && lastSaved && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '20px', background: isSaving ? 'rgba(0, 118, 187, 0.08)' : 'rgba(0, 168, 79, 0.08)', transition: 'all 0.3s', whiteSpace: 'nowrap' }}>
-                  {isSaving ? (
-                    <div style={{ width: '12px', height: '12px', border: '2px solid rgba(0, 118, 187, 0.3)', borderTopColor: colors.blue, borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                  ) : (
-                    <Check size={12} color={colors.green} />
-                  )}
-                  <span style={{ fontSize: '11px', fontWeight: 500, color: isSaving ? colors.blue : colors.green }}>{isSaving ? 'Saving...' : 'Draft saved'}</span>
-                </div>
-              )}
-            </div>
+        <header style={{ padding: isMobile ? '12px 20px' : '20px 48px', background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(20px)', borderBottom: 'none', position: 'sticky', top: 0, zIndex: 100 }}>
+          <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <PracticePlanLogo width={isMobile ? 160 : 220} />
           </div>
         </header>
-        {currentStep > 0 && isMobile && <MobileProgressBar currentStep={currentStep} totalSteps={steps.length - 1} />}
-        {currentStep > 0 && !isMobile && (
-          <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 48px 32px' }}>
+        {currentStep > 0 && isMobile && !submitSuccess && (
+          <MobileProgressBar 
+            currentStep={currentStep} 
+            totalSteps={steps.length - 1} 
+            onViewProgress={() => setOverviewOpen(true)}
+            showViewProgress={currentStep >= 2 && currentStep <= 4}
+            isSaving={isSaving}
+            lastSaved={lastSaved}
+          />
+        )}
+        {currentStep > 0 && !isMobile && !submitSuccess && (
+          <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px 48px 32px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
               {steps.slice(1).map((step, index) => {
                 const actualIndex = index + 1;
@@ -3643,12 +5165,61 @@ export default function PracticePlanOnboarding() {
           </div>
         )}
         <main style={{ maxWidth: '1000px', margin: '0 auto', padding: isMobile ? (currentStep === 0 ? '24px 16px 100px' : '16px 16px 100px') : (currentStep === 0 ? '60px 48px 100px' : '0 48px 100px') }}>
-          <div style={{ background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(40px)', borderRadius: isMobile ? '20px' : '24px', border: '1px solid rgba(0, 118, 187, 0.08)', boxShadow: '0 4px 24px rgba(0, 0, 0, 0.04), 0 12px 48px rgba(0, 118, 187, 0.06)', overflow: 'hidden' }}>
+          <div style={{ background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(40px)', borderRadius: isMobile ? '20px' : '24px', border: '1px solid rgba(0, 118, 187, 0.08)', boxShadow: '0 4px 24px rgba(0, 0, 0, 0.04), 0 12px 48px rgba(0, 118, 187, 0.06)', overflow: 'hidden', position: 'relative' }}>
+            {/* Desktop Actions Bar - top right of card (Saved indicator and Clear only - Progress is in edge tab) */}
+            {!isMobile && currentStep > 0 && !submitSuccess && (
+              <div style={{ 
+                position: 'absolute', 
+                top: '16px', 
+                right: '16px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px',
+                zIndex: 10
+              }}>
+                {lastSaved && (
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '5px', 
+                    padding: '6px 10px', 
+                    borderRadius: '6px', 
+                    background: isSaving ? 'rgba(0, 118, 187, 0.08)' : 'rgba(0, 168, 79, 0.08)', 
+                    transition: 'all 0.3s', 
+                    whiteSpace: 'nowrap' 
+                  }}>
+                    {isSaving ? (
+                      <div style={{ width: '10px', height: '10px', border: '2px solid rgba(0, 118, 187, 0.3)', borderTopColor: colors.blue, borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                    ) : (
+                      <Check size={12} color={colors.green} />
+                    )}
+                    <span style={{ fontSize: '11px', fontWeight: 500, color: isSaving ? colors.blue : colors.green }}>{isSaving ? 'Saving' : 'Saved'}</span>
+                  </div>
+                )}
+                <button 
+                  onClick={clearForm}
+                  title="Clear form and start over"
+                  style={{ 
+                    padding: '6px 8px', 
+                    borderRadius: '6px', 
+                    border: '1px solid rgba(0, 0, 0, 0.08)', 
+                    background: 'white', 
+                    color: '#94a3b8', 
+                    cursor: 'pointer', 
+                    display: 'flex', 
+                    alignItems: 'center',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <RotateCcw size={14} />
+                </button>
+              </div>
+            )}
             <div key={currentStep} className="animate-fade-in-up" style={{ padding: isMobile ? (currentStep === 0 ? '32px 20px' : '24px 20px') : (currentStep === 0 ? '60px 48px' : '48px') }}>
               {currentStep === 0 && <WelcomeStep onContinue={nextStep} isMobile={isMobile} />}
               {currentStep === 1 && <ContactInfoStep data={contactInfo} update={updateContactInfo} errors={errors.contact || {}} isMobile={isMobile} />}
               {currentStep === 2 && <PoliciesStep data={policies} update={updatePolicies} isMobile={isMobile} />}
-              {currentStep === 3 && <LocationsStep locations={locations} setLocations={setLocations} isMobile={isMobile} errors={errors.locations} contactInfo={contactInfo} />}
+              {currentStep === 3 && <LocationsStep locations={locations} setLocations={setLocations} isMobile={isMobile} errors={errors.locations} contactInfo={contactInfo} highlightedLocationId={highlightedLocationId} expandSpaceIndex={expandSpaceIndex} onOpenTableEditor={() => setOverviewOpen(true)} />}
               {currentStep === 4 && !submitSuccess && <ReviewStep policies={policies} locations={locations} contactInfo={contactInfo} isMobile={isMobile} />}
               {currentStep === 4 && submitSuccess && (
                 <div className="animate-fade-in-up" style={{ textAlign: 'center', padding: isMobile ? '40px 20px' : '60px 40px' }}>
@@ -3755,6 +5326,38 @@ export default function PracticePlanOnboarding() {
           </div>
         </main>
       </div>
+      
+      {/* Desktop Edge Tab - only show on steps 2-4, not mobile */}
+      {!isMobile && currentStep >= 2 && currentStep <= 4 && !submitSuccess && (
+        <ProgressEdgeTab 
+          onClick={() => setOverviewOpen(true)}
+          incompleteCount={incompleteCount}
+          overallScore={overallScore}
+        />
+      )}
+      
+      {/* Overview Panel */}
+      <OverviewPanel 
+        isOpen={overviewOpen}
+        onClose={() => setOverviewOpen(false)}
+        locations={locations}
+        setLocations={setLocations}
+        onLocationClick={handleOverviewLocationClick}
+        isMobile={isMobile}
+        onClearForm={clearForm}
+        policies={policies}
+        contactInfo={contactInfo}
+      />
+      
+      {/* Resume Draft Modal */}
+      {showResumeDraftModal && (
+        <ResumeDraftModal 
+          savedDate={savedDraftDate}
+          onResume={handleResumeDraft}
+          onStartFresh={handleStartFresh}
+          isMobile={isMobile}
+        />
+      )}
     </div>
   );
 }
