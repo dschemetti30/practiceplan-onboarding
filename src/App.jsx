@@ -1162,8 +1162,14 @@ const EditableCell = ({ value, onChange, type = 'text', options = [], placeholde
   
   const handleBlur = () => {
     setIsEditing(false);
-    if (localValue !== value) {
-      onChange(localValue);
+    let finalValue = localValue;
+    // Prevent negative numbers
+    if (type === 'number' && finalValue !== '' && parseFloat(finalValue) < 0) {
+      finalValue = '0';
+      setLocalValue('0');
+    }
+    if (finalValue !== value) {
+      onChange(finalValue);
     }
   };
   
@@ -1234,6 +1240,7 @@ const EditableCell = ({ value, onChange, type = 'text', options = [], placeholde
         onKeyDown={handleKeyDown}
         style={inputStyle}
         placeholder={placeholder}
+        min={type === 'number' ? '0' : undefined}
       />
     );
   }
@@ -3158,7 +3165,7 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
               <input type="text" value={asset.name} onChange={(e) => updateAsset(locationId, assetIndex, 'name', e.target.value)} style={assetErrors.name ? inputErrorStyle : inputStyle} placeholder="e.g., Main Gymnasium, Auditorium" />
             </FormGroup>
             <FormGroup label="Hourly Rate" required error={assetErrors.pricing} tooltip="The base price per hour for renting this space. You can set different rates for different renter types later.">
-              <input type="number" value={asset.pricing} onChange={(e) => updateAsset(locationId, assetIndex, 'pricing', e.target.value)} style={assetErrors.pricing ? inputErrorStyle : inputStyle} placeholder="$ per hour" inputMode="decimal" />
+              <input type="number" value={asset.pricing} onChange={(e) => updateAsset(locationId, assetIndex, 'pricing', e.target.value)} style={assetErrors.pricing ? inputErrorStyle : inputStyle} placeholder="$ per hour" inputMode="decimal" min="0" />
             </FormGroup>
           </div>
           
@@ -3871,6 +3878,7 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
                                       }}
                                       placeholder="0"
                                       inputMode="decimal"
+                                      min="0"
                                     />
                                   </div>
                                 )}
@@ -3916,7 +3924,8 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
                           }} 
                           style={{ ...inputStyle, width: '80px', padding: '8px 10px', textAlign: 'right' }} 
                           placeholder="0" 
-                          inputMode="decimal" 
+                          inputMode="decimal"
+                          min="0"
                         />
                       </div>
                       <button 
@@ -4364,6 +4373,7 @@ function LocationCard({ location, handlers, canRemove, isMobile, errors, contact
                       style={{ ...inputStyle, width: '100px' }}
                       placeholder="0"
                       inputMode="decimal"
+                      min="0"
                     />
                     <span style={{ fontSize: '13px', color: '#64748b' }}>/hour</span>
                   </div>
@@ -4869,7 +4879,7 @@ function ReviewStep({ policies, locations, contactInfo, isMobile }) {
   );
 }
 
-export default function App() {
+export default function PracticePlanOnboarding() {
   const isMobile = useIsMobile();
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
