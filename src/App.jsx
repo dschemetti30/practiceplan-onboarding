@@ -593,6 +593,157 @@ const colors = {
   red: '#dc2626',
 };
 
+// Collapsible category component for reservation types and features
+const CollapsibleCategory = ({ name, selectedCount, accentColor, children, defaultOpen = false }) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  
+  return (
+    <div style={{ borderBottom: '1px solid rgba(0, 118, 187, 0.06)' }}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        style={{
+          width: '100%',
+          padding: '12px 16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          transition: 'background 0.15s'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>{name}</span>
+          {selectedCount > 0 && (
+            <span style={{ padding: '2px 8px', borderRadius: '10px', background: `${accentColor}15`, color: accentColor, fontSize: '11px', fontWeight: 600 }}>
+              {selectedCount}
+            </span>
+          )}
+        </div>
+        <ChevronDown size={18} color="#64748b" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
+      </button>
+      {isOpen && (
+        <div style={{ padding: '0 16px 12px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          {children}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Amenity category component with price inputs
+const AmenityCategory = ({ category, selectedInCategory, asset, locationId, assetIndex, updateAsset, inputStyle }) => {
+  const [isOpen, setIsOpen] = useState(selectedInCategory > 0);
+  
+  return (
+    <div style={{ border: '1px solid rgba(0, 118, 187, 0.1)', borderRadius: '10px', overflow: 'hidden' }}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        style={{
+          width: '100%',
+          padding: '12px 14px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: isOpen ? 'rgba(0, 118, 187, 0.04)' : 'white',
+          border: 'none',
+          cursor: 'pointer',
+          transition: 'background 0.2s'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '14px', fontWeight: 600, color: '#1e293b' }}>{category.name}</span>
+          <span style={{ fontSize: '12px', color: '#94a3b8' }}>({category.items.length} items)</span>
+          {selectedInCategory > 0 && (
+            <span style={{ padding: '2px 8px', borderRadius: '10px', background: colors.green, color: 'white', fontSize: '11px', fontWeight: 600 }}>
+              {selectedInCategory} selected
+            </span>
+          )}
+        </div>
+        <ChevronDown size={18} color="#64748b" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
+      </button>
+      {isOpen && (
+        <div style={{ padding: '8px', borderTop: '1px solid rgba(0, 118, 187, 0.08)', background: 'white' }}>
+          <div style={{ display: 'grid', gap: '6px' }}>
+            {category.items.map(addon => {
+              const isSelected = asset.amenities.some(a => a.id === addon.id);
+              const selectedAmenity = asset.amenities.find(a => a.id === addon.id);
+              return (
+                <div key={addon.id} style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '10px',
+                  padding: '10px 12px',
+                  borderRadius: '8px',
+                  border: isSelected ? `1px solid ${colors.blue}` : '1px solid transparent',
+                  background: isSelected ? 'rgba(0, 118, 187, 0.04)' : 'rgba(248, 250, 252, 0.5)',
+                  transition: 'all 0.15s'
+                }}>
+                  <button
+                    onClick={() => {
+                      if (isSelected) {
+                        const newAmenities = asset.amenities.filter(a => a.id !== addon.id);
+                        updateAsset(locationId, assetIndex, 'amenities', newAmenities.length > 0 ? newAmenities : [{ name: '', price: '', isCustom: true }]);
+                      } else {
+                        const newAmenity = { id: addon.id, name: addon.name, price: '', isCustom: false };
+                        const filtered = asset.amenities.filter(a => a.name || a.price);
+                        updateAsset(locationId, assetIndex, 'amenities', [...filtered, newAmenity]);
+                      }
+                    }}
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '5px',
+                      border: isSelected ? 'none' : '2px solid #cbd5e1',
+                      background: isSelected ? `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)` : 'white',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      padding: 0
+                    }}
+                  >
+                    {isSelected && <Check size={12} color="white" strokeWidth={3} />}
+                  </button>
+                  <span style={{ flex: 1, fontSize: '13px', color: isSelected ? '#1e293b' : '#64748b' }}>{addon.name}</span>
+                  {isSelected && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span style={{ fontSize: '13px', color: '#64748b' }}>$</span>
+                      <input
+                        type="number"
+                        value={selectedAmenity?.price || ''}
+                        onChange={(e) => {
+                          const newAmenities = asset.amenities.map(a => 
+                            a.id === addon.id ? { ...a, price: e.target.value } : a
+                          );
+                          updateAsset(locationId, assetIndex, 'amenities', newAmenities);
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                        style={{ 
+                          ...inputStyle, 
+                          width: '70px', 
+                          padding: '6px 8px',
+                          textAlign: 'right',
+                          fontSize: '13px'
+                        }}
+                        placeholder="0"
+                        inputMode="decimal"
+                        min="0"
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Email validation
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -1438,28 +1589,42 @@ const TableEditor = ({ locations, setLocations, onClose, onEditDetails, isMobile
                             <td style={{ padding: '4px 8px' }}><EditableCell type="number" value={space.squareFootage} onChange={(val) => updateSpace(location.id, spaceIndex, 'squareFootage', val)} placeholder="—" /></td>
                             <td style={{ padding: '4px 8px' }}><EditableCell type="email" value={space.approvers?.[0]?.email || ''} onChange={(val) => updateApprover(location.id, spaceIndex, 'email', val)} placeholder="email@..." isRequired={true} isEmpty={!space.approvers?.[0]?.email?.trim()} /></td>
                             <td style={{ padding: '4px 8px', textAlign: 'center' }}>
-                              <span style={{ 
-                                padding: '2px 8px', 
-                                borderRadius: '10px', 
-                                fontSize: '11px', 
-                                fontWeight: 600,
-                                background: space.amenities?.length > 0 ? 'rgba(0, 168, 79, 0.1)' : 'rgba(0, 0, 0, 0.05)',
-                                color: space.amenities?.length > 0 ? colors.green : '#94a3b8'
-                              }}>
+                              <button 
+                                onClick={() => onEditDetails(location.id, spaceIndex, 'amenities')}
+                                style={{ 
+                                  padding: '2px 8px', 
+                                  borderRadius: '10px', 
+                                  fontSize: '11px', 
+                                  fontWeight: 600,
+                                  background: space.amenities?.length > 0 ? 'rgba(0, 168, 79, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+                                  color: space.amenities?.length > 0 ? colors.green : '#94a3b8',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.15s'
+                                }}
+                                title="Edit amenities"
+                              >
                                 {space.amenities?.length || 0}
-                              </span>
+                              </button>
                             </td>
                             <td style={{ padding: '4px 8px', textAlign: 'center' }}>
-                              <span style={{ 
-                                padding: '2px 8px', 
-                                borderRadius: '10px', 
-                                fontSize: '11px', 
-                                fontWeight: 600,
-                                background: space.features?.length > 0 ? 'rgba(0, 168, 79, 0.1)' : 'rgba(0, 0, 0, 0.05)',
-                                color: space.features?.length > 0 ? colors.green : '#94a3b8'
-                              }}>
+                              <button 
+                                onClick={() => onEditDetails(location.id, spaceIndex, 'features')}
+                                style={{ 
+                                  padding: '2px 8px', 
+                                  borderRadius: '10px', 
+                                  fontSize: '11px', 
+                                  fontWeight: 600,
+                                  background: space.features?.length > 0 ? 'rgba(0, 168, 79, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+                                  color: space.features?.length > 0 ? colors.green : '#94a3b8',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.15s'
+                                }}
+                                title="Edit features"
+                              >
                                 {space.features?.length || 0}
-                              </span>
+                              </button>
                             </td>
                             <td style={{ padding: '4px 8px', textAlign: 'center' }}>
                               <button onClick={() => onEditDetails(location.id, spaceIndex)} style={{ padding: '4px 8px', borderRadius: '4px', border: 'none', background: 'rgba(0, 118, 187, 0.08)', color: colors.blue, cursor: 'pointer', fontSize: '11px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }} title="Edit additional details in form view">
@@ -1507,7 +1672,7 @@ const TableEditor = ({ locations, setLocations, onClose, onEditDetails, isMobile
   );
 };
 
-const OverviewPanel = ({ isOpen, onClose, locations, setLocations, onLocationClick, isMobile, onClearForm, policies, contactInfo }) => {
+const OverviewPanel = ({ isOpen, onClose, locations, setLocations, onLocationClick, isMobile, onClearForm, policies, contactInfo, onNavigateToStep }) => {
   const [filter, setFilter] = useState('all'); // 'all' or 'incomplete'
   const [viewMode, setViewMode] = useState('table'); // 'table' or 'status'
   
@@ -1751,10 +1916,10 @@ const OverviewPanel = ({ isOpen, onClose, locations, setLocations, onLocationCli
             locations={locations}
             setLocations={setLocations}
             onClose={onClose}
-            onEditDetails={(locationId, spaceIndex) => {
+            onEditDetails={(locationId, spaceIndex, section = null) => {
               // Close panel and jump to location/space in form
               onClose();
-              onLocationClick(locationId, spaceIndex);
+              onLocationClick(locationId, spaceIndex, section);
             }}
             isMobile={isMobile}
             onDone={() => setViewMode('status')}
@@ -1771,15 +1936,23 @@ const OverviewPanel = ({ isOpen, onClose, locations, setLocations, onLocationCli
             marginBottom: '24px' 
           }}>
             {/* Go-Live Date */}
-            <div style={{ 
-              background: 'white', 
-              borderRadius: '16px', 
-              padding: '20px', 
-              border: '1px solid rgba(0, 0, 0, 0.06)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px'
-            }}>
+            <div 
+              onClick={() => onNavigateToStep(2)}
+              style={{ 
+                background: 'white', 
+                borderRadius: '16px', 
+                padding: '20px', 
+                border: '1px solid rgba(0, 0, 0, 0.06)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = colors.blue; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 118, 187, 0.15)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.06)'; e.currentTarget.style.boxShadow = 'none'; }}
+              title="Click to edit"
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: `linear-gradient(135deg, ${colors.blue}15 0%, ${colors.green}15 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Rocket size={18} color={colors.blue} />
@@ -1792,15 +1965,23 @@ const OverviewPanel = ({ isOpen, onClose, locations, setLocations, onLocationCli
             </div>
             
             {/* Booking Window */}
-            <div style={{ 
-              background: 'white', 
-              borderRadius: '16px', 
-              padding: '20px', 
-              border: '1px solid rgba(0, 0, 0, 0.06)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px'
-            }}>
+            <div 
+              onClick={() => onNavigateToStep(2)}
+              style={{ 
+                background: 'white', 
+                borderRadius: '16px', 
+                padding: '20px', 
+                border: '1px solid rgba(0, 0, 0, 0.06)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = colors.blue; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 118, 187, 0.15)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.06)'; e.currentTarget.style.boxShadow = 'none'; }}
+              title="Click to edit"
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(0, 118, 187, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Calendar size={18} color={colors.blue} />
@@ -1813,15 +1994,23 @@ const OverviewPanel = ({ isOpen, onClose, locations, setLocations, onLocationCli
             </div>
             
             {/* Approval Required */}
-            <div style={{ 
-              background: 'white', 
-              borderRadius: '16px', 
-              padding: '20px', 
-              border: '1px solid rgba(0, 0, 0, 0.06)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px'
-            }}>
+            <div 
+              onClick={() => onNavigateToStep(2)}
+              style={{ 
+                background: 'white', 
+                borderRadius: '16px', 
+                padding: '20px', 
+                border: '1px solid rgba(0, 0, 0, 0.06)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = colors.blue; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 118, 187, 0.15)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.06)'; e.currentTarget.style.boxShadow = 'none'; }}
+              title="Click to edit"
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: policies?.requireApproval === 'yes' ? 'rgba(0, 168, 79, 0.08)' : 'rgba(0, 118, 187, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Shield size={18} color={policies?.requireApproval === 'yes' ? colors.green : colors.blue} />
@@ -1873,12 +2062,20 @@ const OverviewPanel = ({ isOpen, onClose, locations, setLocations, onLocationCli
             marginBottom: '24px' 
           }}>
             {/* Locations & Spaces */}
-            <div style={{ 
-              background: 'white', 
-              borderRadius: '16px', 
-              padding: '24px', 
-              border: '1px solid rgba(0, 0, 0, 0.06)'
-            }}>
+            <div 
+              onClick={() => onNavigateToStep(3)}
+              style={{ 
+                background: 'white', 
+                borderRadius: '16px', 
+                padding: '24px', 
+                border: '1px solid rgba(0, 0, 0, 0.06)',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = colors.blue; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 118, 187, 0.15)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.06)'; e.currentTarget.style.boxShadow = 'none'; }}
+              title="Click to edit locations"
+            >
               <h4 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Building2 size={16} color={colors.blue} /> Inventory
               </h4>
@@ -1903,12 +2100,20 @@ const OverviewPanel = ({ isOpen, onClose, locations, setLocations, onLocationCli
             </div>
             
             {/* Pricing & Content */}
-            <div style={{ 
-              background: 'white', 
-              borderRadius: '16px', 
-              padding: '24px', 
-              border: '1px solid rgba(0, 0, 0, 0.06)'
-            }}>
+            <div 
+              onClick={() => onNavigateToStep(3)}
+              style={{ 
+                background: 'white', 
+                borderRadius: '16px', 
+                padding: '24px', 
+                border: '1px solid rgba(0, 0, 0, 0.06)',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = colors.blue; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 118, 187, 0.15)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.06)'; e.currentTarget.style.boxShadow = 'none'; }}
+              title="Click to edit locations"
+            >
               <h4 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <DollarSign size={16} color={colors.green} /> Pricing & Content
               </h4>
@@ -1933,12 +2138,20 @@ const OverviewPanel = ({ isOpen, onClose, locations, setLocations, onLocationCli
             </div>
             
             {/* Ground Rules Summary */}
-            <div style={{ 
-              background: 'white', 
-              borderRadius: '16px', 
-              padding: '24px', 
-              border: '1px solid rgba(0, 0, 0, 0.06)'
-            }}>
+            <div 
+              onClick={() => onNavigateToStep(2)}
+              style={{ 
+                background: 'white', 
+                borderRadius: '16px', 
+                padding: '24px', 
+                border: '1px solid rgba(0, 0, 0, 0.06)',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = colors.blue; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 118, 187, 0.15)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.06)'; e.currentTarget.style.boxShadow = 'none'; }}
+              title="Click to edit policies"
+            >
               <h4 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <FileText size={16} color={colors.blue} /> Policies
               </h4>
@@ -2089,16 +2302,24 @@ const OverviewPanel = ({ isOpen, onClose, locations, setLocations, onLocationCli
           
           {/* Contact Info */}
           {contactInfo?.fullName && (
-            <div style={{ 
-              marginTop: '16px',
-              background: 'white', 
-              borderRadius: '16px', 
-              padding: '16px 20px', 
-              border: '1px solid rgba(0, 0, 0, 0.06)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px'
-            }}>
+            <div 
+              onClick={() => onNavigateToStep(1)}
+              style={{ 
+                marginTop: '16px',
+                background: 'white', 
+                borderRadius: '16px', 
+                padding: '16px 20px', 
+                border: '1px solid rgba(0, 0, 0, 0.06)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = colors.blue; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 118, 187, 0.15)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.06)'; e.currentTarget.style.boxShadow = 'none'; }}
+              title="Click to edit contact info"
+            >
               <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <User size={20} color="white" />
               </div>
@@ -3044,8 +3265,22 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
   const spaceTypeInfo = spaceTypes.find(t => t.value === asset.type) || null;
   const approverCount = asset.approvers.length;
   
-  // Check if space is complete
-  const isComplete = asset.name && asset.pricing && asset.type;
+  // Collapsible section states
+  const [showReservationTypes, setShowReservationTypes] = useState(false);
+  const [showFeatures, setShowFeatures] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  
+  // Calculate required field completion
+  const requiredFields = [
+    { name: 'Name', complete: !!asset.name?.trim() },
+    { name: 'Type', complete: !!asset.type },
+    { name: 'Indoor/Outdoor', complete: !!asset.indoorOutdoor },
+    { name: 'Pricing', complete: !!asset.pricing?.trim() },
+    { name: 'Approver Email', complete: !!(asset.approvers?.[0]?.email?.trim()) }
+  ];
+  const completedCount = requiredFields.filter(f => f.complete).length;
+  const totalRequired = requiredFields.length;
+  const isComplete = completedCount === totalRequired;
   
   return (
     <div id={`space-${locationId}-${assetIndex}`} className="animate-fade-in-up" style={{ background: 'white', borderRadius: '16px', marginBottom: '16px', overflow: 'hidden', transition: 'all 0.3s ease', border: isExpanded ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.1)', boxShadow: isExpanded ? '0 8px 32px rgba(0, 118, 187, 0.12)' : '0 2px 8px rgba(0, 0, 0, 0.02)', scrollMarginTop: '120px' }}>
@@ -3062,6 +3297,11 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', flexWrap: 'wrap' }}>
               {spaceTypeInfo && <span style={{ padding: '2px 8px', borderRadius: '4px', background: 'rgba(0, 118, 187, 0.08)', color: colors.blue, fontSize: '11px', fontWeight: 600 }}>{spaceTypeInfo.label}</span>}
               <span style={{ fontSize: '13px', color: '#64748b' }}>{asset.pricing ? `$${asset.pricing}/hour` : 'Pricing not set'}</span>
+              {!isExpanded && !isComplete && (
+                <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 500 }}>
+                  • {totalRequired - completedCount} of {totalRequired} required fields incomplete
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -3134,8 +3374,19 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
           
           {/* Space Type Selector */}
           <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#334155', marginBottom: '10px' }}>What type of space is this?</label>
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(3, 1fr)' : 'repeat(4, 1fr)', gap: '8px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', fontWeight: 600, color: '#334155', marginBottom: '10px' }}>
+              What type of space is this?
+              {!asset.type && <span style={{ fontSize: '11px', color: '#ef4444', fontWeight: 500 }}>Required</span>}
+            </label>
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: isMobile ? 'repeat(3, 1fr)' : 'repeat(4, 1fr)', 
+              gap: '8px',
+              padding: !asset.type ? '8px' : '0',
+              borderRadius: !asset.type ? '14px' : '0',
+              border: !asset.type ? '2px dashed #fca5a5' : 'none',
+              background: !asset.type ? 'rgba(239, 68, 68, 0.02)' : 'transparent'
+            }}>
               {spaceTypes.map(type => (
                 <button
                   key={type.value}
@@ -3175,9 +3426,17 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                 <Sun size={16} color={colors.blue} />
                 <label style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>Indoor or Outdoor?</label>
-                <span style={{ fontSize: '11px', color: '#ef4444' }}>*</span>
+                {!asset.indoorOutdoor && <span style={{ fontSize: '11px', color: '#ef4444', fontWeight: 500 }}>Required</span>}
               </div>
-              <div style={{ display: 'flex', gap: '8px', height: '46px' }}>
+              <div style={{ 
+                display: 'flex', 
+                gap: '8px', 
+                height: '46px',
+                padding: !asset.indoorOutdoor ? '4px' : '0',
+                borderRadius: !asset.indoorOutdoor ? '14px' : '0',
+                border: !asset.indoorOutdoor ? '2px dashed #fca5a5' : 'none',
+                background: !asset.indoorOutdoor ? 'rgba(239, 68, 68, 0.02)' : 'transparent'
+              }}>
                 {[
                   { value: 'indoor', label: 'Indoor' },
                   { value: 'outdoor', label: 'Outdoor' },
@@ -3244,24 +3503,39 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
             </div>
           </div>
           
-          {/* Reservation Types - Add-ons style UI */}
+          {/* Reservation Types - Collapsible */}
           <div style={{ marginBottom: '20px', background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', border: '1px solid rgba(0, 118, 187, 0.06)', overflow: 'hidden' }}>
-            <div style={{ padding: isMobile ? '16px' : '20px', borderBottom: (asset.reservationTypes || []).length > 0 ? '1px solid rgba(0, 118, 187, 0.08)' : 'none' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <div 
+              onClick={() => setShowReservationTypes(!showReservationTypes)}
+              style={{ 
+                padding: isMobile ? '16px' : '20px', 
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                transition: 'background 0.15s'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Tag size={16} color={colors.blue} />
                 <h5 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#334155' }}>Types of Reservations</h5>
                 <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
+                {(asset.reservationTypes || []).length > 0 && (
+                  <span style={{ padding: '2px 8px', borderRadius: '10px', background: 'rgba(0, 168, 79, 0.1)', color: colors.green, fontSize: '11px', fontWeight: 600 }}>
+                    {(asset.reservationTypes || []).length} selected
+                  </span>
+                )}
               </div>
-              <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8' }}>What activities can this space be used for?</p>
+              <ChevronDown size={18} color="#64748b" style={{ transform: showReservationTypes ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
             </div>
             
-            {/* Selected reservation types summary */}
-            {(asset.reservationTypes || []).length > 0 && (
-              <div style={{ padding: '12px 16px', background: 'rgba(0, 168, 79, 0.06)', borderBottom: '1px solid rgba(0, 168, 79, 0.1)' }}>
-                <p style={{ margin: '0 0 8px', fontSize: '12px', fontWeight: 600, color: colors.green }}>
-                  {(asset.reservationTypes || []).length} selected
-                </p>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {showReservationTypes && (
+              <div style={{ padding: isMobile ? '0 16px 16px' : '0 20px 20px' }}>
+                <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#94a3b8' }}>What activities can this space be used for?</p>
+                
+                {/* Selected items with remove buttons */}
+                {(asset.reservationTypes || []).length > 0 && (
+                <div style={{ marginBottom: '12px', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                   {(asset.reservationTypes || []).map(typeId => {
                     const resType = allReservationTypes.find(t => t.id === typeId);
                     return resType ? (
@@ -3290,90 +3564,82 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
                     ) : null;
                   })}
                 </div>
-              </div>
-            )}
+                )}
             
-            {/* Categorized reservation types */}
-            <div style={{ padding: '0' }}>
-              {reservationTypeCategories.map(category => {
-                const selectedInCategory = category.types.filter(t => 
-                  (asset.reservationTypes || []).includes(t.id)
-                ).length;
-                const [isOpen, setIsOpen] = React.useState(false);
-                
+                {/* Categorized reservation types */}
+                <div style={{ padding: '0' }}>
+                  {reservationTypeCategories.map(category => {
+                    const selectedInCategory = category.types.filter(t => 
+                      (asset.reservationTypes || []).includes(t.id)
+                    ).length;
+                    
                 return (
-                  <div key={category.name} style={{ borderBottom: '1px solid rgba(0, 118, 187, 0.06)' }}>
-                    <button
-                      onClick={() => setIsOpen(!isOpen)}
-                      style={{
-                        width: '100%',
-                        padding: '12px 16px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        background: 'transparent',
-                        border: 'none',
-                        cursor: 'pointer',
-                        transition: 'background 0.15s'
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <span style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>{category.name}</span>
-                        {selectedInCategory > 0 && (
-                          <span style={{ padding: '2px 8px', borderRadius: '10px', background: 'rgba(0, 168, 79, 0.1)', color: colors.green, fontSize: '11px', fontWeight: 600 }}>
-                            {selectedInCategory}
-                          </span>
-                        )}
-                      </div>
-                      <ChevronDown size={18} color="#64748b" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
-                    </button>
-                    {isOpen && (
-                      <div style={{ padding: '0 16px 12px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                        {category.types.map(type => {
-                          const isSelected = (asset.reservationTypes || []).includes(type.id);
-                          return (
-                            <label key={type.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', borderRadius: '8px', border: isSelected ? `2px solid ${colors.green}` : '1px solid rgba(0, 0, 0, 0.1)', background: isSelected ? 'rgba(0, 168, 79, 0.06)' : 'white', cursor: 'pointer', transition: 'all 0.15s' }}>
-                              <input
-                                type="checkbox"
-                                checked={isSelected}
-                                onChange={() => {
-                                  const newTypes = isSelected 
-                                    ? (asset.reservationTypes || []).filter(t => t !== type.id)
-                                    : [...(asset.reservationTypes || []), type.id];
-                                  updateAsset(locationId, assetIndex, 'reservationTypes', newTypes);
-                                }}
-                                style={{ width: '16px', height: '16px', accentColor: colors.green }}
-                              />
-                              <span style={{ fontSize: '13px', fontWeight: 500, color: isSelected ? colors.green : '#334155' }}>{type.name}</span>
-                            </label>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
+                  <CollapsibleCategory 
+                    key={category.name}
+                    name={category.name}
+                    selectedCount={selectedInCategory}
+                    accentColor={colors.green}
+                  >
+                    {category.types.map(type => {
+                      const isSelected = (asset.reservationTypes || []).includes(type.id);
+                      return (
+                        <label key={type.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', borderRadius: '8px', border: isSelected ? `2px solid ${colors.green}` : '1px solid rgba(0, 0, 0, 0.1)', background: isSelected ? 'rgba(0, 168, 79, 0.06)' : 'white', cursor: 'pointer', transition: 'all 0.15s' }}>
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => {
+                              const newTypes = isSelected 
+                                ? (asset.reservationTypes || []).filter(t => t !== type.id)
+                                : [...(asset.reservationTypes || []), type.id];
+                              updateAsset(locationId, assetIndex, 'reservationTypes', newTypes);
+                            }}
+                            style={{ width: '16px', height: '16px', accentColor: colors.green }}
+                          />
+                          <span style={{ fontSize: '13px', fontWeight: 500, color: isSelected ? colors.green : '#334155' }}>{type.name}</span>
+                        </label>
+                      );
+                    })}
+                  </CollapsibleCategory>
                 );
               })}
-            </div>
+                </div>
+              </div>
+            )}
           </div>
           
-          {/* Facility Features - Add-ons style UI */}
-          <div style={{ marginBottom: '20px', background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', border: '1px solid rgba(0, 118, 187, 0.06)', overflow: 'hidden' }}>
-            <div style={{ padding: isMobile ? '16px' : '20px', borderBottom: (asset.features || []).length > 0 ? '1px solid rgba(0, 118, 187, 0.08)' : 'none' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+          {/* Facility Features - Collapsible */}
+          <div id={`features-${locationId}-${assetIndex}`} style={{ marginBottom: '20px', background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', border: '1px solid rgba(0, 118, 187, 0.06)', overflow: 'hidden', transition: 'box-shadow 0.3s ease' }}>
+            <div 
+              onClick={() => setShowFeatures(!showFeatures)}
+              style={{ 
+                padding: isMobile ? '16px' : '20px', 
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                transition: 'background 0.15s'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <ListChecks size={16} color={colors.blue} />
                 <h5 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#334155' }}>Facility Features</h5>
                 <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
+                {(asset.features || []).length > 0 && (
+                  <span style={{ padding: '2px 8px', borderRadius: '10px', background: 'rgba(0, 118, 187, 0.1)', color: colors.blue, fontSize: '11px', fontWeight: 600 }}>
+                    {(asset.features || []).length} selected
+                  </span>
+                )}
               </div>
-              <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8' }}>What features does this space have?</p>
+              <ChevronDown size={18} color="#64748b" style={{ transform: showFeatures ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
             </div>
             
-            {/* Selected features summary */}
-            {(asset.features || []).length > 0 && (
-              <div style={{ padding: '12px 16px', background: 'rgba(0, 118, 187, 0.06)', borderBottom: '1px solid rgba(0, 118, 187, 0.1)' }}>
-                <p style={{ margin: '0 0 8px', fontSize: '12px', fontWeight: 600, color: colors.blue }}>
-                  {(asset.features || []).length} selected
-                </p>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {showFeatures && (
+              <div style={{ padding: isMobile ? '0 16px 16px' : '0 20px 20px' }}>
+                <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#94a3b8' }}>What features does this space have?</p>
+                
+                {/* Selected features summary */}
+                {(asset.features || []).length > 0 && (
+                <div style={{ marginBottom: '12px', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                   {(asset.features || []).map(featureId => {
                     const feature = allFacilityFeatures.find(f => f.id === featureId);
                     return feature ? (
@@ -3402,70 +3668,47 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
                     ) : null;
                   })}
                 </div>
-              </div>
-            )}
+                )}
             
-            {/* Categorized features */}
-            <div style={{ padding: '0' }}>
+                {/* Categorized features */}
+                <div style={{ padding: '0' }}>
               {facilityFeatureCategories.map(category => {
                 const selectedInCategory = category.features.filter(f => 
                   (asset.features || []).includes(f.id)
                 ).length;
-                const [isOpen, setIsOpen] = React.useState(false);
                 
                 return (
-                  <div key={category.name} style={{ borderBottom: '1px solid rgba(0, 118, 187, 0.06)' }}>
-                    <button
-                      onClick={() => setIsOpen(!isOpen)}
-                      style={{
-                        width: '100%',
-                        padding: '12px 16px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        background: 'transparent',
-                        border: 'none',
-                        cursor: 'pointer',
-                        transition: 'background 0.15s'
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <span style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>{category.name}</span>
-                        {selectedInCategory > 0 && (
-                          <span style={{ padding: '2px 8px', borderRadius: '10px', background: 'rgba(0, 118, 187, 0.1)', color: colors.blue, fontSize: '11px', fontWeight: 600 }}>
-                            {selectedInCategory}
-                          </span>
-                        )}
-                      </div>
-                      <ChevronDown size={18} color="#64748b" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
-                    </button>
-                    {isOpen && (
-                      <div style={{ padding: '0 16px 12px', display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                        {category.features.map(feature => {
-                          const isSelected = (asset.features || []).includes(feature.id);
-                          return (
-                            <label key={feature.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', borderRadius: '8px', border: isSelected ? `2px solid ${colors.blue}` : '1px solid rgba(0, 0, 0, 0.1)', background: isSelected ? 'rgba(0, 118, 187, 0.06)' : 'white', cursor: 'pointer', transition: 'all 0.15s' }}>
-                              <input
-                                type="checkbox"
-                                checked={isSelected}
-                                onChange={() => {
-                                  const newFeatures = isSelected 
-                                    ? (asset.features || []).filter(f => f !== feature.id)
-                                    : [...(asset.features || []), feature.id];
-                                  updateAsset(locationId, assetIndex, 'features', newFeatures);
-                                }}
-                                style={{ width: '16px', height: '16px', accentColor: colors.blue }}
-                              />
-                              <span style={{ fontSize: '13px', fontWeight: 500, color: isSelected ? colors.blue : '#334155' }}>{feature.name}</span>
-                            </label>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
+                  <CollapsibleCategory 
+                    key={category.name}
+                    name={category.name}
+                    selectedCount={selectedInCategory}
+                    accentColor={colors.blue}
+                  >
+                    {category.features.map(feature => {
+                      const isSelected = (asset.features || []).includes(feature.id);
+                      return (
+                        <label key={feature.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', borderRadius: '8px', border: isSelected ? `2px solid ${colors.blue}` : '1px solid rgba(0, 0, 0, 0.1)', background: isSelected ? 'rgba(0, 118, 187, 0.06)' : 'white', cursor: 'pointer', transition: 'all 0.15s' }}>
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => {
+                              const newFeatures = isSelected 
+                                ? (asset.features || []).filter(f => f !== feature.id)
+                                : [...(asset.features || []), feature.id];
+                              updateAsset(locationId, assetIndex, 'features', newFeatures);
+                            }}
+                            style={{ width: '16px', height: '16px', accentColor: colors.blue }}
+                          />
+                          <span style={{ fontSize: '13px', fontWeight: 500, color: isSelected ? colors.blue : '#334155' }}>{feature.name}</span>
+                        </label>
+                      );
+                    })}
+                  </CollapsibleCategory>
                 );
               })}
-            </div>
+                </div>
+              </div>
+            )}
           </div>
           
           {/* Space Photos */}
@@ -3603,7 +3846,7 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
             ) : (
               <div style={{ marginBottom: '16px', padding: '12px 16px', background: 'rgba(0, 118, 187, 0.04)', borderRadius: '10px', border: '1px solid rgba(0, 118, 187, 0.1)' }}>
                 <p style={{ margin: 0, fontSize: '13px', color: '#64748b' }}>
-                  <strong style={{ color: '#334155' }}>Multi-step approval.</strong> Requests start at step 1, then move down. The person with the <span style={{ display: 'inline-flex', alignItems: 'center', verticalAlign: 'middle' }}><Crown size={14} color={colors.orange} style={{ margin: '0 3px' }} /></span> makes the final decision.
+                  <strong style={{ color: '#334155' }}>Multi-step approval.</strong> Requests start at step 1, then move down. The person with the <span style={{ display: 'inline-flex', alignItems: 'center', verticalAlign: 'middle' }}><Crown size={14} color={colors.green} style={{ margin: '0 3px' }} /></span> makes the final decision.
                 </p>
               </div>
             )}
@@ -3616,13 +3859,13 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
                   <div key={i} style={{ 
                     background: 'white', 
                     borderRadius: '10px', 
-                    border: isLast ? `2px solid ${colors.orange}` : '1px solid rgba(0, 118, 187, 0.1)',
+                    border: isLast ? `2px solid ${colors.green}` : '1px solid rgba(0, 118, 187, 0.1)',
                     padding: isMobile ? '12px' : '14px',
                     position: 'relative'
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
                       {isLast ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 10px', borderRadius: '6px', background: `linear-gradient(135deg, ${colors.orange}15 0%, ${colors.orange}25 100%)`, color: colors.orange }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 10px', borderRadius: '6px', background: `linear-gradient(135deg, ${colors.green}15 0%, ${colors.green}25 100%)`, color: colors.green }}>
                           <Crown size={14} />
                           <span style={{ fontSize: '12px', fontWeight: 700 }}>Final Approver</span>
                         </div>
@@ -3665,8 +3908,15 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
                     </div>
                     
                     <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '8px' }}>
-                      <input type="text" value={approver.name} onChange={(e) => updateApprover(locationId, assetIndex, i, 'name', e.target.value)} style={inputStyle} placeholder="Name" />
-                      <input type="email" value={approver.email} onChange={(e) => updateApprover(locationId, assetIndex, i, 'email', e.target.value)} style={inputStyle} placeholder="Email" autoCapitalize="none" />
+                      <input type="text" value={approver.name} onChange={(e) => updateApprover(locationId, assetIndex, i, 'name', e.target.value)} style={inputStyle} placeholder="Name (optional)" />
+                      <input 
+                        type="email" 
+                        value={approver.email} 
+                        onChange={(e) => updateApprover(locationId, assetIndex, i, 'email', e.target.value)} 
+                        style={!approver.email?.trim() ? inputErrorStyle : inputStyle} 
+                        placeholder="Email (required)" 
+                        autoCapitalize="none" 
+                      />
                     </div>
                   </div>
                 );
@@ -3679,39 +3929,61 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
               </p>
             )}
           </div>
-          <div style={{ background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', padding: isMobile ? '16px' : '20px', marginBottom: '20px', border: '1px solid rgba(0, 118, 187, 0.06)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <Mail size={16} color={colors.blue} />
-                <h5 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#64748b' }}>Keep others in the loop</h5>
-                <Tooltip text="These people receive booking notifications but don't need to approve anything. Great for custodians, admins, or coaches."><span /></Tooltip>
+          
+          {/* Notification Recipients - Collapsible */}
+          <div style={{ background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', marginBottom: '20px', border: '1px solid rgba(0, 118, 187, 0.06)', overflow: 'hidden' }}>
+            <div 
+              onClick={() => setShowNotifications(!showNotifications)}
+              style={{ 
+                padding: isMobile ? '14px 16px' : '16px 20px', 
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Mail size={16} color="#94a3b8" />
+                <span style={{ fontSize: '13px', fontWeight: 600, color: '#64748b' }}>Notify others about bookings</span>
+                <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
+                {(asset.notifications || []).filter(n => n.email?.trim()).length > 0 && (
+                  <span style={{ padding: '2px 8px', borderRadius: '10px', background: 'rgba(0, 118, 187, 0.1)', color: colors.blue, fontSize: '11px', fontWeight: 600 }}>
+                    {(asset.notifications || []).filter(n => n.email?.trim()).length} added
+                  </span>
+                )}
               </div>
-              <button onClick={() => addNotification(locationId, assetIndex)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '6px', border: 'none', background: `rgba(0, 168, 79, 0.1)`, color: colors.green, fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}><Plus size={14} />Add</button>
+              <ChevronDown size={18} color="#94a3b8" style={{ transform: showNotifications ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
             </div>
-            <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#94a3b8' }}>Get notified about bookings but don't need to approve.</p>
-            <div style={{ display: 'grid', gap: '8px' }}>
-              {(asset.notifications || []).map((notif, i) => (
-                <div key={i} style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr auto' : '1fr 1fr auto', gap: '8px', alignItems: 'center' }}>
-                  {isMobile ? (
-                    <>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <input type="text" value={notif.name} onChange={(e) => updateNotification(locationId, assetIndex, i, 'name', e.target.value)} style={inputStyle} placeholder="Name" />
-                        <input type="email" value={notif.email} onChange={(e) => updateNotification(locationId, assetIndex, i, 'email', e.target.value)} style={inputStyle} placeholder="Email" autoCapitalize="none" />
-                      </div>
-                      {(asset.notifications || []).length > 1 && <button onClick={() => removeNotification(locationId, assetIndex, i)} style={{ padding: '8px', borderRadius: '6px', border: 'none', background: 'transparent', color: '#94a3b8', cursor: 'pointer', alignSelf: 'start', marginTop: '8px' }}><Trash2 size={16} /></button>}
-                    </>
-                  ) : (
-                    <>
-                      <input type="text" value={notif.name} onChange={(e) => updateNotification(locationId, assetIndex, i, 'name', e.target.value)} style={inputStyle} placeholder="Name" />
-                      <input type="email" value={notif.email} onChange={(e) => updateNotification(locationId, assetIndex, i, 'email', e.target.value)} style={inputStyle} placeholder="Email" autoCapitalize="none" />
-                      {(asset.notifications || []).length > 1 && <button onClick={() => removeNotification(locationId, assetIndex, i)} style={{ padding: '8px', borderRadius: '6px', border: 'none', background: 'transparent', color: '#94a3b8', cursor: 'pointer' }}><Trash2 size={16} /></button>}
-                    </>
-                  )}
+            
+            {showNotifications && (
+              <div style={{ padding: isMobile ? '0 16px 16px' : '0 20px 20px', borderTop: '1px solid rgba(0, 0, 0, 0.04)' }}>
+                <p style={{ margin: '12px 0', fontSize: '13px', color: '#94a3b8' }}>These people get booking notifications but don't need to approve. Great for custodians, admins, or coaches.</p>
+                <div style={{ display: 'grid', gap: '8px' }}>
+                  {(asset.notifications || []).map((notif, i) => (
+                    <div key={i} style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr auto' : '1fr 1fr auto', gap: '8px', alignItems: 'center' }}>
+                      {isMobile ? (
+                        <>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <input type="text" value={notif.name} onChange={(e) => updateNotification(locationId, assetIndex, i, 'name', e.target.value)} style={inputStyle} placeholder="Name" />
+                            <input type="email" value={notif.email} onChange={(e) => updateNotification(locationId, assetIndex, i, 'email', e.target.value)} style={inputStyle} placeholder="Email" autoCapitalize="none" />
+                          </div>
+                          {(asset.notifications || []).length > 1 && <button onClick={() => removeNotification(locationId, assetIndex, i)} style={{ padding: '8px', borderRadius: '6px', border: 'none', background: 'transparent', color: '#94a3b8', cursor: 'pointer', alignSelf: 'start', marginTop: '8px' }}><Trash2 size={16} /></button>}
+                        </>
+                      ) : (
+                        <>
+                          <input type="text" value={notif.name} onChange={(e) => updateNotification(locationId, assetIndex, i, 'name', e.target.value)} style={inputStyle} placeholder="Name (optional)" />
+                          <input type="email" value={notif.email} onChange={(e) => updateNotification(locationId, assetIndex, i, 'email', e.target.value)} style={inputStyle} placeholder="Email" autoCapitalize="none" />
+                          {(asset.notifications || []).length > 1 && <button onClick={() => removeNotification(locationId, assetIndex, i)} style={{ padding: '8px', borderRadius: '6px', border: 'none', background: 'transparent', color: '#94a3b8', cursor: 'pointer' }}><Trash2 size={16} /></button>}
+                        </>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+                <button onClick={() => addNotification(locationId, assetIndex)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '6px', border: '1px dashed rgba(0, 168, 79, 0.4)', background: 'transparent', color: colors.green, fontSize: '12px', fontWeight: 600, cursor: 'pointer', marginTop: '12px' }}><Plus size={14} />Add Another Person</button>
+              </div>
+            )}
           </div>
-          <div style={{ background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', padding: isMobile ? '16px' : '20px', border: '1px solid rgba(0, 118, 187, 0.06)' }}>
+          <div id={`amenities-${locationId}-${assetIndex}`} style={{ background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', padding: isMobile ? '16px' : '20px', border: '1px solid rgba(0, 118, 187, 0.06)', transition: 'box-shadow 0.3s ease' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
               <DollarSign size={16} color={colors.blue} />
               <h5 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#64748b' }}>Optional Add-ons</h5>
@@ -3779,116 +4051,18 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
                 const selectedInCategory = category.items.filter(item => 
                   asset.amenities.some(a => a.id === item.id)
                 ).length;
-                const [isOpen, setIsOpen] = React.useState(selectedInCategory > 0);
                 
                 return (
-                  <div key={category.name} style={{ border: '1px solid rgba(0, 118, 187, 0.1)', borderRadius: '10px', overflow: 'hidden' }}>
-                    <button
-                      onClick={() => setIsOpen(!isOpen)}
-                      style={{
-                        width: '100%',
-                        padding: '12px 14px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        background: isOpen ? 'rgba(0, 118, 187, 0.04)' : 'white',
-                        border: 'none',
-                        cursor: 'pointer',
-                        transition: 'background 0.2s'
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <span style={{ fontSize: '14px', fontWeight: 600, color: '#1e293b' }}>{category.name}</span>
-                        <span style={{ fontSize: '12px', color: '#94a3b8' }}>({category.items.length} items)</span>
-                        {selectedInCategory > 0 && (
-                          <span style={{ padding: '2px 8px', borderRadius: '10px', background: colors.green, color: 'white', fontSize: '11px', fontWeight: 600 }}>
-                            {selectedInCategory} selected
-                          </span>
-                        )}
-                      </div>
-                      <ChevronDown size={18} color="#64748b" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
-                    </button>
-                    {isOpen && (
-                      <div style={{ padding: '8px', borderTop: '1px solid rgba(0, 118, 187, 0.08)', background: 'white' }}>
-                        <div style={{ display: 'grid', gap: '6px' }}>
-                          {category.items.map(addon => {
-                            const isSelected = asset.amenities.some(a => a.id === addon.id);
-                            const selectedAmenity = asset.amenities.find(a => a.id === addon.id);
-                            return (
-                              <div key={addon.id} style={{ 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                gap: '10px',
-                                padding: '10px 12px',
-                                borderRadius: '8px',
-                                border: isSelected ? `1px solid ${colors.blue}` : '1px solid transparent',
-                                background: isSelected ? 'rgba(0, 118, 187, 0.04)' : 'rgba(248, 250, 252, 0.5)',
-                                transition: 'all 0.15s'
-                              }}>
-                                <button
-                                  onClick={() => {
-                                    if (isSelected) {
-                                      const newAmenities = asset.amenities.filter(a => a.id !== addon.id);
-                                      updateAsset(locationId, assetIndex, 'amenities', newAmenities.length > 0 ? newAmenities : [{ name: '', price: '', isCustom: true }]);
-                                    } else {
-                                      const newAmenity = { id: addon.id, name: addon.name, price: '', isCustom: false };
-                                      const filtered = asset.amenities.filter(a => a.name || a.price);
-                                      updateAsset(locationId, assetIndex, 'amenities', [...filtered, newAmenity]);
-                                    }
-                                  }}
-                                  style={{
-                                    width: '20px',
-                                    height: '20px',
-                                    borderRadius: '5px',
-                                    border: isSelected ? 'none' : '2px solid #cbd5e1',
-                                    background: isSelected ? `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)` : 'white',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    flexShrink: 0,
-                                    padding: 0
-                                  }}
-                                >
-                                  {isSelected && <Check size={12} color="white" />}
-                                </button>
-                                <div style={{ flex: 1, minWidth: 0 }}>
-                                  <span style={{ fontSize: '13px', fontWeight: 500, color: '#1e293b' }}>{addon.name}</span>
-                                  {!isMobile && <p style={{ margin: '2px 0 0', fontSize: '11px', color: '#94a3b8' }}>{addon.description}</p>}
-                                </div>
-                                {isSelected && (
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
-                                    <span style={{ fontSize: '13px', color: '#64748b' }}>$</span>
-                                    <input
-                                      type="number"
-                                      value={selectedAmenity?.price || ''}
-                                      onChange={(e) => {
-                                        const newAmenities = asset.amenities.map(a => 
-                                          a.id === addon.id ? { ...a, price: e.target.value } : a
-                                        );
-                                        updateAsset(locationId, assetIndex, 'amenities', newAmenities);
-                                      }}
-                                      onClick={(e) => e.stopPropagation()}
-                                      style={{ 
-                                        ...inputStyle, 
-                                        width: '70px', 
-                                        padding: '6px 8px',
-                                        textAlign: 'right',
-                                        fontSize: '13px'
-                                      }}
-                                      placeholder="0"
-                                      inputMode="decimal"
-                                      min="0"
-                                    />
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  <AmenityCategory 
+                    key={category.name}
+                    category={category}
+                    selectedInCategory={selectedInCategory}
+                    asset={asset}
+                    locationId={locationId}
+                    assetIndex={assetIndex}
+                    updateAsset={updateAsset}
+                    inputStyle={inputStyle}
+                  />
                 );
               })}
             </div>
@@ -3961,9 +4135,8 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
 
 function LocationCard({ location, handlers, canRemove, isMobile, errors, contactInfo, allLocations, onCopySettings, initiallyCollapsed = false, isFirstLocation = false, isHighlighted = false, expandSpaceIndex = null }) {
   const [isExpanded, setIsExpanded] = useState(!initiallyCollapsed || isHighlighted);
-  // Start with no space expanded if any spaces were bulk added, otherwise expand first one
-  const hasBulkAddedSpaces = location.assets.some(a => a.bulkAdded);
-  const [expandedAsset, setExpandedAsset] = useState(hasBulkAddedSpaces ? -1 : (location.assets.length > 0 ? 0 : -1));
+  // Start with all spaces collapsed by default
+  const [expandedAsset, setExpandedAsset] = useState(-1);
   const [contactMode, setContactMode] = useState(null); // null = choosing, 'self' = use own info, 'other' = new contact
   const [showBulkAdd, setShowBulkAdd] = useState(false);
   const [bulkNames, setBulkNames] = useState('');
@@ -4087,9 +4260,44 @@ function LocationCard({ location, handlers, canRemove, isMobile, errors, contact
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', flexWrap: 'wrap' }}>
               <span style={{ padding: '3px 8px', borderRadius: '5px', background: 'rgba(0, 118, 187, 0.1)', color: colors.blue, fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' }}>{typeInfo.label}</span>
               <span style={{ fontSize: '13px', color: '#64748b' }}>{location.assets.length} {location.assets.length === 1 ? 'space' : 'spaces'}</span>
-              {!isExpanded && !isLocationComplete && (
-                <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 500 }}>• Incomplete</span>
-              )}
+              {!isExpanded && !isLocationComplete && (() => {
+                // Calculate incomplete required fields
+                const completion = calculateCompletionScore(location);
+                let totalRequired = 0;
+                let completedRequired = 0;
+                
+                // Location level
+                if (location.name?.trim()) completedRequired++;
+                totalRequired++;
+                if (location.address?.trim()) completedRequired++;
+                totalRequired++;
+                if (location.contactName?.trim()) completedRequired++;
+                totalRequired++;
+                if (location.contactEmail?.trim()) completedRequired++;
+                totalRequired++;
+                
+                // Space level (5 required fields per space)
+                location.assets?.forEach(space => {
+                  if (space.name?.trim()) completedRequired++;
+                  totalRequired++;
+                  if (space.type) completedRequired++;
+                  totalRequired++;
+                  if (space.indoorOutdoor) completedRequired++;
+                  totalRequired++;
+                  if (space.pricing?.trim()) completedRequired++;
+                  totalRequired++;
+                  if (space.approvers?.[0]?.email?.trim()) completedRequired++;
+                  totalRequired++;
+                });
+                
+                const incompleteFields = totalRequired - completedRequired;
+                
+                return (
+                  <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 500 }}>
+                    • {incompleteFields} of {totalRequired} required fields incomplete
+                  </span>
+                );
+              })()}
             </div>
           </div>
         </div>
@@ -4592,7 +4800,7 @@ function LocationsStep({ locations, setLocations, isMobile, errors, contactInfo,
       )}
       
       {showAddModal && (
-        <div className="animate-fade-in" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: isMobile ? 'flex-end' : 'center', justifyContent: 'center', zIndex: 1000, padding: isMobile ? 0 : '20px' }} onClick={() => setShowAddModal(false)}>
+        <div className="animate-fade-in" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: isMobile ? 'flex-end' : 'center', justifyContent: 'center', zIndex: 9999, padding: isMobile ? 0 : '20px' }} onClick={() => setShowAddModal(false)}>
           <div onClick={(e) => e.stopPropagation()} className={isMobile ? 'animate-fade-in-up' : 'animate-scale-in'} style={{ 
             background: 'white', 
             borderRadius: isMobile ? '20px 20px 0 0' : '20px', 
@@ -4644,7 +4852,7 @@ function LocationsStep({ locations, setLocations, isMobile, errors, contactInfo,
       
       {/* Bulk Add Locations Modal */}
       {showBulkAddLocations && (
-        <div className="animate-fade-in" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: isMobile ? 'flex-end' : 'center', justifyContent: 'center', zIndex: 1000, padding: isMobile ? 0 : '20px' }} onClick={() => setShowBulkAddLocations(false)}>
+        <div className="animate-fade-in" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: isMobile ? 'flex-end' : 'center', justifyContent: 'center', zIndex: 9999, padding: isMobile ? 0 : '20px' }} onClick={() => setShowBulkAddLocations(false)}>
           <div onClick={(e) => e.stopPropagation()} className={isMobile ? 'animate-fade-in-up' : 'animate-scale-in'} style={{ 
             background: 'white', 
             borderRadius: isMobile ? '20px 20px 0 0' : '20px', 
@@ -4740,7 +4948,7 @@ function LocationsStep({ locations, setLocations, isMobile, errors, contactInfo,
           errors={errors?.[idx]} 
           contactInfo={contactInfo} 
           allLocations={locations}
-          initiallyCollapsed={location.bulkAdded === true}
+          initiallyCollapsed={true}
           isFirstLocation={idx === 0}
           isHighlighted={highlightedLocationId === location.id}
           expandSpaceIndex={highlightedLocationId === location.id ? expandSpaceIndex : null}
@@ -5182,7 +5390,7 @@ export default function PracticePlanOnboarding() {
   };
 
   // Handle clicking a location from the overview panel
-  const handleOverviewLocationClick = (locationId, spaceIndex = null) => {
+  const handleOverviewLocationClick = (locationId, spaceIndex = null, section = null) => {
     setOverviewOpen(false);
     
     // Navigate to Locations step if not already there
@@ -5200,6 +5408,22 @@ export default function PracticePlanOnboarding() {
       if (locationElement) {
         locationElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
+      
+      // If a specific section is requested, scroll to it after space expands
+      if (section && spaceIndex !== null) {
+        setTimeout(() => {
+          const sectionElement = document.getElementById(`${section}-${locationId}-${spaceIndex}`);
+          if (sectionElement) {
+            sectionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Highlight the section briefly
+            sectionElement.style.boxShadow = `0 0 0 3px ${colors.blue}`;
+            setTimeout(() => {
+              sectionElement.style.boxShadow = '';
+            }, 2000);
+          }
+        }, 400);
+      }
+      
       // Remove highlight after animation
       setTimeout(() => {
         setHighlightedLocationId(null);
@@ -5563,6 +5787,11 @@ export default function PracticePlanOnboarding() {
         onClearForm={clearForm}
         policies={policies}
         contactInfo={contactInfo}
+        onNavigateToStep={(step) => {
+          setOverviewOpen(false);
+          setCurrentStep(step);
+          window.scrollTo(0, 0);
+        }}
       />
       
       {/* Resume Draft Modal */}
