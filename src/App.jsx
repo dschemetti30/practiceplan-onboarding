@@ -1237,8 +1237,8 @@ const ProgressEdgeTab = ({ onClick, incompleteCount, overallScore }) => (
       right: 0,
       top: '50%',
       transform: 'translateY(-50%)',
-      width: '48px',
-      height: '120px',
+      width: '52px',
+      height: '110px',
       background: `linear-gradient(180deg, ${colors.blue} 0%, ${colors.green} 100%)`,
       border: 'none',
       borderRadius: '12px 0 0 12px',
@@ -1247,48 +1247,55 @@ const ProgressEdgeTab = ({ onClick, incompleteCount, overallScore }) => (
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: '8px',
-      boxShadow: '-4px 0 20px rgba(0, 0, 0, 0.15)',
+      gap: '10px',
+      boxShadow: '-4px 0 20px rgba(0, 0, 0, 0.15), inset 2px 0 0 rgba(255,255,255,0.2)',
       zIndex: 100,
-      transition: 'width 0.2s ease'
+      transition: 'all 0.2s ease',
+      padding: '14px 8px 14px 6px'
     }}
-    onMouseEnter={(e) => e.currentTarget.style.width = '56px'}
-    onMouseLeave={(e) => e.currentTarget.style.width = '48px'}
+    onMouseEnter={(e) => { e.currentTarget.style.width = '58px'; e.currentTarget.style.paddingRight = '14px'; }}
+    onMouseLeave={(e) => { e.currentTarget.style.width = '52px'; e.currentTarget.style.paddingRight = '8px'; }}
   >
-    <ClipboardList size={22} color="white" />
+    {/* Clipboard with notification badge overlay */}
+    <div style={{ position: 'relative' }}>
+      <ClipboardList size={22} color="white" />
+      {incompleteCount > 0 && (
+        <div style={{
+          position: 'absolute',
+          top: '-6px',
+          right: '-8px',
+          width: '18px',
+          height: '18px',
+          borderRadius: '50%',
+          background: '#ef4444',
+          color: 'white',
+          fontSize: '10px',
+          fontWeight: 700,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          border: '2px solid rgba(255,255,255,0.3)'
+        }}>
+          {incompleteCount}
+        </div>
+      )}
+    </div>
+    
+    {/* Percentage circle */}
     <div style={{
-      width: '32px',
-      height: '32px',
+      width: '36px',
+      height: '36px',
       borderRadius: '50%',
       background: 'rgba(255, 255, 255, 0.2)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      fontSize: '12px',
+      fontSize: '11px',
       fontWeight: 700,
       color: 'white'
     }}>
       {overallScore}%
     </div>
-    {incompleteCount > 0 && (
-      <div style={{
-        position: 'absolute',
-        top: '8px',
-        right: '8px',
-        width: '18px',
-        height: '18px',
-        borderRadius: '50%',
-        background: '#ef4444',
-        color: 'white',
-        fontSize: '10px',
-        fontWeight: 700,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
-        {incompleteCount}
-      </div>
-    )}
   </button>
 );
 
