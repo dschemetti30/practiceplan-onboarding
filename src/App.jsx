@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Check, ChevronRight, ChevronLeft, ChevronUp, ChevronDown, Building2, FileText, Shield, Clock, Users, DollarSign, Plus, Trash2, MapPin, Mail, User, X, School, Copy, Sparkles, PartyPopper, HelpCircle, AlertCircle, Crown, Save, Eye, Layers, Church, Landmark, Building, Home, Upload, File, Camera, Image, RotateCcw, CloudRain, Zap, RefreshCw, Lock, SkipForward, Sun, Ruler, Tag, ListChecks, Calendar, Bell, Rocket, Globe, TrendingUp, Headphones, ClipboardList, ArrowRight, Table, BarChart3 } from 'lucide-react';
+import { Check, ChevronRight, ChevronLeft, ChevronUp, ChevronDown, Building2, FileText, Shield, Clock, Users, DollarSign, Plus, Trash2, MapPin, Mail, User, X, School, Copy, Sparkles, PartyPopper, HelpCircle, AlertCircle, Crown, Save, Eye, Layers, Church, Landmark, Building, Home, Upload, File, Camera, Image, RotateCcw, CloudRain, Zap, RefreshCw, Lock, SkipForward, Sun, Ruler, Tag, ListChecks, Calendar, Bell, Rocket, Globe, TrendingUp, Headphones, ClipboardList, ArrowRight, Table, BarChart3, XCircle } from 'lucide-react';
 
 // Mobile detection hook
 const useIsMobile = () => {
@@ -844,10 +844,11 @@ const SectionTitle = ({ icon: Icon, title, subtitle, isMobile }) => (
   </div>
 );
 
-const FormGroup = ({ label, hint, children, required, error, tooltip }) => (
+const FormGroup = ({ label, hint, children, required, error, tooltip, isEmpty }) => (
   <div style={{ marginBottom: '20px' }}>
-    <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '14px', fontWeight: 600, color: '#334155', marginBottom: '8px' }}>
-      {label}{required && <span style={{ color: colors.red, marginLeft: '2px' }}>*</span>}
+    <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', fontWeight: 600, color: '#334155', marginBottom: '8px' }}>
+      {label}
+      {required && <span style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 400 }}>*</span>}
       {tooltip && <Tooltip text={tooltip}><span /></Tooltip>}
     </label>
     {hint && <p style={{ margin: '0 0 8px', fontSize: '13px', color: '#64748b' }}>{hint}</p>}
@@ -901,7 +902,7 @@ const PhotoUpload = ({ photos = [], onAdd, onRemove, maxPhotos = 5, isMobile, hi
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
           <Camera size={16} color={colors.blue} />
           <span style={{ fontSize: '14px', fontWeight: 600, color: '#64748b' }}>Photos</span>
-          <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
+          
         </div>
       )}
       
@@ -1497,8 +1498,14 @@ const TableEditor = ({ locations, setLocations, onClose, onEditDetails, isMobile
   };
   
   const deleteLocation = (locationId) => {
-    if (window.confirm('Delete this location and all its spaces?')) {
-      setLocations(prev => prev.filter(loc => loc.id !== locationId));
+    const loc = locations.find(c => c.id === locationId);
+    const spacesCount = loc?.assets?.length || 0;
+    const locationName = loc?.name || 'this location';
+    const message = spacesCount > 0 
+      ? `Delete "${locationName}" and its ${spacesCount} rentable space${spacesCount > 1 ? 's' : ''}?`
+      : `Delete "${locationName}"?`;
+    if (window.confirm(message)) {
+      setLocations(prev => prev.filter(l => l.id !== locationId));
     }
   };
   
@@ -1570,11 +1577,16 @@ const TableEditor = ({ locations, setLocations, onClose, onEditDetails, isMobile
                   {locations.map((location, locIndex) => (
                     <React.Fragment key={location.id}>
                       {location.assets.length === 0 ? (
-                        <tr style={{ borderBottom: '1px solid rgba(0, 0, 0, 0.05)' }}>
+                        <tr style={{ borderBottom: '1px solid rgba(0, 0, 0, 0.05)', background: 'rgba(239, 68, 68, 0.03)' }}>
                           <td style={{ padding: '4px 8px', verticalAlign: 'middle' }}>
                             <EditableCell value={location.name} onChange={(val) => updateLocation(location.id, 'name', val)} placeholder="Location name" isRequired={true} isEmpty={!location.name?.trim()} />
                           </td>
-                          <td colSpan={10} style={{ padding: '12px 16px', color: '#94a3b8', fontSize: '13px', fontStyle: 'italic' }}>No spaces added yet</td>
+                          <td colSpan={10} style={{ padding: '12px 16px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ef4444', fontSize: '13px', fontWeight: 500 }}>
+                              <AlertCircle size={16} />
+                              No rentable spaces - <button onClick={() => onEditDetails(location.id, null)} style={{ background: 'none', border: 'none', color: colors.blue, fontSize: '13px', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>add spaces</button>
+                            </div>
+                          </td>
                           <td style={{ padding: '4px 8px', textAlign: 'center' }}>
                             <button onClick={() => deleteLocation(location.id)} style={{ padding: '6px', borderRadius: '6px', border: 'none', background: 'transparent', color: '#94a3b8', cursor: 'pointer' }} title="Delete location"><Trash2 size={14} /></button>
                           </td>
@@ -2679,13 +2691,13 @@ function ContactInfoStep({ data, update, errors, isMobile, onDraftFound, isCheck
       <SectionTitle icon={User} title="Let's Start With You" subtitle="Tell us a bit about yourself so we can keep you updated on your setup." isMobile={isMobile} />
       <CardSection isMobile={isMobile}>
         <div style={{ maxWidth: '600px' }}>
-          <FormGroup label="Full Name" required error={errors.fullName}>
+          <FormGroup label="Full Name" required error={errors.fullName} isEmpty={!data.fullName?.trim()}>
             <input type="text" value={data.fullName} onChange={(e) => update('fullName', e.target.value)} style={errors.fullName ? inputErrorStyle : inputStyle} placeholder="e.g., John Smith" />
           </FormGroup>
-          <FormGroup label="Organization Name" required error={errors.organization}>
+          <FormGroup label="Organization Name" required error={errors.organization} isEmpty={!data.organization?.trim()}>
             <input type="text" value={data.organization} onChange={(e) => update('organization', e.target.value)} style={errors.organization ? inputErrorStyle : inputStyle} placeholder="e.g., Springfield School District, First Baptist Church" />
           </FormGroup>
-          <FormGroup label="Email Address" required error={errors.email}>
+          <FormGroup label="Email Address" required error={errors.email} isEmpty={!data.email?.trim()}>
             <div style={{ position: 'relative' }}>
               <input 
                 type="email" 
@@ -2703,9 +2715,116 @@ function ContactInfoStep({ data, update, errors, isMobile, onDraftFound, isCheck
               )}
             </div>
           </FormGroup>
-          <FormGroup label="Mobile Phone" required error={errors.phone}>
+          <FormGroup label="Mobile Phone" required error={errors.phone} isEmpty={!data.phone?.trim()}>
             <input type="tel" value={data.phone} onChange={(e) => update('phone', e.target.value)} style={errors.phone ? inputErrorStyle : inputStyle} placeholder="(555) 123-4567" />
           </FormGroup>
+        </div>
+      </CardSection>
+      
+      {/* Administrator Email Section */}
+      <CardSection isMobile={isMobile}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+          <div style={{ 
+            width: '40px', 
+            height: '40px', 
+            borderRadius: '10px', 
+            background: `linear-gradient(135deg, ${colors.green}15 0%, ${colors.green}25 100%)`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0
+          }}>
+            <Crown size={20} color={colors.green} />
+          </div>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Account Administrator</h3>
+            <p style={{ margin: '2px 0 0', fontSize: '13px', color: '#64748b' }}>Who should have admin access to manage bookings and settings?</p>
+          </div>
+        </div>
+        
+        <div style={{ maxWidth: '600px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
+            <label 
+              onClick={() => update('adminEmailSameAsPersonal', true)}
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '12px', 
+                padding: '14px 16px', 
+                borderRadius: '10px', 
+                border: data.adminEmailSameAsPersonal ? `2px solid ${colors.green}` : '1px solid rgba(0, 0, 0, 0.1)', 
+                background: data.adminEmailSameAsPersonal ? 'rgba(0, 168, 79, 0.06)' : 'white',
+                cursor: 'pointer',
+                transition: 'all 0.15s'
+              }}
+            >
+              <div style={{
+                width: '20px',
+                height: '20px',
+                borderRadius: '50%',
+                border: data.adminEmailSameAsPersonal ? `6px solid ${colors.green}` : '2px solid #cbd5e1',
+                background: 'white',
+                flexShrink: 0
+              }} />
+              <div>
+                <span style={{ fontSize: '14px', fontWeight: 600, color: data.adminEmailSameAsPersonal ? colors.green : '#334155' }}>Use my email address</span>
+                {data.email && <span style={{ fontSize: '13px', color: '#64748b', marginLeft: '8px' }}>({data.email})</span>}
+              </div>
+            </label>
+            
+            <label 
+              onClick={() => update('adminEmailSameAsPersonal', false)}
+              style={{ 
+                display: 'flex', 
+                alignItems: 'flex-start', 
+                gap: '12px', 
+                padding: '14px 16px', 
+                borderRadius: '10px', 
+                border: data.adminEmailSameAsPersonal === false ? `2px solid ${colors.green}` : '1px solid rgba(0, 0, 0, 0.1)', 
+                background: data.adminEmailSameAsPersonal === false ? 'rgba(0, 168, 79, 0.06)' : 'white',
+                cursor: 'pointer',
+                transition: 'all 0.15s'
+              }}
+            >
+              <div style={{
+                width: '20px',
+                height: '20px',
+                borderRadius: '50%',
+                border: data.adminEmailSameAsPersonal === false ? `6px solid ${colors.green}` : '2px solid #cbd5e1',
+                background: 'white',
+                flexShrink: 0,
+                marginTop: '2px'
+              }} />
+              <div style={{ flex: 1 }}>
+                <span style={{ fontSize: '14px', fontWeight: 600, color: data.adminEmailSameAsPersonal === false ? colors.green : '#334155' }}>Use a different email</span>
+                <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#94a3b8' }}>For a shared inbox or another team member</p>
+              </div>
+            </label>
+          </div>
+          
+          {data.adminEmailSameAsPersonal === false && (
+            <div className="animate-fade-in" style={{ marginTop: '12px' }}>
+              <FormGroup label="Administrator Email" required error={errors.adminEmail} isEmpty={!data.adminEmail?.trim()}>
+                <input 
+                  type="email" 
+                  value={data.adminEmail || ''} 
+                  onChange={(e) => update('adminEmail', e.target.value)} 
+                  style={errors.adminEmail ? inputErrorStyle : inputStyle} 
+                  placeholder="admin@example.org" 
+                  autoCapitalize="none" 
+                />
+              </FormGroup>
+              <FormGroup label="Administrator Name">
+                <input 
+                  type="text" 
+                  value={data.adminName || ''} 
+                  onChange={(e) => update('adminName', e.target.value)} 
+                  style={inputStyle} 
+                  placeholder="e.g., Jane Doe" 
+                />
+              </FormGroup>
+            </div>
+          )}
         </div>
       </CardSection>
       
@@ -2881,10 +3000,9 @@ function PoliciesStep({ data, update, isMobile }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
           <Calendar size={18} color={colors.blue} />
           <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Booking Period</h3>
-          <Tooltip text="When do you want to start accepting bookings, and how far in advance can people book?"><span /></Tooltip>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-          <FormGroup label="When do you want to go live?" tooltip="The date you want to start allowing the public to make bookings on PracticePlan.">
+          <FormGroup label="When do you want to go live?">
             <input 
               type="date" 
               value={data.goLiveDate || ''} 
@@ -2893,7 +3011,7 @@ function PoliciesStep({ data, update, isMobile }) {
               min={new Date().toISOString().split('T')[0]}
             />
           </FormGroup>
-          <FormGroup label="How far in advance can people book?" tooltip="The maximum number of months into the future that renters can reserve your spaces.">
+          <FormGroup label="How far in advance can people book?">
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {[
                 { value: '1', label: '1 month' },
@@ -2948,13 +3066,8 @@ function PoliciesStep({ data, update, isMobile }) {
         <div style={{ display: 'grid', gap: '16px' }}>
           {/* Require Approval Toggle */}
           <div style={{ padding: '16px', background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', border: '1px solid rgba(0, 118, 187, 0.08)' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
-              <div style={{ flex: 1 }}>
-                <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#1e293b' }}>Require approval before reservations are confirmed?</p>
-                <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#64748b' }}>
-                  If yes, an approver must approve each reservation within 7 days, or it will be automatically rejected.
-                </p>
-              </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
+              <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#1e293b' }}>Require approval before bookings are confirmed?</p>
               <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
                 <button 
                   onClick={() => update('requireApproval', 'yes')} 
@@ -2992,16 +3105,8 @@ function PoliciesStep({ data, update, isMobile }) {
           
           {/* Notification Toggle */}
           <div style={{ padding: '16px', background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', border: '1px solid rgba(0, 118, 187, 0.08)' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Bell size={16} color={colors.blue} />
-                  <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#1e293b' }}>Receive notifications when a reservation is submitted?</p>
-                </div>
-                <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#64748b' }}>
-                  Get notified when someone submits a reservation for approval. This is separate from confirmation notifications.
-                </p>
-              </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
+              <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#1e293b' }}>Get notified when bookings are submitted?</p>
               <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
                 <button 
                   onClick={() => update('notifyOnBooking', 'yes')} 
@@ -3040,195 +3145,185 @@ function PoliciesStep({ data, update, isMobile }) {
       </CardSection>
       
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '16px' : '24px' }}>
-        {/* 1. Booking Increments - First */}
+        {/* 1. Booking Increments */}
         <CardSection isMobile={isMobile}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
             <Clock size={18} color={colors.blue} />
-            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Booking Increments</h3>
-            <Tooltip text="This determines the minimum booking length and how time slots appear to renters. 1-hour slots are most common."><span /></Tooltip>
+            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: '#1e293b' }}>Booking Increments</h3>
           </div>
-          <FormGroup label="Time Slots">
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: showCustomIncrement ? '12px' : 0 }}>
-              {[
-                { value: '30', label: '30 min' },
-                { value: '60', label: '1 hour' },
-                { value: '90', label: '90 min' },
-                { value: '120', label: '2 hours' },
-                { value: 'custom', label: 'Custom' },
-                { value: 'unsure', label: 'Not sure yet' },
-              ].map(opt => (
-                <button 
-                  key={opt.value} 
-                  onClick={() => handleIncrementChange(opt.value)} 
-                  style={{ 
-                    padding: '10px 14px', 
-                    borderRadius: '8px', 
-                    cursor: 'pointer', 
-                    transition: 'all 0.2s', 
-                    border: (data.timeIncrement === opt.value || (showCustomIncrement && opt.value === 'custom')) ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)', 
-                    background: (data.timeIncrement === opt.value || (showCustomIncrement && opt.value === 'custom')) ? `rgba(0, 118, 187, 0.08)` : 'white', 
-                    color: (data.timeIncrement === opt.value || (showCustomIncrement && opt.value === 'custom')) ? colors.blue : '#64748b', 
-                    fontSize: '13px', 
-                    fontWeight: 600 
-                  }}
-                >
-                  {opt.label}
-                </button>
-              ))}
+          <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#64748b' }}>Minimum booking length for renters</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+            {[
+              { value: '30', label: '30 min' },
+              { value: '60', label: '1 hour' },
+              { value: '90', label: '90 min' },
+              { value: '120', label: '2 hours' },
+              { value: 'custom', label: 'Custom' },
+              { value: 'unsure', label: 'Not sure' },
+            ].map(opt => (
+              <button 
+                key={opt.value} 
+                onClick={() => handleIncrementChange(opt.value)} 
+                style={{ 
+                  padding: '10px 8px', 
+                  borderRadius: '8px', 
+                  cursor: 'pointer', 
+                  transition: 'all 0.2s', 
+                  border: (data.timeIncrement === opt.value || (showCustomIncrement && opt.value === 'custom')) ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)', 
+                  background: (data.timeIncrement === opt.value || (showCustomIncrement && opt.value === 'custom')) ? `rgba(0, 118, 187, 0.08)` : 'white', 
+                  color: (data.timeIncrement === opt.value || (showCustomIncrement && opt.value === 'custom')) ? colors.blue : '#64748b', 
+                  fontSize: '13px', 
+                  fontWeight: 600 
+                }}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          {showCustomIncrement && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px' }}>
+              <input 
+                type="number" 
+                value={data.customTimeIncrement || ''} 
+                onChange={(e) => update('customTimeIncrement', e.target.value)}
+                style={{ ...inputStyle, width: '80px' }}
+                placeholder="0"
+                min="15"
+                step="15"
+              />
+              <span style={{ fontSize: '14px', color: '#64748b' }}>minutes</span>
             </div>
-            {showCustomIncrement && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <input 
-                  type="number" 
-                  value={data.customTimeIncrement || ''} 
-                  onChange={(e) => update('customTimeIncrement', e.target.value)}
-                  style={{ ...inputStyle, width: '80px' }}
-                  placeholder="0"
-                  min="15"
-                  step="15"
-                />
-                <span style={{ fontSize: '14px', color: '#64748b' }}>minutes</span>
-              </div>
-            )}
-          </FormGroup>
+          )}
         </CardSection>
         
-        {/* 2. Liability Insurance - Second */}
+        {/* 2. Liability Insurance */}
         <CardSection isMobile={isMobile}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
             <Shield size={18} color={colors.blue} />
-            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Liability Insurance</h3>
-            <Tooltip text="Many organizations require renters to provide a Certificate of Insurance (COI) naming your organization as additionally insured."><span /></Tooltip>
+            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: '#1e293b' }}>Liability Insurance</h3>
           </div>
-          <FormGroup label="Require Insurance?">
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              {[
-                { value: 'yes', label: 'Yes, require it' },
-                { value: 'sometimes', label: 'Case by case' },
-                { value: 'no', label: 'Not required' },
-                { value: 'unsure', label: 'Not sure yet' },
-              ].map(opt => (
-                <button 
-                  key={opt.value} 
-                  onClick={() => update('requireInsurance', opt.value)} 
-                  style={{ 
-                    padding: '10px 14px', 
-                    borderRadius: '8px', 
-                    cursor: 'pointer', 
-                    transition: 'all 0.2s', 
-                    border: data.requireInsurance === opt.value ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)', 
-                    background: data.requireInsurance === opt.value ? `rgba(0, 118, 187, 0.08)` : 'white', 
-                    color: data.requireInsurance === opt.value ? colors.blue : '#64748b', 
-                    fontSize: '13px', 
-                    fontWeight: 600 
-                  }}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          </FormGroup>
+          <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#64748b' }}>Require renters to provide a COI?</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
+            {[
+              { value: 'yes', label: 'Yes, require' },
+              { value: 'sometimes', label: 'Case by case' },
+              { value: 'no', label: 'Not required' },
+              { value: 'unsure', label: 'Not sure' },
+            ].map(opt => (
+              <button 
+                key={opt.value} 
+                onClick={() => update('requireInsurance', opt.value)} 
+                style={{ 
+                  padding: '10px 8px', 
+                  borderRadius: '8px', 
+                  cursor: 'pointer', 
+                  transition: 'all 0.2s', 
+                  border: data.requireInsurance === opt.value ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)', 
+                  background: data.requireInsurance === opt.value ? `rgba(0, 118, 187, 0.08)` : 'white', 
+                  color: data.requireInsurance === opt.value ? colors.blue : '#64748b', 
+                  fontSize: '13px', 
+                  fontWeight: 600 
+                }}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </CardSection>
         
-        {/* 3. Cancellation Policy - Third */}
+        {/* 3. Cancellation Policy */}
         <CardSection isMobile={isMobile}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-            <Clock size={18} color={colors.blue} />
-            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Cancellation Policy</h3>
-            <Tooltip text="This is how far in advance renters must cancel to receive a refund. After this window, their payment is non-refundable."><span /></Tooltip>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+            <XCircle size={18} color={colors.blue} />
+            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: '#1e293b' }}>Cancellation Policy</h3>
           </div>
-          <FormGroup label="Cancellation Window">
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: showCustomCancellation ? '12px' : 0 }}>
-              {[
-                { value: '3', label: '3 days' },
-                { value: '7', label: '7 days' },
-                { value: '14', label: '14 days' },
-                { value: '30', label: '30 days' },
-                { value: 'custom', label: 'Custom' },
-                { value: 'unsure', label: 'Not sure yet' },
-              ].map(opt => (
-                <button 
-                  key={opt.value} 
-                  onClick={() => handleCancellationChange(opt.value)} 
-                  style={{ 
-                    padding: '10px 14px', 
-                    borderRadius: '8px', 
-                    cursor: 'pointer', 
-                    transition: 'all 0.2s', 
-                    border: (data.cancellationDays === opt.value || (showCustomCancellation && opt.value === 'custom')) ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)', 
-                    background: (data.cancellationDays === opt.value || (showCustomCancellation && opt.value === 'custom')) ? `rgba(0, 118, 187, 0.08)` : 'white', 
-                    color: (data.cancellationDays === opt.value || (showCustomCancellation && opt.value === 'custom')) ? colors.blue : '#64748b', 
-                    fontSize: '13px', 
-                    fontWeight: 600 
-                  }}
-                >
-                  {opt.label}
-                </button>
-              ))}
+          <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#64748b' }}>How much notice for a full refund?</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+            {[
+              { value: '3', label: '3 days' },
+              { value: '7', label: '7 days' },
+              { value: '14', label: '14 days' },
+              { value: '30', label: '30 days' },
+              { value: 'custom', label: 'Custom' },
+              { value: 'unsure', label: 'Not sure' },
+            ].map(opt => (
+              <button 
+                key={opt.value} 
+                onClick={() => handleCancellationChange(opt.value)} 
+                style={{ 
+                  padding: '10px 8px', 
+                  borderRadius: '8px', 
+                  cursor: 'pointer', 
+                  transition: 'all 0.2s', 
+                  border: (data.cancellationDays === opt.value || (showCustomCancellation && opt.value === 'custom')) ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)', 
+                  background: (data.cancellationDays === opt.value || (showCustomCancellation && opt.value === 'custom')) ? `rgba(0, 118, 187, 0.08)` : 'white', 
+                  color: (data.cancellationDays === opt.value || (showCustomCancellation && opt.value === 'custom')) ? colors.blue : '#64748b', 
+                  fontSize: '13px', 
+                  fontWeight: 600 
+                }}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          {showCustomCancellation && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px' }}>
+              <input 
+                type="number" 
+                value={data.customCancellationDays || ''} 
+                onChange={(e) => update('customCancellationDays', e.target.value)}
+                style={{ ...inputStyle, width: '80px' }}
+                placeholder="0"
+                min="1"
+              />
+              <span style={{ fontSize: '14px', color: '#64748b' }}>days before</span>
             </div>
-            {showCustomCancellation && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <input 
-                  type="number" 
-                  value={data.customCancellationDays || ''} 
-                  onChange={(e) => update('customCancellationDays', e.target.value)}
-                  style={{ ...inputStyle, width: '80px' }}
-                  placeholder="0"
-                  min="1"
-                />
-                <span style={{ fontSize: '14px', color: '#64748b' }}>days before booking</span>
-              </div>
-            )}
-          </FormGroup>
+          )}
         </CardSection>
         
-        {/* 4. Weather Policy - Fourth */}
+        {/* 4. Weather Policy */}
         <CardSection isMobile={isMobile}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
             <CloudRain size={18} color={colors.blue} />
-            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Weather Policy</h3>
-            <Tooltip text="If you cancel a rental due to weather (rain, lightning, etc.), should the renter receive a refund or credit?"><span /></Tooltip>
+            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: '#1e293b' }}>Weather Policy</h3>
           </div>
-          <FormGroup label="Weather Cancellations">
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              {[
-                { value: 'yes', label: 'Yes, refund' },
-                { value: 'credit', label: 'Credit only' },
-                { value: 'no', label: 'No refunds' },
-                { value: 'unsure', label: 'Not sure yet' },
-              ].map(opt => (
-                <button 
-                  key={opt.value} 
-                  onClick={() => update('weatherRefund', opt.value)} 
-                  style={{ 
-                    padding: '10px 14px', 
-                    borderRadius: '8px', 
-                    cursor: 'pointer', 
-                    transition: 'all 0.2s', 
-                    border: data.weatherRefund === opt.value ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)', 
-                    background: data.weatherRefund === opt.value ? `rgba(0, 118, 187, 0.08)` : 'white', 
-                    color: data.weatherRefund === opt.value ? colors.blue : '#64748b', 
-                    fontSize: '13px', 
-                    fontWeight: 600 
-                  }}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          </FormGroup>
+          <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#64748b' }}>Refund if you cancel due to weather?</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
+            {[
+              { value: 'yes', label: 'Full refund' },
+              { value: 'credit', label: 'Credit only' },
+              { value: 'no', label: 'No refunds' },
+              { value: 'unsure', label: 'Not sure' },
+            ].map(opt => (
+              <button 
+                key={opt.value} 
+                onClick={() => update('weatherRefund', opt.value)} 
+                style={{ 
+                  padding: '10px 8px', 
+                  borderRadius: '8px', 
+                  cursor: 'pointer', 
+                  transition: 'all 0.2s', 
+                  border: data.weatherRefund === opt.value ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)', 
+                  background: data.weatherRefund === opt.value ? `rgba(0, 118, 187, 0.08)` : 'white', 
+                  color: data.weatherRefund === opt.value ? colors.blue : '#64748b', 
+                  fontSize: '13px', 
+                  fontWeight: 600 
+                }}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </CardSection>
       </div>
       
       {/* Waivers & Agreements */}
       <CardSection isMobile={isMobile}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
           <FileText size={18} color={colors.blue} />
-          <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Waivers & Agreements</h3>
-          <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 500, background: 'rgba(0,0,0,0.04)', padding: '4px 10px', borderRadius: '6px' }}>Optional</span>
-          <Tooltip text="If you have waiver language that renters must agree to, upload it or paste it here. They'll see this during the booking process."><span /></Tooltip>
+          <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: '#1e293b' }}>Waivers & Agreements</h3>
         </div>
-        <p style={{ margin: '0 0 16px', fontSize: '14px', color: '#64748b' }}>Got a waiver renters need to sign? Upload a document or paste the text below.</p>
+        <p style={{ margin: '0 0 16px', fontSize: '13px', color: '#64748b' }}>Got a waiver renters need to sign? Upload or paste it below.</p>
         
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
           <div>
@@ -3244,13 +3339,11 @@ function PoliciesStep({ data, update, isMobile }) {
       
       {/* Rental Policy Document */}
       <CardSection isMobile={isMobile}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
           <FileText size={18} color={colors.blue} />
-          <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Rental Policy Document</h3>
-          <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 500, background: 'rgba(0,0,0,0.04)', padding: '4px 10px', borderRadius: '6px' }}>Optional</span>
-          <Tooltip text="Any facility use policies, rules, or rental agreements you want renters to acknowledge before booking."><span /></Tooltip>
+          <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: '#1e293b' }}>Rental Policy Document</h3>
         </div>
-        <p style={{ margin: '0 0 16px', fontSize: '14px', color: '#64748b' }}>Have a facility use policy or rental agreement? Upload a document or paste the text below.</p>
+        <p style={{ margin: '0 0 16px', fontSize: '13px', color: '#64748b' }}>Have facility rules or a rental agreement? Upload or paste it below.</p>
         
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
           <div>
@@ -3382,8 +3475,7 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
           {/* Space Type Selector */}
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', fontWeight: 600, color: '#334155', marginBottom: '10px' }}>
-              What type of space is this?
-              {!asset.type && <span style={{ fontSize: '11px', color: '#ef4444', fontWeight: 500 }}>Required</span>}
+              What type of space is this? <span style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 400 }}>*</span>
             </label>
             <div style={{ 
               display: 'grid', 
@@ -3419,11 +3511,11 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr', gap: '16px', marginBottom: '20px' }}>
-            <FormGroup label="What's this space called?" required error={assetErrors.name} tooltip="The name renters will see when booking, like 'Main Gym' or 'Conference Room A'.">
-              <input type="text" value={asset.name} onChange={(e) => updateAsset(locationId, assetIndex, 'name', e.target.value)} style={assetErrors.name ? inputErrorStyle : inputStyle} placeholder="e.g., Main Gymnasium, Auditorium" />
+            <FormGroup label="What's this space called?" required error={assetErrors.name} isEmpty={!asset.name?.trim()} tooltip="The name renters will see when booking, like 'Main Gym' or 'Conference Room A'.">
+              <input type="text" value={asset.name} onChange={(e) => updateAsset(locationId, assetIndex, 'name', e.target.value)} style={!asset.name?.trim() ? inputErrorStyle : inputStyle} placeholder="e.g., Main Gymnasium, Auditorium" />
             </FormGroup>
-            <FormGroup label="Hourly Rate" required error={assetErrors.pricing} tooltip="The base price per hour for renting this space. You can set different rates for different renter types later.">
-              <input type="number" value={asset.pricing} onChange={(e) => updateAsset(locationId, assetIndex, 'pricing', e.target.value)} style={assetErrors.pricing ? inputErrorStyle : inputStyle} placeholder="$ per hour" inputMode="decimal" min="0" />
+            <FormGroup label="Hourly Rate" required error={assetErrors.pricing} isEmpty={!asset.pricing?.trim()} tooltip="The base price per hour for renting this space. You can set different rates for different renter types later.">
+              <input type="number" value={asset.pricing} onChange={(e) => updateAsset(locationId, assetIndex, 'pricing', e.target.value)} style={!asset.pricing?.trim() ? inputErrorStyle : inputStyle} placeholder="$ per hour" inputMode="decimal" min="0" />
             </FormGroup>
           </div>
           
@@ -3432,8 +3524,7 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                 <Sun size={16} color={colors.blue} />
-                <label style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>Indoor or Outdoor?</label>
-                {!asset.indoorOutdoor && <span style={{ fontSize: '11px', color: '#ef4444', fontWeight: 500 }}>Required</span>}
+                <label style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>Indoor or Outdoor? <span style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 400 }}>*</span></label>
               </div>
               <div style={{ 
                 display: 'flex', 
@@ -3474,7 +3565,7 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                 <Ruler size={16} color={colors.blue} />
                 <label style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>Estimated Size</label>
-                <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
+                
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', height: '46px' }}>
                 <input
@@ -3493,7 +3584,7 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                 <Users size={16} color={colors.blue} />
                 <label style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>Max Capacity</label>
-                <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
+                
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', height: '46px' }}>
                 <input
@@ -3507,6 +3598,93 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
                 />
                 <span style={{ fontSize: '14px', color: '#64748b', whiteSpace: 'nowrap' }}>people</span>
               </div>
+            </div>
+          </div>
+          
+          {/* When can people book - moved up for importance */}
+          <div style={{ background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', padding: isMobile ? '16px' : '20px', marginBottom: '20px', border: '1px solid rgba(0, 118, 187, 0.06)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+              <Clock size={16} color={colors.blue} />
+              <h5 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#64748b' }}>When can people book?</h5>
+              <Tooltip text="Set the hours this space is available for rental. Renters can only book within these windows."><span /></Tooltip>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
+              <div>
+                <p style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: 600, color: '#94a3b8' }}>Weekdays (Mon-Fri)</p>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <input type="time" value={asset.weekdayAvailability?.start || '15:00'} onChange={(e) => updateAsset(locationId, assetIndex, 'weekdayAvailability', { ...(asset.weekdayAvailability || {}), start: e.target.value })} style={{ ...inputStyle, flex: 1 }} />
+                  <span style={{ color: '#94a3b8', fontWeight: 500 }}>to</span>
+                  <input type="time" value={asset.weekdayAvailability?.end || '22:00'} onChange={(e) => updateAsset(locationId, assetIndex, 'weekdayAvailability', { ...(asset.weekdayAvailability || {}), end: e.target.value })} style={{ ...inputStyle, flex: 1 }} />
+                </div>
+              </div>
+              <div>
+                <p style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: 600, color: '#94a3b8' }}>Weekends (Sat-Sun)</p>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <input type="time" value={asset.weekendAvailability?.start || '08:00'} onChange={(e) => updateAsset(locationId, assetIndex, 'weekendAvailability', { ...(asset.weekendAvailability || {}), start: e.target.value })} style={{ ...inputStyle, flex: 1 }} />
+                  <span style={{ color: '#94a3b8', fontWeight: 500 }}>to</span>
+                  <input type="time" value={asset.weekendAvailability?.end || '22:00'} onChange={(e) => updateAsset(locationId, assetIndex, 'weekendAvailability', { ...(asset.weekendAvailability || {}), end: e.target.value })} style={{ ...inputStyle, flex: 1 }} />
+                </div>
+              </div>
+            </div>
+            
+            {/* Blackout Dates Section */}
+            <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px dashed rgba(0, 118, 187, 0.15)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                <span style={{ fontSize: '14px', fontWeight: 600, color: '#64748b' }}>Blackout Dates</span>
+                <Tooltip text="Dates when this space is unavailable (holidays, school events, maintenance, etc.)"><span /></Tooltip>
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
+                {[
+                  { value: 'none', label: 'None yet' },
+                  { value: 'holidays', label: 'Major holidays' },
+                  { value: 'custom', label: 'I have specific dates' },
+                  { value: 'later', label: "I'll provide later" },
+                ].map(opt => (
+                  <button 
+                    key={opt.value} 
+                    onClick={() => updateAsset(locationId, assetIndex, 'blackoutOption', opt.value)} 
+                    style={{ 
+                      padding: '8px 14px', 
+                      borderRadius: '8px', 
+                      cursor: 'pointer', 
+                      transition: 'all 0.2s', 
+                      border: asset.blackoutOption === opt.value ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)', 
+                      background: asset.blackoutOption === opt.value ? `rgba(0, 118, 187, 0.08)` : 'white', 
+                      color: asset.blackoutOption === opt.value ? colors.blue : '#64748b', 
+                      fontSize: '12px', 
+                      fontWeight: 600 
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+              {asset.blackoutOption === 'custom' && (
+                <textarea 
+                  value={asset.blackoutDates || ''} 
+                  onChange={(e) => updateAsset(locationId, assetIndex, 'blackoutDates', e.target.value)}
+                  style={{ ...inputStyle, minHeight: '80px', resize: 'vertical', fontSize: '13px' }}
+                  placeholder="Enter dates or date ranges, e.g.:&#10;Dec 20 - Jan 3 (Winter Break)&#10;March 15-22 (Spring Break)&#10;July 4, Memorial Day, Labor Day"
+                />
+              )}
+              {asset.blackoutOption === 'holidays' && (
+                <p style={{ margin: 0, fontSize: '12px', color: '#64748b', fontStyle: 'italic' }}>
+                  We'll block standard US holidays (New Year's, Memorial Day, July 4th, Labor Day, Thanksgiving, Christmas). You can customize this later.
+                </p>
+              )}
+            </div>
+            
+            {/* Additional Availability Notes */}
+            <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px dashed rgba(0, 118, 187, 0.15)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                <span style={{ fontSize: '14px', fontWeight: 600, color: '#64748b' }}>Additional Details</span>
+              </div>
+              <textarea 
+                value={asset.availabilityNotes || ''} 
+                onChange={(e) => updateAsset(locationId, assetIndex, 'availabilityNotes', e.target.value)}
+                style={{ ...inputStyle, minHeight: '70px', resize: 'vertical', fontSize: '13px' }}
+                placeholder="Any additional details about availability, seasonal hours, or special scheduling notes for this space..."
+              />
             </div>
           </div>
           
@@ -3526,7 +3704,7 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Tag size={16} color={colors.blue} />
                 <h5 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#334155' }}>Types of Reservations</h5>
-                <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
+                
                 {(asset.reservationTypes || []).length > 0 && (
                   <span style={{ padding: '2px 8px', borderRadius: '10px', background: 'rgba(0, 168, 79, 0.1)', color: colors.green, fontSize: '11px', fontWeight: 600 }}>
                     {(asset.reservationTypes || []).length} selected
@@ -3630,7 +3808,7 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <ListChecks size={16} color={colors.blue} />
                 <h5 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#334155' }}>Facility Features</h5>
-                <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
+                
                 {(asset.features || []).length > 0 && (
                   <span style={{ padding: '2px 8px', borderRadius: '10px', background: 'rgba(0, 118, 187, 0.1)', color: colors.blue, fontSize: '11px', fontWeight: 600 }}>
                     {(asset.features || []).length} selected
@@ -3725,7 +3903,7 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
               <span style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>
                 {asset.name ? `Photos of ${asset.name}` : 'Space Photos'}
               </span>
-              <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
+              
             </div>
             <PhotoUpload
               photos={asset.photos || []}
@@ -3744,94 +3922,6 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
             <p style={{ margin: '8px 0 0', fontSize: '12px', color: '#64748b' }}>
               Show renters what this space looks like - courts, fields, seating, equipment, etc.
             </p>
-          </div>
-          
-          <div style={{ background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', padding: isMobile ? '16px' : '20px', marginBottom: '20px', border: '1px solid rgba(0, 118, 187, 0.06)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-              <Clock size={16} color={colors.blue} />
-              <h5 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#64748b' }}>When can people book?</h5>
-              <Tooltip text="Set the hours this space is available for rental. Renters can only book within these windows."><span /></Tooltip>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
-              <div>
-                <p style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: 600, color: '#94a3b8' }}>Weekdays (Mon-Fri)</p>
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                  <input type="time" value={asset.weekdayAvailability?.start || '15:00'} onChange={(e) => updateAsset(locationId, assetIndex, 'weekdayAvailability', { ...(asset.weekdayAvailability || {}), start: e.target.value })} style={{ ...inputStyle, flex: 1 }} />
-                  <span style={{ color: '#94a3b8', fontWeight: 500 }}>to</span>
-                  <input type="time" value={asset.weekdayAvailability?.end || '22:00'} onChange={(e) => updateAsset(locationId, assetIndex, 'weekdayAvailability', { ...(asset.weekdayAvailability || {}), end: e.target.value })} style={{ ...inputStyle, flex: 1 }} />
-                </div>
-              </div>
-              <div>
-                <p style={{ margin: '0 0 12px', fontSize: '13px', fontWeight: 600, color: '#94a3b8' }}>Weekends (Sat-Sun)</p>
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                  <input type="time" value={asset.weekendAvailability?.start || '08:00'} onChange={(e) => updateAsset(locationId, assetIndex, 'weekendAvailability', { ...(asset.weekendAvailability || {}), start: e.target.value })} style={{ ...inputStyle, flex: 1 }} />
-                  <span style={{ color: '#94a3b8', fontWeight: 500 }}>to</span>
-                  <input type="time" value={asset.weekendAvailability?.end || '22:00'} onChange={(e) => updateAsset(locationId, assetIndex, 'weekendAvailability', { ...(asset.weekendAvailability || {}), end: e.target.value })} style={{ ...inputStyle, flex: 1 }} />
-                </div>
-              </div>
-            </div>
-            
-            {/* Blackout Dates Section */}
-            <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px dashed rgba(0, 118, 187, 0.15)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                <span style={{ fontSize: '14px', fontWeight: 600, color: '#64748b' }}>Blackout Dates</span>
-                <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
-                <Tooltip text="Dates when this space is unavailable (holidays, school events, maintenance, etc.)"><span /></Tooltip>
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
-                {[
-                  { value: 'none', label: 'None yet' },
-                  { value: 'holidays', label: 'Major holidays' },
-                  { value: 'custom', label: 'I have specific dates' },
-                  { value: 'later', label: "I'll provide later" },
-                ].map(opt => (
-                  <button 
-                    key={opt.value} 
-                    onClick={() => updateAsset(locationId, assetIndex, 'blackoutOption', opt.value)} 
-                    style={{ 
-                      padding: '8px 14px', 
-                      borderRadius: '8px', 
-                      cursor: 'pointer', 
-                      transition: 'all 0.2s', 
-                      border: asset.blackoutOption === opt.value ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)', 
-                      background: asset.blackoutOption === opt.value ? `rgba(0, 118, 187, 0.08)` : 'white', 
-                      color: asset.blackoutOption === opt.value ? colors.blue : '#64748b', 
-                      fontSize: '12px', 
-                      fontWeight: 600 
-                    }}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-              {asset.blackoutOption === 'custom' && (
-                <textarea 
-                  value={asset.blackoutDates || ''} 
-                  onChange={(e) => updateAsset(locationId, assetIndex, 'blackoutDates', e.target.value)}
-                  style={{ ...inputStyle, minHeight: '80px', resize: 'vertical', fontSize: '13px' }}
-                  placeholder="Enter dates or date ranges, e.g.:&#10;Dec 20 - Jan 3 (Winter Break)&#10;March 15-22 (Spring Break)&#10;July 4, Memorial Day, Labor Day"
-                />
-              )}
-              {asset.blackoutOption === 'holidays' && (
-                <p style={{ margin: 0, fontSize: '12px', color: '#64748b', fontStyle: 'italic' }}>
-                  We'll block standard US holidays (New Year's, Memorial Day, July 4th, Labor Day, Thanksgiving, Christmas). You can customize this later.
-                </p>
-              )}
-            </div>
-            
-            {/* Additional Availability Notes */}
-            <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px dashed rgba(0, 118, 187, 0.15)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                <span style={{ fontSize: '14px', fontWeight: 600, color: '#64748b' }}>Additional Details</span>
-                <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
-              </div>
-              <textarea 
-                value={asset.availabilityNotes || ''} 
-                onChange={(e) => updateAsset(locationId, assetIndex, 'availabilityNotes', e.target.value)}
-                style={{ ...inputStyle, minHeight: '70px', resize: 'vertical', fontSize: '13px' }}
-                placeholder="Any additional details about availability, seasonal hours, or special scheduling notes for this space..."
-              />
-            </div>
           </div>
           <div style={{ background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', padding: isMobile ? '16px' : '20px', marginBottom: '20px', border: '1px solid rgba(0, 118, 187, 0.06)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
@@ -3915,15 +4005,23 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
                     </div>
                     
                     <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '8px' }}>
-                      <input type="text" value={approver.name} onChange={(e) => updateApprover(locationId, assetIndex, i, 'name', e.target.value)} style={inputStyle} placeholder="Name (optional)" />
-                      <input 
-                        type="email" 
-                        value={approver.email} 
-                        onChange={(e) => updateApprover(locationId, assetIndex, i, 'email', e.target.value)} 
-                        style={!approver.email?.trim() ? inputErrorStyle : inputStyle} 
-                        placeholder="Email (required)" 
-                        autoCapitalize="none" 
-                      />
+                      <div>
+                        <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>Name</label>
+                        <input type="text" value={approver.name} onChange={(e) => updateApprover(locationId, assetIndex, i, 'name', e.target.value)} style={inputStyle} placeholder="e.g., John Smith" />
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>
+                          Email <span style={{ color: '#94a3b8' }}>*</span>
+                        </label>
+                        <input 
+                          type="email" 
+                          value={approver.email} 
+                          onChange={(e) => updateApprover(locationId, assetIndex, i, 'email', e.target.value)} 
+                          style={!approver.email?.trim() ? inputErrorStyle : inputStyle} 
+                          placeholder="email@example.org" 
+                          autoCapitalize="none" 
+                        />
+                      </div>
                     </div>
                   </div>
                 );
@@ -3952,7 +4050,7 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <Mail size={16} color="#94a3b8" />
                 <span style={{ fontSize: '13px', fontWeight: 600, color: '#64748b' }}>Notify others about bookings</span>
-                <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
+                
                 {(asset.notifications || []).filter(n => n.email?.trim()).length > 0 && (
                   <span style={{ padding: '2px 8px', borderRadius: '10px', background: 'rgba(0, 118, 187, 0.1)', color: colors.blue, fontSize: '11px', fontWeight: 600 }}>
                     {(asset.notifications || []).filter(n => n.email?.trim()).length} added
@@ -3993,7 +4091,7 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
           <div id={`amenities-${locationId}-${assetIndex}`} style={{ background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', padding: isMobile ? '16px' : '20px', border: '1px solid rgba(0, 118, 187, 0.06)', transition: 'box-shadow 0.3s ease' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
               <DollarSign size={16} color={colors.blue} />
-              <h5 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#64748b' }}>Optional Add-ons</h5>
+              <h5 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#64748b' }}>Add-ons</h5>
               <Tooltip text="Extra items or services renters can add to their booking for an additional fee."><span /></Tooltip>
             </div>
             <p style={{ margin: '0 0 16px', fontSize: '13px', color: '#94a3b8' }}>Check any extras you offer and set your price. Select from categories below or add custom items.</p>
@@ -4266,8 +4364,26 @@ function LocationCard({ location, handlers, canRemove, isMobile, errors, contact
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', flexWrap: 'wrap' }}>
               <span style={{ padding: '3px 8px', borderRadius: '5px', background: 'rgba(0, 118, 187, 0.1)', color: colors.blue, fontSize: '11px', fontWeight: 600, textTransform: 'uppercase' }}>{typeInfo.label}</span>
-              <span style={{ fontSize: '13px', color: '#64748b' }}>{location.assets.length} {location.assets.length === 1 ? 'space' : 'spaces'}</span>
-              {!isExpanded && !isLocationComplete && (() => {
+              {location.assets.length === 0 ? (
+                locationErrors.noSpaces ? (
+                  <span style={{ 
+                    fontSize: '12px', 
+                    color: '#ef4444', 
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}>
+                    <AlertCircle size={14} />
+                    Add at least one space
+                  </span>
+                ) : (
+                  <span style={{ fontSize: '13px', color: '#94a3b8' }}>No spaces yet</span>
+                )
+              ) : (
+                <span style={{ fontSize: '13px', color: '#64748b' }}>{location.assets.length} {location.assets.length === 1 ? 'space' : 'spaces'}</span>
+              )}
+              {!isExpanded && !isLocationComplete && location.assets.length > 0 && (() => {
                 // Calculate incomplete required fields
                 const completion = calculateCompletionScore(location);
                 let totalRequired = 0;
@@ -4403,11 +4519,11 @@ function LocationCard({ location, handlers, canRemove, isMobile, errors, contact
           <CardSection isMobile={isMobile}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}><MapPin size={18} color={colors.blue} /><h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>Location Details</h3></div>
             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
-              <FormGroup label="Location Name" required error={locationErrors.name} tooltip="A friendly name for this location that helps you identify it, like 'Main Campus' or 'Downtown Center'.">
-                <input type="text" value={location.name} onChange={(e) => handlers.updateLocation(location.id, 'name', e.target.value)} style={locationErrors.name ? inputErrorStyle : inputStyle} placeholder="e.g., Main Building, North Campus" />
+              <FormGroup label="Location Name" required error={locationErrors.name} isEmpty={!location.name?.trim()} tooltip="A friendly name for this location that helps you identify it, like 'Main Campus' or 'Downtown Center'.">
+                <input type="text" value={location.name} onChange={(e) => handlers.updateLocation(location.id, 'name', e.target.value)} style={!location.name?.trim() ? inputErrorStyle : inputStyle} placeholder="e.g., Main Building, North Campus" />
               </FormGroup>
-              <FormGroup label="Address" required error={locationErrors.address} tooltip="The full street address. This helps renters find the location.">
-                <input type="text" value={location.address} onChange={(e) => handlers.updateLocation(location.id, 'address', e.target.value)} style={locationErrors.address ? inputErrorStyle : inputStyle} placeholder="123 Main St, City, State ZIP" />
+              <FormGroup label="Address" required error={locationErrors.address} isEmpty={!location.address?.trim()} tooltip="The full street address. This helps renters find the location.">
+                <input type="text" value={location.address} onChange={(e) => handlers.updateLocation(location.id, 'address', e.target.value)} style={!location.address?.trim() ? inputErrorStyle : inputStyle} placeholder="123 Main St, City, State ZIP" />
               </FormGroup>
             </div>
             
@@ -4418,7 +4534,7 @@ function LocationCard({ location, handlers, canRemove, isMobile, errors, contact
                 <span style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>
                   {location.name ? `Photos of ${location.name}` : 'Location Photos'}
                 </span>
-                <span style={{ fontSize: '11px', color: '#94a3b8', background: 'rgba(0,0,0,0.04)', padding: '2px 8px', borderRadius: '4px' }}>Optional</span>
+                
               </div>
               <PhotoUpload
                 photos={location.photos || []}
@@ -4479,11 +4595,11 @@ function LocationCard({ location, handlers, canRemove, isMobile, errors, contact
                     <button onClick={resetContactMode} style={{ padding: '6px 12px', borderRadius: '6px', border: 'none', background: 'rgba(0,0,0,0.06)', color: '#64748b', fontSize: '13px', fontWeight: 500, cursor: 'pointer' }}>Cancel</button>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
-                    <FormGroup label="Full Name" required error={locationErrors.contactName}>
-                      <input type="text" value={location.contactName || ''} onChange={(e) => handleContactChange('contactName', e.target.value)} style={locationErrors.contactName ? inputErrorStyle : inputStyle} placeholder="e.g., John Smith" />
+                    <FormGroup label="Full Name" required error={locationErrors.contactName} isEmpty={!location.contactName?.trim()}>
+                      <input type="text" value={location.contactName || ''} onChange={(e) => handleContactChange('contactName', e.target.value)} style={!location.contactName?.trim() ? inputErrorStyle : inputStyle} placeholder="e.g., John Smith" />
                     </FormGroup>
-                    <FormGroup label="Email" required error={locationErrors.contactEmail}>
-                      <input type="email" value={location.contactEmail} onChange={(e) => handleContactChange('contactEmail', e.target.value)} style={locationErrors.contactEmail ? inputErrorStyle : inputStyle} placeholder="contact@example.org" autoCapitalize="none" />
+                    <FormGroup label="Email" required error={locationErrors.contactEmail} isEmpty={!location.contactEmail?.trim()}>
+                      <input type="email" value={location.contactEmail} onChange={(e) => handleContactChange('contactEmail', e.target.value)} style={!location.contactEmail?.trim() ? inputErrorStyle : inputStyle} placeholder="contact@example.org" autoCapitalize="none" />
                     </FormGroup>
                   </div>
                   <p style={{ margin: '12px 0 0', fontSize: '12px', color: '#94a3b8' }}>This person will be the default final approver for bookings at this location.</p>
@@ -4633,7 +4749,17 @@ function LocationsStep({ locations, setLocations, isMobile, errors, contactInfo,
 
   const handlers = {
     addLocation: (type) => { setLocations(prev => [...prev, createEmptyLocation(type)]); setShowAddModal(false); },
-    removeLocation: (id) => setLocations(prev => prev.filter(c => c.id !== id)),
+    removeLocation: (id) => {
+      const loc = locations.find(c => c.id === id);
+      const spacesCount = loc?.assets?.length || 0;
+      const locationName = loc?.name || 'this location';
+      const message = spacesCount > 0 
+        ? `Delete "${locationName}" and its ${spacesCount} rentable space${spacesCount > 1 ? 's' : ''}?`
+        : `Delete "${locationName}"?`;
+      if (window.confirm(message)) {
+        setLocations(prev => prev.filter(c => c.id !== id));
+      }
+    },
     duplicateLocation: (id) => { const loc = locations.find(c => c.id === id); if (loc) setLocations(prev => [...prev, duplicateLocation(loc)]); },
     updateLocation: (id, field, value) => setLocations(prev => prev.map(c => c.id === id ? { ...c, [field]: value } : c)),
     updateAsset: (locationId, assetIndex, field, value) => {
@@ -4790,18 +4916,18 @@ function LocationsStep({ locations, setLocations, isMobile, errors, contactInfo,
         </div>
       ) : (
         /* Locations exist - show summary bar */
-        <div style={{ display: 'flex', alignItems: isMobile ? 'stretch' : 'center', justifyContent: 'space-between', marginBottom: isMobile ? '16px' : '24px', padding: isMobile ? '16px' : '20px 24px', background: 'linear-gradient(135deg, rgba(0, 118, 187, 0.04) 0%, rgba(0, 168, 79, 0.04) 100%)', borderRadius: '14px', border: '1px solid rgba(0, 118, 187, 0.1)', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '12px' : '0' }}>
-          <div>
+        <div style={{ display: 'flex', alignItems: isMobile ? 'stretch' : 'center', justifyContent: 'space-between', marginBottom: isMobile ? '16px' : '24px', padding: isMobile ? '20px' : '20px 24px', background: 'linear-gradient(135deg, rgba(0, 118, 187, 0.04) 0%, rgba(0, 168, 79, 0.04) 100%)', borderRadius: '14px', border: '1px solid rgba(0, 118, 187, 0.1)', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '16px' : '0' }}>
+          <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
             <p style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: '#1e293b' }}>{locations.length} {locations.length === 1 ? 'Location' : 'Locations'} • {locations.reduce((sum, c) => sum + c.assets.length, 0)} Spaces</p>
             <p style={{ margin: '2px 0 0', fontSize: '13px', color: '#64748b' }}>Set up one location fully, then duplicate it!</p>
           </div>
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            <button onClick={onOpenTableEditor} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '12px 16px', borderRadius: '10px', border: 'none', background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`, color: 'white', fontSize: '14px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 16px rgba(0, 118, 187, 0.25)' }}>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-end' }}>
+            <button onClick={onOpenTableEditor} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '12px 16px', borderRadius: '10px', border: 'none', background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`, color: 'white', fontSize: '14px', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 16px rgba(0, 118, 187, 0.25)', flex: isMobile ? '1 1 45%' : 'none', minWidth: isMobile ? '140px' : 'auto' }}>
               <Table size={16} />
-              Quick Edit All
+              Quick Edit
             </button>
-            <button onClick={() => setShowBulkAddLocations(true)} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '12px 16px', borderRadius: '10px', border: '1px solid rgba(0, 118, 187, 0.2)', background: 'white', color: colors.blue, fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}><Layers size={16} />Bulk Add</button>
-            <button onClick={() => setShowAddModal(true)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '12px 20px', borderRadius: '10px', border: '1px solid rgba(0, 168, 79, 0.3)', background: 'rgba(0, 168, 79, 0.08)', color: colors.green, fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}><Plus size={18} />Add Location</button>
+            <button onClick={() => setShowBulkAddLocations(true)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '12px 16px', borderRadius: '10px', border: '1px solid rgba(0, 118, 187, 0.2)', background: 'white', color: colors.blue, fontSize: '14px', fontWeight: 600, cursor: 'pointer', flex: isMobile ? '1 1 45%' : 'none', minWidth: isMobile ? '140px' : 'auto' }}><Layers size={16} />Bulk Add</button>
+            <button onClick={() => setShowAddModal(true)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '12px 20px', borderRadius: '10px', border: '1px solid rgba(0, 168, 79, 0.3)', background: 'rgba(0, 168, 79, 0.08)', color: colors.green, fontSize: '14px', fontWeight: 600, cursor: 'pointer', flex: isMobile ? '1 1 100%' : 'none' }}><Plus size={18} />Add Location</button>
           </div>
         </div>
       )}
@@ -5099,23 +5225,24 @@ export default function PracticePlanOnboarding() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [contactInfo, setContactInfo] = useState({ fullName: '', organization: '', email: '', phone: '' });
+  const [contactInfo, setContactInfo] = useState({ fullName: '', organization: '', email: '', phone: '', adminEmailSameAsPersonal: null, adminEmail: '', adminName: '' });
   const [policies, setPolicies] = useState({ 
     goLiveDate: '', 
-    bookingWindowMonths: '3', 
-    requireApproval: 'yes', 
-    notifyOnBooking: 'yes',
-    cancellationDays: '7', 
-    weatherRefund: 'yes', 
-    requireInsurance: 'yes', 
+    bookingWindowMonths: '', 
+    requireApproval: '', 
+    notifyOnBooking: '',
+    cancellationDays: '', 
+    weatherRefund: '', 
+    requireInsurance: '', 
     waiverText: '', 
     facilityAgreement: '', 
-    timeIncrement: '60' 
+    timeIncrement: '' 
   });
   const [locations, setLocations] = useState([]);
   const [errors, setErrors] = useState({});
   const [lastSaved, setLastSaved] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [showSaveToast, setShowSaveToast] = useState(false);
   const [overviewOpen, setOverviewOpen] = useState(false);
   const [highlightedLocationId, setHighlightedLocationId] = useState(null);
   const [expandSpaceIndex, setExpandSpaceIndex] = useState(null);
@@ -5300,6 +5427,11 @@ export default function PracticePlanOnboarding() {
     else if (!isValidEmail(contactInfo.email)) errs.email = 'Please enter a valid email address';
     if (!contactInfo.phone.trim()) errs.phone = 'Please enter your phone number';
     else if (!isValidPhone(contactInfo.phone)) errs.phone = 'Please enter a valid phone number';
+    // Validate admin email if using different email
+    if (contactInfo.adminEmailSameAsPersonal === false) {
+      if (!contactInfo.adminEmail?.trim()) errs.adminEmail = 'Please enter an admin email';
+      else if (!isValidEmail(contactInfo.adminEmail)) errs.adminEmail = 'Please enter a valid email address';
+    }
     return errs;
   };
 
@@ -5312,6 +5444,9 @@ export default function PracticePlanOnboarding() {
       if (!loc.contactName || !loc.contactName.trim()) locErr.contactName = 'Required';
       if (!loc.contactEmail || !loc.contactEmail.trim()) locErr.contactEmail = 'Required';
       else if (!isValidEmail(loc.contactEmail)) locErr.contactEmail = 'Invalid email';
+      
+      // Check if location has at least one space
+      if (loc.assets.length === 0) locErr.noSpaces = true;
       
       const assetErrors = [];
       loc.assets.forEach((asset, assetIdx) => {
@@ -5349,6 +5484,11 @@ export default function PracticePlanOnboarding() {
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(payload)
       });
+      
+      // Show success toast
+      setLastSaved(new Date());
+      setShowSaveToast(true);
+      setTimeout(() => setShowSaveToast(false), 2000);
     } catch (error) {
       console.error('Error saving draft:', error);
     }
@@ -5809,6 +5949,33 @@ export default function PracticePlanOnboarding() {
           onStartFresh={handleStartFresh}
           isMobile={isMobile}
         />
+      )}
+      
+      {/* Save Success Toast */}
+      {showSaveToast && (
+        <div 
+          className="animate-fade-in"
+          style={{
+            position: 'fixed',
+            bottom: '24px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: colors.green,
+            color: 'white',
+            padding: '12px 20px',
+            borderRadius: '10px',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '14px',
+            fontWeight: 600,
+            zIndex: 10000
+          }}
+        >
+          <Check size={18} />
+          Progress saved
+        </div>
       )}
     </div>
   );
