@@ -902,98 +902,141 @@ const PhotoUpload = ({ photos = [], onAdd, onRemove, maxPhotos = 5, isMobile, hi
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
           <Camera size={16} color={colors.blue} />
           <span style={{ fontSize: '14px', fontWeight: 600, color: '#64748b' }}>Photos</span>
-          
         </div>
       )}
       
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-        {/* Existing photos */}
-        {photos.map((photo, index) => (
-          <div 
-            key={photo.id || index} 
-            style={{ 
-              position: 'relative', 
-              width: isMobile ? '80px' : '100px', 
-              height: isMobile ? '80px' : '100px', 
-              borderRadius: '12px', 
-              overflow: 'hidden',
-              border: '1px solid rgba(0, 118, 187, 0.15)'
-            }}
-          >
-            <img 
-              src={photo.data} 
-              alt={photo.name} 
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-            <button
-              onClick={() => onRemove(photo.id || index)}
-              style={{
-                position: 'absolute',
-                top: '4px',
-                right: '4px',
-                width: '24px',
-                height: '24px',
-                borderRadius: '50%',
-                border: 'none',
-                background: 'rgba(0, 0, 0, 0.6)',
-                color: 'white',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: 0
-              }}
-            >
-              <X size={14} />
-            </button>
+      {/* Full-width upload zone when no photos */}
+      {photos.length === 0 ? (
+        <label 
+          style={{ 
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '12px',
+            padding: '32px 24px',
+            borderRadius: '12px', 
+            border: '2px dashed rgba(0, 118, 187, 0.25)',
+            background: 'rgba(0, 118, 187, 0.03)',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".jpg,.jpeg,.png,.webp"
+            multiple
+            onChange={handleFileSelect}
+            style={{ display: 'none' }}
+          />
+          <div style={{ 
+            width: '56px', 
+            height: '56px', 
+            borderRadius: '14px', 
+            background: 'rgba(0, 118, 187, 0.1)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center' 
+          }}>
+            <Camera size={28} color={colors.blue} />
           </div>
-        ))}
-        
-        {/* Add photo button */}
-        {photos.length < maxPhotos && (
-          <label 
-            style={{ 
-              width: isMobile ? '80px' : '100px', 
-              height: isMobile ? '80px' : '100px', 
-              borderRadius: '12px', 
-              border: '2px dashed rgba(0, 118, 187, 0.25)',
-              background: 'rgba(0, 118, 187, 0.03)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              cursor: 'pointer',
-              transition: 'all 0.2s'
-            }}
-          >
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".jpg,.jpeg,.png,.webp"
-              multiple
-              onChange={handleFileSelect}
-              style={{ display: 'none' }}
-            />
-            <div style={{ 
-              width: '32px', 
-              height: '32px', 
-              borderRadius: '8px', 
-              background: 'rgba(0, 118, 187, 0.1)', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center' 
-            }}>
-              <Plus size={18} color={colors.blue} />
-            </div>
-            <span style={{ fontSize: '11px', color: '#64748b', textAlign: 'center' }}>Add Photo</span>
-          </label>
-        )}
-      </div>
-      
-      <p style={{ margin: '8px 0 0', fontSize: '11px', color: '#94a3b8' }}>
-        {photos.length}/{maxPhotos} photos • JPG, PNG, or WebP • Max 5MB each
-      </p>
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 600, color: colors.blue }}>Add photos of this space</p>
+            <p style={{ margin: 0, fontSize: '12px', color: '#94a3b8' }}>Upload up to {maxPhotos} photos • JPG, PNG, or WebP • Max 5MB each</p>
+          </div>
+        </label>
+      ) : (
+        <>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+            {/* Existing photos */}
+            {photos.map((photo, index) => (
+              <div 
+                key={photo.id || index} 
+                style={{ 
+                  position: 'relative', 
+                  width: isMobile ? '80px' : '100px', 
+                  height: isMobile ? '80px' : '100px', 
+                  borderRadius: '12px', 
+                  overflow: 'hidden',
+                  border: '1px solid rgba(0, 118, 187, 0.15)'
+                }}
+              >
+                <img 
+                  src={photo.data} 
+                  alt={photo.name} 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+                <button
+                  onClick={() => onRemove(photo.id || index)}
+                  style={{
+                    position: 'absolute',
+                    top: '4px',
+                    right: '4px',
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    border: 'none',
+                    background: 'rgba(0, 0, 0, 0.6)',
+                    color: 'white',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: 0
+                  }}
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ))}
+            
+            {/* Add photo button */}
+            {photos.length < maxPhotos && (
+              <label 
+                style={{ 
+                  width: isMobile ? '80px' : '100px', 
+                  height: isMobile ? '80px' : '100px', 
+                  borderRadius: '12px', 
+                  border: '2px dashed rgba(0, 118, 187, 0.25)',
+                  background: 'rgba(0, 118, 187, 0.03)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+              >
+                <input
+                  type="file"
+                  accept=".jpg,.jpeg,.png,.webp"
+                  multiple
+                  onChange={handleFileSelect}
+                  style={{ display: 'none' }}
+                />
+                <div style={{ 
+                  width: '32px', 
+                  height: '32px', 
+                  borderRadius: '8px', 
+                  background: 'rgba(0, 118, 187, 0.1)', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center' 
+                }}>
+                  <Plus size={18} color={colors.blue} />
+                </div>
+                <span style={{ fontSize: '11px', color: '#64748b', textAlign: 'center' }}>Add More</span>
+              </label>
+            )}
+          </div>
+          
+          <p style={{ margin: '8px 0 0', fontSize: '11px', color: '#94a3b8' }}>
+            {photos.length}/{maxPhotos} photos
+          </p>
+        </>
+      )}
     </div>
   );
 };
@@ -2714,6 +2757,79 @@ function ContactInfoStep({ data, update, errors, isMobile, onDraftFound, isCheck
                 </div>
               )}
             </div>
+            {/* Draft Found Prompt - directly under email */}
+            {showDraftPrompt && foundDraft && (
+              <div 
+                className="animate-fade-in"
+                style={{ 
+                  marginTop: '12px',
+                  padding: '16px', 
+                  background: 'linear-gradient(135deg, rgba(0, 118, 187, 0.08) 0%, rgba(0, 168, 79, 0.08) 100%)', 
+                  borderRadius: '12px', 
+                  border: `2px solid ${colors.blue}`
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                  <div style={{ 
+                    width: '40px', 
+                    height: '40px', 
+                    borderRadius: '10px', 
+                    background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    <RefreshCw size={20} color="white" />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <h4 style={{ margin: '0 0 4px', fontSize: '15px', fontWeight: 700, color: '#1e293b' }}>
+                      Welcome back!
+                    </h4>
+                    <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#64748b' }}>
+                      Found your progress from {new Date(foundDraft.lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.
+                      {foundDraft.formData?.locations?.length > 0 && ` ${foundDraft.formData.locations.length} location${foundDraft.formData.locations.length > 1 ? 's' : ''} saved.`}
+                    </p>
+                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                      <button
+                        onClick={handleRestoreDraft}
+                        style={{
+                          padding: '8px 16px',
+                          borderRadius: '8px',
+                          border: 'none',
+                          background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`,
+                          color: 'white',
+                          fontSize: '13px',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        <RefreshCw size={14} />
+                        Restore Progress
+                      </button>
+                      <button
+                        onClick={handleStartFresh}
+                        style={{
+                          padding: '8px 16px',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(0, 0, 0, 0.1)',
+                          background: 'white',
+                          color: '#64748b',
+                          fontSize: '13px',
+                          fontWeight: 600,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Start Fresh
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </FormGroup>
           <FormGroup label="Mobile Phone" required error={errors.phone} isEmpty={!data.phone?.trim()}>
             <input type="tel" value={data.phone} onChange={(e) => update('phone', e.target.value)} style={errors.phone ? inputErrorStyle : inputStyle} placeholder="(555) 123-4567" />
@@ -2827,78 +2943,6 @@ function ContactInfoStep({ data, update, errors, isMobile, onDraftFound, isCheck
           )}
         </div>
       </CardSection>
-      
-      {/* Draft Found Prompt */}
-      {showDraftPrompt && foundDraft && (
-        <div style={{ 
-          marginTop: '16px',
-          padding: '20px', 
-          background: 'linear-gradient(135deg, rgba(0, 118, 187, 0.08) 0%, rgba(0, 168, 79, 0.08) 100%)', 
-          borderRadius: '16px', 
-          border: `2px solid ${colors.blue}`,
-          animation: 'fadeIn 0.3s ease-out'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
-            <div style={{ 
-              width: '48px', 
-              height: '48px', 
-              borderRadius: '12px', 
-              background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0
-            }}>
-              <RefreshCw size={24} color="white" />
-            </div>
-            <div style={{ flex: 1 }}>
-              <h4 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 700, color: '#1e293b' }}>
-                Welcome back!
-              </h4>
-              <p style={{ margin: '0 0 12px', fontSize: '14px', color: '#64748b' }}>
-                We found your previous progress from {new Date(foundDraft.lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}. 
-                {foundDraft.formData?.locations?.length > 0 && ` You had ${foundDraft.formData.locations.length} location${foundDraft.formData.locations.length > 1 ? 's' : ''} configured.`}
-              </p>
-              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                <button
-                  onClick={handleRestoreDraft}
-                  style={{
-                    padding: '10px 20px',
-                    borderRadius: '10px',
-                    border: 'none',
-                    background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`,
-                    color: 'white',
-                    fontSize: '14px',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}
-                >
-                  <RefreshCw size={16} />
-                  Restore My Progress
-                </button>
-                <button
-                  onClick={handleStartFresh}
-                  style={{
-                    padding: '10px 20px',
-                    borderRadius: '10px',
-                    border: '1px solid rgba(0, 0, 0, 0.1)',
-                    background: 'white',
-                    color: '#64748b',
-                    fontSize: '14px',
-                    fontWeight: 600,
-                    cursor: 'pointer'
-                  }}
-                >
-                  Start Fresh
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
       
       <div style={{ marginTop: '16px', padding: isMobile ? '16px' : '20px 24px', background: 'rgba(0, 118, 187, 0.04)', borderRadius: '12px', border: '1px solid rgba(0, 118, 187, 0.1)', display: 'flex', alignItems: 'center', gap: '16px' }}>
         <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(0, 118, 187, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -3369,6 +3413,7 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
   const [showReservationTypes, setShowReservationTypes] = useState(false);
   const [showFeatures, setShowFeatures] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showAddons, setShowAddons] = useState(false);
   
   // Calculate required field completion
   const requiredFields = [
@@ -3519,84 +3564,88 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
             </FormGroup>
           </div>
           
-          {/* Indoor/Outdoor, Square Footage, and Max Capacity */}
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr', gap: '16px', marginBottom: '20px' }}>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <Sun size={16} color={colors.blue} />
-                <label style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>Indoor or Outdoor? <span style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 400 }}>*</span></label>
-              </div>
-              <div style={{ 
-                display: 'flex', 
-                gap: '8px', 
-                height: '46px',
-                padding: !asset.indoorOutdoor ? '4px' : '0',
-                borderRadius: !asset.indoorOutdoor ? '14px' : '0',
-                border: !asset.indoorOutdoor ? '2px dashed #fca5a5' : 'none',
-                background: !asset.indoorOutdoor ? 'rgba(239, 68, 68, 0.02)' : 'transparent'
-              }}>
-                {[
-                  { value: 'indoor', label: 'Indoor' },
-                  { value: 'outdoor', label: 'Outdoor' },
-                  { value: 'both', label: 'Both' },
-                ].map(opt => (
-                  <button
-                    key={opt.value}
-                    onClick={() => updateAsset(locationId, assetIndex, 'indoorOutdoor', opt.value)}
-                    style={{
-                      flex: 1,
-                      height: '100%',
-                      borderRadius: '10px',
-                      border: asset.indoorOutdoor === opt.value ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)',
-                      background: asset.indoorOutdoor === opt.value ? 'rgba(0, 118, 187, 0.08)' : 'white',
-                      color: asset.indoorOutdoor === opt.value ? colors.blue : '#64748b',
-                      fontSize: '14px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      transition: 'all 0.15s'
-                    }}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
+          {/* Indoor/Outdoor - Full width on mobile */}
+          <div style={{ marginBottom: '20px', padding: isMobile ? '16px' : '20px', background: 'rgba(248, 250, 252, 0.5)', borderRadius: '12px', border: '1px solid rgba(0, 118, 187, 0.06)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+              <Sun size={16} color={colors.blue} />
+              <label style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>Indoor or Outdoor? <span style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 400 }}>*</span></label>
             </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <Ruler size={16} color={colors.blue} />
-                <label style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>Estimated Size</label>
-                
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', height: '46px' }}>
-                <input
-                  type="number"
-                  value={asset.squareFootage || ''}
-                  onChange={(e) => updateAsset(locationId, assetIndex, 'squareFootage', e.target.value)}
-                  style={{ ...inputStyle, flex: 1, height: '100%' }}
-                  placeholder="e.g., 5000"
-                  inputMode="numeric"
-                  min="0"
-                />
-                <span style={{ fontSize: '14px', color: '#64748b', whiteSpace: 'nowrap' }}>sq ft</span>
-              </div>
+            <div style={{ 
+              display: 'flex', 
+              gap: '10px',
+              padding: !asset.indoorOutdoor ? '4px' : '0',
+              borderRadius: !asset.indoorOutdoor ? '14px' : '0',
+              border: !asset.indoorOutdoor ? '2px dashed #fca5a5' : 'none',
+              background: !asset.indoorOutdoor ? 'rgba(239, 68, 68, 0.02)' : 'transparent'
+            }}>
+              {[
+                { value: 'indoor', label: 'Indoor', Icon: Home },
+                { value: 'outdoor', label: 'Outdoor', Icon: Sun },
+                { value: 'both', label: 'Both', Icon: RefreshCw },
+              ].map(opt => (
+                <button
+                  key={opt.value}
+                  onClick={() => updateAsset(locationId, assetIndex, 'indoorOutdoor', opt.value)}
+                  style={{
+                    flex: 1,
+                    padding: '14px 16px',
+                    borderRadius: '10px',
+                    border: asset.indoorOutdoor === opt.value ? `2px solid ${colors.blue}` : '1px solid rgba(0, 118, 187, 0.15)',
+                    background: asset.indoorOutdoor === opt.value ? 'rgba(0, 118, 187, 0.08)' : 'white',
+                    color: asset.indoorOutdoor === opt.value ? colors.blue : '#64748b',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <opt.Icon size={22} color={asset.indoorOutdoor === opt.value ? colors.blue : '#94a3b8'} />
+                  {opt.label}
+                </button>
+              ))}
             </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <Users size={16} color={colors.blue} />
-                <label style={{ fontSize: '14px', fontWeight: 600, color: '#334155' }}>Max Capacity</label>
-                
+            
+            {/* Size and Capacity - side by side */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '16px' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                  <Ruler size={14} color="#64748b" />
+                  <label style={{ fontSize: '13px', fontWeight: 600, color: '#64748b' }}>Estimated Size</label>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <input
+                    type="number"
+                    value={asset.squareFootage || ''}
+                    onChange={(e) => updateAsset(locationId, assetIndex, 'squareFootage', e.target.value)}
+                    style={{ ...inputStyle, flex: 1 }}
+                    placeholder="5000"
+                    inputMode="numeric"
+                    min="0"
+                  />
+                  <span style={{ fontSize: '13px', color: '#94a3b8', whiteSpace: 'nowrap' }}>sq ft</span>
+                </div>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', height: '46px' }}>
-                <input
-                  type="number"
-                  value={asset.maxCapacity || ''}
-                  onChange={(e) => updateAsset(locationId, assetIndex, 'maxCapacity', e.target.value)}
-                  style={{ ...inputStyle, flex: 1, height: '100%' }}
-                  placeholder="e.g., 100"
-                  inputMode="numeric"
-                  min="0"
-                />
-                <span style={{ fontSize: '14px', color: '#64748b', whiteSpace: 'nowrap' }}>people</span>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                  <Users size={14} color="#64748b" />
+                  <label style={{ fontSize: '13px', fontWeight: 600, color: '#64748b' }}>Max Capacity</label>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <input
+                    type="number"
+                    value={asset.maxCapacity || ''}
+                    onChange={(e) => updateAsset(locationId, assetIndex, 'maxCapacity', e.target.value)}
+                    style={{ ...inputStyle, flex: 1 }}
+                    placeholder="100"
+                    inputMode="numeric"
+                    min="0"
+                  />
+                  <span style={{ fontSize: '13px', color: '#94a3b8', whiteSpace: 'nowrap' }}>people</span>
+                </div>
               </div>
             </div>
           </div>
@@ -4088,13 +4137,46 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
               </div>
             )}
           </div>
-          <div id={`amenities-${locationId}-${assetIndex}`} style={{ background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', padding: isMobile ? '16px' : '20px', border: '1px solid rgba(0, 118, 187, 0.06)', transition: 'box-shadow 0.3s ease' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-              <DollarSign size={16} color={colors.blue} />
-              <h5 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#64748b' }}>Add-ons</h5>
-              <Tooltip text="Extra items or services renters can add to their booking for an additional fee."><span /></Tooltip>
+          
+          {/* Add-ons - Collapsible */}
+          <div id={`amenities-${locationId}-${assetIndex}`} style={{ background: 'rgba(248, 250, 252, 0.8)', borderRadius: '12px', border: '1px solid rgba(0, 118, 187, 0.06)', overflow: 'hidden', marginBottom: '20px' }}>
+            <div 
+              onClick={() => setShowAddons(!showAddons)}
+              style={{ 
+                padding: isMobile ? '16px' : '20px', 
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                background: showAddons ? 'rgba(0, 118, 187, 0.03)' : 'transparent',
+                transition: 'background 0.2s'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <DollarSign size={16} color={colors.blue} />
+                <h5 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#64748b' }}>Add-ons</h5>
+                {asset.amenities.filter(a => a.name).length > 0 && (
+                  <span style={{ 
+                    padding: '2px 8px', 
+                    borderRadius: '10px', 
+                    background: 'rgba(0, 168, 79, 0.1)', 
+                    color: colors.green, 
+                    fontSize: '12px', 
+                    fontWeight: 600 
+                  }}>
+                    {asset.amenities.filter(a => a.name).length} selected
+                  </span>
+                )}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '12px', color: '#94a3b8' }}>{showAddons ? 'Collapse' : 'Expand'}</span>
+                <ChevronRight size={18} color="#94a3b8" style={{ transform: showAddons ? 'rotate(90deg)' : 'rotate(0)', transition: 'transform 0.3s ease' }} />
+              </div>
             </div>
-            <p style={{ margin: '0 0 16px', fontSize: '13px', color: '#94a3b8' }}>Check any extras you offer and set your price. Select from categories below or add custom items.</p>
+            
+            {showAddons && (
+              <div style={{ padding: isMobile ? '0 16px 16px' : '0 20px 20px', borderTop: '1px solid rgba(0, 118, 187, 0.06)' }}>
+                <p style={{ margin: '16px 0', fontSize: '13px', color: '#94a3b8' }}>Extra items or services renters can add for an additional fee.</p>
             
             {/* Selected add-ons summary */}
             {asset.amenities.filter(a => a.name && !a.isCustom).length > 0 && (
@@ -4231,6 +4313,36 @@ function AssetCard({ asset, assetIndex, locationId, isExpanded, onToggle, update
                 Add custom option
               </button>
             </div>
+              </div>
+            )}
+          </div>
+          
+          {/* Done / Collapse Space Button */}
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            paddingTop: '8px'
+          }}>
+            <button
+              onClick={onToggle}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '12px 24px',
+                borderRadius: '10px',
+                border: `2px solid ${colors.green}`,
+                background: 'rgba(0, 168, 79, 0.08)',
+                color: colors.green,
+                fontSize: '14px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+            >
+              <Check size={18} />
+              Done with this space
+            </button>
           </div>
         </div>
       )}
@@ -5139,7 +5251,6 @@ function ReviewStep({ policies, locations, contactInfo, isMobile }) {
 
       <ReviewSection title="Your Information">
         <ReviewItem label="Name" value={contactInfo.fullName} />
-        <ReviewItem label="Organization" value={contactInfo.organization} />
         <ReviewItem label="Organization" value={contactInfo.organization} />
         <ReviewItem label="Email" value={contactInfo.email} />
         <ReviewItem label="Phone" value={contactInfo.phone} />
