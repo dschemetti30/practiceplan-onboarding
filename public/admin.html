@@ -11,7 +11,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f1f5f9; min-height: 100vh; }
     
-    :root { --pp-blue: #0076bb; --pp-green: #00a84f; --pp-gray: #64748b; --pp-dark: #1e293b; --pp-light: #f8fafc; }
+    :root { --pp-blue: #0076bb; --pp-green: #00a84f; --pp-gray: #64748b; --pp-dark: #1e293b; --pp-light: #f8fafc; --pp-orange: #f59e0b; --pp-red: #ef4444; }
     
     .login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); }
     .login-box { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.1); max-width: 400px; width: 100%; text-align: center; }
@@ -41,40 +41,66 @@
     .logout-btn { padding: 8px 16px; background: var(--pp-light); border: 1px solid #e2e8f0; border-radius: 6px; font-size: 13px; color: var(--pp-gray); cursor: pointer; font-family: 'Montserrat', sans-serif; font-weight: 500; }
     .logout-btn:hover { background: #e2e8f0; }
     
-    .stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; padding: 24px; max-width: 1400px; margin: 0 auto; }
-    .stat-card { background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
-    .stat-card .label { font-size: 11px; color: var(--pp-gray); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600; }
-    .stat-card .value { font-size: 28px; font-weight: 700; color: var(--pp-dark); }
+    /* Charts Section */
+    .charts-section { padding: 24px; max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+    .chart-card { background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 20px; }
+    .chart-card h3 { font-size: 14px; font-weight: 600; color: var(--pp-dark); margin-bottom: 16px; }
+    .mini-chart { display: flex; align-items: flex-end; gap: 4px; height: 80px; }
+    .mini-bar { background: linear-gradient(180deg, var(--pp-blue), var(--pp-green)); border-radius: 4px 4px 0 0; min-width: 24px; flex: 1; transition: height 0.3s; }
+    .chart-labels { display: flex; gap: 4px; margin-top: 8px; }
+    .chart-labels span { flex: 1; text-align: center; font-size: 10px; color: var(--pp-gray); }
+    .donut-container { display: flex; align-items: center; gap: 20px; }
+    .donut { width: 100px; height: 100px; border-radius: 50%; background: conic-gradient(var(--pp-green) 0deg, var(--pp-green) var(--completed-deg, 180deg), var(--pp-orange) var(--completed-deg, 180deg), var(--pp-orange) 360deg); display: flex; align-items: center; justify-content: center; }
+    .donut-inner { width: 60px; height: 60px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: var(--pp-dark); }
+    .donut-legend { font-size: 12px; }
+    .donut-legend div { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+    
+    .stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; padding: 0 24px 16px; max-width: 1400px; margin: 0 auto; }
+    .stat-card { background: white; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; }
+    .stat-card .label { font-size: 10px; color: var(--pp-gray); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600; }
+    .stat-card .value { font-size: 24px; font-weight: 700; color: var(--pp-dark); }
     .stat-card .value.green { color: var(--pp-green); }
     .stat-card .value.blue { color: var(--pp-blue); }
-    .stat-card .value.orange { color: #f59e0b; }
+    .stat-card .value.orange { color: var(--pp-orange); }
+    .stat-card .value.red { color: var(--pp-red); }
     
     .filters { padding: 0 24px 16px; max-width: 1400px; margin: 0 auto; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
     .filter-btn { padding: 8px 16px; border-radius: 20px; border: 1px solid #e2e8f0; background: white; font-size: 13px; color: var(--pp-gray); cursor: pointer; font-family: 'Montserrat', sans-serif; font-weight: 500; }
     .filter-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); }
     .filter-btn.active { background: var(--pp-blue); color: white; border-color: var(--pp-blue); }
-    .search-input { padding: 8px 16px; border-radius: 20px; border: 1px solid #e2e8f0; font-size: 13px; width: 250px; font-family: 'Montserrat', sans-serif; }
+    .search-input { padding: 8px 16px; border-radius: 20px; border: 1px solid #e2e8f0; font-size: 13px; width: 220px; font-family: 'Montserrat', sans-serif; }
     .search-input:focus { outline: none; border-color: var(--pp-blue); }
-    .refresh-btn { padding: 8px 16px; border-radius: 20px; border: 1px solid #e2e8f0; background: white; font-size: 13px; color: var(--pp-gray); cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif; font-weight: 500; }
-    .refresh-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); }
+    .action-btn { padding: 8px 16px; border-radius: 20px; border: 1px solid #e2e8f0; background: white; font-size: 13px; color: var(--pp-gray); cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: 'Montserrat', sans-serif; font-weight: 500; }
+    .action-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); }
+    .action-btn.primary { background: var(--pp-blue); color: white; border-color: var(--pp-blue); }
+    .action-btn.primary:hover { background: #005a8f; }
     
     .table-container { padding: 0 24px 24px; max-width: 1400px; margin: 0 auto; }
     .table-wrapper { background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; }
     table { width: 100%; border-collapse: collapse; }
-    th { text-align: left; padding: 14px 16px; background: var(--pp-light); font-size: 11px; font-weight: 600; color: var(--pp-gray); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; }
-    td { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; font-size: 14px; color: #334155; }
+    th { text-align: left; padding: 12px 14px; background: var(--pp-light); font-size: 11px; font-weight: 600; color: var(--pp-gray); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; cursor: pointer; user-select: none; white-space: nowrap; }
+    th:hover { background: #eef2f6; }
+    th .sort-icon { margin-left: 4px; opacity: 0.4; }
+    th.sorted .sort-icon { opacity: 1; }
+    td { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; font-size: 13px; color: #334155; }
     tr:last-child td { border-bottom: none; }
     tr:hover { background: var(--pp-light); }
-    .status-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+    tr.stale { background: #fef3c7; }
+    tr.stale:hover { background: #fde68a; }
+    .status-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 600; text-transform: uppercase; }
     .status-badge.submitted { background: #dcfce7; color: #16a34a; }
     .status-badge.in-progress { background: #fef3c7; color: #d97706; }
-    .view-btn { padding: 6px 12px; background: var(--pp-light); border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12px; color: var(--pp-blue); cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif; }
-    .view-btn:hover { background: #e2e8f0; }
-    .completion-bar { width: 60px; height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
+    .status-badge.stale { background: #fee2e2; color: #dc2626; }
+    .action-btns { display: flex; gap: 6px; }
+    .icon-btn { width: 30px; height: 30px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--pp-gray); }
+    .icon-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); background: var(--pp-light); }
+    .icon-btn.danger:hover { border-color: var(--pp-red); color: var(--pp-red); }
+    .completion-bar { width: 50px; height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
     .completion-fill { height: 100%; background: linear-gradient(90deg, var(--pp-blue), var(--pp-green)); border-radius: 3px; }
     .org-name { font-weight: 600; color: var(--pp-dark); }
-    .contact-email { font-size: 12px; color: var(--pp-gray); }
-    .date-cell { font-size: 13px; color: var(--pp-gray); }
+    .contact-email { font-size: 11px; color: var(--pp-gray); }
+    .date-cell { font-size: 12px; color: var(--pp-gray); }
     .empty-state { padding: 60px 24px; text-align: center; color: var(--pp-gray); }
     
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: flex-start; justify-content: center; padding: 20px; z-index: 1000; overflow-y: auto; }
@@ -86,36 +112,46 @@
     .modal-close:hover { background: #e2e8f0; }
     .modal-body { padding: 24px; }
     .detail-section { margin-bottom: 28px; }
-    .detail-section h3 { font-size: 13px; font-weight: 700; color: var(--pp-blue); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid var(--pp-light); }
-    .detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
-    .detail-item { background: var(--pp-light); padding: 12px; border-radius: 8px; }
-    .detail-item label { display: block; font-size: 10px; color: var(--pp-gray); text-transform: uppercase; margin-bottom: 4px; font-weight: 600; letter-spacing: 0.3px; }
-    .detail-item span { font-size: 14px; color: var(--pp-dark); font-weight: 500; }
-    .location-card { background: var(--pp-light); border-radius: 12px; padding: 20px; margin-bottom: 16px; border-left: 4px solid var(--pp-blue); }
-    .location-card h4 { font-size: 16px; font-weight: 700; color: var(--pp-dark); margin-bottom: 4px; }
-    .location-card .location-meta { font-size: 12px; color: var(--pp-gray); margin-bottom: 12px; }
-    .space-card { background: white; border-radius: 8px; padding: 16px; margin-top: 12px; border: 1px solid #e2e8f0; }
-    .space-card .space-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-    .space-card .space-name { font-weight: 600; color: var(--pp-dark); font-size: 15px; }
-    .space-card .space-price { font-weight: 700; color: var(--pp-green); font-size: 15px; }
-    .space-card .space-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; font-size: 12px; color: var(--pp-gray); }
-    .space-card .space-details span { background: #f1f5f9; padding: 4px 8px; border-radius: 4px; }
-    .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-    .tag { display: inline-block; padding: 3px 8px; background: rgba(0, 118, 187, 0.1); color: var(--pp-blue); border-radius: 4px; font-size: 11px; font-weight: 500; }
-    .approver-info { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #e2e8f0; font-size: 12px; color: var(--pp-gray); }
+    .detail-section h3 { font-size: 13px; font-weight: 700; color: var(--pp-blue); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid var(--pp-light); display: flex; align-items: center; justify-content: space-between; }
+    .detail-section h3 .toggle-btn { font-size: 12px; color: var(--pp-gray); cursor: pointer; font-weight: 500; }
+    .detail-section h3 .toggle-btn:hover { color: var(--pp-blue); }
+    .detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+    .detail-item { background: var(--pp-light); padding: 10px 12px; border-radius: 8px; }
+    .detail-item label { display: block; font-size: 9px; color: var(--pp-gray); text-transform: uppercase; margin-bottom: 2px; font-weight: 600; letter-spacing: 0.3px; }
+    .detail-item span { font-size: 13px; color: var(--pp-dark); font-weight: 500; }
+    .location-card { background: var(--pp-light); border-radius: 12px; padding: 16px; margin-bottom: 12px; border-left: 4px solid var(--pp-blue); }
+    .location-card.collapsed .location-content { display: none; }
+    .location-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+    .location-card h4 { font-size: 15px; font-weight: 700; color: var(--pp-dark); margin-bottom: 2px; }
+    .location-card .location-meta { font-size: 11px; color: var(--pp-gray); }
+    .space-card { background: white; border-radius: 8px; padding: 14px; margin-top: 10px; border: 1px solid #e2e8f0; }
+    .space-card .space-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .space-card .space-name { font-weight: 600; color: var(--pp-dark); font-size: 14px; }
+    .space-card .space-price { font-weight: 700; color: var(--pp-green); font-size: 14px; }
+    .space-card .space-details { display: flex; flex-wrap: wrap; gap: 6px; font-size: 11px; color: var(--pp-gray); }
+    .space-card .space-details span { background: #f1f5f9; padding: 3px 8px; border-radius: 4px; }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+    .tag { display: inline-block; padding: 2px 6px; background: rgba(0, 118, 187, 0.1); color: var(--pp-blue); border-radius: 4px; font-size: 10px; font-weight: 500; }
+    .approver-info { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #e2e8f0; font-size: 11px; color: var(--pp-gray); }
     .drive-link { display: inline-flex; align-items: center; gap: 6px; color: var(--pp-blue); text-decoration: none; font-weight: 500; }
     .drive-link:hover { text-decoration: underline; }
+    
+    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--pp-dark); color: white; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 500; z-index: 2000; transform: translateY(100px); opacity: 0; transition: all 0.3s; }
+    .toast.show { transform: translateY(0); opacity: 1; }
     
     .spinner { width: 32px; height: 32px; border: 3px solid #e2e8f0; border-top-color: var(--pp-blue); border-radius: 50%; animation: spin 1s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading { display: flex; align-items: center; justify-content: center; padding: 60px; }
     
+    @media (max-width: 900px) {
+      .charts-section { grid-template-columns: 1fr; }
+    }
     @media (max-width: 768px) {
       .stats-bar { grid-template-columns: repeat(2, 1fr); }
       .filters { flex-direction: column; align-items: stretch; }
       .search-input { width: 100%; }
       .table-wrapper { overflow-x: auto; }
-      table { min-width: 800px; }
+      table { min-width: 900px; }
       .user-email { display: none; }
     }
   </style>
@@ -194,24 +230,59 @@
         <button class="logout-btn" onclick="logout()">Sign Out</button>
       </div>
     </div>
+    
+    <div class="charts-section">
+      <div class="chart-card">
+        <h3>Submissions (Last 8 Weeks)</h3>
+        <div class="mini-chart" id="weeklyChart"></div>
+        <div class="chart-labels" id="weeklyLabels"></div>
+      </div>
+      <div class="chart-card">
+        <h3>Completion Rate</h3>
+        <div class="donut-container">
+          <div class="donut" id="donutChart"><div class="donut-inner" id="donutValue">0%</div></div>
+          <div class="donut-legend">
+            <div><span class="legend-dot" style="background:var(--pp-green)"></span> Completed</div>
+            <div><span class="legend-dot" style="background:var(--pp-orange)"></span> In Progress</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <div class="stats-bar">
-      <div class="stat-card"><div class="label">Total Submissions</div><div class="value" id="statTotal">-</div></div>
+      <div class="stat-card"><div class="label">Total</div><div class="value" id="statTotal">-</div></div>
       <div class="stat-card"><div class="label">Completed</div><div class="value green" id="statCompleted">-</div></div>
       <div class="stat-card"><div class="label">In Progress</div><div class="value orange" id="statInProgress">-</div></div>
-      <div class="stat-card"><div class="label">Total Locations</div><div class="value blue" id="statLocations">-</div></div>
-      <div class="stat-card"><div class="label">Total Spaces</div><div class="value blue" id="statSpaces">-</div></div>
+      <div class="stat-card"><div class="label">Stale (7+ days)</div><div class="value red" id="statStale">-</div></div>
+      <div class="stat-card"><div class="label">Locations</div><div class="value blue" id="statLocations">-</div></div>
+      <div class="stat-card"><div class="label">Spaces</div><div class="value blue" id="statSpaces">-</div></div>
     </div>
+    
     <div class="filters">
       <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>
       <button class="filter-btn" data-filter="submitted" onclick="setFilter('submitted')">Completed</button>
       <button class="filter-btn" data-filter="in-progress" onclick="setFilter('in-progress')">In Progress</button>
+      <button class="filter-btn" data-filter="stale" onclick="setFilter('stale')">Stale</button>
       <input type="text" class="search-input" placeholder="Search..." oninput="handleSearch(this.value)">
-      <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
+      <button class="action-btn" onclick="exportCSV()">📥 Export CSV</button>
+      <button class="action-btn" onclick="loadData()">↻ Refresh</button>
     </div>
+    
     <div class="table-container">
       <div class="table-wrapper">
         <table>
-          <thead><tr><th>Organization</th><th>Contact</th><th>Status</th><th>Progress</th><th>Locations</th><th>Spaces</th><th>Last Updated</th><th></th></tr></thead>
+          <thead>
+            <tr>
+              <th onclick="sortBy('organization')">Organization <span class="sort-icon">↕</span></th>
+              <th onclick="sortBy('contact')">Contact <span class="sort-icon">↕</span></th>
+              <th onclick="sortBy('status')">Status <span class="sort-icon">↕</span></th>
+              <th onclick="sortBy('completion')">Progress <span class="sort-icon">↕</span></th>
+              <th onclick="sortBy('locations')">Loc <span class="sort-icon">↕</span></th>
+              <th onclick="sortBy('spaces')">Spc <span class="sort-icon">↕</span></th>
+              <th onclick="sortBy('lastUpdated')" class="sorted">Updated <span class="sort-icon">↓</span></th>
+              <th>Actions</th>
+            </tr>
+          </thead>
           <tbody id="tableBody"><tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr></tbody>
         </table>
       </div>
@@ -228,12 +299,16 @@
       <div class="modal-body" id="modalBody"></div>
     </div>
   </div>
+  
+  <div class="toast" id="toast"></div>
 
   <script>
     const GOOGLE_CLIENT_ID = '552673133395-m5onf8p7gt83lpvjqkpvao444ds0903h.apps.googleusercontent.com';
     const API_URL = 'https://script.google.com/macros/s/AKfycbxY4cTJeIBwjbCV77vSDpn1OiP2mrs5h6phU4rJazR9rAYbrQLYJF37W8d7l_QndcMB/exec';
+    const STALE_DAYS = 7;
     
     let allData = [], currentFilter = 'all', searchQuery = '', currentUser = null;
+    let sortField = 'lastUpdated', sortDir = 'desc';
 
     window.onload = function() {
       google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleCredentialResponse, auto_select: true });
@@ -282,7 +357,7 @@
 
     function jsonpRequest(url) {
       return new Promise((resolve, reject) => {
-        const cb = 'cb_' + Date.now();
+        const cb = 'cb_' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
         window[cb] = (data) => { delete window[cb]; document.body.removeChild(s); resolve(data); };
         const s = document.createElement('script');
         s.src = url + '&callback=' + cb;
@@ -296,43 +371,172 @@
       document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr>';
       try {
         const result = await jsonpRequest(`${API_URL}?action=getAdminData&email=${encodeURIComponent(currentUser?.email || '')}`);
-        if (result.success) { allData = result.data || []; updateStats(); renderTable(); }
+        if (result.success) { 
+          allData = result.data || []; 
+          // Mark stale items
+          const now = new Date();
+          allData.forEach(d => {
+            const updated = new Date(d.lastUpdated);
+            const daysDiff = (now - updated) / (1000 * 60 * 60 * 24);
+            d.isStale = d.status === 'In Progress' && daysDiff > STALE_DAYS;
+            d.daysSinceUpdate = Math.floor(daysDiff);
+          });
+          updateStats(); 
+          updateCharts();
+          renderTable(); 
+        }
         else if (result.error === 'Unauthorized') { logout(); }
         else { throw new Error(result.error); }
-      } catch (e) { document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">Unable to load data. Try refreshing.</td></tr>'; }
+      } catch (e) { 
+        console.error(e);
+        document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">Unable to load data. Try refreshing.</td></tr>'; 
+      }
     }
 
     function updateStats() {
+      const staleCount = allData.filter(d => d.isStale).length;
       document.getElementById('statTotal').textContent = allData.length;
       document.getElementById('statCompleted').textContent = allData.filter(d => d.status === 'Submitted').length;
       document.getElementById('statInProgress').textContent = allData.filter(d => d.status === 'In Progress').length;
+      document.getElementById('statStale').textContent = staleCount;
       document.getElementById('statLocations').textContent = allData.reduce((s, d) => s + (d.locations || 0), 0);
       document.getElementById('statSpaces').textContent = allData.reduce((s, d) => s + (d.spaces || 0), 0);
+    }
+    
+    function updateCharts() {
+      // Weekly chart
+      const weeks = {};
+      const now = new Date();
+      for (let i = 7; i >= 0; i--) {
+        const d = new Date(now);
+        d.setDate(d.getDate() - (i * 7));
+        const key = d.toISOString().split('T')[0].substring(0, 7) + '-W' + Math.ceil(d.getDate() / 7);
+        weeks[key] = 0;
+      }
+      allData.forEach(d => {
+        const date = new Date(d.lastUpdated);
+        const key = date.toISOString().split('T')[0].substring(0, 7) + '-W' + Math.ceil(date.getDate() / 7);
+        if (weeks[key] !== undefined) weeks[key]++;
+      });
+      const values = Object.values(weeks);
+      const max = Math.max(...values, 1);
+      const chartHtml = values.map(v => `<div class="mini-bar" style="height:${(v/max)*100}%"></div>`).join('');
+      const labelsHtml = Object.keys(weeks).map(k => `<span>${k.split('-W')[1] || ''}</span>`).join('');
+      document.getElementById('weeklyChart').innerHTML = chartHtml;
+      document.getElementById('weeklyLabels').innerHTML = labelsHtml;
+      
+      // Donut chart
+      const completed = allData.filter(d => d.status === 'Submitted').length;
+      const total = allData.length || 1;
+      const pct = Math.round((completed / total) * 100);
+      const deg = (completed / total) * 360;
+      document.getElementById('donutChart').style.setProperty('--completed-deg', deg + 'deg');
+      document.getElementById('donutValue').textContent = pct + '%';
     }
 
     function setFilter(f) { currentFilter = f; document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === f)); renderTable(); }
     function handleSearch(q) { searchQuery = q.toLowerCase(); renderTable(); }
+    
+    function sortBy(field) {
+      if (sortField === field) { sortDir = sortDir === 'asc' ? 'desc' : 'asc'; }
+      else { sortField = field; sortDir = 'desc'; }
+      document.querySelectorAll('th').forEach(th => th.classList.remove('sorted'));
+      event.target.closest('th').classList.add('sorted');
+      event.target.closest('th').querySelector('.sort-icon').textContent = sortDir === 'asc' ? '↑' : '↓';
+      renderTable();
+    }
 
     function renderTable() {
       let filtered = allData;
       if (currentFilter === 'submitted') filtered = filtered.filter(d => d.status === 'Submitted');
       else if (currentFilter === 'in-progress') filtered = filtered.filter(d => d.status === 'In Progress');
+      else if (currentFilter === 'stale') filtered = filtered.filter(d => d.isStale);
       if (searchQuery) filtered = filtered.filter(d => (d.organization + d.contact + d.email).toLowerCase().includes(searchQuery));
-      filtered.sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated));
+      
+      // Sort
+      filtered.sort((a, b) => {
+        let aVal = a[sortField], bVal = b[sortField];
+        if (sortField === 'lastUpdated') { aVal = new Date(aVal); bVal = new Date(bVal); }
+        if (sortField === 'completion' || sortField === 'locations' || sortField === 'spaces') { aVal = Number(aVal) || 0; bVal = Number(bVal) || 0; }
+        if (aVal < bVal) return sortDir === 'asc' ? -1 : 1;
+        if (aVal > bVal) return sortDir === 'asc' ? 1 : -1;
+        return 0;
+      });
       
       if (!filtered.length) { document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">No submissions found</td></tr>'; return; }
       
       document.getElementById('tableBody').innerHTML = filtered.map(item => `
-        <tr>
+        <tr class="${item.isStale ? 'stale' : ''}">
           <td><div class="org-name">${esc(item.organization || 'Unknown')}</div></td>
           <td><div>${esc(item.contact || '-')}</div><div class="contact-email">${esc(item.email)}</div></td>
-          <td><span class="status-badge ${item.status === 'Submitted' ? 'submitted' : 'in-progress'}">${item.status === 'Submitted' ? 'Completed' : 'In Progress'}</span></td>
-          <td><div style="display:flex;align-items:center;gap:8px"><div class="completion-bar"><div class="completion-fill" style="width:${item.completion||0}%"></div></div><span style="font-size:12px;color:var(--pp-gray)">${item.completion||0}%</span></div></td>
+          <td><span class="status-badge ${item.status === 'Submitted' ? 'submitted' : item.isStale ? 'stale' : 'in-progress'}">${item.status === 'Submitted' ? 'Completed' : item.isStale ? 'Stale' : 'In Progress'}</span></td>
+          <td><div style="display:flex;align-items:center;gap:6px"><div class="completion-bar"><div class="completion-fill" style="width:${item.completion||0}%"></div></div><span style="font-size:11px;color:var(--pp-gray)">${item.completion||0}%</span></div></td>
           <td>${item.locations || 0}</td>
           <td>${item.spaces || 0}</td>
-          <td class="date-cell">${formatDate(item.lastUpdated)}</td>
-          <td><button class="view-btn" onclick='viewDetails(${JSON.stringify(item).replace(/'/g,"&#39;")})'>View</button></td>
+          <td class="date-cell">${formatDateShort(item.lastUpdated)}${item.isStale ? '<br><span style="color:var(--pp-red);font-size:10px">'+item.daysSinceUpdate+'d ago</span>' : ''}</td>
+          <td class="action-btns">
+            <button class="icon-btn" onclick='viewDetails(${JSON.stringify(item).replace(/'/g,"&#39;")})' title="View">👁</button>
+            <button class="icon-btn" onclick="copyEmail('${esc(item.email)}')" title="Copy email">📋</button>
+            <button class="icon-btn" onclick="emailContact('${esc(item.email)}','${esc(item.contact)}')" title="Email">✉️</button>
+            <button class="icon-btn danger" onclick="archiveItem('${item.sheetType}',${item.rowIndex},'${esc(item.organization)}')" title="Archive">🗑</button>
+          </td>
         </tr>`).join('');
+    }
+    
+    function copyEmail(email) {
+      navigator.clipboard.writeText(email);
+      showToast('Email copied to clipboard');
+    }
+    
+    function emailContact(email, name) {
+      const subject = encodeURIComponent('PracticePlan Onboarding');
+      const body = encodeURIComponent(`Hi ${name || 'there'},\n\n`);
+      window.open(`mailto:${email}?subject=${subject}&body=${body}`);
+    }
+    
+    async function archiveItem(sheetType, rowIndex, orgName) {
+      if (!confirm(`Archive "${orgName}"? This will hide it from the dashboard.`)) return;
+      try {
+        const result = await jsonpRequest(`${API_URL}?action=archiveSubmission&email=${encodeURIComponent(currentUser?.email || '')}&sheetType=${sheetType}&rowIndex=${rowIndex}`);
+        if (result.success) {
+          showToast('Archived successfully');
+          loadData();
+        } else {
+          showToast('Archive failed: ' + (result.error || 'Unknown error'));
+        }
+      } catch (e) {
+        showToast('Archive failed');
+      }
+    }
+    
+    function exportCSV() {
+      let filtered = allData;
+      if (currentFilter === 'submitted') filtered = filtered.filter(d => d.status === 'Submitted');
+      else if (currentFilter === 'in-progress') filtered = filtered.filter(d => d.status === 'In Progress');
+      else if (currentFilter === 'stale') filtered = filtered.filter(d => d.isStale);
+      if (searchQuery) filtered = filtered.filter(d => (d.organization + d.contact + d.email).toLowerCase().includes(searchQuery));
+      
+      const headers = ['Organization','Contact','Email','Phone','Status','Completion','Locations','Spaces','Last Updated'];
+      const rows = filtered.map(d => [
+        d.organization, d.contact, d.email, d.phone, d.status, d.completion + '%', d.locations, d.spaces, d.lastUpdated
+      ]);
+      
+      const csv = [headers, ...rows].map(r => r.map(c => `"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `practiceplan-submissions-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('CSV exported');
+    }
+    
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
     }
 
     function viewDetails(item) {
@@ -342,7 +546,6 @@
       const policies = fd.policies || {};
       const locations = fd.locations || [];
 
-      // Contact section
       let html = `
         <div class="detail-section">
           <h3>Contact Information</h3>
@@ -352,12 +555,8 @@
             <div class="detail-item"><label>Email</label><span>${esc(contact.email || item.email)}</span></div>
             <div class="detail-item"><label>Phone</label><span>${esc(contact.phone || item.phone)}</span></div>
             ${contact.adminEmail ? `<div class="detail-item"><label>Admin Email</label><span>${esc(contact.adminEmail)}</span></div>` : ''}
-            ${contact.adminName ? `<div class="detail-item"><label>Admin Name</label><span>${esc(contact.adminName)}</span></div>` : ''}
           </div>
-        </div>`;
-
-      // Status section
-      html += `
+        </div>
         <div class="detail-section">
           <h3>Submission Status</h3>
           <div class="detail-grid">
@@ -370,104 +569,71 @@
           </div>
         </div>`;
 
-      // Policies section
       if (Object.keys(policies).some(k => policies[k])) {
-        html += `
-          <div class="detail-section">
-            <h3>Policies & Settings</h3>
-            <div class="detail-grid">
-              ${policies.goLiveDate ? `<div class="detail-item"><label>Go Live Date</label><span>${esc(policies.goLiveDate)}</span></div>` : ''}
-              ${policies.bookingWindowMonths ? `<div class="detail-item"><label>Booking Window</label><span>${policies.bookingWindowMonths} months ahead</span></div>` : ''}
-              ${policies.requireApproval ? `<div class="detail-item"><label>Require Approval</label><span>${policies.requireApproval}</span></div>` : ''}
-              ${policies.notifyOnBooking ? `<div class="detail-item"><label>Notify on Booking</label><span>${policies.notifyOnBooking}</span></div>` : ''}
-              ${policies.cancellationDays ? `<div class="detail-item"><label>Cancellation Notice</label><span>${policies.cancellationDays} days</span></div>` : ''}
-              ${policies.weatherRefund ? `<div class="detail-item"><label>Weather Refund</label><span>${policies.weatherRefund}</span></div>` : ''}
-              ${policies.requireInsurance ? `<div class="detail-item"><label>Require Insurance</label><span>${policies.requireInsurance}</span></div>` : ''}
-              ${policies.timeIncrement ? `<div class="detail-item"><label>Time Increment</label><span>${policies.timeIncrement} minutes</span></div>` : ''}
-            </div>
-          </div>`;
+        html += `<div class="detail-section"><h3>Policies & Settings</h3><div class="detail-grid">
+          ${policies.goLiveDate ? `<div class="detail-item"><label>Go Live Date</label><span>${esc(policies.goLiveDate)}</span></div>` : ''}
+          ${policies.bookingWindowMonths ? `<div class="detail-item"><label>Booking Window</label><span>${policies.bookingWindowMonths} months</span></div>` : ''}
+          ${policies.requireApproval ? `<div class="detail-item"><label>Require Approval</label><span>${policies.requireApproval}</span></div>` : ''}
+          ${policies.cancellationDays ? `<div class="detail-item"><label>Cancellation</label><span>${policies.cancellationDays} days</span></div>` : ''}
+          ${policies.weatherRefund ? `<div class="detail-item"><label>Weather Refund</label><span>${policies.weatherRefund}</span></div>` : ''}
+          ${policies.requireInsurance ? `<div class="detail-item"><label>Insurance</label><span>${policies.requireInsurance}</span></div>` : ''}
+          ${policies.timeIncrement ? `<div class="detail-item"><label>Time Increment</label><span>${policies.timeIncrement} min</span></div>` : ''}
+        </div></div>`;
       }
 
-      // Locations & Spaces section
-      html += `<div class="detail-section"><h3>Locations & Spaces (${locations.length})</h3>`;
+      html += `<div class="detail-section"><h3>Locations & Spaces (${locations.length}) <span class="toggle-btn" onclick="toggleAllLocations()">Expand/Collapse All</span></h3>`;
       
       if (locations.length > 0) {
-        locations.forEach((loc, locIdx) => {
-          html += `
-            <div class="location-card">
-              <h4>${esc(loc.name || 'Unnamed Location')}</h4>
-              <div class="location-meta">
-                ${loc.type ? `Type: ${loc.type}` : ''}
-                ${loc.address ? ` • Address: ${esc(loc.address)}` : ''}
-              </div>`;
+        locations.forEach((loc, idx) => {
+          const spaceCount = (loc.assets || []).length;
+          html += `<div class="location-card" id="loc-${idx}">
+            <div class="location-header" onclick="toggleLocation(${idx})">
+              <div><h4>${esc(loc.name || 'Unnamed Location')}</h4><div class="location-meta">${loc.type || ''} • ${spaceCount} space${spaceCount !== 1 ? 's' : ''}${loc.address ? ' • ' + esc(loc.address) : ''}</div></div>
+              <span style="font-size:18px;color:var(--pp-gray)">▼</span>
+            </div>
+            <div class="location-content">`;
           
           if (loc.assets && loc.assets.length > 0) {
-            loc.assets.forEach((space, spaceIdx) => {
-              html += `
-                <div class="space-card">
-                  <div class="space-header">
-                    <span class="space-name">${esc(space.name || 'Unnamed Space')}</span>
-                    <span class="space-price">$${space.pricing || '?'}/hr</span>
-                  </div>
-                  <div class="space-details">
-                    ${space.type ? `<span>Type: ${esc(space.type)}</span>` : ''}
-                    ${space.indoorOutdoor ? `<span>${space.indoorOutdoor}</span>` : ''}
-                    ${space.maxCapacity ? `<span>Capacity: ${space.maxCapacity}</span>` : ''}
-                    ${space.squareFootage ? `<span>${space.squareFootage} sq ft</span>` : ''}
-                  </div>`;
-              
-              // Reservation types
-              if (space.reservationTypes && space.reservationTypes.length > 0) {
-                html += `<div class="tag-list">${space.reservationTypes.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>`;
-              }
-              
-              // Features
-              if (space.features && space.features.length > 0) {
-                html += `<div class="tag-list" style="margin-top:6px">${space.features.map(f => `<span class="tag" style="background:rgba(0,168,79,0.1);color:var(--pp-green)">${esc(f)}</span>`).join('')}</div>`;
-              }
-              
-              // Amenities
-              if (space.amenities && space.amenities.length > 0) {
-                const amenityNames = space.amenities.map(a => a.name || a).filter(Boolean);
-                if (amenityNames.length > 0) {
-                  html += `<div class="tag-list" style="margin-top:6px">${amenityNames.map(a => `<span class="tag" style="background:#fef3c7;color:#d97706">${esc(a)}</span>`).join('')}</div>`;
-                }
-              }
-              
-              // Approvers
-              if (space.approvers && space.approvers.length > 0) {
-                html += `<div class="approver-info"><strong>Approval Chain:</strong> ${space.approvers.map((a, i) => `${i+1}. ${esc(a.name || '')} (${esc(a.email || '')})`).join(' → ')}</div>`;
-              }
-              
-              // Add-ons
-              if (space.addons && space.addons.length > 0) {
-                const selectedAddons = space.addons.filter(a => a.selected);
-                if (selectedAddons.length > 0) {
-                  html += `<div class="approver-info"><strong>Add-ons:</strong> ${selectedAddons.map(a => `${esc(a.name)} ($${a.price})`).join(', ')}</div>`;
-                }
-              }
-              
+            loc.assets.forEach(space => {
+              html += `<div class="space-card">
+                <div class="space-header"><span class="space-name">${esc(space.name || 'Unnamed')}</span><span class="space-price">$${space.pricing || '?'}/hr</span></div>
+                <div class="space-details">
+                  ${space.type ? `<span>${esc(space.type)}</span>` : ''}
+                  ${space.indoorOutdoor ? `<span>${space.indoorOutdoor}</span>` : ''}
+                  ${space.maxCapacity ? `<span>Cap: ${space.maxCapacity}</span>` : ''}
+                  ${space.squareFootage ? `<span>${space.squareFootage} sqft</span>` : ''}
+                </div>`;
+              if (space.reservationTypes?.length) html += `<div class="tag-list">${space.reservationTypes.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>`;
+              if (space.features?.length) html += `<div class="tag-list">${space.features.map(f => `<span class="tag" style="background:rgba(0,168,79,0.1);color:var(--pp-green)">${esc(f)}</span>`).join('')}</div>`;
+              if (space.approvers?.length) html += `<div class="approver-info"><strong>Approvers:</strong> ${space.approvers.map((a,i) => `${i+1}. ${esc(a.email)}`).join(' → ')}</div>`;
               html += `</div>`;
             });
-          } else {
-            html += `<p style="color:var(--pp-gray);font-style:italic;font-size:13px">No spaces configured</p>`;
-          }
-          
-          html += `</div>`;
+          } else { html += `<p style="color:var(--pp-gray);font-style:italic;font-size:12px;margin-top:10px">No spaces</p>`; }
+          html += `</div></div>`;
         });
       } else {
-        html += `<p style="color:var(--pp-gray);font-style:italic">No location data available</p>`;
+        html += `<p style="color:var(--pp-gray);font-style:italic">No location data available. This may be an older submission.</p>`;
       }
-      
       html += `</div>`;
 
       document.getElementById('modalBody').innerHTML = html;
       document.getElementById('modalOverlay').classList.add('active');
     }
+    
+    function toggleLocation(idx) {
+      document.getElementById('loc-' + idx).classList.toggle('collapsed');
+    }
+    
+    function toggleAllLocations() {
+      const cards = document.querySelectorAll('.location-card');
+      const allCollapsed = Array.from(cards).every(c => c.classList.contains('collapsed'));
+      cards.forEach(c => allCollapsed ? c.classList.remove('collapsed') : c.classList.add('collapsed'));
+    }
 
     function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
     function formatDate(d) { return d ? new Date(d).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}) : '-'; }
-    function esc(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '-'; }
+    function formatDateShort(d) { return d ? new Date(d).toLocaleDateString('en-US', {month:'short',day:'numeric'}) : '-'; }
+    function esc(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;') : '-'; }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
   </script>
 </body>
