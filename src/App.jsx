@@ -4831,6 +4831,38 @@ function LocationCard({ location, handlers, canRemove, isMobile, errors, contact
             {location.assets.map((asset, assetIndex) => (
               <AssetCard key={assetIndex} asset={asset} assetIndex={assetIndex} locationId={location.id} isExpanded={expandedAsset === assetIndex} onToggle={() => setExpandedAsset(expandedAsset === assetIndex ? -1 : assetIndex)} updateAsset={handlers.updateAsset} updateApprover={handlers.updateApprover} addApprover={handlers.addApprover} removeApprover={handlers.removeApprover} moveApprover={handlers.moveApprover} updateNotification={handlers.updateNotification} addNotification={handlers.addNotification} removeNotification={handlers.removeNotification} updateAmenity={handlers.updateAmenity} addAmenity={handlers.addAmenity} removeAmenity={handlers.removeAmenity} removeAsset={handlers.removeAsset} duplicateAsset={handlers.duplicateAsset} canRemove={location.assets.length > 1} isMobile={isMobile} errors={locationErrors.assets?.[assetIndex]} />
             ))}
+            
+            {/* Done with this location button */}
+            {location.assets.length > 0 && (
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                padding: '20px 0 8px',
+                marginTop: '8px',
+                borderTop: '1px dashed rgba(0, 118, 187, 0.15)'
+              }}>
+                <button
+                  onClick={handleToggle}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '12px 28px',
+                    borderRadius: '10px',
+                    border: `2px solid ${colors.green}`,
+                    background: 'rgba(0, 168, 79, 0.08)',
+                    color: colors.green,
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <Check size={18} />
+                  Done with this location
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
