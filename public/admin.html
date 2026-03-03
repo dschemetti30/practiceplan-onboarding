@@ -869,20 +869,50 @@
       html += '<div class="progress-hero"><div class="progress-hero-inner"><div class="progress-ring-large"><svg width="90" height="90" viewBox="0 0 90 90"><circle class="bg" cx="45" cy="45" r="36"/><circle class="progress" cx="45" cy="45" r="36" stroke-dasharray="' + circ + '" stroke-dashoffset="' + offset + '"/></svg><div class="center-text">' + pct + '%</div></div><div class="progress-details"><div class="progress-title">Form Submission Progress</div><div class="progress-bar-large"><div class="progress-bar-fill" style="width:' + pct + '%"></div></div><div class="progress-meta"><span><strong>' + (item.locations||0) + '</strong> locations</span><span><strong>' + (item.spaces||0) + '</strong> spaces</span><span>Updated <strong>' + timeAgo(item.lastUpdated) + '</strong></span></div></div></div></div>';
       
       // Contact info
-      html += '<div class="modal-body"><div class="detail-section"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Contact Information</h3><div class="detail-grid"><div class="detail-item"><label>Name</label><span>' + esc(contact.fullName || item.contact || '-') + '</span></div><div class="detail-item"><label>Organization</label><span>' + esc(contact.organization || item.organization || '-') + '</span></div><div class="detail-item"><label>Email</label><span>' + esc(contact.email || item.email || '-') + '</span></div><div class="detail-item"><label>Phone</label><span>' + formatPhone(contact.phone || item.phone) + '</span></div>' + (contact.adminEmail ? '<div class="detail-item"><label>Admin Email</label><span>' + esc(contact.adminEmail) + '</span></div>' : '') + (contact.adminPhone ? '<div class="detail-item"><label>Admin Phone</label><span>' + formatPhone(contact.adminPhone) + '</span></div>' : '') + (policies.goLiveDate ? '<div class="detail-item"><label>Go Live Date</label><span>' + esc(safeGoLiveDateStr(policies.goLiveDate)) + '</span></div>' : '') + (item.accountRep ? '<div class="detail-item"><label>Account Rep</label><span>' + esc((TEAM_MEMBERS.find(function(m){return m.email===item.accountRep})||{}).name || item.accountRep) + '</span></div>' : '') + '</div>' + renderNotesBlock(item.email, 'contact') + '</div>';
+      html += '<div class="modal-body"><div class="detail-section"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Contact Information</h3><div class="detail-grid"><div class="detail-item"><label>Name</label><span>' + esc(contact.fullName || item.contact || '-') + '</span></div><div class="detail-item"><label>Organization</label><span>' + esc(contact.organization || item.organization || '-') + '</span></div><div class="detail-item"><label>Email</label><span>' + esc(contact.email || item.email || '-') + '</span></div><div class="detail-item"><label>Phone</label><span>' + formatPhone(contact.phone || item.phone) + '</span></div>' + (contact.adminEmail ? '<div class="detail-item"><label>Admin Email</label><span>' + esc(contact.adminEmail) + '</span></div>' : '') + (contact.adminPhone ? '<div class="detail-item"><label>Admin Phone</label><span>' + formatPhone(contact.adminPhone) + '</span></div>' : '') + (policies.goLiveDate ? '<div class="detail-item"><label>Go Live Date</label><span>' + esc(safeGoLiveDateStr(policies.goLiveDate)) + '</span></div>' : '') + (contact.jobTitle ? '<div class="detail-item"><label>Job Title</label><span>' + esc(contact.jobTitle) + '</span></div>' : '') + (item.accountRep ? '<div class="detail-item"><label>Account Rep</label><span>' + esc((TEAM_MEMBERS.find(function(m){return m.email===item.accountRep})||{}).name || item.accountRep) + '</span></div>' : '') + '</div>' + renderNotesBlock(item.email, 'contact') + '</div>';
       
-      // Policies
+      // Policies & Settings
       if (policies && Object.keys(policies).length > 0) {
-        var policyItems = [];
+        var policyLabels = {
+          goLiveDate: 'Go Live Date', bookingWindow: 'Booking Window', bookingWindowMonths: 'Booking Window (months)',
+          requireApproval: 'Require Approval', notifyOnBooking: 'Notify on Booking',
+          cancellationDays: 'Cancellation Period (days)', weatherRefund: 'Weather Refund Policy',
+          requireInsurance: 'Require Insurance', timeIncrement: 'Time Increment (min)',
+          waiverText: 'Waiver Text', facilityPolicyText: 'Facility Policy Text',
+          facilityAgreement: 'Facility Agreement'
+        };
+        var policyEntries = [];
         Object.keys(policies).forEach(function(key) {
-          if (key === 'goLiveDate') return;
           var val = policies[key];
-          if (val === true) policyItems.push(key);
-          else if (val && typeof val === 'string' && val !== 'false') policyItems.push(key + ': ' + val);
+          if (!val && val !== 0) return;
+          var label = policyLabels[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, function(s){return s.toUpperCase()}).trim();
+          var displayVal = '';
+          if (typeof val === 'boolean') displayVal = val ? 'Yes' : 'No';
+          else if (key === 'goLiveDate') displayVal = safeGoLiveDateStr(val) ? formatGoLive(val) || safeGoLiveDateStr(val) : String(val);
+          else displayVal = String(val);
+          if (displayVal === 'yes') displayVal = 'Yes';
+          if (displayVal === 'no') displayVal = 'No';
+          if (displayVal === 'unsure') displayVal = 'Unsure';
+          if (displayVal === 'sometimes') displayVal = 'Sometimes';
+          if (displayVal === 'credit') displayVal = 'Credit';
+          policyEntries.push({ label: label, value: displayVal, isLong: displayVal.length > 60 });
         });
-        if (policyItems.length > 0) {
-          html += '<div class="detail-section"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Policies &amp; Settings</h3><div class="tag-list">' + policyItems.map(function(p) { return '<span class="tag blue">' + esc(p.replace(/([A-Z])/g, ' $1').replace(/^./, function(s){return s.toUpperCase()}).trim()) + '</span>'; }).join('') + '</div>' + renderNotesBlock(item.email, 'policies') + '</div>';
+        if (policyEntries.length > 0) {
+          html += '<div class="detail-section"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Policies &amp; Settings</h3><div class="detail-grid">';
+          policyEntries.forEach(function(pe) {
+            html += '<div class="detail-item' + (pe.isLong ? ' full-width' : '') + '"><label>' + esc(pe.label) + '</label><span>' + esc(pe.value) + '</span></div>';
+          });
+          html += '</div>' + renderNotesBlock(item.email, 'policies') + '</div>';
         }
+      }
+      
+      // Uploaded Files section
+      var hasFiles = (fd.waiverFileUrl || fd.agreementFileUrl);
+      if (hasFiles) {
+        html += '<div class="detail-section"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg> Uploaded Documents</h3><div class="detail-grid">';
+        if (fd.waiverFileUrl) html += '<div class="detail-item"><label>Waiver File</label><a href="' + esc(fd.waiverFileUrl) + '" target="_blank" style="color:var(--pp-blue);text-decoration:underline">View Document</a></div>';
+        if (fd.agreementFileUrl) html += '<div class="detail-item"><label>Agreement File</label><a href="' + esc(fd.agreementFileUrl) + '" target="_blank" style="color:var(--pp-blue);text-decoration:underline">View Document</a></div>';
+        html += '</div></div>';
       }
       
       // Locations
@@ -1056,6 +1086,30 @@
       rows.push(['Form Completion', (item.completion || 0) + '%']);
       if (item.driveFolder) rows.push(['Google Drive Folder', item.driveFolder]);
       rows.push([]);
+      // Policies & Settings
+      if (policies && Object.keys(policies).length > 0) {
+        rows.push(['POLICIES & SETTINGS']);
+        var policyLabels = {
+          goLiveDate: 'Go Live Date', bookingWindow: 'Booking Window', bookingWindowMonths: 'Booking Window (months)',
+          requireApproval: 'Require Approval', notifyOnBooking: 'Notify on Booking',
+          cancellationDays: 'Cancellation Period (days)', weatherRefund: 'Weather Refund Policy',
+          requireInsurance: 'Require Insurance', timeIncrement: 'Time Increment (min)',
+          waiverText: 'Waiver Text', facilityPolicyText: 'Facility Policy Text',
+          facilityAgreement: 'Facility Agreement'
+        };
+        Object.keys(policies).forEach(function(key) {
+          var val = policies[key];
+          if (!val && val !== 0) return;
+          var label = policyLabels[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, function(s){return s.toUpperCase()}).trim();
+          var displayVal = key === 'goLiveDate' ? (safeGoLiveDateStr(val) || String(val)) : String(val);
+          rows.push([label, displayVal]);
+        });
+        rows.push([]);
+      }
+      // Uploaded documents
+      if (fd.waiverFileUrl) rows.push(['Waiver File', fd.waiverFileUrl]);
+      if (fd.agreementFileUrl) rows.push(['Agreement File', fd.agreementFileUrl]);
+      if (fd.waiverFileUrl || fd.agreementFileUrl) rows.push([]);
       rows.push(['ONBOARDING CHECKLIST']);
       CHECKLIST_ITEMS.forEach(function(c) { rows.push([c.label, cl[c.id] ? 'Complete' : 'Incomplete']); });
       // Checklist notes
