@@ -66,18 +66,30 @@
     .stat-card:hover::before { opacity: 1; }
     .stat-card h3 { font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
     
-    /* Funnel - Horizontal Pills */
-    .funnel-horizontal { display: flex; align-items: center; gap: 8px; }
-    .funnel-pill { flex: 1; text-align: center; padding: 16px 12px; border-radius: 16px; background: var(--bg); transition: all 0.3s ease; cursor: default; position: relative; }
-    .funnel-pill:hover { transform: translateY(-2px); }
-    .funnel-pill .num { font-size: 28px; font-weight: 700; color: var(--text); display: block; }
-    .funnel-pill .pct { font-size: 12px; font-weight: 600; color: var(--pp-green); margin-top: 2px; }
-    .funnel-pill .lbl { font-size: 10px; color: var(--text2); text-transform: uppercase; margin-top: 6px; letter-spacing: 0.5px; }
-    .funnel-pill.blue { background: linear-gradient(135deg, rgba(0,118,187,0.1), rgba(0,118,187,0.05)); }
-    .funnel-pill.purple { background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(139,92,246,0.05)); }
-    .funnel-pill.amber { background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(245,158,11,0.05)); }
-    .funnel-pill.green { background: linear-gradient(135deg, rgba(0,168,79,0.1), rgba(0,168,79,0.05)); }
-    .funnel-arrow { color: var(--text3); font-size: 18px; }
+    /* Premium Funnel */
+    .funnel-container { position: relative; padding: 8px 0; }
+    .funnel-track { position: absolute; top: 50%; left: 40px; right: 40px; height: 4px; background: var(--border); border-radius: 2px; transform: translateY(-50%); z-index: 0; }
+    .funnel-track-fill { height: 100%; background: linear-gradient(90deg, var(--pp-blue), #8b5cf6, #f59e0b, var(--pp-green)); border-radius: 2px; transition: width 0.8s ease; }
+    .funnel-stages { display: flex; justify-content: space-between; position: relative; z-index: 1; }
+    .funnel-stage { display: flex; flex-direction: column; align-items: center; flex: 1; }
+    .funnel-node { width: 72px; height: 72px; border-radius: 50%; background: var(--card); border: 3px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: default; position: relative; }
+    .funnel-node::before { content: ''; position: absolute; inset: -6px; border-radius: 50%; background: transparent; transition: all 0.3s; }
+    .funnel-node:hover { transform: scale(1.1); }
+    .funnel-node:hover::before { background: rgba(0,118,187,0.08); }
+    .funnel-node.active { border-color: var(--pp-blue); box-shadow: 0 0 0 4px rgba(0,118,187,0.15); }
+    .funnel-node.s1 { border-color: var(--pp-blue); }
+    .funnel-node.s2 { border-color: #6366f1; }
+    .funnel-node.s3 { border-color: #8b5cf6; }
+    .funnel-node.s4 { border-color: #f59e0b; }
+    .funnel-node.s5 { border-color: var(--pp-green); }
+    .funnel-node .num { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1; }
+    .funnel-node .pct { font-size: 10px; font-weight: 600; color: var(--text2); margin-top: 2px; }
+    .funnel-label { margin-top: 12px; text-align: center; }
+    .funnel-label .title { font-size: 11px; font-weight: 600; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; }
+    .funnel-label .drop { font-size: 10px; color: var(--text3); margin-top: 3px; }
+    .funnel-label .drop.negative { color: #ef4444; }
+    .funnel-connector { position: absolute; top: 36px; height: 2px; background: var(--border); z-index: 0; }
+    @media (max-width: 900px) { .funnel-node { width: 56px; height: 56px; } .funnel-node .num { font-size: 18px; } .funnel-label .title { font-size: 9px; } }
     
     /* Time Stats */
     .time-stats { display: flex; gap: 16px; }
@@ -289,7 +301,7 @@
     
     /* Responsive */
     @media (max-width: 1200px) { .pipeline-board { grid-template-columns: repeat(2, 1fr); } .stats-row { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 900px) { .stats-row { grid-template-columns: 1fr; } .quick-stats-grid { grid-template-columns: repeat(2, 1fr); } .funnel-horizontal { flex-wrap: wrap; } .funnel-arrow { display: none; } .funnel-pill { flex: 1 1 45%; } }
+    @media (max-width: 900px) { .stats-row { grid-template-columns: 1fr; } .quick-stats-grid { grid-template-columns: repeat(2, 1fr); } .funnel-node { width: 56px; height: 56px; } .funnel-node .num { font-size: 18px; } .funnel-label .title { font-size: 9px; } .funnel-label .drop { display: none; } }
     @media (max-width: 768px) { .main-content { padding: 20px; } .header { padding: 12px 20px; } .controls-row { flex-direction: column; align-items: stretch; } .time-selector { justify-content: center; } .filters { justify-content: center; } .search-input { width: 100%; } .table-wrapper { display: none; } .mobile-cards { display: block; } .pipeline-board { grid-template-columns: 1fr; } .modal { margin: 16px; border-radius: 20px; } .modal-header { padding: 24px; } .modal-body { padding: 24px; } .drive-banner { flex-direction: column; gap: 16px; text-align: center; } .progress-hero-inner { flex-direction: column; text-align: center; } .header-logo { height: 28px; } }
   </style>
 </head>
@@ -317,7 +329,7 @@
     </div>
     <div class="main-content">
       <div class="stats-row">
-        <div class="stat-card animate-in"><h3>Conversion Funnel</h3><div class="funnel-horizontal" id="funnelChart"></div></div>
+        <div class="stat-card animate-in"><h3>Conversion Funnel</h3><div class="funnel-container"><div class="funnel-track"><div class="funnel-track-fill" id="funnelTrack"></div></div><div class="funnel-stages" id="funnelChart"></div></div></div>
         <div class="stat-card animate-in stagger-1"><h3>Avg Completion Time</h3><div class="time-stats"><div class="time-stat"><div class="value" id="avgTime">-</div><div class="label">Avg Days</div></div><div class="time-stat"><div class="value" id="fastestTime">-</div><div class="label">Fastest</div></div><div class="time-stat"><div class="value" id="slowestTime">-</div><div class="label">Slowest</div></div></div></div>
         <div class="stat-card animate-in stagger-2"><h3>Overview</h3><div class="quick-stats-grid"><div class="quick-stat-item"><div class="num" id="statTotal">0</div><div class="lbl">Total</div></div><div class="quick-stat-item"><div class="num green" id="statComplete">0</div><div class="lbl">Complete</div></div><div class="quick-stat-item"><div class="num blue" id="statActive">0</div><div class="lbl">Active</div></div><div class="quick-stat-item"><div class="num" id="statStale">0</div><div class="lbl">Stale</div></div></div></div>
       </div>
@@ -489,8 +501,15 @@
       const tf = getFilteredByTime(allData), complete = tf.filter(d => d.pipelineStatus === 'complete').length, active = tf.filter(d => d.pipelineStatus !== 'complete').length, stale = tf.filter(d => d.isStale).length;
       document.getElementById('statTotal').textContent = tf.length; document.getElementById('statComplete').textContent = complete; document.getElementById('statActive').textContent = active; document.getElementById('statStale').textContent = stale;
       const total = tf.length || 1;
-      const stages = [{l:'Started',c:tf.length,cl:'blue'},{l:'25%+',c:tf.filter(d=>d.completion>=25).length,cl:'blue'},{l:'50%+',c:tf.filter(d=>d.completion>=50).length,cl:'purple'},{l:'75%+',c:tf.filter(d=>d.completion>=75).length,cl:'amber'},{l:'Done',c:complete,cl:'green'}];
-      document.getElementById('funnelChart').innerHTML = stages.map((s,i) => '<div class="funnel-pill '+s.cl+'"><span class="num">'+s.c+'</span><span class="pct">'+Math.round((s.c/total)*100)+'%</span><span class="lbl">'+s.l+'</span></div>' + (i < stages.length-1 ? '<span class="funnel-arrow">→</span>' : '')).join('');
+      const stages = [{l:'Started',c:tf.length,s:'s1'},{l:'25%+',c:tf.filter(d=>d.completion>=25).length,s:'s2'},{l:'50%+',c:tf.filter(d=>d.completion>=50).length,s:'s3'},{l:'75%+',c:tf.filter(d=>d.completion>=75).length,s:'s4'},{l:'Complete',c:complete,s:'s5'}];
+      const completionRate = Math.round((complete / total) * 100);
+      document.getElementById('funnelTrack').style.width = completionRate + '%';
+      document.getElementById('funnelChart').innerHTML = stages.map((s,i) => {
+        const pct = Math.round((s.c/total)*100);
+        const prevCount = i > 0 ? stages[i-1].c : s.c;
+        const dropoff = i > 0 && prevCount > 0 ? Math.round(((prevCount - s.c) / prevCount) * 100) : 0;
+        return '<div class="funnel-stage"><div class="funnel-node ' + s.s + '"><span class="num">' + s.c + '</span><span class="pct">' + pct + '%</span></div><div class="funnel-label"><div class="title">' + s.l + '</div>' + (i > 0 && dropoff > 0 ? '<div class="drop negative">-' + dropoff + '% drop</div>' : '<div class="drop">of total</div>') + '</div></div>';
+      }).join('');
       const completed = tf.filter(d => d.pipelineStatus === 'complete');
       if (completed.length > 0) { const times = completed.map(d => Math.max(1, 7 - (d.daysSinceUpdate || 0))).filter(t => t > 0); document.getElementById('avgTime').textContent = times.length ? (times.reduce((a,b) => a+b, 0) / times.length).toFixed(1) : '-'; document.getElementById('fastestTime').textContent = times.length ? Math.min(...times) : '-'; document.getElementById('slowestTime').textContent = times.length ? Math.max(...times) : '-'; }
       else { document.getElementById('avgTime').textContent = '-'; document.getElementById('fastestTime').textContent = '-'; document.getElementById('slowestTime').textContent = '-'; }
