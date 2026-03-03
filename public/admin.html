@@ -384,8 +384,8 @@
     function formatPhone(p) { if (!p) return '-'; const c = String(p).replace(/\D/g, ''); if (c.length === 10) return '(' + c.slice(0,3) + ') ' + c.slice(3,6) + '-' + c.slice(6); if (c.length === 11 && c[0] === '1') return '+1 (' + c.slice(1,4) + ') ' + c.slice(4,7) + '-' + c.slice(7); return p; }
     function timeAgo(d) { if (!d) return '-'; const now = new Date(), diff = now - new Date(d), mins = Math.floor(diff/60000), hrs = Math.floor(diff/3600000), days = Math.floor(diff/86400000); if (mins < 1) return 'just now'; if (mins < 60) return mins + ' min ago'; if (hrs < 24) return hrs + ' hr ago'; if (days === 1) return '1 day ago'; if (days < 30) return days + ' days ago'; return Math.floor(days/30) + ' mo ago'; }
     function getLocationString(item) { const fd = item.formData || {}, locs = fd.locations || []; if (locs.length > 0) { const l = locs[0]; if (l.state && l.city) return l.city + ', ' + l.state; if (l.state) return l.state; if (l.city) return l.city; } return ''; }
-    function getGoLiveDate(item) { return (item.formData?.policies?.goLiveDate) || ''; }
-    function formatGoLive(d) { if (!d) return null; try { const p = d.split('-'); if (p.length === 3) return new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2])).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); return d; } catch(e) { return d; } }
+    function getGoLiveDate(item) { var val = (item.formData && item.formData.policies && item.formData.policies.goLiveDate) || ''; return safeGoLiveDateStr(val); }
+    function formatGoLive(d) { if (!d) return null; try { var s = safeGoLiveDateStr(d); if (!s) return null; var p = s.split('-'); if (p.length === 3) return new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2])).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); return s; } catch(e) { return String(d); } }
     function getChecklist(email) { return checklistData[email] || {}; }
     function setChecklist(email, id, checked) { if (!checklistData[email]) checklistData[email] = {}; checklistData[email][id] = checked; localStorage.setItem('pp_checklists', JSON.stringify(checklistData)); }
     function getChecklistCount(email) { const cl = getChecklist(email); return CHECKLIST_ITEMS.filter(i => cl[i.id]).length; }
@@ -532,30 +532,112 @@
       });
     }
 
+    function safeGoLiveDateStr(val) {
+      if (!val) return '';
+      if (typeof val === 'string') return val;
+      if (val instanceof Date || (typeof val === 'object' && val.getFullYear)) {
+        return val.getFullYear() + '-' + String(val.getMonth()+1).padStart(2,'0') + '-' + String(val.getDate()).padStart(2,'0');
+      }
+      return String(val);
+    }
+
+    function parseDateStr(s) {
+      if (!s) return null;
+      var str = safeGoLiveDateStr(s);
+      if (!str) return null;
+      var parts = str.split('-');
+      if (parts.length === 3) return new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+      return null;
+    }
+
+    function getEventClass(eventDate) {
+      var today = new Date(); today.setHours(0,0,0,0);
+      var diffDays = Math.floor((eventDate - today) / 86400000);
+      if (diffDays === 0) return 'is-today';
+      if (diffDays > 0 && diffDays <= 7) return 'this-week';
+      if (diffDays > 7) return 'upcoming';
+      return 'past-event';
+    }
+
     function renderCalendar() {
-      const year = calendarDate.getFullYear(), month = calendarDate.getMonth();
+      closeCalPopover();
+      var year = calendarDate.getFullYear(), month = calendarDate.getMonth();
       document.getElementById('calendarMonth').textContent = new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-      const firstDay = new Date(year, month, 1).getDay(), daysInMonth = new Date(year, month + 1, 0).getDate(), daysInPrev = new Date(year, month, 0).getDate();
-      const today = new Date(); today.setHours(0,0,0,0);
-      const events = allData.filter(d => d.goLiveDate).map(d => { const parts = d.goLiveDate.split('-'); return { ...d, date: new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2])) }; });
-      let html = '<div class="calendar-day-header">Sun</div><div class="calendar-day-header">Mon</div><div class="calendar-day-header">Tue</div><div class="calendar-day-header">Wed</div><div class="calendar-day-header">Thu</div><div class="calendar-day-header">Fri</div><div class="calendar-day-header">Sat</div>';
-      let day = 1, nextDay = 1;
-      for (let i = 0; i < 42; i++) {
-        let dateNum, isOther = false, dateObj;
+      var firstDay = new Date(year, month, 1).getDay(), daysInMonth = new Date(year, month + 1, 0).getDate(), daysInPrev = new Date(year, month, 0).getDate();
+      var today = new Date(); today.setHours(0,0,0,0);
+      var events = allData.filter(function(d){return d.goLiveDate}).map(function(d) {
+        var dateObj = parseDateStr(d.goLiveDate);
+        if (!dateObj) return null;
+        return Object.assign({}, d, { date: dateObj });
+      }).filter(function(d){return d !== null});
+      var html = '<div class="calendar-day-header">Sun</div><div class="calendar-day-header">Mon</div><div class="calendar-day-header">Tue</div><div class="calendar-day-header">Wed</div><div class="calendar-day-header">Thu</div><div class="calendar-day-header">Fri</div><div class="calendar-day-header">Sat</div>';
+      var day = 1, nextDay = 1;
+      for (var i = 0; i < 42; i++) {
+        var dateNum, isOther = false, dateObj;
         if (i < firstDay) { dateNum = daysInPrev - firstDay + i + 1; isOther = true; dateObj = new Date(year, month - 1, dateNum); }
         else if (day > daysInMonth) { dateNum = nextDay++; isOther = true; dateObj = new Date(year, month + 1, dateNum); }
         else { dateNum = day++; dateObj = new Date(year, month, dateNum); }
-        const isToday = dateObj.getTime() === today.getTime();
-        const dayEvents = events.filter(e => e.date.getTime() === dateObj.getTime());
-        html += '<div class="calendar-day' + (isOther ? ' other-month' : '') + (isToday ? ' today' : '') + '"><div class="calendar-date">' + dateNum + '</div>';
-        dayEvents.slice(0, 2).forEach(e => { html += '<div class="calendar-event go-live" onclick="viewDetails(allData.find(d=>d.email===\'' + esc(e.email) + '\'))">' + esc(e.organization || 'Unknown') + '</div>'; });
-        if (dayEvents.length > 2) html += '<div class="calendar-more">+' + (dayEvents.length - 2) + ' more</div>';
+        var isToday = dateObj.getTime() === today.getTime();
+        var dayEvents = events.filter(function(e){return e.date.getTime() === dateObj.getTime()});
+        var hasEvents = dayEvents.length > 0;
+        html += '<div class="calendar-day' + (isOther ? ' other-month' : '') + (isToday ? ' today' : '') + (hasEvents ? ' has-events' : '') + '">';
+        if (hasEvents && !isOther) html += '<span class="cal-event-count">' + dayEvents.length + '</span>';
+        html += '<div class="calendar-date">' + dateNum + '</div>';
+        var isoStr = dateObj.toISOString();
+        dayEvents.slice(0, 2).forEach(function(e) {
+          var evtClass = getEventClass(e.date);
+          var loc = e.locationStr || '';
+          var metaText = loc || e.contact || '';
+          html += '<div class="calendar-event ' + evtClass + '" onclick="event.stopPropagation();showCalPopover(event,\'' + isoStr + '\')" title="' + esc(e.organization) + (metaText ? ' - ' + esc(metaText) : '') + '"><span class="event-org">' + esc(e.organization || 'Unknown') + '</span>' + (metaText ? '<span class="event-meta">' + esc(metaText) + '</span>' : '') + '</div>';
+        });
+        if (dayEvents.length > 2) html += '<div class="calendar-more" onclick="event.stopPropagation();showCalPopover(event,\'' + isoStr + '\')">+' + (dayEvents.length - 2) + ' more</div>';
         html += '</div>';
         if (i >= 34 && day > daysInMonth) break;
       }
       document.getElementById('calendarGrid').innerHTML = html;
     }
 
+    function showCalPopover(evt, dateIso) {
+      var dateObj = new Date(dateIso); dateObj.setHours(0,0,0,0);
+      var evts = allData.filter(function(d){return d.goLiveDate}).filter(function(d) {
+        var parsed = parseDateStr(d.goLiveDate);
+        return parsed && parsed.getTime() === dateObj.getTime();
+      });
+      if (!evts.length) return;
+      var dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+      var labels = { 'new': 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', 'review': 'Review', 'complete': 'Complete' };
+      var h = '<div class="cal-popover-header"><div><h4>' + evts.length + ' Go-Live' + (evts.length > 1 ? 's' : '') + '</h4><div class="pop-date">' + dateStr + '</div></div><button class="cal-popover-close" onclick="closeCalPopover()">&#x2715;</button></div>';
+      h += '<div class="cal-popover-body">';
+      evts.forEach(function(e) {
+        var contact = (e.formData && e.formData.contactInfo) || {};
+        var loc = e.locationStr || '';
+        var rep = e.accountRep ? TEAM_MEMBERS.find(function(m){return m.email === e.accountRep}) : null;
+        h += '<div class="cal-popover-item" onclick="closeCalPopover();viewDetails(allData.find(function(d){return d.email===\'' + esc(e.email) + '\'}))">';
+        h += '<div class="cal-popover-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0076bb" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>';
+        h += '<div class="cal-popover-details">';
+        h += '<div class="cal-popover-org">' + esc(e.organization || 'Unknown') + '</div>';
+        if (contact.fullName || e.contact) h += '<div class="cal-popover-contact">' + esc(contact.fullName || e.contact) + (rep ? ' - Rep: ' + rep.name : '') + '</div>';
+        if (loc) h += '<div class="cal-popover-loc"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ' + esc(loc) + '</div>';
+        h += '<span class="cal-popover-status ' + (e.pipelineStatus || 'new') + '">' + (labels[e.pipelineStatus] || 'New') + '</span>';
+        h += '</div></div>';
+      });
+      h += '</div>';
+      var pop = document.getElementById('calPopover');
+      pop.innerHTML = h;
+      pop.style.display = 'block';
+      var rect = evt.target.getBoundingClientRect();
+      var top = rect.bottom + 8, left = rect.left;
+      if (left + 320 > window.innerWidth) left = window.innerWidth - 340;
+      if (left < 10) left = 10;
+      if (top + 300 > window.innerHeight) top = rect.top - pop.offsetHeight - 8;
+      pop.style.top = top + 'px';
+      pop.style.left = left + 'px';
+    }
+
+    function closeCalPopover() { var el = document.getElementById('calPopover'); if(el) el.style.display = 'none'; }
+    document.addEventListener('click', function(e) { if (!e.target.closest('.cal-popover') && !e.target.closest('.calendar-event') && !e.target.closest('.calendar-more')) closeCalPopover(); });
+
+    function goToday() { calendarDate = new Date(); renderCalendar(); }
     function prevMonth() { calendarDate.setMonth(calendarDate.getMonth() - 1); renderCalendar(); }
     function nextMonth() { calendarDate.setMonth(calendarDate.getMonth() + 1); renderCalendar(); }
 
