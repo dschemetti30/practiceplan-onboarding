@@ -347,10 +347,25 @@
     .comment-cancel:hover{border-color:var(--text2);color:var(--text)}
     .comment-actions{display:flex;justify-content:flex-end;margin-top:6px;gap:6px}
     .comment-actions.hidden{display:none}
-    .toast{position:fixed;bottom:28px;right:28px;background:var(--text);color:var(--card);padding:14px 24px;border-radius:14px;font-size:14px;font-weight:500;z-index:2000;transform:translateY(100px);opacity:0;transition:all 0.4s}
+    .toast{position:fixed;bottom:28px;right:28px;background:var(--text);color:var(--card);padding:14px 24px;border-radius:14px;font-size:14px;font-weight:500;z-index:2000;transform:translateY(100px);opacity:0;transition:all 0.4s;display:flex;align-items:center;gap:10px}
     .toast.show{transform:translateY(0);opacity:1}
+    .toast.success{background:#065f46}
+    .toast.error{background:#991b1b}
+    .toast-icon{width:20px;height:20px;flex-shrink:0}
     .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--pp-blue);border-radius:50%;animation:spin 0.8s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+    .skeleton-row td{padding:16px 12px}
+    .skeleton-bar{height:12px;border-radius:6px;background:linear-gradient(90deg,var(--bg) 25%,rgba(0,118,187,0.06) 50%,var(--bg) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+    .skeleton-bar.short{width:60%}
+    .skeleton-bar.medium{width:80%}
+    .skeleton-bar.tiny{width:40%}
+    .skeleton-avatar{width:34px;height:34px;border-radius:8px;background:linear-gradient(90deg,var(--bg) 25%,rgba(0,118,187,0.06) 50%,var(--bg) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+    .skeleton-badge{width:80px;height:22px;border-radius:20px;background:linear-gradient(90deg,var(--bg) 25%,rgba(0,118,187,0.06) 50%,var(--bg) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .fade-in-row{animation:fadeInUp 0.3s ease both}
+    .stats-section{transition:opacity 0.4s}
+    .stats-section.loading-state{opacity:0.4}
     .loading{display:flex;align-items:center;justify-content:center;padding:60px}
     .mobile-cards{display:none}
     @media(max-width:1400px){.pipeline-board{grid-template-columns:repeat(3,1fr)}}
@@ -561,7 +576,12 @@
     }
 
     async function loadData() {
-      document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr>';
+      var skeletonRows = '';
+      for (var sk = 0; sk < 5; sk++) {
+        skeletonRows += '<tr class="skeleton-row"><td><div style="display:flex;align-items:center;gap:10px"><div class="skeleton-avatar"></div><div><div class="skeleton-bar short" style="width:120px;margin-bottom:4px"></div><div class="skeleton-bar tiny" style="width:80px;height:8px"></div></div></div></td><td><div class="skeleton-bar medium" style="width:100px;margin-bottom:4px"></div><div class="skeleton-bar tiny" style="width:130px;height:8px"></div></td><td><div class="skeleton-badge"></div></td><td><div class="skeleton-bar tiny" style="width:60px"></div></td><td><div class="skeleton-bar short" style="width:70px"></div></td><td><div class="skeleton-bar tiny" style="width:60px"></div></td><td><div class="skeleton-bar short" style="width:90px;height:28px;border-radius:6px"></div></td><td><div class="skeleton-bar tiny" style="width:60px"></div></td></tr>';
+      }
+      document.getElementById('tableBody').innerHTML = skeletonRows;
+      document.querySelector('.stats-section')?.classList.add('loading-state');
       try {
         const result = await jsonpRequest(API_URL + '?action=getAdminData&email=' + encodeURIComponent(currentUser?.email || ''));
         if (result.success) {
@@ -573,9 +593,16 @@
             if (!ps) { if (d.status === 'Submitted') ps = 'complete'; else if (pct >= 75) ps = 'review'; else if (pct > 0) ps = 'in-progress'; else ps = 'new'; }
             return { ...d, isStale: d.status === 'In Progress' && daysDiff > STALE_DAYS, daysSinceUpdate: Math.floor(daysDiff), updatedDate: updated, pipelineStatus: ps, goLiveDate: getGoLiveDate(d), locationStr: getLocationString(d), accountRep: d.accountRep || '' };
           });
-          allData = processed.filter(d => d.status !== 'Archived');
-          archivedData = processed.filter(d => d.status === 'Archived');
-          updateStats(); renderTable(); renderPipeline(); renderCalendar();
+          // Deduplicate: hide drafts if a completed submission exists for same email
+          var submittedEmails = {};
+          processed.forEach(function(d) { if (d.sheetType === 'main' && d.email) submittedEmails[d.email.toLowerCase()] = true; });
+          var deduped = processed.filter(function(d) {
+            if (d.sheetType === 'drafts' && d.email && submittedEmails[d.email.toLowerCase()]) return false;
+            return true;
+          });
+          allData = deduped.filter(d => d.status !== 'Archived');
+          archivedData = deduped.filter(d => d.status === 'Archived');
+          document.querySelector('.stats-section')?.classList.remove('loading-state'); updateStats(); renderTable(); renderPipeline(); renderCalendar();
         } else if (result.error === 'Unauthorized') logout();
         else { console.error('API returned error:', result); document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">API error: ' + (result.error || JSON.stringify(result)) + '</td></tr>'; }
       } catch(e) { console.error('LoadData error:', e); document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">Unable to load data: ' + e.message + '<br><small style="color:var(--text3)">Check browser console for details. Email: ' + (currentUser?.email || 'none') + '</small></td></tr>'; }
@@ -618,11 +645,22 @@
       let filtered = getFilteredData();
       filtered.sort((a, b) => { let av = a[sortField], bv = b[sortField]; if (sortField === 'lastUpdated' || sortField === 'goLiveDate') { av = av ? new Date(av) : new Date(0); bv = bv ? new Date(bv) : new Date(0); } if (av < bv) return sortDir === 'asc' ? -1 : 1; if (av > bv) return sortDir === 'asc' ? 1 : -1; return 0; });
       if (!filtered.length) { document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">No submissions found</td></tr>'; return; }
+      var _rowIdx = 0;
       const labels = { new: 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', review: 'Review', complete: 'Form Complete' };
       document.getElementById('tableBody').innerHTML = filtered.map(item => {
         const goLive = formatGoLive(item.goLiveDate), isArch = currentFilter === 'archived', clCount = getChecklistCount(item.email);
         return '<tr><td><div class="org-cell"><div class="org-avatar" style="background:' + getOrgColor(item.organization) + '">' + getOrgInitials(item.organization) + '</div><div><div class="org-name">' + esc(item.organization || 'Unknown') + '</div>' + (item.locationStr ? '<div class="org-location">' + esc(item.locationStr) + '</div>' : '') + '</div></div></td><td><div class="contact-name">' + esc(item.contact || '-') + '</div><div class="contact-email">' + esc(item.email) + '</div></td><td><span class="status-badge ' + (isArch ? 'archived' : item.isStale ? 'stale' : item.pipelineStatus) + '">' + (isArch ? 'Archived' : item.isStale ? 'Stale' : labels[item.pipelineStatus]) + '</span></td><td><div class="checklist-mini"><div class="checklist-dots">' + CHECKLIST_ITEMS.map(c => '<span class="checklist-dot' + (getChecklist(item.email)[c.id] ? ' done' : '') + '"></span>').join('') + '</div><span class="checklist-text">' + clCount + '/' + CHECKLIST_ITEMS.length + '</span></div></td><td>' + (goLive ? '<span class="go-live-date">' + goLive + '</span>' : '<span class="go-live-date none">-</span>') + '</td><td><span class="time-ago">' + timeAgo(item.lastUpdated) + '</span></td><td><select class="rep-select" onchange="assignRep(\'' + item.sheetType + '\',' + item.rowIndex + ',this.value)">' + getRepOptions(item.accountRep) + '</select></td><td><div class="action-cell"><button class="action-btn primary" onclick=\'viewDetails(' + JSON.stringify(item).replace(/'/g,"&#39;") + ')\'>View</button><button class="action-btn" onclick="emailContact(\'' + esc(item.email) + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email</button><button class="action-btn danger" onclick="archiveRow(\'' + item.sheetType + '\',' + item.rowIndex + ',\'' + esc(item.email) + '\')">' + (isArch ? 'Restore' : 'Archive') + '</button></div></td></tr>';
       }).join('');
+      // Animate rows
+      setTimeout(function() {
+        var rows = document.querySelectorAll('#tableBody tr');
+        rows.forEach(function(row, i) {
+          row.style.opacity = '0';
+          row.style.transform = 'translateY(8px)';
+          row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+          setTimeout(function() { row.style.opacity = '1'; row.style.transform = 'translateY(0)'; }, i * 40);
+        });
+      }, 10);
     }
 
     function getRepOptions(sel) { return '<option value="">Unassigned</option>' + TEAM_MEMBERS.map(m => '<option value="' + m.email + '"' + (sel === m.email ? ' selected' : '') + '>' + m.name + '</option>').join(''); }
@@ -763,9 +801,20 @@
       if (!confirm(isArchived ? 'Restore this submission?' : 'Archive this submission?')) return;
       try {
         var result = await jsonpRequest(API_URL + '?action=' + action + '&email=' + encodeURIComponent(currentUser?.email || '') + '&sheetType=' + sheetType + '&rowIndex=' + rowIndex);
-        if (result.success) { showToast(isArchived ? 'Restored' : 'Archived'); loadData(); }
-        else showToast('Failed: ' + (result.error || 'Unknown'));
-      } catch(e) { showToast('Failed'); }
+        if (result.success) {
+          // Update local data instead of full reload
+          var sourceArr = isArchived ? archivedData : allData;
+          var targetArr = isArchived ? allData : archivedData;
+          var idx = sourceArr.findIndex(function(d) { return d.sheetType === sheetType && d.rowIndex === rowIndex; });
+          if (idx >= 0) {
+            var item = sourceArr.splice(idx, 1)[0];
+            item.status = isArchived ? (sheetType === 'main' ? 'New Submission' : 'In Progress') : 'Archived';
+            targetArr.push(item);
+          }
+          showToast(isArchived ? 'Restored' : 'Archived', 'success');
+          updateStats(); renderTable(); renderPipeline();
+        } else showToast('Failed: ' + (result.error || 'Unknown'), 'error');
+      } catch(e) { showToast('Failed', 'error'); }
     }
     function emailContact(e) { window.open('mailto:' + e); }
     async function assignRep(sheetType, rowIndex, repEmail) {
@@ -775,13 +824,27 @@
           // Update local data immediately so UI stays in sync
           allData.forEach(function(d) { if (d.sheetType === sheetType && d.rowIndex === rowIndex) d.accountRep = repEmail; });
           archivedData.forEach(function(d) { if (d.sheetType === sheetType && d.rowIndex === rowIndex) d.accountRep = repEmail; });
-          showToast('Rep assigned');
+          showToast('Rep assigned', 'success');
           renderPipeline();
-        } else showToast('Failed: ' + (result.error || 'Unknown'));
-      } catch(e) { showToast('Failed to assign rep'); }
+        } else showToast('Failed: ' + (result.error || 'Unknown'), 'error');
+      } catch(e) { showToast('Failed to assign rep', 'error'); }
     }
     function exportCSV() { const filtered = getFilteredData(); const csv = [['Organization','Location','Contact','Email','Status','Go Live','Updated','Rep','Checklist'], ...filtered.map(d => [d.organization, d.locationStr, d.contact, d.email, d.pipelineStatus, d.goLiveDate || '', d.lastUpdated, d.accountRep || '', getChecklistCount(d.email) + '/' + CHECKLIST_ITEMS.length])].map(r => r.map(c => '"' + String(c||'').replace(/"/g,'""') + '"').join(',')).join('\n'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'practiceplan-' + new Date().toISOString().split('T')[0] + '.csv'; a.click(); showToast('Exported'); }
-    function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
+    function showToast(msg, type) {
+      var t = document.getElementById('toast');
+      t.className = 'toast';
+      if (type === 'success') {
+        t.innerHTML = '<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> ' + msg;
+        t.classList.add('success');
+      } else if (type === 'error') {
+        t.innerHTML = '<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> ' + msg;
+        t.classList.add('error');
+      } else {
+        t.textContent = msg;
+      }
+      t.classList.add('show');
+      setTimeout(function() { t.classList.remove('show'); }, 2500);
+    }
 
     function viewDetails(item) {
       window._currentModalItem = item;
@@ -1034,7 +1097,7 @@
       a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
       a.download = (item.organization || 'export').replace(/[^a-zA-Z0-9]/g, '_') + '_onboarding_' + new Date().toISOString().split('T')[0] + '.csv';
       a.click();
-      showToast('CSV exported');
+      showToast('CSV exported', 'success');
     }
 
     function esc(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;') : '-'; }
