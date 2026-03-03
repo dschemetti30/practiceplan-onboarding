@@ -12,8 +12,6 @@
     :root { --pp-blue: #0076bb; --pp-green: #00a84f; --bg: #f1f5f9; --card: #fff; --border: #e2e8f0; --text: #1e293b; --text2: #64748b; --text3: #94a3b8; }
     [data-theme="dark"] { --pp-blue: #38bdf8; --pp-green: #4ade80; --bg: #0f172a; --card: #1e293b; --border: #334155; --text: #f1f5f9; --text2: #94a3b8; --text3: #64748b; }
     body { font-family: 'Montserrat', sans-serif; background: var(--bg); min-height: 100vh; color: var(--text); transition: all 0.3s ease; }
-    
-    /* Animations */
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
     @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
@@ -21,10 +19,6 @@
     .animate-in { animation: fadeIn 0.4s ease forwards; }
     .stagger-1 { animation-delay: 0.05s; }
     .stagger-2 { animation-delay: 0.1s; }
-    .stagger-3 { animation-delay: 0.15s; }
-    .stagger-4 { animation-delay: 0.2s; }
-    
-    /* Login */
     .login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
     .login-box { background: var(--card); padding: 48px 40px; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); max-width: 420px; width: 100%; text-align: center; animation: scaleIn 0.5s ease; }
     .login-box h1 { font-size: 22px; color: var(--text); margin-bottom: 6px; }
@@ -39,34 +33,25 @@
     .dashboard { display: none; }
     .dashboard.active { display: block; }
     .login-screen.hidden { display: none; }
-    
-    /* Header */
-    .header { background: var(--card); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); background: rgba(255,255,255,0.9); }
+    .header { background: var(--card); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); background: rgba(255,255,255,0.9); gap: 20px; }
     [data-theme="dark"] .header { background: rgba(30,41,59,0.9); }
-    .header-logo { height: 36px; transition: transform 0.2s; }
-    .header-logo:hover { transform: scale(1.02); }
-    .header-right { display: flex; align-items: center; gap: 16px; }
-    .user-pill { display: flex; align-items: center; gap: 10px; padding: 6px 16px 6px 6px; background: var(--bg); border-radius: 50px; transition: all 0.2s; }
-    .user-pill:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .header-logo { height: 36px; transition: transform 0.2s; flex-shrink: 0; }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .user-pill { display: flex; align-items: center; gap: 10px; padding: 6px 16px 6px 6px; background: var(--bg); border-radius: 50px; }
     .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--pp-blue), var(--pp-green)); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
     .user-name { font-size: 13px; color: var(--text); font-weight: 600; white-space: nowrap; }
-    .header-btn { width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); transition: all 0.2s; }
-    .header-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); transform: translateY(-1px); }
+    .header-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border); background: var(--card); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); transition: all 0.2s; flex-shrink: 0; }
+    .header-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); transform: scale(1.05); }
     .header-btn svg { width: 18px; height: 18px; }
-    .logout-btn { padding: 10px 20px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; font-size: 13px; color: var(--text2); cursor: pointer; font-family: inherit; font-weight: 500; transition: all 0.2s; }
+    .logout-btn { padding: 10px 20px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; font-size: 13px; color: var(--text2); cursor: pointer; font-family: inherit; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
     .logout-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); }
-    
     .main-content { padding: 32px; max-width: 1600px; margin: 0 auto; }
-    
-    /* Stats Row */
     .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 32px; }
     .stat-card { background: var(--card); border-radius: 20px; padding: 24px; border: 1px solid var(--border); transition: all 0.3s ease; position: relative; overflow: hidden; }
     .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--pp-blue), var(--pp-green)); opacity: 0; transition: opacity 0.3s; }
     .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
     .stat-card:hover::before { opacity: 1; }
     .stat-card h3 { font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
-    
-    /* Premium Funnel */
     .funnel-container { position: relative; padding: 8px 0; }
     .funnel-track { position: absolute; top: 50%; left: 40px; right: 40px; height: 4px; background: var(--border); border-radius: 2px; transform: translateY(-50%); z-index: 0; }
     .funnel-track-fill { height: 100%; background: linear-gradient(90deg, var(--pp-blue), #8b5cf6, #f59e0b, var(--pp-green)); border-radius: 2px; transition: width 0.8s ease; }
@@ -76,7 +61,6 @@
     .funnel-node::before { content: ''; position: absolute; inset: -6px; border-radius: 50%; background: transparent; transition: all 0.3s; }
     .funnel-node:hover { transform: scale(1.1); }
     .funnel-node:hover::before { background: rgba(0,118,187,0.08); }
-    .funnel-node.active { border-color: var(--pp-blue); box-shadow: 0 0 0 4px rgba(0,118,187,0.15); }
     .funnel-node.s1 { border-color: var(--pp-blue); }
     .funnel-node.s2 { border-color: #6366f1; }
     .funnel-node.s3 { border-color: #8b5cf6; }
@@ -88,17 +72,11 @@
     .funnel-label .title { font-size: 11px; font-weight: 600; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; }
     .funnel-label .drop { font-size: 10px; color: var(--text3); margin-top: 3px; }
     .funnel-label .drop.negative { color: #ef4444; }
-    .funnel-connector { position: absolute; top: 36px; height: 2px; background: var(--border); z-index: 0; }
-    @media (max-width: 900px) { .funnel-node { width: 56px; height: 56px; } .funnel-node .num { font-size: 18px; } .funnel-label .title { font-size: 9px; } }
-    
-    /* Time Stats */
     .time-stats { display: flex; gap: 16px; }
     .time-stat { text-align: center; flex: 1; padding: 20px 16px; background: var(--bg); border-radius: 16px; transition: all 0.3s; }
     .time-stat:hover { transform: translateY(-2px); }
     .time-stat .value { font-size: 32px; font-weight: 700; background: linear-gradient(135deg, var(--pp-blue), var(--pp-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .time-stat .label { font-size: 10px; color: var(--text2); text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px; }
-    
-    /* Quick Stats */
     .quick-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
     .quick-stat-item { text-align: center; padding: 16px 12px; background: var(--bg); border-radius: 14px; transition: all 0.3s; }
     .quick-stat-item:hover { transform: scale(1.02); }
@@ -106,8 +84,6 @@
     .quick-stat-item .num.blue { color: var(--pp-blue); }
     .quick-stat-item .num.green { color: var(--pp-green); }
     .quick-stat-item .lbl { font-size: 9px; color: var(--text2); text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px; }
-    
-    /* Controls */
     .controls-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
     .section-title { font-size: 18px; font-weight: 700; color: var(--text); }
     .time-selector { display: flex; gap: 4px; background: var(--card); padding: 4px; border-radius: 14px; border: 1px solid var(--border); }
@@ -116,30 +92,26 @@
     .time-btn.active { background: var(--pp-blue); color: white; }
     .filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
     .filter-btn { padding: 10px 18px; border-radius: 50px; border: 1px solid var(--border); background: var(--card); font-size: 12px; color: var(--text2); cursor: pointer; font-family: inherit; font-weight: 500; transition: all 0.2s; }
-    .filter-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); transform: translateY(-1px); }
+    .filter-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); }
     .filter-btn.active { background: var(--pp-blue); color: white; border-color: var(--pp-blue); }
     .filter-btn.archived { border-style: dashed; }
     .filter-btn.archived.active { background: var(--text2); border-color: var(--text2); border-style: solid; }
-    .search-input { padding: 10px 18px; border-radius: 50px; border: 1px solid var(--border); background: var(--card); font-size: 12px; width: 180px; font-family: inherit; color: var(--text); transition: all 0.2s; }
-    .search-input:focus { outline: none; border-color: var(--pp-blue); box-shadow: 0 0 0 3px rgba(0,118,187,0.1); }
-    .action-btn { padding: 10px 18px; border-radius: 50px; border: 1px solid var(--border); background: var(--card); font-size: 12px; color: var(--text2); cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: inherit; font-weight: 500; transition: all 0.2s; }
-    .action-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); transform: translateY(-1px); }
+    .search-input { padding: 10px 18px; border-radius: 50px; border: 1px solid var(--border); background: var(--card); font-size: 12px; width: 180px; font-family: inherit; color: var(--text); }
+    .search-input:focus { outline: none; border-color: var(--pp-blue); }
+    .action-btn { padding: 10px 18px; border-radius: 50px; border: 1px solid var(--border); background: var(--card); font-size: 12px; color: var(--text2); cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: inherit; font-weight: 500; }
+    .action-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); }
     .action-btn svg { width: 14px; height: 14px; }
-    /* Table */
     .table-section { margin-bottom: 40px; }
-    .table-wrapper { background: var(--card); border-radius: 20px; border: 1px solid var(--border); overflow: hidden; transition: all 0.3s; }
-    .table-wrapper:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.06); }
+    .table-wrapper { background: var(--card); border-radius: 20px; border: 1px solid var(--border); overflow: hidden; }
     table { width: 100%; border-collapse: collapse; }
-    th { text-align: left; padding: 16px 20px; background: var(--bg); font-size: 10px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); cursor: pointer; white-space: nowrap; transition: background 0.2s; }
+    th { text-align: left; padding: 16px 20px; background: var(--bg); font-size: 10px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); cursor: pointer; white-space: nowrap; }
     th:hover { background: var(--border); }
     th .sort-icon { margin-left: 4px; opacity: 0.4; }
     th.sorted .sort-icon { opacity: 1; }
-    td { padding: 16px 20px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); transition: background 0.2s; }
-    tr { transition: all 0.2s; }
+    td { padding: 16px 20px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); }
     tr:last-child td { border-bottom: none; }
     tr:hover { background: var(--bg); }
-    tr:hover td:first-child { padding-left: 24px; }
-    .status-badge { display: inline-block; padding: 6px 12px; border-radius: 50px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+    .status-badge { display: inline-block; padding: 6px 12px; border-radius: 50px; font-size: 10px; font-weight: 600; text-transform: uppercase; }
     .status-badge.new { background: linear-gradient(135deg, #e0f2fe, #bae6fd); color: #0369a1; }
     .status-badge.in-progress { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #b45309; }
     .status-badge.review { background: linear-gradient(135deg, #ede9fe, #ddd6fe); color: #7c3aed; }
@@ -148,18 +120,17 @@
     .status-badge.archived { background: var(--bg); color: var(--text3); }
     .action-btns { display: flex; gap: 6px; }
     .icon-btn { width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); transition: all 0.2s; }
-    .icon-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); transform: scale(1.05); }
+    .icon-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); }
     .icon-btn svg { width: 16px; height: 16px; }
     .completion-bar { width: 60px; height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; }
-    .completion-fill { height: 100%; background: linear-gradient(90deg, var(--pp-blue), var(--pp-green)); border-radius: 3px; transition: width 0.4s ease; }
+    .completion-fill { height: 100%; background: linear-gradient(90deg, var(--pp-blue), var(--pp-green)); border-radius: 3px; }
     .org-name { font-weight: 600; color: var(--text); }
     .contact-email { font-size: 11px; color: var(--text2); margin-top: 2px; }
     .empty-state { padding: 60px 24px; text-align: center; color: var(--text2); }
-    
-    /* Pipeline Section */
     .pipeline-section { margin-bottom: 40px; }
     .pipeline-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-    .pipeline-column { background: var(--bg); border-radius: 20px; padding: 16px; min-height: 300px; }
+    .pipeline-column { background: var(--bg); border-radius: 20px; padding: 16px; min-height: 300px; position: relative; }
+    .pipeline-column:not(:last-child)::after { content: ''; position: absolute; right: -10px; top: 60px; bottom: 20px; width: 1px; background: linear-gradient(180deg, transparent, var(--border), var(--border), transparent); }
     .pipeline-column-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 8px 16px; }
     .pipeline-column-title { font-size: 12px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
     .pipeline-dot { width: 8px; height: 8px; border-radius: 50%; }
@@ -168,11 +139,11 @@
     .pipeline-column[data-status="review"] .pipeline-dot { background: #8b5cf6; }
     .pipeline-column[data-status="complete"] .pipeline-dot { background: var(--pp-green); }
     .pipeline-column-count { font-size: 12px; font-weight: 600; color: var(--text2); background: var(--card); padding: 4px 10px; border-radius: 50px; }
-    .pipeline-cards { display: flex; flex-direction: column; gap: 10px; }
+    .pipeline-cards { display: flex; flex-direction: column; gap: 10px; min-height: 50px; }
     .pipeline-card { background: var(--card); border-radius: 14px; padding: 16px; border: 1px solid var(--border); cursor: grab; transition: all 0.25s ease; opacity: 0; animation: fadeIn 0.4s ease forwards; user-select: none; }
     .pipeline-card:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-    .pipeline-card.dragging { opacity: 0.5; cursor: grabbing; transform: rotate(3deg) scale(1.05); box-shadow: 0 15px 40px rgba(0,0,0,0.2); }
-    .pipeline-column.drag-over { background: rgba(0,118,187,0.1); border: 2px dashed var(--pp-blue); }
+    .pipeline-card.dragging { opacity: 0.5; cursor: grabbing; transform: rotate(3deg) scale(1.05); }
+    .pipeline-column.drag-over { background: rgba(0,118,187,0.1); border: 2px dashed var(--pp-blue); border-radius: 20px; }
     .pipeline-cards.drag-over { min-height: 100px; }
     .pipeline-card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
     .pipeline-card-contact { font-size: 12px; color: var(--text2); margin-bottom: 12px; }
@@ -182,11 +153,8 @@
     .pipeline-card-progress-fill { height: 100%; background: linear-gradient(90deg, var(--pp-blue), var(--pp-green)); }
     .pipeline-card-progress-text { font-size: 11px; font-weight: 600; color: var(--text2); }
     .pipeline-card-date { font-size: 11px; color: var(--text3); }
-    
-    /* Mobile Cards */
     .mobile-cards { display: none; }
-    .mobile-card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border); transition: all 0.3s; animation: fadeIn 0.4s ease forwards; }
-    .mobile-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
+    .mobile-card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border); }
     .mobile-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
     .mobile-card-org { font-size: 16px; font-weight: 700; color: var(--text); }
     .mobile-card-contact { font-size: 13px; color: var(--text2); margin-top: 4px; }
@@ -196,32 +164,28 @@
     .mobile-card-stats { display: flex; justify-content: center; gap: 32px; margin-bottom: 20px; padding: 16px 0; background: var(--bg); border-radius: 14px; }
     .mobile-card-stat { text-align: center; }
     .mobile-card-stat .val { font-size: 22px; font-weight: 700; color: var(--pp-blue); }
-    .mobile-card-stat .lbl { font-size: 10px; color: var(--text2); text-transform: uppercase; margin-top: 2px; letter-spacing: 0.3px; }
+    .mobile-card-stat .lbl { font-size: 10px; color: var(--text2); text-transform: uppercase; margin-top: 2px; }
     .mobile-card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .mobile-card-btn { padding: 14px; border: 1px solid var(--border); background: var(--card); border-radius: 14px; font-size: 13px; font-weight: 600; color: var(--text2); cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
-    .mobile-card-btn:active { transform: scale(0.98); }
+    .mobile-card-btn { padding: 14px; border: 1px solid var(--border); background: var(--card); border-radius: 14px; font-size: 13px; font-weight: 600; color: var(--text2); cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .mobile-card-btn.primary { background: linear-gradient(135deg, var(--pp-blue), #0284c7); color: white; border: none; }
     .mobile-card-btn svg { width: 16px; height: 16px; }
-    /* Modal */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.7); backdrop-filter: blur(8px); display: none; align-items: flex-start; justify-content: center; padding: 40px 20px; z-index: 1000; overflow-y: auto; opacity: 0; transition: opacity 0.3s; }
-    .modal-overlay.active { display: flex; opacity: 1; }
-    .modal { background: var(--card); border-radius: 24px; max-width: 750px; width: 100%; overflow: hidden; box-shadow: 0 25px 80px rgba(0,0,0,0.3); transform: scale(0.95) translateY(20px); transition: transform 0.3s ease; }
-    .modal-overlay.active .modal { transform: scale(1) translateY(0); }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.7); backdrop-filter: blur(8px); display: none; align-items: flex-start; justify-content: center; padding: 40px 20px; z-index: 1000; overflow-y: auto; }
+    .modal-overlay.active { display: flex; }
+    .modal { background: var(--card); border-radius: 24px; max-width: 750px; width: 100%; overflow: hidden; box-shadow: 0 25px 80px rgba(0,0,0,0.3); }
     .modal-header { padding: 28px 32px; background: linear-gradient(135deg, #0076bb, #00a84f); color: white; position: relative; }
     .modal-header h2 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
     .modal-header .modal-subtitle { font-size: 14px; opacity: 0.9; }
-    .modal-close { position: absolute; top: 24px; right: 24px; width: 40px; height: 40px; border-radius: 50%; border: none; background: rgba(255,255,255,0.15); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; transition: all 0.2s; }
-    .modal-close:hover { background: rgba(255,255,255,0.25); transform: rotate(90deg); }
+    .modal-close { position: absolute; top: 24px; right: 24px; width: 40px; height: 40px; border-radius: 50%; border: none; background: rgba(255,255,255,0.15); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .modal-close:hover { background: rgba(255,255,255,0.25); }
     .drive-banner { display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, #f0fdf4, #dcfce7); padding: 20px 28px; }
     [data-theme="dark"] .drive-banner { background: linear-gradient(135deg, #14532d, #166534); }
     .drive-banner-text { display: flex; align-items: center; gap: 16px; }
-    .drive-banner-icon { width: 48px; height: 48px; background: white; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--pp-green); box-shadow: 0 4px 12px rgba(0,168,79,0.15); }
+    .drive-banner-icon { width: 48px; height: 48px; background: white; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--pp-green); }
     [data-theme="dark"] .drive-banner-icon { background: var(--card); }
     .drive-banner-icon svg { width: 24px; height: 24px; }
     .drive-banner-label { font-size: 12px; color: var(--text2); }
     .drive-banner-title { font-size: 15px; font-weight: 600; color: var(--text); }
-    .drive-banner-btn { padding: 12px 24px; background: var(--pp-green); color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
-    .drive-banner-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,168,79,0.3); }
+    .drive-banner-btn { padding: 12px 24px; background: var(--pp-green); color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 8px; }
     .drive-banner-btn svg { width: 16px; height: 16px; }
     .progress-hero { padding: 28px 32px; background: var(--bg); }
     .progress-hero-inner { display: flex; align-items: center; gap: 28px; }
@@ -229,12 +193,12 @@
     .progress-ring-large svg { transform: rotate(-90deg); }
     .progress-ring-large circle { fill: none; stroke-width: 8; }
     .progress-ring-large .bg { stroke: var(--border); }
-    .progress-ring-large .progress { stroke: url(#gradient); stroke-linecap: round; transition: stroke-dashoffset 0.6s ease; }
+    .progress-ring-large .progress { stroke: url(#gradient); stroke-linecap: round; }
     .progress-ring-large .center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; font-weight: 700; color: var(--text); }
     .progress-details { flex: 1; }
     .progress-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 10px; }
     .progress-bar-large { height: 12px; background: var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 10px; }
-    .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #0076bb, #00a84f); border-radius: 6px; transition: width 0.4s ease; }
+    .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #0076bb, #00a84f); border-radius: 6px; }
     .progress-meta { display: flex; gap: 24px; font-size: 13px; color: var(--text2); }
     .progress-meta strong { color: var(--text); }
     .timeline { padding: 0 32px 28px; }
@@ -242,13 +206,12 @@
     .timeline h3 svg { width: 18px; height: 18px; }
     .timeline-items { position: relative; padding-left: 28px; }
     .timeline-items::before { content: ''; position: absolute; left: 8px; top: 6px; bottom: 6px; width: 2px; background: var(--border); }
-    .timeline-item { position: relative; padding-bottom: 20px; opacity: 0; animation: slideIn 0.4s ease forwards; }
+    .timeline-item { position: relative; padding-bottom: 20px; }
     .timeline-item:last-child { padding-bottom: 0; }
-    .timeline-dot { position: absolute; left: -28px; top: 4px; width: 18px; height: 18px; border-radius: 50%; background: var(--card); border: 2px solid var(--pp-blue); transition: all 0.3s; }
+    .timeline-dot { position: absolute; left: -28px; top: 4px; width: 18px; height: 18px; border-radius: 50%; background: var(--card); border: 2px solid var(--pp-blue); }
     .timeline-item.complete .timeline-dot { background: var(--pp-green); border-color: var(--pp-green); }
     .timeline-item.complete .timeline-dot::after { content: '✓'; color: white; font-size: 10px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-    .timeline-content { background: var(--bg); padding: 14px 18px; border-radius: 12px; transition: all 0.2s; }
-    .timeline-content:hover { background: var(--border); }
+    .timeline-content { background: var(--bg); padding: 14px 18px; border-radius: 12px; }
     .timeline-title { font-size: 14px; font-weight: 600; color: var(--text); }
     .timeline-desc { font-size: 12px; color: var(--text2); margin-top: 4px; }
     .timeline-date { font-size: 11px; color: var(--text3); margin-top: 6px; }
@@ -256,24 +219,18 @@
     .detail-section { margin-bottom: 28px; }
     .detail-section h3 { font-size: 12px; font-weight: 700; color: var(--pp-blue); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
     .detail-section h3 svg { width: 18px; height: 18px; }
-    .detail-section h3 .toggle-btn { margin-left: auto; font-size: 12px; color: var(--text2); cursor: pointer; text-transform: none; letter-spacing: 0; font-weight: 500; transition: color 0.2s; }
-    .detail-section h3 .toggle-btn:hover { color: var(--pp-blue); }
+    .detail-section h3 .toggle-btn { margin-left: auto; font-size: 12px; color: var(--text2); cursor: pointer; text-transform: none; letter-spacing: 0; font-weight: 500; }
     .detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
-    .detail-item { background: var(--bg); padding: 14px 16px; border-radius: 14px; transition: all 0.2s; }
-    .detail-item:hover { transform: translateY(-2px); }
-    .detail-item label { display: block; font-size: 10px; color: var(--text2); text-transform: uppercase; margin-bottom: 6px; font-weight: 600; letter-spacing: 0.3px; }
+    .detail-item { background: var(--bg); padding: 14px 16px; border-radius: 14px; }
+    .detail-item label { display: block; font-size: 10px; color: var(--text2); text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
     .detail-item span { font-size: 14px; color: var(--text); font-weight: 500; display: block; }
-    .location-card { background: var(--bg); border-radius: 16px; margin-bottom: 14px; overflow: hidden; transition: all 0.3s; }
-    .location-card:hover { box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    .location-card { background: var(--bg); border-radius: 16px; margin-bottom: 14px; overflow: hidden; }
     .location-card.collapsed .location-content { display: none; }
-    .location-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 16px 18px; background: var(--card); transition: all 0.2s; }
-    .location-header:hover { background: var(--bg); }
-    .location-card.collapsed .location-header { background: var(--card); }
+    .location-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 16px 18px; background: var(--card); }
     .location-card h4 { font-size: 15px; font-weight: 700; color: var(--text); }
     .location-card .location-meta { font-size: 12px; color: var(--text2); margin-top: 4px; }
     .location-content { padding: 14px; }
-    .space-card { background: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 10px; border: 1px solid var(--border); transition: all 0.2s; }
-    .space-card:hover { border-color: var(--pp-blue); }
+    .space-card { background: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 10px; border: 1px solid var(--border); }
     .space-card .space-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
     .space-card .space-name { font-weight: 600; color: var(--text); font-size: 14px; }
     .space-card .space-price { font-weight: 700; color: var(--pp-green); font-size: 15px; }
@@ -287,22 +244,12 @@
     .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--pp-blue); border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading { display: flex; align-items: center; justify-content: center; padding: 60px; }
-    
-    /* Confetti */
     .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden; }
     .confetti { position: absolute; width: 10px; height: 10px; opacity: 0; }
     @keyframes confetti-fall { 0% { transform: translateY(-100px) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
-    
-    /* Auto-refresh indicator */
-    .refresh-indicator { position: fixed; bottom: 28px; left: 28px; display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 50px; font-size: 12px; color: var(--text2); box-shadow: 0 4px 12px rgba(0,0,0,0.1); opacity: 0; transition: opacity 0.3s; }
-    .refresh-indicator.visible { opacity: 1; }
-    .refresh-indicator .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pp-green); animation: pulse 2s infinite; }
-    .refresh-indicator.refreshing .dot { background: var(--pp-blue); }
-    
-    /* Responsive */
-    @media (max-width: 1200px) { .pipeline-board { grid-template-columns: repeat(2, 1fr); } .stats-row { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 1200px) { .pipeline-board { grid-template-columns: repeat(2, 1fr); } .pipeline-column:nth-child(2)::after, .pipeline-column:nth-child(4)::after { display: none; } .stats-row { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 900px) { .stats-row { grid-template-columns: 1fr; } .quick-stats-grid { grid-template-columns: repeat(2, 1fr); } .funnel-node { width: 56px; height: 56px; } .funnel-node .num { font-size: 18px; } .funnel-label .title { font-size: 9px; } .funnel-label .drop { display: none; } }
-    @media (max-width: 768px) { .main-content { padding: 20px; } .header { padding: 12px 20px; } .controls-row { flex-direction: column; align-items: stretch; } .time-selector { justify-content: center; } .filters { justify-content: center; } .search-input { width: 100%; } .table-wrapper { display: none; } .mobile-cards { display: block; } .pipeline-board { grid-template-columns: 1fr; } .modal { margin: 16px; border-radius: 20px; } .modal-header { padding: 24px; } .modal-body { padding: 24px; } .drive-banner { flex-direction: column; gap: 16px; text-align: center; } .progress-hero-inner { flex-direction: column; text-align: center; } .header-logo { height: 28px; } }
+    @media (max-width: 768px) { .main-content { padding: 20px; } .header { padding: 12px 16px; gap: 12px; } .header-logo { height: 28px; } .header-right { gap: 8px; } .user-pill { padding: 0; background: none; } .user-name { display: none; } .header-btn { width: 36px; height: 36px; } .logout-btn { padding: 8px 14px; font-size: 12px; } .controls-row { flex-direction: column; align-items: stretch; } .time-selector { justify-content: center; } .filters { justify-content: center; } .search-input { width: 100%; } .table-wrapper { display: none; } .mobile-cards { display: block; } .pipeline-board { grid-template-columns: 1fr; } .pipeline-column::after { display: none; } .modal { margin: 16px; border-radius: 20px; } .modal-header { padding: 24px; } .modal-body { padding: 24px; } .drive-banner { flex-direction: column; gap: 16px; text-align: center; } .progress-hero-inner { flex-direction: column; text-align: center; } }
   </style>
 </head>
 <body>
@@ -365,41 +312,15 @@
   <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()"><div class="modal" id="modalContent"></div></div>
   <div class="toast" id="toast"></div>
   <div class="confetti-container" id="confettiContainer"></div>
-  <div class="refresh-indicator" id="refreshIndicator"><span class="dot"></span><span>Auto-refresh in <span id="refreshCountdown">30</span>s</span></div>
   <script>
     const GOOGLE_CLIENT_ID = '552673133395-m5onf8p7gt83lpvjqkpvao444ds0903h.apps.googleusercontent.com';
     const API_URL = 'https://script.google.com/macros/s/AKfycbxY4cTJeIBwjbCV77vSDpn1OiP2mrs5h6phU4rJazR9rAYbrQLYJF37W8d7l_QndcMB/exec';
     const STALE_DAYS = 7;
-    const AUTO_REFRESH_INTERVAL = 30;
     let allData = [], archivedData = [], currentFilter = 'all', searchQuery = '', currentUser = null;
     let sortField = 'lastUpdated', sortDir = 'desc', timePeriodDays = 7;
     let darkMode = localStorage.getItem('darkMode') === 'true';
-    let soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
-    let refreshTimer = null, refreshCountdown = AUTO_REFRESH_INTERVAL;
     let draggedCard = null, draggedData = null;
-    let previousCompleteCount = 0;
-    
-    // Audio context for sounds
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    let audioCtx = null;
-    function initAudio() { if (!audioCtx) audioCtx = new AudioContext(); }
-    function playSound(type) {
-      if (!soundEnabled) return;
-      initAudio();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      if (type === 'success') { osc.frequency.value = 800; gain.gain.value = 0.1; osc.type = 'sine'; }
-      else if (type === 'pop') { osc.frequency.value = 400; gain.gain.value = 0.05; osc.type = 'triangle'; }
-      else if (type === 'drop') { osc.frequency.value = 300; gain.gain.value = 0.08; osc.type = 'sine'; }
-      else if (type === 'celebrate') { osc.frequency.value = 523; gain.gain.value = 0.12; osc.type = 'square'; }
-      osc.start();
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
-      osc.stop(audioCtx.currentTime + 0.2);
-    }
-    
-    // Confetti
+
     function launchConfetti() {
       const container = document.getElementById('confettiContainer');
       const colors = ['#0076bb', '#00a84f', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4'];
@@ -415,46 +336,9 @@
         confetti.style.animationDelay = Math.random() * 0.5 + 's';
         container.appendChild(confetti);
       }
-      playSound('celebrate');
-      setTimeout(() => { playSound('success'); }, 200);
       setTimeout(() => { container.innerHTML = ''; }, 4000);
     }
-    
-    // Auto-refresh
-    function startAutoRefresh() {
-      document.getElementById('refreshIndicator').classList.add('visible');
-      refreshCountdown = AUTO_REFRESH_INTERVAL;
-      updateRefreshDisplay();
-      if (refreshTimer) clearInterval(refreshTimer);
-      refreshTimer = setInterval(() => {
-        refreshCountdown--;
-        updateRefreshDisplay();
-        if (refreshCountdown <= 0) {
-          refreshCountdown = AUTO_REFRESH_INTERVAL;
-          silentRefresh();
-        }
-      }, 1000);
-    }
-    function updateRefreshDisplay() { document.getElementById('refreshCountdown').textContent = refreshCountdown; }
-    async function silentRefresh() {
-      document.getElementById('refreshIndicator').classList.add('refreshing');
-      try {
-        const result = await jsonpRequest(API_URL + '?action=getAdminData&email=' + encodeURIComponent(currentUser?.email || ''));
-        if (result.success) {
-          const now = new Date();
-          const processedData = (result.data || []).map(d => { const updated = new Date(d.lastUpdated); const daysDiff = (now - updated) / 86400000; const pct = d.completion || 0; let pipelineStatus = 'new'; if (d.status === 'Submitted') pipelineStatus = 'complete'; else if (pct >= 75) pipelineStatus = 'review'; else if (pct > 0) pipelineStatus = 'in-progress'; return { ...d, isStale: d.status === 'In Progress' && daysDiff > STALE_DAYS, daysSinceUpdate: Math.floor(daysDiff), updatedDate: updated, pipelineStatus }; });
-          const newAllData = processedData.filter(d => d.status !== 'Archived');
-          const newCompleteCount = newAllData.filter(d => d.pipelineStatus === 'complete').length;
-          if (newCompleteCount > previousCompleteCount && previousCompleteCount > 0) { launchConfetti(); showToast('New completion!'); }
-          previousCompleteCount = newCompleteCount;
-          allData = newAllData;
-          archivedData = processedData.filter(d => d.status === 'Archived');
-          updateStats(); renderTable(); renderPipeline();
-        }
-      } catch (e) { console.error('Silent refresh failed:', e); }
-      document.getElementById('refreshIndicator').classList.remove('refreshing');
-    }
-    
+
     window.onload = function() {
       if (darkMode) document.documentElement.setAttribute('data-theme', 'dark');
       updateDarkModeIcon();
@@ -463,7 +347,7 @@
       const stored = sessionStorage.getItem('pp_admin_user');
       if (stored) { currentUser = JSON.parse(stored); showDashboard(); }
     };
-    
+
     function toggleDarkMode() { darkMode = !darkMode; localStorage.setItem('darkMode', darkMode); document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : ''); updateDarkModeIcon(); }
     function updateDarkModeIcon() { document.getElementById('darkModeBtn').innerHTML = darkMode ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'; }
     function handleCredentialResponse(response) { document.getElementById('loginLoading').classList.add('active'); document.getElementById('googleButtonContainer').style.display = 'none'; verifyAccess(JSON.parse(atob(response.credential.split('.')[1]))); }
@@ -471,8 +355,8 @@
       try {
         const result = await jsonpRequest(API_URL + '?action=verifyAdmin&email=' + encodeURIComponent(payload.email));
         if (result.authorized) { currentUser = { email: payload.email, name: payload.name || payload.email.split('@')[0] }; sessionStorage.setItem('pp_admin_user', JSON.stringify(currentUser)); showDashboard(); }
-        else { document.getElementById('loginLoading').classList.remove('active'); document.getElementById('googleButtonContainer').style.display = 'flex'; document.getElementById('loginError').textContent = 'Access denied'; document.getElementById('loginError').style.display = 'block'; }
-      } catch (e) { document.getElementById('loginLoading').classList.remove('active'); document.getElementById('googleButtonContainer').style.display = 'flex'; }
+        else { document.getElementById('loginLoading').classList.remove('active'); document.getElementById('googleButtonContainer').style.display = 'flex'; document.getElementById('loginError').textContent = 'Access denied for ' + payload.email; document.getElementById('loginError').style.display = 'block'; }
+      } catch (e) { document.getElementById('loginLoading').classList.remove('active'); document.getElementById('googleButtonContainer').style.display = 'flex'; document.getElementById('loginError').textContent = 'Connection error'; document.getElementById('loginError').style.display = 'block'; }
     }
     function showDashboard() {
       document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('dashboard').classList.add('active');
@@ -485,14 +369,25 @@
       document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr>';
       try {
         const result = await jsonpRequest(API_URL + '?action=getAdminData&email=' + encodeURIComponent(currentUser?.email || ''));
-        if (result.success) { 
+        if (result.success) {
           const now = new Date();
-          const processedData = (result.data || []).map(d => { const updated = new Date(d.lastUpdated); const daysDiff = (now - updated) / 86400000; const pct = d.completion || 0; let pipelineStatus = 'new'; if (d.status === 'Submitted') pipelineStatus = 'complete'; else if (pct >= 75) pipelineStatus = 'review'; else if (pct > 0) pipelineStatus = 'in-progress'; return { ...d, isStale: d.status === 'In Progress' && daysDiff > STALE_DAYS, daysSinceUpdate: Math.floor(daysDiff), updatedDate: updated, pipelineStatus }; });
-          allData = processedData.filter(d => d.status !== 'Archived'); archivedData = processedData.filter(d => d.status === 'Archived');
-          previousCompleteCount = allData.filter(d => d.pipelineStatus === 'complete').length;
+          const processedData = (result.data || []).map(d => {
+            const updated = new Date(d.lastUpdated);
+            const daysDiff = (now - updated) / 86400000;
+            const pct = d.completion || 0;
+            // Use saved pipelineStatus if available, otherwise calculate
+            let pipelineStatus = d.pipelineStatus;
+            if (!pipelineStatus) {
+              if (d.status === 'Submitted') pipelineStatus = 'complete';
+              else if (pct >= 75) pipelineStatus = 'review';
+              else if (pct > 0) pipelineStatus = 'in-progress';
+              else pipelineStatus = 'new';
+            }
+            return { ...d, isStale: d.status === 'In Progress' && daysDiff > STALE_DAYS, daysSinceUpdate: Math.floor(daysDiff), updatedDate: updated, pipelineStatus };
+          });
+          allData = processedData.filter(d => d.status !== 'Archived');
+          archivedData = processedData.filter(d => d.status === 'Archived');
           updateStats(); renderTable(); renderPipeline();
-          playSound('pop');
-          startAutoRefresh();
         } else if (result.error === 'Unauthorized') { logout(); }
       } catch (e) { console.error(e); document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">Unable to load data</td></tr>'; }
     }
@@ -531,78 +426,38 @@
         cardsContainer.innerHTML = cards.length ? cards.map((item, i) =>
           '<div class="pipeline-card" draggable="true" data-id="' + (item.rowIndex || i) + '" data-status="' + status + '" style="animation-delay:' + (si*0.1 + i*0.05) + 's"><div class="pipeline-card-title">' + esc(item.organization || 'Unknown') + '</div><div class="pipeline-card-contact">' + esc(item.contact || item.email) + '</div><div class="pipeline-card-meta"><div class="pipeline-card-progress"><div class="pipeline-card-progress-bar"><div class="pipeline-card-progress-fill" style="width:' + (item.completion||0) + '%"></div></div><span class="pipeline-card-progress-text">' + (item.completion||0) + '%</span></div><span class="pipeline-card-date">' + formatDateShort(item.lastUpdated) + '</span></div></div>'
         ).join('') : '<div style="text-align:center;padding:30px;color:var(--text3);font-size:13px">No items</div>';
-        
-        // Add drag-drop event listeners to cards
         cardsContainer.querySelectorAll('.pipeline-card').forEach((card, i) => {
           const item = cards[i];
           card.addEventListener('click', () => viewDetails(item));
           card.addEventListener('dragstart', (e) => handleDragStart(e, item));
           card.addEventListener('dragend', handleDragEnd);
         });
-        
-        // Add drop zone listeners
         cardsContainer.addEventListener('dragover', handleDragOver);
         cardsContainer.addEventListener('dragleave', handleDragLeave);
         cardsContainer.addEventListener('drop', (e) => handleDrop(e, status));
       });
     }
-    
-    // Drag and Drop handlers
-    function handleDragStart(e, item) {
-      draggedCard = e.target;
-      draggedData = item;
-      e.target.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
-      playSound('pop');
-    }
-    
-    function handleDragEnd(e) {
-      e.target.classList.remove('dragging');
-      document.querySelectorAll('.pipeline-column').forEach(col => col.classList.remove('drag-over'));
-      document.querySelectorAll('.pipeline-cards').forEach(cards => cards.classList.remove('drag-over'));
-      draggedCard = null;
-      draggedData = null;
-    }
-    
-    function handleDragOver(e) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      e.currentTarget.classList.add('drag-over');
-      e.currentTarget.closest('.pipeline-column').classList.add('drag-over');
-    }
-    
-    function handleDragLeave(e) {
-      e.currentTarget.classList.remove('drag-over');
-      e.currentTarget.closest('.pipeline-column').classList.remove('drag-over');
-    }
-    
+    function handleDragStart(e, item) { draggedCard = e.target; draggedData = item; e.target.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
+    function handleDragEnd(e) { e.target.classList.remove('dragging'); document.querySelectorAll('.pipeline-column').forEach(col => col.classList.remove('drag-over')); document.querySelectorAll('.pipeline-cards').forEach(cards => cards.classList.remove('drag-over')); draggedCard = null; draggedData = null; }
+    function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; e.currentTarget.classList.add('drag-over'); e.currentTarget.closest('.pipeline-column').classList.add('drag-over'); }
+    function handleDragLeave(e) { e.currentTarget.classList.remove('drag-over'); e.currentTarget.closest('.pipeline-column').classList.remove('drag-over'); }
     async function handleDrop(e, targetStatus) {
       e.preventDefault();
       e.currentTarget.classList.remove('drag-over');
       e.currentTarget.closest('.pipeline-column').classList.remove('drag-over');
-      
       if (!draggedData || draggedData.pipelineStatus === targetStatus) return;
-      
-      playSound('drop');
-      
-      // Update local data optimistically
       const oldStatus = draggedData.pipelineStatus;
+      const sheetType = draggedData.sheetType;
+      const rowIndex = draggedData.rowIndex;
       draggedData.pipelineStatus = targetStatus;
-      
-      // If moved to complete, trigger confetti
-      if (targetStatus === 'complete' && oldStatus !== 'complete') {
-        launchConfetti();
-        showToast(draggedData.organization + ' completed!');
-      } else {
-        showToast('Moved to ' + targetStatus.replace('-', ' '));
-      }
-      
-      // Re-render pipeline
+      if (targetStatus === 'complete' && oldStatus !== 'complete') { launchConfetti(); showToast(draggedData.organization + ' completed!'); }
+      else { showToast('Moved to ' + targetStatus.replace('-', ' ')); }
       renderPipeline();
       updateStats();
-      
-      // Note: In a real app, you'd save this to the backend here
-      // For now it's just a visual change that resets on refresh
+      try {
+        const result = await jsonpRequest(API_URL + '?action=updatePipelineStatus&email=' + encodeURIComponent(currentUser?.email || '') + '&sheetType=' + sheetType + '&rowIndex=' + rowIndex + '&newStatus=' + encodeURIComponent(targetStatus));
+        if (!result.success) { draggedData.pipelineStatus = oldStatus; renderPipeline(); updateStats(); showToast('Failed to save'); }
+      } catch (err) { draggedData.pipelineStatus = oldStatus; renderPipeline(); updateStats(); showToast('Failed to save'); }
     }
     function renderTable() {
       let filtered = getFilteredData();
@@ -616,11 +471,11 @@
         '<div class="mobile-card" style="animation-delay:' + (i*0.05) + 's"><div class="mobile-card-header"><div><div class="mobile-card-org">' + esc(item.organization || 'Unknown') + '</div><div class="mobile-card-contact">' + esc(item.contact || item.email) + '</div></div><span class="status-badge ' + item.pipelineStatus + '">' + (item.completion||0) + '%</span></div><div class="mobile-card-progress"><div class="mobile-card-progress-bar"><div class="mobile-card-progress-fill" style="width:' + (item.completion||0) + '%"></div></div></div><div class="mobile-card-stats"><div class="mobile-card-stat"><div class="val">' + (item.locations||0) + '</div><div class="lbl">Locations</div></div><div class="mobile-card-stat"><div class="val">' + (item.spaces||0) + '</div><div class="lbl">Spaces</div></div><div class="mobile-card-stat"><div class="val">' + formatDateShort(item.lastUpdated) + '</div><div class="lbl">Updated</div></div></div><div class="mobile-card-actions"><button class="mobile-card-btn primary" onclick=\'viewDetails(' + JSON.stringify(item).replace(/'/g,"&#39;") + ')\'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> View</button><button class="mobile-card-btn" onclick="emailContact(\'' + esc(item.email) + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email</button></div></div>'
       ).join('');
     }
-    function emailContact(email) { playSound('pop'); window.open('mailto:' + email); }
-    async function archiveItem(sheetType, rowIndex, orgName) { if (!confirm('Archive "' + orgName + '"?')) return; try { const result = await jsonpRequest(API_URL + '?action=archiveSubmission&email=' + encodeURIComponent(currentUser?.email || '') + '&sheetType=' + sheetType + '&rowIndex=' + rowIndex); if (result.success) { playSound('success'); showToast('Archived'); loadData(); } else { showToast('Failed'); } } catch (e) { showToast('Failed'); } }
-    async function restoreItem(sheetType, rowIndex, orgName) { if (!confirm('Restore "' + orgName + '"?')) return; try { const result = await jsonpRequest(API_URL + '?action=restoreSubmission&email=' + encodeURIComponent(currentUser?.email || '') + '&sheetType=' + sheetType + '&rowIndex=' + rowIndex); if (result.success) { playSound('success'); showToast('Restored'); loadData(); } else { showToast('Failed'); } } catch (e) { showToast('Failed'); } }
-    function exportCSV() { const filtered = getFilteredData(); const csv = [['Organization','Contact','Email','Status','Progress','Locations','Spaces','Updated'], ...filtered.map(d => [d.organization, d.contact, d.email, d.pipelineStatus, d.completion + '%', d.locations, d.spaces, d.lastUpdated])].map(r => r.map(c => '"' + String(c||'').replace(/"/g,'""') + '"').join(',')).join('\n'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'practiceplan-' + new Date().toISOString().split('T')[0] + '.csv'; a.click(); playSound('success'); showToast('Exported'); }
-    function showToast(msg) { playSound('pop'); const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
+    function emailContact(email) { window.open('mailto:' + email); }
+    async function archiveItem(sheetType, rowIndex, orgName) { if (!confirm('Archive "' + orgName + '"?')) return; try { const result = await jsonpRequest(API_URL + '?action=archiveSubmission&email=' + encodeURIComponent(currentUser?.email || '') + '&sheetType=' + sheetType + '&rowIndex=' + rowIndex); if (result.success) { showToast('Archived'); loadData(); } else { showToast('Failed'); } } catch (e) { showToast('Failed'); } }
+    async function restoreItem(sheetType, rowIndex, orgName) { if (!confirm('Restore "' + orgName + '"?')) return; try { const result = await jsonpRequest(API_URL + '?action=restoreSubmission&email=' + encodeURIComponent(currentUser?.email || '') + '&sheetType=' + sheetType + '&rowIndex=' + rowIndex); if (result.success) { showToast('Restored'); loadData(); } else { showToast('Failed'); } } catch (e) { showToast('Failed'); } }
+    function exportCSV() { const filtered = getFilteredData(); const csv = [['Organization','Contact','Email','Status','Progress','Locations','Spaces','Updated'], ...filtered.map(d => [d.organization, d.contact, d.email, d.pipelineStatus, d.completion + '%', d.locations, d.spaces, d.lastUpdated])].map(r => r.map(c => '"' + String(c||'').replace(/"/g,'""') + '"').join(',')).join('\n'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'practiceplan-' + new Date().toISOString().split('T')[0] + '.csv'; a.click(); showToast('Exported'); }
+    function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
     function viewDetails(item) {
       const fd = item.formData || {}, contact = fd.contactInfo || {}, policies = fd.policies || {}, locations = fd.locations || [];
       const pct = item.completion || 0, circumference = 2 * Math.PI * 36, offset = circumference - (pct / 100) * circumference;
@@ -632,7 +487,6 @@
       if (pct >= 75) timeline.push({ title: 'Policies Set', desc: 'Ready for review', complete: true });
       if (item.pipelineStatus === 'complete') timeline.push({ title: 'Complete', desc: 'All info submitted', complete: true });
       else timeline.push({ title: 'Awaiting', desc: (100-pct) + '% remaining', complete: false });
-      
       let html = '<div class="modal-header"><h2>' + esc(item.organization || 'Details') + '</h2><div class="modal-subtitle">' + esc(contact.fullName || item.contact || '') + (contact.email ? ' - ' + esc(contact.email) : '') + '</div><button class="modal-close" onclick="closeModal()">✕</button></div>';
       if (item.driveFolder) html += '<div class="drive-banner"><div class="drive-banner-text"><div class="drive-banner-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div><div><div class="drive-banner-label">Uploaded Files</div><div class="drive-banner-title">View in Google Drive</div></div></div><a href="' + item.driveFolder + '" target="_blank" class="drive-banner-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Open</a></div>';
       html += '<div class="progress-hero"><div class="progress-hero-inner"><div class="progress-ring-large"><svg width="90" height="90" viewBox="0 0 90 90"><circle class="bg" cx="45" cy="45" r="36"/><circle class="progress" cx="45" cy="45" r="36" stroke-dasharray="' + circumference + '" stroke-dashoffset="' + offset + '"/></svg><div class="center-text">' + pct + '%</div></div><div class="progress-details"><div class="progress-title">Onboarding Progress</div><div class="progress-bar-large"><div class="progress-bar-fill" style="width:' + pct + '%"></div></div><div class="progress-meta"><span><strong>' + (item.locations||0) + '</strong> locations</span><span><strong>' + (item.spaces||0) + '</strong> spaces</span><span>Updated <strong>' + formatDate(item.lastUpdated) + '</strong></span></div></div></div></div>';
