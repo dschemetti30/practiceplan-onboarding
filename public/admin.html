@@ -69,8 +69,6 @@
     .funnel-label .title { font-size: 11px; font-weight: 600; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; }
     .funnel-label .drop { font-size: 10px; color: var(--text3); margin-top: 3px; }
     .funnel-label .drop.negative { color: #ef4444; }
-    
-    /* Redesigned Time Stats */
     .time-stats-container { display: flex; flex-direction: column; gap: 16px; }
     .time-hero { display: flex; align-items: center; gap: 24px; padding: 20px; background: linear-gradient(135deg, rgba(0,118,187,0.08), rgba(0,168,79,0.08)); border-radius: 16px; }
     .time-hero-ring { width: 100px; height: 100px; position: relative; flex-shrink: 0; }
@@ -88,8 +86,6 @@
     .time-range-item { flex: 1; text-align: center; padding: 14px 8px; background: var(--bg); border-radius: 12px; }
     .time-range-item .val { font-size: 16px; font-weight: 700; color: var(--pp-blue); }
     .time-range-item .lbl { font-size: 9px; color: var(--text2); text-transform: uppercase; margin-top: 4px; }
-    
-    /* Redesigned Overview with SVG icons */
     .overview-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
     .overview-item { padding: 16px; background: var(--bg); border-radius: 14px; display: flex; align-items: center; gap: 12px; transition: all 0.2s; }
     .overview-item:hover { transform: translateX(4px); }
@@ -101,8 +97,6 @@
     .overview-icon.stale { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #d97706; }
     .overview-data .num { font-size: 24px; font-weight: 700; color: var(--text); }
     .overview-data .lbl { font-size: 11px; color: var(--text2); }
-    
-    /* Compact Controls */
     .controls-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
     .section-title { font-size: 18px; font-weight: 700; color: var(--text); }
     .controls-right { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
@@ -115,16 +109,14 @@
     .text-action-btn { padding: 10px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); cursor: pointer; display: flex; align-items: center; gap: 6px; color: var(--text2); transition: all 0.2s; font-family: inherit; font-size: 12px; font-weight: 500; white-space: nowrap; }
     .text-action-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); }
     .text-action-btn svg { width: 14px; height: 14px; }
-    
-    /* Table */
     .table-section { margin-bottom: 40px; }
     .table-wrapper { background: var(--card); border-radius: 20px; border: 1px solid var(--border); overflow: hidden; }
     table { width: 100%; border-collapse: collapse; }
-    th { text-align: left; padding: 16px 20px; background: var(--bg); font-size: 10px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); cursor: pointer; white-space: nowrap; }
+    th { text-align: left; padding: 16px 16px; background: var(--bg); font-size: 10px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); cursor: pointer; white-space: nowrap; }
     th:hover { background: var(--border); }
     th .sort-icon { margin-left: 4px; opacity: 0.4; }
     th.sorted .sort-icon { opacity: 1; }
-    td { padding: 16px 20px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); }
+    td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); vertical-align: top; }
     tr:last-child td { border-bottom: none; }
     tr:hover { background: var(--bg); }
     .status-badge { display: inline-block; padding: 6px 12px; border-radius: 50px; font-size: 10px; font-weight: 600; text-transform: uppercase; }
@@ -140,13 +132,17 @@
     .icon-btn { width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); transition: all 0.2s; }
     .icon-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); }
     .icon-btn svg { width: 16px; height: 16px; }
-    .completion-bar { width: 60px; height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; }
+    .completion-bar { width: 50px; height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; }
     .completion-fill { height: 100%; background: linear-gradient(90deg, var(--pp-blue), var(--pp-green)); border-radius: 3px; }
-    .org-name { font-weight: 600; color: var(--text); }
+    .org-cell { max-width: 180px; }
+    .org-name { font-weight: 600; color: var(--text); line-height: 1.3; }
+    .org-location { font-size: 11px; color: var(--text3); margin-top: 3px; }
+    .contact-name { font-weight: 500; color: var(--text); }
     .contact-email { font-size: 11px; color: var(--text2); margin-top: 2px; word-break: break-all; }
+    .go-live-date { font-size: 11px; color: var(--pp-green); font-weight: 600; }
+    .go-live-date.none { color: var(--text3); font-weight: 400; }
+    .time-ago { font-size: 12px; color: var(--text2); }
     .empty-state { padding: 60px 24px; text-align: center; color: var(--text2); }
-    
-    /* Pipeline */
     .pipeline-section { margin-bottom: 40px; }
     .pipeline-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
     .pipeline-column { background: var(--bg); border-radius: 20px; padding: 16px; min-height: 300px; position: relative; }
@@ -160,36 +156,34 @@
     .pipeline-column[data-status="complete"] .pipeline-dot { background: var(--pp-green); }
     .pipeline-column-count { font-size: 12px; font-weight: 600; color: var(--text2); background: var(--card); padding: 4px 10px; border-radius: 50px; }
     .pipeline-cards { display: flex; flex-direction: column; gap: 10px; min-height: 50px; }
-    .pipeline-card { background: var(--card); border-radius: 14px; padding: 16px; border: 1px solid var(--border); cursor: pointer; transition: all 0.25s ease; opacity: 0; animation: fadeIn 0.4s ease forwards; }
+    .pipeline-card { background: var(--card); border-radius: 14px; padding: 14px; border: 1px solid var(--border); cursor: pointer; transition: all 0.25s ease; opacity: 0; animation: fadeIn 0.4s ease forwards; position: relative; }
     .pipeline-card:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-    .pipeline-card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-    .pipeline-card-contact { font-size: 12px; color: var(--text2); margin-bottom: 12px; }
+    .pipeline-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .pipeline-card-title { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; flex: 1; padding-right: 8px; }
+    .pipeline-card-golive { font-size: 9px; font-weight: 600; color: var(--pp-green); background: rgba(0,168,79,0.1); padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+    .pipeline-card-golive.none { color: var(--text3); background: var(--bg); }
+    .pipeline-card-location { font-size: 11px; color: var(--text2); margin-bottom: 10px; }
     .pipeline-card-meta { display: flex; justify-content: space-between; align-items: center; }
     .pipeline-card-progress { display: flex; align-items: center; gap: 8px; }
-    .pipeline-card-progress-bar { width: 50px; height: 4px; background: var(--bg); border-radius: 2px; overflow: hidden; }
+    .pipeline-card-progress-bar { width: 40px; height: 4px; background: var(--bg); border-radius: 2px; overflow: hidden; }
     .pipeline-card-progress-fill { height: 100%; background: linear-gradient(90deg, var(--pp-blue), var(--pp-green)); }
-    .pipeline-card-progress-text { font-size: 11px; font-weight: 600; color: var(--text2); }
-    .pipeline-card-date { font-size: 11px; color: var(--text3); }
-    
-    /* Mobile Cards */
+    .pipeline-card-progress-text { font-size: 10px; font-weight: 600; color: var(--text2); }
+    .pipeline-card-time { font-size: 10px; color: var(--text3); }
     .mobile-cards { display: none; }
     .mobile-card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border); }
-    .mobile-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
-    .mobile-card-org { font-size: 16px; font-weight: 700; color: var(--text); }
-    .mobile-card-contact { font-size: 13px; color: var(--text2); margin-top: 4px; }
-    .mobile-card-progress { margin-bottom: 20px; }
+    .mobile-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .mobile-card-org { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.3; }
+    .mobile-card-location { font-size: 12px; color: var(--text2); margin-top: 4px; }
+    .mobile-card-golive { font-size: 10px; font-weight: 600; color: var(--pp-green); background: rgba(0,168,79,0.1); padding: 4px 10px; border-radius: 8px; white-space: nowrap; }
+    .mobile-card-golive.none { color: var(--text3); background: var(--bg); }
+    .mobile-card-progress { margin-bottom: 16px; }
     .mobile-card-progress-bar { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
     .mobile-card-progress-fill { height: 100%; background: linear-gradient(90deg, var(--pp-blue), var(--pp-green)); border-radius: 4px; }
-    .mobile-card-stats { display: flex; justify-content: center; gap: 32px; margin-bottom: 20px; padding: 16px 0; background: var(--bg); border-radius: 14px; }
+    .mobile-card-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px; padding: 14px; background: var(--bg); border-radius: 14px; }
     .mobile-card-stat { text-align: center; }
-    .mobile-card-stat .val { font-size: 22px; font-weight: 700; color: var(--pp-blue); }
-    .mobile-card-stat .lbl { font-size: 10px; color: var(--text2); text-transform: uppercase; margin-top: 2px; }
-    .mobile-card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .mobile-card-btn { padding: 14px; border: 1px solid var(--border); background: var(--card); border-radius: 14px; font-size: 13px; font-weight: 600; color: var(--text2); cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .mobile-card-btn.primary { background: linear-gradient(135deg, var(--pp-blue), #0284c7); color: white; border: none; }
-    .mobile-card-btn svg { width: 16px; height: 16px; }
-    
-    /* Modal */
+    .mobile-card-stat .val { font-size: 16px; font-weight: 700; color: var(--pp-blue); }
+    .mobile-card-stat .lbl { font-size: 9px; color: var(--text2); text-transform: uppercase; margin-top: 2px; }
+    .mobile-card-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--pp-blue), #0284c7); color: white; border: none; border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
     .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.7); backdrop-filter: blur(8px); display: none; align-items: flex-start; justify-content: center; padding: 40px 20px; z-index: 1000; overflow-y: auto; }
     .modal-overlay.active { display: flex; }
     .modal { background: var(--card); border-radius: 24px; max-width: 750px; width: 100%; overflow: hidden; box-shadow: 0 25px 80px rgba(0,0,0,0.3); }
@@ -222,8 +216,6 @@
     .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #0076bb, #00a84f); border-radius: 6px; }
     .progress-meta { display: flex; gap: 24px; font-size: 13px; color: var(--text2); }
     .progress-meta strong { color: var(--text); }
-    
-    /* Timeline with more spacing */
     .timeline { padding: 32px 32px 28px; }
     .timeline h3 { font-size: 12px; font-weight: 700; color: var(--pp-blue); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
     .timeline h3 svg { width: 18px; height: 18px; }
@@ -244,15 +236,12 @@
     .detail-section h3 { font-size: 12px; font-weight: 700; color: var(--pp-blue); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
     .detail-section h3 svg { width: 18px; height: 18px; }
     .detail-section h3 .toggle-btn { margin-left: auto; font-size: 12px; color: var(--text2); cursor: pointer; text-transform: none; letter-spacing: 0; font-weight: 500; }
-    
-    /* Fixed detail grid for long content */
     .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
     .detail-grid.single-col { grid-template-columns: 1fr; }
     .detail-item { background: var(--bg); padding: 14px 16px; border-radius: 14px; overflow: hidden; }
     .detail-item label { display: block; font-size: 10px; color: var(--text2); text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
     .detail-item span { font-size: 14px; color: var(--text); font-weight: 500; display: block; word-break: break-word; }
     .detail-item.full-width { grid-column: 1 / -1; }
-    
     .location-card { background: var(--bg); border-radius: 16px; margin-bottom: 14px; overflow: hidden; }
     .location-card:last-child { margin-bottom: 0; }
     .location-card.collapsed .location-content { display: none; }
@@ -275,14 +264,11 @@
     .tag.green { background: #dcfce7; color: #00a84f; }
     .tag.purple { background: #ede9fe; color: #7c3aed; }
     .tag.orange { background: #fef3c7; color: #d97706; }
-    
-    /* Additional Form Data Section */
     .additional-data { margin-top: 16px; }
     .additional-data-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
     .additional-data-item { background: var(--card); border: 1px solid var(--border); padding: 12px 14px; border-radius: 12px; }
     .additional-data-item label { display: block; font-size: 10px; color: var(--text2); text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
     .additional-data-item span { font-size: 13px; color: var(--text); font-weight: 500; }
-    
     .toast { position: fixed; bottom: 28px; right: 28px; background: var(--text); color: var(--card); padding: 14px 24px; border-radius: 14px; font-size: 14px; font-weight: 500; z-index: 2000; transform: translateY(100px); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     .toast.show { transform: translateY(0); opacity: 1; }
     .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--pp-blue); border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -291,17 +277,16 @@
     .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden; }
     .confetti { position: absolute; width: 10px; height: 10px; opacity: 0; }
     @keyframes confetti-fall { 0% { transform: translateY(-100px) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
-    
     @media (max-width: 1200px) { .pipeline-board { grid-template-columns: repeat(2, 1fr); } .pipeline-column:nth-child(2)::after, .pipeline-column:nth-child(4)::after { display: none; } .stats-row { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 900px) { .stats-row { grid-template-columns: 1fr; } .detail-grid { grid-template-columns: 1fr; } .additional-data-grid { grid-template-columns: 1fr; } }
-    @media (max-width: 768px) { .main-content { padding: 20px; } .header { padding: 12px 16px; gap: 12px; } .header-logo { height: 28px; } .header-right { gap: 8px; } .user-pill { padding: 0; background: none; } .user-name { display: none; } .header-btn { width: 36px; height: 36px; } .logout-btn { padding: 8px 14px; font-size: 12px; } .controls-row { flex-direction: column; align-items: stretch; } .controls-right { justify-content: center; flex-wrap: wrap; } .search-input { width: 100%; } .table-wrapper { display: none; } .mobile-cards { display: block; } .pipeline-board { grid-template-columns: 1fr; } .pipeline-column::after { display: none; } .modal { margin: 16px; border-radius: 20px; } .modal-header { padding: 24px; } .modal-body { padding: 24px; } .drive-banner { flex-direction: column; gap: 16px; text-align: center; } .progress-hero-inner { flex-direction: column; text-align: center; } .overview-grid { grid-template-columns: 1fr; } .time-hero { flex-direction: column; text-align: center; } }
+    @media (max-width: 768px) { .main-content { padding: 20px; } .header { padding: 12px 16px; gap: 12px; } .header-logo { height: 28px; } .header-right { gap: 8px; } .user-pill { padding: 0; background: none; } .user-name { display: none; } .header-btn { width: 36px; height: 36px; } .logout-btn { padding: 8px 14px; font-size: 12px; } .controls-row { flex-direction: column; align-items: stretch; } .controls-right { justify-content: center; flex-wrap: wrap; } .search-input { width: 100%; } .table-wrapper { display: none; } .mobile-cards { display: block; } .pipeline-board { grid-template-columns: 1fr; } .pipeline-column::after { display: none; } .modal { margin: 16px; border-radius: 20px; } .modal-header { padding: 24px; } .modal-body { padding: 24px; } .drive-banner { flex-direction: column; gap: 16px; text-align: center; } .progress-hero-inner { flex-direction: column; text-align: center; } .overview-grid { grid-template-columns: 1fr; } .time-hero { flex-direction: column; text-align: center; } .mobile-card-stats { grid-template-columns: repeat(2, 1fr); } }
   </style>
 </head>
 <body>
   <svg style="position:absolute;width:0;height:0"><defs><linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#0076bb"/><stop offset="100%" stop-color="#00a84f"/></linearGradient></defs></svg>
   <div class="login-screen" id="loginScreen">
     <div class="login-box">
-      <div class="logo-container"><svg class="logo-svg" viewBox="0 0 396.37 66.7"><g><g><path fill="#00a84f" d="M38.52,31.97l-18.72-7.88c-1.03-.43-1.86-1.68-1.86-2.8v-8.53c0-1.11.83-1.67,1.86-1.23l20.95,8.82c3.5,1.47,5.25,3.41,5.25,5.34,0,1.93-1.75,3.87-5.25,5.34l-2.23.94Z"/><path fill="#00a84f" d="M29.74,48.22v11.43c0,1.11-.83,2.37-1.86,2.8l-8.08,3.4c-1.03.43-1.86-.12-1.86-1.23v-21.97c0-1.11.83-2.37,1.86-2.8l20.95-8.82c3.5-1.47,5.25-3.41,5.25-5.34v10.81c0,3.03-1.75,5.61-5.25,7.09l-11.01,4.64Z"/><path fill="#0076bb" d="M24.43,21.29L5.71,13.41c-1.03-.43-1.86-1.68-1.86-2.8V2.08c0-1.11.83-1.67,1.86-1.23l20.95,8.82c3.5,1.47,5.25,3.41,5.25,5.34,0,1.93-1.75,3.87-5.25,5.34l-2.23.94Z"/><path fill="#0076bb" d="M15.65,37.54v11.43c0,1.11-.83,2.37-1.86,2.8l-8.08,3.4c-1.03.43-1.86-.12-1.86-1.23v-21.97c0-1.11.83-2.37,1.86-2.8l20.95-8.82c3.5-1.47,5.25-3.41,5.25-5.34v10.81c0,3.03-1.75,5.61-5.25,7.09l-11.01,4.64Z"/><g fill="#0076bb"><path d="M87.8,38.08h-11.64l-1,5.69h-6.85l2-11.38h19.16c2.39,0,3.86-1.23,3.86-2.96,0-1.3-1.03-2.13-2.96-2.13h-19.16l1.32-5.79h18.24c6.19,0,9.58,2.89,9.58,7.15,0,5.52-4.82,9.41-12.54,9.41Z"/><path d="M130.29,43.77h-9.21l-3.92-5.89h-10.58l-1.03,5.89h-6.88l2-11.38h19.36c2.29,0,4.29-1.1,4.29-2.89,0-1.46-1.26-2.2-3.39-2.2h-19.36l1.33-5.79h18.5c4.66,0,10.18,1.43,10.18,6.75,0,4.02-2.89,7.42-7.18,8.25.63.57,1.33,1.36,2.56,2.93l3.36,4.32Z"/><path d="M138,43.77l5.19-5.72h5.55c1.36,0,2.89,0,3.96.07-.47-.8-1.16-2.16-1.7-3.23l-2.96-5.89-13.04,14.77h-8.15l17.83-20.12c1.16-1.3,2.73-2.49,4.89-2.49s3.23,1.1,3.96,2.49l10.34,20.12h-25.88Z"/><path d="M190.18,38.05l-5.42,5.72h-11.18c-6.95,0-11.57-4.19-11.57-9.81,0-7.32,6.98-12.44,15.5-12.44h15.6l-5.45,5.79h-11.18c-4.09,0-7.55,2.63-7.55,6.15,0,2.76,2.29,4.59,5.65,4.59h15.6Z"/><path d="M216.65,21.52l-1.08,5.79h-8l-2.93,16.46h-6.88l2.89-16.46h-10.44l5.52-5.79h20.93Z"/><path d="M221.18,43.77h-6.88l3.96-22.25h6.85l-3.93,22.25Z"/><path d="M251.47,38.05l-1.64,5.72h-14.05c-6.95,0-11.57-4.19-11.57-9.81,0-7.32,6.98-12.44,15.5-12.44h14.93l-1.83,5.79h-14.14c-4.09,0-7.55,2.63-7.55,6.15,0,2.76,2.29,4.59,5.65,4.59h14.69Z"/><path d="M278.35,38.05l-4.59,5.72h-21.42l3.96-22.25h24.88l-4.62,5.79h-14.4l-.47,2.66h16.73l-3.92,5.06h-13.7l-.53,3.03h18.09Z"/><path d="M298.05,38.08h-11.64l-1,5.69h-6.85l2-11.38h19.16c2.39,0,3.86-1.23,3.86-2.96,0-1.3-1.03-2.13-2.96-2.13h-19.16l4.14-5.79h15.42c6.19,0,9.58,2.89,9.58,7.15,0,5.52-4.82,9.41-12.54,9.41Z"/><path d="M334.61,38.05l-5.49,5.72h-19.66l3.96-22.25h6.85l-2.93,16.53h17.26Z"/><path d="M342.3,43.77l5.19-5.72h5.55c1.36,0,2.89,0,3.96.07-.47-.8-1.16-2.16-1.7-3.23l-2.96-5.89-13.04,14.77h-8.15l17.83-20.12c1.16-1.3,2.73-2.49,4.89-2.49s3.23,1.1,3.96,2.49l10.34,20.12h-25.88Z"/><path d="M386.02,42.94l-11.47-12.24-2.3,13.07h-6.25l3.23-18.46c.5-2.96,2.46-4.16,4.52-4.16.83,0,1.66.2,2.56,1.2l11.47,12.24,2.33-13.07h6.25l-3.29,18.43c-.53,2.96-2.49,4.19-4.49,4.19-.93,0-1.63-.2-2.56-1.2Z"/></g></g></g></svg></div>
+      <div class="logo-container"><svg class="logo-svg" viewBox="0 0 396.37 66.7"><g><g><path fill="#00a84f" d="M38.52,31.97l-18.72-7.88c-1.03-.43-1.86-1.68-1.86-2.8v-8.53c0-1.11.83-1.67,1.86-1.23l20.95,8.82c3.5,1.47,5.25,3.41,5.25,5.34,0,1.93-1.75,3.87-5.25,5.34l-2.23.94Z"/><path fill="#00a84f" d="M29.74,48.22v11.43c0,1.11-.83,2.37-1.86,2.8l-8.08,3.4c-1.03.43-1.86-.12-1.86-1.23v-21.97c0-1.11.83-2.37,1.86-2.8l20.95-8.82c3.5-1.47,5.25-3.41,5.25-5.34v10.81c0,3.03-1.75,5.61-5.25,7.09l-11.01,4.64Z"/><path fill="#0076bb" d="M24.43,21.29L5.71,13.41c-1.03-.43-1.86-1.68-1.86-2.8V2.08c0-1.11.83-1.67,1.86-1.23l20.95,8.82c3.5,1.47,5.25,3.41,5.25,5.34,0,1.93-1.75,3.87-5.25,5.34l-2.23.94Z"/><path fill="#0076bb" d="M15.65,37.54v11.43c0,1.11-.83,2.37-1.86,2.8l-8.08,3.4c-1.03.43-1.86-.12-1.86-1.23v-21.97c0-1.11.83-2.37,1.86-2.8l20.95-8.82c3.5-1.47,5.25-3.41,5.25-5.34v10.81c0,3.03-1.75,5.61-5.25,7.09l-11.01,4.64Z"/><g fill="#0076bb"><path d="M87.8,38.08h-11.64l-1,5.69h-6.85l2-11.38h19.16c2.39,0,3.86-1.23,3.86-2.96,0-1.3-1.03-2.13-2.96-2.13h-19.16l1.32-5.79h18.24c6.19,0,9.58,2.89,9.58,7.15,0,5.52-4.82,9.41-12.54,9.41Z"/><path d="M130.29,43.77h-9.21l-3.92-5.89h-10.58l-1.03,5.89h-6.88l2-11.38h19.36c2.29,0,4.29-1.1,4.29-2.89,0-1.46-1.26-2.2-3.39-2.2h-19.36l1.33-5.79h18.5c4.66,0,10.18,1.43,10.18,6.75,0,4.02-2.89,7.42-7.18,8.25.63.57,1.33,1.36,2.56,2.93l3.36,4.32Z"/><path d="M138,43.77l5.19-5.72h5.55c1.36,0,2.89,0,3.96.07-.47-.8-1.16-2.16-1.7-3.23l-2.96-5.89-13.04,14.77h-8.15l17.83-20.12c1.16-1.3,2.73-2.49,4.89-2.49s3.23,1.1,3.96,2.49l10.34,20.12h-25.88Z"/><path d="M190.18,38.05l-5.42,5.72h-11.18c-6.95,0-11.57-4.19-11.57-9.81,0-7.32,6.98-12.44,15.5-12.44h15.6l-5.45,5.79h-11.18c-4.09,0-7.55,2.63-7.55,6.15,0,2.76,2.29,4.59,5.65,4.59h15.6Z"/><path d="M216.65,21.52l-1.08,5.79h-8l-2.93,16.46h-6.88l2.89-16.46h-10.44l5.52-5.79h20.93Z"/><path d="M221.18,43.77h-6.88l3.96-22.25h6.85l-3.93,22.25Z"/><path d="M251.47,38.05l-1.64,5.72h-14.05c-6.95,0-11.57-4.19-11.57-9.81,0-7.32,6.98-12.44,15.5-12.44h14.93l-1.83,5.79h-14.14c-4.09,0-7.55,2.63-7.55,6.15,0,2.76,2.29,4.59,5.65,4.59h14.69Z"/><path d="M278.35,38.05l-4.59,5.72h-21.42l3.96-22.25h24.88l-4.62,5.79h-14.4l-.47,2.66h16.73l-3.92,5.06h-13.7l-.53,3.03h18.09Z"/><path d="M298.05,38.08h-11.64l-1,5.69h-6.85l2-11.38h19.16c2.39,0,3.86-1.23,3.86-2.96,0-1.3-1.03-2.13-2.96-2.13h-19.16l4.14-5.79h15.42c6.19,0,9.58,2.89,9.58,7.15,0,5.52-4.82,9.41-12.54,9.41Z"/><path d="M334.61,38.05l-5.49,5.72h-19.66l3.96-22.25h6.85l-2.93,16.53h17.26Z"/><path d="M342.3,43.77l5.19-5.72h5.55c1.36,0,2.89,0,3.96.07-.47-.8-1.16-2.16-1.7-3.23l-2.96-5.89-13.04,14.77h-8.15l17.83-20.12c1.16-1.3,2.73-2.49,4.89-2.49s3.23,1.1,3.96,2.49l10.34,20.12h-25.88Z"/><path d="M386.02,42.94l-11.47-12.24-2.3,13.07h-6.25l3.23-18.46c.5-2.96,2.46-4.16,4.52-4.16.83,0,1.66.2,2.56,1.2l11.47,12.24,2.33-13.07h6.25l-3.29,18.43c-.53,2.96-2.49,4.19-4.49,4.19-.93,0-1.63-.2-2.56-1.2Z"/></g></g></g></svg>
       <h1>Admin Dashboard</h1>
       <p class="subtitle">Internal access only</p>
       <div class="login-error" id="loginError"></div>
@@ -336,7 +321,7 @@
             <button class="text-action-btn" onclick="loadData()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh</button>
           </div>
         </div>
-        <div class="table-wrapper"><table><thead><tr><th onclick="sortBy('organization')">Organization <span class="sort-icon">↕</span></th><th onclick="sortBy('contact')">Contact <span class="sort-icon">↕</span></th><th onclick="sortBy('pipelineStatus')">Status <span class="sort-icon">↕</span></th><th onclick="sortBy('completion')">Progress <span class="sort-icon">↕</span></th><th>Loc</th><th>Spc</th><th onclick="sortBy('lastUpdated')" class="sorted">Updated <span class="sort-icon">↓</span></th><th>Actions</th></tr></thead><tbody id="tableBody"><tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr></tbody></table></div>
+        <div class="table-wrapper"><table><thead><tr><th onclick="sortBy('organization')">Organization <span class="sort-icon">↕</span></th><th onclick="sortBy('contact')">Contact <span class="sort-icon">↕</span></th><th onclick="sortBy('pipelineStatus')">Status <span class="sort-icon">↕</span></th><th onclick="sortBy('completion')">Progress <span class="sort-icon">↕</span></th><th onclick="sortBy('goLiveDate')">Go Live <span class="sort-icon">↕</span></th><th onclick="sortBy('lastUpdated')" class="sorted">Updated <span class="sort-icon">↓</span></th><th>Actions</th></tr></thead><tbody id="tableBody"><tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr></tbody></table></div>
         <div class="mobile-cards" id="mobileCards"></div>
       </div>
       <div class="pipeline-section">
@@ -375,6 +360,59 @@
         return { value: hours || '<1', unit: 'hours' };
       }
       return { value: days.toFixed(1), unit: 'days' };
+    }
+
+    function timeAgo(dateStr) {
+      if (!dateStr) return '-';
+      const date = new Date(dateStr);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+      if (diffMins < 1) return 'just now';
+      if (diffMins < 60) return diffMins + ' min ago';
+      if (diffHours < 24) return diffHours + ' hr ago';
+      if (diffDays === 1) return '1 day ago';
+      if (diffDays < 30) return diffDays + ' days ago';
+      return Math.floor(diffDays / 30) + ' mo ago';
+    }
+
+    function getLocationString(item) {
+      const fd = item.formData || {};
+      const locations = fd.locations || [];
+      if (locations.length > 0) {
+        const loc = locations[0];
+        if (loc.state && loc.city) return loc.city + ', ' + loc.state;
+        if (loc.state) return loc.state;
+        if (loc.city) return loc.city;
+        if (loc.address) {
+          const parts = loc.address.split(',');
+          if (parts.length >= 2) {
+            const stateZip = parts[parts.length - 1].trim();
+            const city = parts[parts.length - 2].trim();
+            const stateMatch = stateZip.match(/([A-Z]{2})/);
+            if (stateMatch) return city + ', ' + stateMatch[1];
+            return city;
+          }
+        }
+      }
+      return '';
+    }
+
+    function getGoLiveDate(item) {
+      const fd = item.formData || {};
+      const policies = fd.policies || {};
+      return policies.goLiveDate || '';
+    }
+
+    function formatGoLive(dateStr) {
+      if (!dateStr) return null;
+      try {
+        const date = new Date(dateStr);
+        if (isNaN(date)) return dateStr;
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      } catch (e) { return dateStr; }
     }
 
     function launchConfetti() {
@@ -422,7 +460,7 @@
     function logout() { sessionStorage.removeItem('pp_admin_user'); google.accounts.id.disableAutoSelect(); location.reload(); }
     function jsonpRequest(url) { return new Promise((resolve, reject) => { const cb = 'cb_' + Date.now() + '_' + Math.random().toString(36).substr(2,5); window[cb] = (data) => { delete window[cb]; document.body.removeChild(s); resolve(data); }; const s = document.createElement('script'); s.src = url + '&callback=' + cb; s.onerror = () => { delete window[cb]; document.body.removeChild(s); reject(new Error('Failed')); }; document.body.appendChild(s); setTimeout(() => { if (window[cb]) { delete window[cb]; reject(new Error('Timeout')); } }, 15000); }); }
     async function loadData() {
-      document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr>';
+      document.getElementById('tableBody').innerHTML = '<tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr>';
       try {
         const result = await jsonpRequest(API_URL + '?action=getAdminData&email=' + encodeURIComponent(currentUser?.email || ''));
         if (result.success) {
@@ -438,13 +476,15 @@
               else if (pct > 0) pipelineStatus = 'in-progress';
               else pipelineStatus = 'new';
             }
-            return { ...d, isStale: d.status === 'In Progress' && daysDiff > STALE_DAYS, daysSinceUpdate: Math.floor(daysDiff), updatedDate: updated, pipelineStatus };
+            const goLiveDate = getGoLiveDate(d);
+            const locationStr = getLocationString(d);
+            return { ...d, isStale: d.status === 'In Progress' && daysDiff > STALE_DAYS, daysSinceUpdate: Math.floor(daysDiff), updatedDate: updated, pipelineStatus, goLiveDate, locationStr };
           });
           allData = processedData.filter(d => d.status !== 'Archived');
           archivedData = processedData.filter(d => d.status === 'Archived');
           updateStats(); renderTable(); renderPipeline();
         } else if (result.error === 'Unauthorized') { logout(); }
-      } catch (e) { console.error(e); document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">Unable to load data</td></tr>'; }
+      } catch (e) { console.error(e); document.getElementById('tableBody').innerHTML = '<tr><td colspan="7" class="empty-state">Unable to load data</td></tr>'; }
     }
     function getFilteredByTime(data) { if (timePeriodDays === 0) return data; const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - timePeriodDays); return data.filter(d => d.updatedDate >= cutoff); }
     function updateStats() {
@@ -483,7 +523,7 @@
     function setFilter(f) { currentFilter = f; renderTable(); renderPipeline(); }
     function handleSearch(q) { searchQuery = q.toLowerCase(); renderTable(); renderPipeline(); }
     function sortBy(field) { if (sortField === field) { sortDir = sortDir === 'asc' ? 'desc' : 'asc'; } else { sortField = field; sortDir = 'desc'; } document.querySelectorAll('th').forEach(th => th.classList.remove('sorted')); if (event?.target) { event.target.closest('th').classList.add('sorted'); event.target.closest('th').querySelector('.sort-icon').textContent = sortDir === 'asc' ? '↑' : '↓'; } renderTable(); }
-    function getFilteredData() { let filtered = currentFilter === 'archived' ? archivedData : getFilteredByTime(allData); if (currentFilter === 'complete') filtered = filtered.filter(d => d.pipelineStatus === 'complete'); else if (currentFilter === 'active') filtered = filtered.filter(d => d.pipelineStatus !== 'complete'); else if (currentFilter === 'stale') filtered = filtered.filter(d => d.isStale); if (searchQuery) filtered = filtered.filter(d => (d.organization + d.contact + d.email).toLowerCase().includes(searchQuery)); return filtered; }
+    function getFilteredData() { let filtered = currentFilter === 'archived' ? archivedData : getFilteredByTime(allData); if (currentFilter === 'complete') filtered = filtered.filter(d => d.pipelineStatus === 'complete'); else if (currentFilter === 'active') filtered = filtered.filter(d => d.pipelineStatus !== 'complete'); else if (currentFilter === 'stale') filtered = filtered.filter(d => d.isStale); if (searchQuery) filtered = filtered.filter(d => (d.organization + d.contact + d.email + d.locationStr).toLowerCase().includes(searchQuery)); return filtered; }
     function renderPipeline() {
       const filtered = getFilteredData();
       const byStatus = { new: [], 'in-progress': [], review: [], complete: [] };
@@ -493,9 +533,10 @@
         const idPart = status.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('');
         document.getElementById('count' + idPart).textContent = cards.length;
         const cardsContainer = document.getElementById('cards' + idPart);
-        cardsContainer.innerHTML = cards.length ? cards.map((item, i) =>
-          '<div class="pipeline-card" style="animation-delay:' + (si*0.1 + i*0.05) + 's"><div class="pipeline-card-title">' + esc(item.organization || 'Unknown') + '</div><div class="pipeline-card-contact">' + esc(item.contact || item.email) + '</div><div class="pipeline-card-meta"><div class="pipeline-card-progress"><div class="pipeline-card-progress-bar"><div class="pipeline-card-progress-fill" style="width:' + (item.completion||0) + '%"></div></div><span class="pipeline-card-progress-text">' + (item.completion||0) + '%</span></div><span class="pipeline-card-date">' + formatDateShort(item.lastUpdated) + '</span></div></div>'
-        ).join('') : '<div style="text-align:center;padding:30px;color:var(--text3);font-size:13px">No items</div>';
+        cardsContainer.innerHTML = cards.length ? cards.map((item, i) => {
+          const goLive = formatGoLive(item.goLiveDate);
+          return '<div class="pipeline-card" style="animation-delay:' + (si*0.1 + i*0.05) + 's"><div class="pipeline-card-header"><div class="pipeline-card-title">' + esc(item.organization || 'Unknown') + '</div>' + (goLive ? '<span class="pipeline-card-golive">' + goLive + '</span>' : '<span class="pipeline-card-golive none">No date</span>') + '</div><div class="pipeline-card-location">' + esc(item.locationStr || item.contact || item.email) + '</div><div class="pipeline-card-meta"><div class="pipeline-card-progress"><div class="pipeline-card-progress-bar"><div class="pipeline-card-progress-fill" style="width:' + (item.completion||0) + '%"></div></div><span class="pipeline-card-progress-text">' + (item.completion||0) + '%</span></div><span class="pipeline-card-time">' + timeAgo(item.lastUpdated) + '</span></div></div>';
+        }).join('') : '<div style="text-align:center;padding:30px;color:var(--text3);font-size:13px">No items</div>';
         cardsContainer.querySelectorAll('.pipeline-card').forEach((card, i) => {
           card.addEventListener('click', () => viewDetails(cards[i]));
         });
@@ -503,20 +544,22 @@
     }
     function renderTable() {
       let filtered = getFilteredData();
-      filtered.sort((a, b) => { let aVal = a[sortField], bVal = b[sortField]; if (sortField === 'lastUpdated') { aVal = new Date(aVal); bVal = new Date(bVal); } if (sortField === 'completion' || sortField === 'locations' || sortField === 'spaces') { aVal = Number(aVal) || 0; bVal = Number(bVal) || 0; } if (aVal < bVal) return sortDir === 'asc' ? -1 : 1; if (aVal > bVal) return sortDir === 'asc' ? 1 : -1; return 0; });
-      if (!filtered.length) { document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">No submissions found</td></tr>'; document.getElementById('mobileCards').innerHTML = '<div class="empty-state">No submissions found</div>'; return; }
+      filtered.sort((a, b) => { let aVal = a[sortField], bVal = b[sortField]; if (sortField === 'lastUpdated') { aVal = new Date(aVal); bVal = new Date(bVal); } if (sortField === 'goLiveDate') { aVal = aVal ? new Date(aVal) : new Date(0); bVal = bVal ? new Date(bVal) : new Date(0); } if (sortField === 'completion' || sortField === 'locations' || sortField === 'spaces') { aVal = Number(aVal) || 0; bVal = Number(bVal) || 0; } if (aVal < bVal) return sortDir === 'asc' ? -1 : 1; if (aVal > bVal) return sortDir === 'asc' ? 1 : -1; return 0; });
+      if (!filtered.length) { document.getElementById('tableBody').innerHTML = '<tr><td colspan="7" class="empty-state">No submissions found</td></tr>'; document.getElementById('mobileCards').innerHTML = '<div class="empty-state">No submissions found</div>'; return; }
       const isArchive = currentFilter === 'archived', labels = { new: 'New', 'in-progress': 'In Progress', review: 'Review', complete: 'Complete' };
-      document.getElementById('tableBody').innerHTML = filtered.map(item =>
-        '<tr><td><div class="org-name">' + esc(item.organization || 'Unknown') + '</div></td><td><div>' + esc(item.contact || '-') + '</div><div class="contact-email">' + esc(item.email) + '</div></td><td><span class="status-badge ' + (isArchive ? 'archived' : item.isStale ? 'stale' : item.pipelineStatus) + '">' + (isArchive ? 'Archived' : item.isStale ? 'Stale' : labels[item.pipelineStatus]) + '</span></td><td><div style="display:flex;align-items:center;gap:8px"><div class="completion-bar"><div class="completion-fill" style="width:' + (item.completion||0) + '%"></div></div><span style="font-size:12px;color:var(--text2);font-weight:500">' + (item.completion||0) + '%</span></div></td><td>' + (item.locations||0) + '</td><td>' + (item.spaces||0) + '</td><td style="font-size:12px;color:var(--text2)">' + formatDateShort(item.lastUpdated) + '</td><td class="action-btns"><button class="view-btn" onclick=\'viewDetails(' + JSON.stringify(item).replace(/'/g,"&#39;") + ')\'>View</button><button class="icon-btn" onclick="emailContact(\'' + esc(item.email) + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></button>' + (isArchive ? '<button class="icon-btn" onclick="restoreItem(\'' + item.sheetType + '\',' + item.rowIndex + ',\'' + esc(item.organization) + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button>' : '<button class="icon-btn" onclick="archiveItem(\'' + item.sheetType + '\',' + item.rowIndex + ',\'' + esc(item.organization) + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg></button>') + '</td></tr>'
-      ).join('');
-      document.getElementById('mobileCards').innerHTML = filtered.map((item, i) =>
-        '<div class="mobile-card" style="animation-delay:' + (i*0.05) + 's"><div class="mobile-card-header"><div><div class="mobile-card-org">' + esc(item.organization || 'Unknown') + '</div><div class="mobile-card-contact">' + esc(item.contact || item.email) + '</div></div><span class="status-badge ' + item.pipelineStatus + '">' + (item.completion||0) + '%</span></div><div class="mobile-card-progress"><div class="mobile-card-progress-bar"><div class="mobile-card-progress-fill" style="width:' + (item.completion||0) + '%"></div></div></div><div class="mobile-card-stats"><div class="mobile-card-stat"><div class="val">' + (item.locations||0) + '</div><div class="lbl">Locations</div></div><div class="mobile-card-stat"><div class="val">' + (item.spaces||0) + '</div><div class="lbl">Spaces</div></div><div class="mobile-card-stat"><div class="val">' + formatDateShort(item.lastUpdated) + '</div><div class="lbl">Updated</div></div></div><div class="mobile-card-actions"><button class="mobile-card-btn primary" onclick=\'viewDetails(' + JSON.stringify(item).replace(/'/g,"&#39;") + ')\'>View Details</button><button class="mobile-card-btn" onclick="emailContact(\'' + esc(item.email) + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email</button></div></div>'
-      ).join('');
+      document.getElementById('tableBody').innerHTML = filtered.map(item => {
+        const goLive = formatGoLive(item.goLiveDate);
+        return '<tr><td class="org-cell"><div class="org-name">' + esc(item.organization || 'Unknown') + '</div>' + (item.locationStr ? '<div class="org-location">' + esc(item.locationStr) + '</div>' : '') + '</td><td><div class="contact-name">' + esc(item.contact || '-') + '</div><div class="contact-email">' + esc(item.email) + '</div></td><td><span class="status-badge ' + (isArchive ? 'archived' : item.isStale ? 'stale' : item.pipelineStatus) + '">' + (isArchive ? 'Archived' : item.isStale ? 'Stale' : labels[item.pipelineStatus]) + '</span></td><td><div style="display:flex;align-items:center;gap:8px"><div class="completion-bar"><div class="completion-fill" style="width:' + (item.completion||0) + '%"></div></div><span style="font-size:12px;color:var(--text2);font-weight:500">' + (item.completion||0) + '%</span></div></td><td>' + (goLive ? '<span class="go-live-date">' + goLive + '</span>' : '<span class="go-live-date none">-</span>') + '</td><td><span class="time-ago">' + timeAgo(item.lastUpdated) + '</span></td><td class="action-btns"><button class="view-btn" onclick=\'viewDetails(' + JSON.stringify(item).replace(/'/g,"&#39;") + ')\'>View</button><button class="icon-btn" onclick="emailContact(\'' + esc(item.email) + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></button>' + (isArchive ? '<button class="icon-btn" onclick="restoreItem(\'' + item.sheetType + '\',' + item.rowIndex + ',\'' + esc(item.organization) + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button>' : '<button class="icon-btn" onclick="archiveItem(\'' + item.sheetType + '\',' + item.rowIndex + ',\'' + esc(item.organization) + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg></button>') + '</td></tr>';
+      }).join('');
+      document.getElementById('mobileCards').innerHTML = filtered.map((item, i) => {
+        const goLive = formatGoLive(item.goLiveDate);
+        return '<div class="mobile-card" style="animation-delay:' + (i*0.05) + 's"><div class="mobile-card-header"><div><div class="mobile-card-org">' + esc(item.organization || 'Unknown') + '</div>' + (item.locationStr ? '<div class="mobile-card-location">' + esc(item.locationStr) + '</div>' : '') + '</div>' + (goLive ? '<span class="mobile-card-golive">' + goLive + '</span>' : '<span class="mobile-card-golive none">No date</span>') + '</div><div class="mobile-card-progress"><div class="mobile-card-progress-bar"><div class="mobile-card-progress-fill" style="width:' + (item.completion||0) + '%"></div></div></div><div class="mobile-card-stats"><div class="mobile-card-stat"><div class="val">' + (item.completion||0) + '%</div><div class="lbl">Progress</div></div><div class="mobile-card-stat"><div class="val">' + (item.locations||0) + '</div><div class="lbl">Locations</div></div><div class="mobile-card-stat"><div class="val">' + (item.spaces||0) + '</div><div class="lbl">Spaces</div></div><div class="mobile-card-stat"><div class="val" style="font-size:12px">' + timeAgo(item.lastUpdated) + '</div><div class="lbl">Updated</div></div></div><button class="mobile-card-btn" onclick=\'viewDetails(' + JSON.stringify(item).replace(/'/g,"&#39;") + ')\'>View Details</button></div>';
+      }).join('');
     }
     function emailContact(email) { window.open('mailto:' + email); }
     async function archiveItem(sheetType, rowIndex, orgName) { if (!confirm('Archive "' + orgName + '"?')) return; try { const result = await jsonpRequest(API_URL + '?action=archiveSubmission&email=' + encodeURIComponent(currentUser?.email || '') + '&sheetType=' + sheetType + '&rowIndex=' + rowIndex); if (result.success) { showToast('Archived'); loadData(); } else { showToast('Failed'); } } catch (e) { showToast('Failed'); } }
     async function restoreItem(sheetType, rowIndex, orgName) { if (!confirm('Restore "' + orgName + '"?')) return; try { const result = await jsonpRequest(API_URL + '?action=restoreSubmission&email=' + encodeURIComponent(currentUser?.email || '') + '&sheetType=' + sheetType + '&rowIndex=' + rowIndex); if (result.success) { showToast('Restored'); loadData(); } else { showToast('Failed'); } } catch (e) { showToast('Failed'); } }
-    function exportCSV() { const filtered = getFilteredData(); const csv = [['Organization','Contact','Email','Status','Progress','Locations','Spaces','Updated'], ...filtered.map(d => [d.organization, d.contact, d.email, d.pipelineStatus, d.completion + '%', d.locations, d.spaces, d.lastUpdated])].map(r => r.map(c => '"' + String(c||'').replace(/"/g,'""') + '"').join(',')).join('\n'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'practiceplan-' + new Date().toISOString().split('T')[0] + '.csv'; a.click(); showToast('Exported'); }
+    function exportCSV() { const filtered = getFilteredData(); const csv = [['Organization','Location','Contact','Email','Status','Progress','Go Live','Updated'], ...filtered.map(d => [d.organization, d.locationStr, d.contact, d.email, d.pipelineStatus, d.completion + '%', d.goLiveDate || '', d.lastUpdated])].map(r => r.map(c => '"' + String(c||'').replace(/"/g,'""') + '"').join(',')).join('\n'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'practiceplan-' + new Date().toISOString().split('T')[0] + '.csv'; a.click(); showToast('Exported'); }
     function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
     function viewDetails(item) {
       const fd = item.formData || {}, contact = fd.contactInfo || {}, policies = fd.policies || {}, locations = fd.locations || [];
@@ -531,13 +574,11 @@
       else timeline.push({ title: 'Awaiting', desc: (100-pct) + '% remaining', complete: false });
       let html = '<div class="modal-header"><h2>' + esc(item.organization || 'Details') + '</h2><div class="modal-subtitle">' + esc(contact.fullName || item.contact || '') + '</div><button class="modal-close" onclick="closeModal()">✕</button></div>';
       if (item.driveFolder) html += '<div class="drive-banner"><div class="drive-banner-text"><div class="drive-banner-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div><div><div class="drive-banner-label">Uploaded Files</div><div class="drive-banner-title">View in Google Drive</div></div></div><a href="' + item.driveFolder + '" target="_blank" class="drive-banner-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Open</a></div>';
-      html += '<div class="progress-hero"><div class="progress-hero-inner"><div class="progress-ring-large"><svg width="90" height="90" viewBox="0 0 90 90"><circle class="bg" cx="45" cy="45" r="36"/><circle class="progress" cx="45" cy="45" r="36" stroke-dasharray="' + circumference + '" stroke-dashoffset="' + offset + '"/></svg><div class="center-text">' + pct + '%</div></div><div class="progress-details"><div class="progress-title">Onboarding Progress</div><div class="progress-bar-large"><div class="progress-bar-fill" style="width:' + pct + '%"></div></div><div class="progress-meta"><span><strong>' + (item.locations||0) + '</strong> locations</span><span><strong>' + (item.spaces||0) + '</strong> spaces</span><span>Updated <strong>' + formatDate(item.lastUpdated) + '</strong></span></div></div></div></div>';
+      html += '<div class="progress-hero"><div class="progress-hero-inner"><div class="progress-ring-large"><svg width="90" height="90" viewBox="0 0 90 90"><circle class="bg" cx="45" cy="45" r="36"/><circle class="progress" cx="45" cy="45" r="36" stroke-dasharray="' + circumference + '" stroke-dashoffset="' + offset + '"/></svg><div class="center-text">' + pct + '%</div></div><div class="progress-details"><div class="progress-title">Onboarding Progress</div><div class="progress-bar-large"><div class="progress-bar-fill" style="width:' + pct + '%"></div></div><div class="progress-meta"><span><strong>' + (item.locations||0) + '</strong> locations</span><span><strong>' + (item.spaces||0) + '</strong> spaces</span><span>Updated <strong>' + timeAgo(item.lastUpdated) + '</strong></span></div></div></div></div>';
       html += '<div class="timeline"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Activity Timeline</h3><div class="timeline-items">';
-      timeline.forEach((t,i) => { html += '<div class="timeline-item ' + (t.complete ? 'complete' : '') + '"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-title">' + t.title + '</div><div class="timeline-desc">' + t.desc + '</div>' + (t.date ? '<div class="timeline-date">' + formatDate(t.date) + '</div>' : '') + '</div></div>'; });
+      timeline.forEach((t,i) => { html += '<div class="timeline-item ' + (t.complete ? 'complete' : '') + '"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-title">' + t.title + '</div><div class="timeline-desc">' + t.desc + '</div>' + (t.date ? '<div class="timeline-date">' + timeAgo(t.date) + '</div>' : '') + '</div></div>'; });
       html += '</div></div>';
       html += '<div class="modal-body"><div class="detail-section"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Contact Information</h3><div class="detail-grid"><div class="detail-item"><label>Name</label><span>' + esc(contact.fullName || item.contact || '-') + '</span></div><div class="detail-item"><label>Organization</label><span>' + esc(contact.organization || item.organization || '-') + '</span></div><div class="detail-item full-width"><label>Email</label><span>' + esc(contact.email || item.email || '-') + '</span></div><div class="detail-item"><label>Phone</label><span>' + formatPhone(contact.phone || item.phone) + '</span></div>' + (contact.title ? '<div class="detail-item"><label>Title</label><span>' + esc(contact.title) + '</span></div>' : '') + (contact.adminEmail ? '<div class="detail-item full-width"><label>Admin Email</label><span>' + esc(contact.adminEmail) + '</span></div>' : '') + (contact.adminPhone ? '<div class="detail-item"><label>Admin Phone</label><span>' + formatPhone(contact.adminPhone) + '</span></div>' : '') + (contact.adminName ? '<div class="detail-item"><label>Admin Name</label><span>' + esc(contact.adminName) + '</span></div>' : '') + '</div></div>';
-      
-      // Policies section
       if (policies && Object.keys(policies).length > 0) {
         html += '<div class="detail-section"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Rental Policies</h3><div class="detail-grid">';
         if (policies.goLiveDate) html += '<div class="detail-item"><label>Go Live Date</label><span>' + esc(policies.goLiveDate) + '</span></div>';
@@ -554,14 +595,10 @@
         if (policies.notes) html += '<div class="detail-item full-width"><label>Notes</label><span>' + esc(policies.notes) + '</span></div>';
         html += '</div></div>';
       }
-      
-      // Locations section
       html += '<div class="detail-section"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Locations (' + locations.length + ') <span class="toggle-btn" onclick="toggleAllLocations()">Toggle All</span></h3>';
       if (locations.length > 0) {
         locations.forEach((loc, idx) => {
           html += '<div class="location-card" id="loc-' + idx + '"><div class="location-header" onclick="toggleLocation(' + idx + ')"><div><h4>' + esc(loc.name || 'Unnamed Location') + '</h4><div class="location-meta">' + (loc.address ? esc(loc.address) + ' • ' : '') + (loc.assets?.length || 0) + ' spaces</div></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="location-content">';
-          
-          // Location details
           if (loc.address || loc.city || loc.state || loc.zip || loc.contactName || loc.contactEmail || loc.contactPhone) {
             html += '<div class="detail-grid" style="margin-bottom:14px">';
             if (loc.address) html += '<div class="detail-item full-width"><label>Address</label><span>' + esc(loc.address) + (loc.city ? ', ' + esc(loc.city) : '') + (loc.state ? ', ' + esc(loc.state) : '') + (loc.zip ? ' ' + esc(loc.zip) : '') + '</span></div>';
@@ -570,12 +607,9 @@
             if (loc.contactPhone) html += '<div class="detail-item"><label>Site Phone</label><span>' + formatPhone(loc.contactPhone) + '</span></div>';
             html += '</div>';
           }
-          
           if (loc.assets?.length) {
             loc.assets.forEach(space => {
               html += '<div class="space-card"><div class="space-header"><span class="space-name">' + esc(space.name || 'Unnamed Space') + '</span>' + (space.pricing ? '<span class="space-price">$' + space.pricing + '/hr</span>' : '') + '</div>';
-              
-              // Basic details
               if (space.type || space.indoorOutdoor || space.maxCapacity || space.squareFeet) {
                 html += '<div class="space-details">';
                 if (space.type) html += '<span>' + esc(space.type) + '</span>';
@@ -585,60 +619,21 @@
                 if (space.dimensions) html += '<span>' + esc(space.dimensions) + '</span>';
                 html += '</div>';
               }
-              
-              // Reservation Types
-              if (space.reservationTypes?.length) {
-                html += '<div class="space-section"><div class="space-section-title">Reservation Types</div><div class="tag-list">' + space.reservationTypes.map(t => '<span class="tag">' + esc(t) + '</span>').join('') + '</div></div>';
-              }
-              
-              // Amenities
-              if (space.amenities?.length) {
-                html += '<div class="space-section"><div class="space-section-title">Amenities</div><div class="tag-list">' + space.amenities.map(a => '<span class="tag green">' + esc(a) + '</span>').join('') + '</div></div>';
-              }
-              
-              // Features
-              if (space.features?.length) {
-                html += '<div class="space-section"><div class="space-section-title">Features</div><div class="tag-list">' + space.features.map(f => '<span class="tag green">' + esc(f) + '</span>').join('') + '</div></div>';
-              }
-              
-              // Equipment
-              if (space.equipment?.length) {
-                html += '<div class="space-section"><div class="space-section-title">Equipment</div><div class="tag-list">' + space.equipment.map(e => '<span class="tag purple">' + esc(e) + '</span>').join('') + '</div></div>';
-              }
-              
-              // Restrictions
-              if (space.restrictions?.length) {
-                html += '<div class="space-section"><div class="space-section-title">Restrictions</div><div class="tag-list">' + space.restrictions.map(r => '<span class="tag orange">' + esc(r) + '</span>').join('') + '</div></div>';
-              }
-              
-              // Availability
-              if (space.availability || space.availableHours) {
-                html += '<div class="space-section"><div class="space-section-title">Availability</div><div class="tag-list"><span class="tag">' + esc(space.availability || space.availableHours) + '</span></div></div>';
-              }
-              
-              // Description
-              if (space.description) {
-                html += '<div class="space-section"><div class="space-section-title">Description</div><p style="font-size:13px;color:var(--text2);margin:0">' + esc(space.description) + '</p></div>';
-              }
-              
-              // Notes
-              if (space.notes) {
-                html += '<div class="space-section"><div class="space-section-title">Notes</div><p style="font-size:13px;color:var(--text2);margin:0">' + esc(space.notes) + '</p></div>';
-              }
-              
+              if (space.reservationTypes?.length) html += '<div class="space-section"><div class="space-section-title">Reservation Types</div><div class="tag-list">' + space.reservationTypes.map(t => '<span class="tag">' + esc(t) + '</span>').join('') + '</div></div>';
+              if (space.amenities?.length) html += '<div class="space-section"><div class="space-section-title">Amenities</div><div class="tag-list">' + space.amenities.map(a => '<span class="tag green">' + esc(a) + '</span>').join('') + '</div></div>';
+              if (space.features?.length) html += '<div class="space-section"><div class="space-section-title">Features</div><div class="tag-list">' + space.features.map(f => '<span class="tag green">' + esc(f) + '</span>').join('') + '</div></div>';
+              if (space.equipment?.length) html += '<div class="space-section"><div class="space-section-title">Equipment</div><div class="tag-list">' + space.equipment.map(e => '<span class="tag purple">' + esc(e) + '</span>').join('') + '</div></div>';
+              if (space.restrictions?.length) html += '<div class="space-section"><div class="space-section-title">Restrictions</div><div class="tag-list">' + space.restrictions.map(r => '<span class="tag orange">' + esc(r) + '</span>').join('') + '</div></div>';
+              if (space.availability || space.availableHours) html += '<div class="space-section"><div class="space-section-title">Availability</div><div class="tag-list"><span class="tag">' + esc(space.availability || space.availableHours) + '</span></div></div>';
+              if (space.description) html += '<div class="space-section"><div class="space-section-title">Description</div><p style="font-size:13px;color:var(--text2);margin:0">' + esc(space.description) + '</p></div>';
+              if (space.notes) html += '<div class="space-section"><div class="space-section-title">Notes</div><p style="font-size:13px;color:var(--text2);margin:0">' + esc(space.notes) + '</p></div>';
               html += '</div>';
             });
-          } else {
-            html += '<p style="color:var(--text3);font-size:13px;padding:10px 0">No spaces added yet</p>';
-          }
+          } else html += '<p style="color:var(--text3);font-size:13px;padding:10px 0">No spaces added yet</p>';
           html += '</div></div>';
         });
-      } else {
-        html += '<p style="color:var(--text3)">No locations added yet</p>';
-      }
+      } else html += '<p style="color:var(--text3)">No locations added yet</p>';
       html += '</div>';
-      
-      // Additional form data (catch-all for any fields we might have missed)
       const knownKeys = ['contactInfo', 'policies', 'locations', 'currentStep', 'lastSaved'];
       const additionalData = Object.keys(fd).filter(k => !knownKeys.includes(k) && fd[k] && typeof fd[k] !== 'object');
       if (additionalData.length > 0) {
@@ -649,7 +644,6 @@
         });
         html += '</div></div>';
       }
-      
       html += '</div>';
       document.getElementById('modalContent').innerHTML = html;
       document.getElementById('modalOverlay').classList.add('active');
@@ -658,7 +652,6 @@
     function toggleAllLocations() { const cards = document.querySelectorAll('.location-card'); const all = Array.from(cards).every(c => c.classList.contains('collapsed')); cards.forEach(c => all ? c.classList.remove('collapsed') : c.classList.add('collapsed')); }
     function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
     function formatDate(d) { return d ? new Date(d).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) : '-'; }
-    function formatDateShort(d) { return d ? new Date(d).toLocaleDateString('en-US', {month:'short',day:'numeric'}) : '-'; }
     function esc(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;') : '-'; }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
   </script>
