@@ -14,7 +14,6 @@
     body { font-family: 'Montserrat', sans-serif; background: var(--bg); min-height: 100vh; color: var(--text); transition: all 0.3s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
     .animate-in { animation: fadeIn 0.4s ease forwards; }
     .stagger-1 { animation-delay: 0.05s; }
     .stagger-2 { animation-delay: 0.1s; }
@@ -73,28 +72,29 @@
     
     /* Redesigned Time Stats */
     .time-stats-container { display: flex; flex-direction: column; gap: 16px; }
-    .time-hero { display: flex; align-items: center; gap: 20px; padding: 20px; background: linear-gradient(135deg, rgba(0,118,187,0.08), rgba(0,168,79,0.08)); border-radius: 16px; }
-    .time-hero-ring { width: 80px; height: 80px; position: relative; flex-shrink: 0; }
+    .time-hero { display: flex; align-items: center; gap: 24px; padding: 20px; background: linear-gradient(135deg, rgba(0,118,187,0.08), rgba(0,168,79,0.08)); border-radius: 16px; }
+    .time-hero-ring { width: 100px; height: 100px; position: relative; flex-shrink: 0; }
     .time-hero-ring svg { transform: rotate(-90deg); }
-    .time-hero-ring circle { fill: none; stroke-width: 6; }
-    .time-hero-ring .bg { stroke: var(--border); }
-    .time-hero-ring .progress { stroke: url(#gradient); stroke-linecap: round; transition: stroke-dashoffset 0.6s ease; }
+    .time-hero-ring circle { fill: none; }
+    .time-hero-ring .bg { stroke: var(--border); stroke-width: 8; }
+    .time-hero-ring .progress { stroke: url(#gradient); stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.6s ease; }
     .time-hero-value { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
-    .time-hero-value .num { font-size: 24px; font-weight: 700; color: var(--text); }
-    .time-hero-value .unit { font-size: 9px; color: var(--text2); text-transform: uppercase; }
+    .time-hero-value .num { font-size: 20px; font-weight: 700; color: var(--text); line-height: 1.1; }
+    .time-hero-value .unit { font-size: 9px; color: var(--text2); text-transform: uppercase; display: block; margin-top: 2px; }
     .time-hero-info { flex: 1; }
     .time-hero-info .label { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
     .time-hero-info .desc { font-size: 12px; color: var(--text2); }
     .time-range { display: flex; gap: 12px; }
-    .time-range-item { flex: 1; text-align: center; padding: 12px 8px; background: var(--bg); border-radius: 12px; }
-    .time-range-item .val { font-size: 18px; font-weight: 700; color: var(--pp-blue); }
-    .time-range-item .lbl { font-size: 9px; color: var(--text2); text-transform: uppercase; margin-top: 2px; }
+    .time-range-item { flex: 1; text-align: center; padding: 14px 8px; background: var(--bg); border-radius: 12px; }
+    .time-range-item .val { font-size: 16px; font-weight: 700; color: var(--pp-blue); }
+    .time-range-item .lbl { font-size: 9px; color: var(--text2); text-transform: uppercase; margin-top: 4px; }
     
-    /* Redesigned Overview */
+    /* Redesigned Overview with SVG icons */
     .overview-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
     .overview-item { padding: 16px; background: var(--bg); border-radius: 14px; display: flex; align-items: center; gap: 12px; transition: all 0.2s; }
     .overview-item:hover { transform: translateX(4px); }
-    .overview-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .overview-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+    .overview-icon svg { width: 20px; height: 20px; }
     .overview-icon.total { background: linear-gradient(135deg, #e0e7ff, #c7d2fe); color: #4f46e5; }
     .overview-icon.complete { background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #16a34a; }
     .overview-icon.active { background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #2563eb; }
@@ -112,9 +112,9 @@
     .styled-select::after { content: ''; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid var(--text2); pointer-events: none; }
     .search-input { padding: 10px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); font-size: 12px; width: 160px; font-family: inherit; color: var(--text); }
     .search-input:focus { outline: none; border-color: var(--pp-blue); }
-    .icon-action-btn { width: 38px; height: 38px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); transition: all 0.2s; }
-    .icon-action-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); }
-    .icon-action-btn svg { width: 16px; height: 16px; }
+    .text-action-btn { padding: 10px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); cursor: pointer; display: flex; align-items: center; gap: 6px; color: var(--text2); transition: all 0.2s; font-family: inherit; font-size: 12px; font-weight: 500; white-space: nowrap; }
+    .text-action-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); }
+    .text-action-btn svg { width: 14px; height: 14px; }
     
     /* Table */
     .table-section { margin-bottom: 40px; }
@@ -240,6 +240,7 @@
     .timeline-date { font-size: 11px; color: var(--text3); margin-top: 6px; }
     .modal-body { padding: 28px 32px; }
     .detail-section { margin-bottom: 28px; }
+    .detail-section:last-child { margin-bottom: 0; }
     .detail-section h3 { font-size: 12px; font-weight: 700; color: var(--pp-blue); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
     .detail-section h3 svg { width: 18px; height: 18px; }
     .detail-section h3 .toggle-btn { margin-left: auto; font-size: 12px; color: var(--text2); cursor: pointer; text-transform: none; letter-spacing: 0; font-weight: 500; }
@@ -253,20 +254,35 @@
     .detail-item.full-width { grid-column: 1 / -1; }
     
     .location-card { background: var(--bg); border-radius: 16px; margin-bottom: 14px; overflow: hidden; }
+    .location-card:last-child { margin-bottom: 0; }
     .location-card.collapsed .location-content { display: none; }
     .location-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 16px 18px; background: var(--card); }
     .location-card h4 { font-size: 15px; font-weight: 700; color: var(--text); }
     .location-card .location-meta { font-size: 12px; color: var(--text2); margin-top: 4px; }
     .location-content { padding: 14px; }
     .space-card { background: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 10px; border: 1px solid var(--border); }
+    .space-card:last-child { margin-bottom: 0; }
     .space-card .space-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
     .space-card .space-name { font-weight: 600; color: var(--text); font-size: 14px; }
     .space-card .space-price { font-weight: 700; color: var(--pp-green); font-size: 15px; }
-    .space-card .space-details { display: flex; flex-wrap: wrap; gap: 8px; font-size: 12px; }
+    .space-card .space-details { display: flex; flex-wrap: wrap; gap: 8px; font-size: 12px; margin-bottom: 12px; }
     .space-card .space-details span { background: var(--bg); padding: 5px 10px; border-radius: 8px; color: var(--text2); }
-    .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .space-card .space-section { margin-bottom: 12px; }
+    .space-card .space-section:last-child { margin-bottom: 0; }
+    .space-card .space-section-title { font-size: 10px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 6px; }
     .tag { display: inline-block; padding: 4px 10px; background: #e0f2fe; color: #0076bb; border-radius: 6px; font-size: 11px; font-weight: 500; }
     .tag.green { background: #dcfce7; color: #00a84f; }
+    .tag.purple { background: #ede9fe; color: #7c3aed; }
+    .tag.orange { background: #fef3c7; color: #d97706; }
+    
+    /* Additional Form Data Section */
+    .additional-data { margin-top: 16px; }
+    .additional-data-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .additional-data-item { background: var(--card); border: 1px solid var(--border); padding: 12px 14px; border-radius: 12px; }
+    .additional-data-item label { display: block; font-size: 10px; color: var(--text2); text-transform: uppercase; margin-bottom: 4px; font-weight: 600; }
+    .additional-data-item span { font-size: 13px; color: var(--text); font-weight: 500; }
+    
     .toast { position: fixed; bottom: 28px; right: 28px; background: var(--text); color: var(--card); padding: 14px 24px; border-radius: 14px; font-size: 14px; font-weight: 500; z-index: 2000; transform: translateY(100px); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     .toast.show { transform: translateY(0); opacity: 1; }
     .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--pp-blue); border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -277,8 +293,8 @@
     @keyframes confetti-fall { 0% { transform: translateY(-100px) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
     
     @media (max-width: 1200px) { .pipeline-board { grid-template-columns: repeat(2, 1fr); } .pipeline-column:nth-child(2)::after, .pipeline-column:nth-child(4)::after { display: none; } .stats-row { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 900px) { .stats-row { grid-template-columns: 1fr; } .detail-grid { grid-template-columns: 1fr; } }
-    @media (max-width: 768px) { .main-content { padding: 20px; } .header { padding: 12px 16px; gap: 12px; } .header-logo { height: 28px; } .header-right { gap: 8px; } .user-pill { padding: 0; background: none; } .user-name { display: none; } .header-btn { width: 36px; height: 36px; } .logout-btn { padding: 8px 14px; font-size: 12px; } .controls-row { flex-direction: column; align-items: stretch; } .controls-right { justify-content: center; } .search-input { width: 100%; } .table-wrapper { display: none; } .mobile-cards { display: block; } .pipeline-board { grid-template-columns: 1fr; } .pipeline-column::after { display: none; } .modal { margin: 16px; border-radius: 20px; } .modal-header { padding: 24px; } .modal-body { padding: 24px; } .drive-banner { flex-direction: column; gap: 16px; text-align: center; } .progress-hero-inner { flex-direction: column; text-align: center; } .overview-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 900px) { .stats-row { grid-template-columns: 1fr; } .detail-grid { grid-template-columns: 1fr; } .additional-data-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { .main-content { padding: 20px; } .header { padding: 12px 16px; gap: 12px; } .header-logo { height: 28px; } .header-right { gap: 8px; } .user-pill { padding: 0; background: none; } .user-name { display: none; } .header-btn { width: 36px; height: 36px; } .logout-btn { padding: 8px 14px; font-size: 12px; } .controls-row { flex-direction: column; align-items: stretch; } .controls-right { justify-content: center; flex-wrap: wrap; } .search-input { width: 100%; } .table-wrapper { display: none; } .mobile-cards { display: block; } .pipeline-board { grid-template-columns: 1fr; } .pipeline-column::after { display: none; } .modal { margin: 16px; border-radius: 20px; } .modal-header { padding: 24px; } .modal-body { padding: 24px; } .drive-banner { flex-direction: column; gap: 16px; text-align: center; } .progress-hero-inner { flex-direction: column; text-align: center; } .overview-grid { grid-template-columns: 1fr; } .time-hero { flex-direction: column; text-align: center; } }
   </style>
 </head>
 <body>
@@ -306,8 +322,8 @@
     <div class="main-content">
       <div class="stats-row">
         <div class="stat-card animate-in"><h3>Conversion Funnel</h3><div class="funnel-container"><div class="funnel-track"><div class="funnel-track-fill" id="funnelTrack"></div></div><div class="funnel-stages" id="funnelChart"></div></div></div>
-        <div class="stat-card animate-in stagger-1"><h3>Completion Metrics</h3><div class="time-stats-container"><div class="time-hero"><div class="time-hero-ring"><svg width="80" height="80" viewBox="0 0 80 80"><circle class="bg" cx="40" cy="40" r="32" fill="none" stroke="var(--border)" stroke-width="6"/><circle class="progress" id="timeRingProgress" cx="40" cy="40" r="32" fill="none" stroke="url(#gradient)" stroke-width="6" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="201" transform="rotate(-90 40 40)"/></svg><div class="time-hero-value"><span class="num" id="avgTime">-</span><span class="unit">days</span></div></div><div class="time-hero-info"><div class="label">Average Time to Complete</div><div class="desc">From first save to final submission</div></div></div><div class="time-range"><div class="time-range-item"><div class="val" id="fastestTime">-</div><div class="lbl">Fastest</div></div><div class="time-range-item"><div class="val" id="slowestTime">-</div><div class="lbl">Slowest</div></div></div></div></div>
-        <div class="stat-card animate-in stagger-2"><h3>Overview</h3><div class="overview-grid"><div class="overview-item"><div class="overview-icon total">📊</div><div class="overview-data"><div class="num" id="statTotal">0</div><div class="lbl">Total Submissions</div></div></div><div class="overview-item"><div class="overview-icon complete">✓</div><div class="overview-data"><div class="num" id="statComplete">0</div><div class="lbl">Completed</div></div></div><div class="overview-item"><div class="overview-icon active">⚡</div><div class="overview-data"><div class="num" id="statActive">0</div><div class="lbl">In Progress</div></div></div><div class="overview-item"><div class="overview-icon stale">⏰</div><div class="overview-data"><div class="num" id="statStale">0</div><div class="lbl">Stale (7+ days)</div></div></div></div></div>
+        <div class="stat-card animate-in stagger-1"><h3>Completion Metrics</h3><div class="time-stats-container"><div class="time-hero"><div class="time-hero-ring"><svg width="100" height="100" viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="42"/><circle class="progress" id="timeRingProgress" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="264"/></svg><div class="time-hero-value"><span class="num" id="avgTime">-</span><span class="unit" id="avgTimeUnit">days</span></div></div><div class="time-hero-info"><div class="label">Average Time to Complete</div><div class="desc">From first save to final submission</div></div></div><div class="time-range"><div class="time-range-item"><div class="val" id="fastestTime">-</div><div class="lbl">Fastest</div></div><div class="time-range-item"><div class="val" id="slowestTime">-</div><div class="lbl">Slowest</div></div></div></div></div>
+        <div class="stat-card animate-in stagger-2"><h3>Overview</h3><div class="overview-grid"><div class="overview-item"><div class="overview-icon total"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></div><div class="overview-data"><div class="num" id="statTotal">0</div><div class="lbl">Total Submissions</div></div></div><div class="overview-item"><div class="overview-icon complete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="overview-data"><div class="num" id="statComplete">0</div><div class="lbl">Completed</div></div></div><div class="overview-item"><div class="overview-icon active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="overview-data"><div class="num" id="statActive">0</div><div class="lbl">In Progress</div></div></div><div class="overview-item"><div class="overview-icon stale"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="overview-data"><div class="num" id="statStale">0</div><div class="lbl">Stale (7+ days)</div></div></div></div></div>
       </div>
       <div class="table-section">
         <div class="controls-row">
@@ -316,8 +332,8 @@
             <div class="styled-select"><select id="timePeriodSelect" onchange="setTimePeriod(this.value)"><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="60">Last 60 days</option><option value="90">Last 90 days</option><option value="0">All time</option></select></div>
             <div class="styled-select"><select id="statusFilter" onchange="setFilter(this.value)"><option value="all">All statuses</option><option value="complete">Complete</option><option value="active">Active</option><option value="stale">Stale</option><option value="archived">Archived</option></select></div>
             <input type="text" class="search-input" placeholder="Search..." oninput="handleSearch(this.value)">
-            <button class="icon-action-btn" onclick="exportCSV()" title="Export CSV"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
-            <button class="icon-action-btn" onclick="loadData()" title="Refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></button>
+            <button class="text-action-btn" onclick="exportCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export CSV</button>
+            <button class="text-action-btn" onclick="loadData()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh</button>
           </div>
         </div>
         <div class="table-wrapper"><table><thead><tr><th onclick="sortBy('organization')">Organization <span class="sort-icon">↕</span></th><th onclick="sortBy('contact')">Contact <span class="sort-icon">↕</span></th><th onclick="sortBy('pipelineStatus')">Status <span class="sort-icon">↕</span></th><th onclick="sortBy('completion')">Progress <span class="sort-icon">↕</span></th><th>Loc</th><th>Spc</th><th onclick="sortBy('lastUpdated')" class="sorted">Updated <span class="sort-icon">↓</span></th><th>Actions</th></tr></thead><tbody id="tableBody"><tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr></tbody></table></div>
@@ -351,6 +367,14 @@
       if (cleaned.length === 10) return '(' + cleaned.slice(0,3) + ') ' + cleaned.slice(3,6) + '-' + cleaned.slice(6);
       if (cleaned.length === 11 && cleaned[0] === '1') return '+1 (' + cleaned.slice(1,4) + ') ' + cleaned.slice(4,7) + '-' + cleaned.slice(7);
       return phone;
+    }
+
+    function formatTimeValue(days) {
+      if (days < 1) {
+        const hours = Math.round(days * 24);
+        return { value: hours || '<1', unit: 'hours' };
+      }
+      return { value: days.toFixed(1), unit: 'days' };
     }
 
     function launchConfetti() {
@@ -439,15 +463,19 @@
       const completed = tf.filter(d => d.pipelineStatus === 'complete');
       let avgDays = 0, fastest = 0, slowest = 0;
       if (completed.length > 0) {
-        const times = completed.map(d => Math.max(1, 7 - (d.daysSinceUpdate || 0))).filter(t => t > 0);
+        const times = completed.map(d => Math.max(0.1, 7 - (d.daysSinceUpdate || 0))).filter(t => t > 0);
         avgDays = times.length ? (times.reduce((a,b) => a+b, 0) / times.length) : 0;
         fastest = times.length ? Math.min(...times) : 0;
         slowest = times.length ? Math.max(...times) : 0;
       }
-      document.getElementById('avgTime').textContent = avgDays ? avgDays.toFixed(1) : '-';
-      document.getElementById('fastestTime').textContent = fastest || '-';
-      document.getElementById('slowestTime').textContent = slowest || '-';
-      const circumference = 2 * Math.PI * 32;
+      const avgFormatted = formatTimeValue(avgDays);
+      const fastFormatted = formatTimeValue(fastest);
+      const slowFormatted = formatTimeValue(slowest);
+      document.getElementById('avgTime').textContent = avgDays ? avgFormatted.value : '-';
+      document.getElementById('avgTimeUnit').textContent = avgDays ? avgFormatted.unit : 'days';
+      document.getElementById('fastestTime').textContent = fastest ? fastFormatted.value + ' ' + fastFormatted.unit : '-';
+      document.getElementById('slowestTime').textContent = slowest ? slowFormatted.value + ' ' + slowFormatted.unit : '-';
+      const circumference = 2 * Math.PI * 42;
       const progress = avgDays ? Math.min(avgDays / 10, 1) : 0;
       document.getElementById('timeRingProgress').style.strokeDashoffset = circumference - (progress * circumference);
     }
@@ -507,11 +535,122 @@
       html += '<div class="timeline"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Activity Timeline</h3><div class="timeline-items">';
       timeline.forEach((t,i) => { html += '<div class="timeline-item ' + (t.complete ? 'complete' : '') + '"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-title">' + t.title + '</div><div class="timeline-desc">' + t.desc + '</div>' + (t.date ? '<div class="timeline-date">' + formatDate(t.date) + '</div>' : '') + '</div></div>'; });
       html += '</div></div>';
-      html += '<div class="modal-body"><div class="detail-section"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Contact Information</h3><div class="detail-grid"><div class="detail-item"><label>Name</label><span>' + esc(contact.fullName || item.contact) + '</span></div><div class="detail-item"><label>Organization</label><span>' + esc(contact.organization || item.organization) + '</span></div><div class="detail-item full-width"><label>Email</label><span>' + esc(contact.email || item.email) + '</span></div><div class="detail-item"><label>Phone</label><span>' + formatPhone(contact.phone || item.phone) + '</span></div>' + (contact.adminEmail ? '<div class="detail-item full-width"><label>Admin Email</label><span>' + esc(contact.adminEmail) + '</span></div>' : '') + (contact.adminPhone ? '<div class="detail-item"><label>Admin Phone</label><span>' + formatPhone(contact.adminPhone) + '</span></div>' : '') + '</div></div>';
-      if (Object.keys(policies).some(k => policies[k])) html += '<div class="detail-section"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Policies</h3><div class="detail-grid">' + (policies.goLiveDate ? '<div class="detail-item"><label>Go Live Date</label><span>' + esc(policies.goLiveDate) + '</span></div>' : '') + (policies.requireApproval ? '<div class="detail-item"><label>Require Approval</label><span>' + policies.requireApproval + '</span></div>' : '') + (policies.cancellationDays ? '<div class="detail-item"><label>Cancellation Notice</label><span>' + policies.cancellationDays + ' days</span></div>' : '') + (policies.timeIncrement ? '<div class="detail-item"><label>Time Increment</label><span>' + policies.timeIncrement + ' min</span></div>' : '') + '</div></div>';
+      html += '<div class="modal-body"><div class="detail-section"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Contact Information</h3><div class="detail-grid"><div class="detail-item"><label>Name</label><span>' + esc(contact.fullName || item.contact || '-') + '</span></div><div class="detail-item"><label>Organization</label><span>' + esc(contact.organization || item.organization || '-') + '</span></div><div class="detail-item full-width"><label>Email</label><span>' + esc(contact.email || item.email || '-') + '</span></div><div class="detail-item"><label>Phone</label><span>' + formatPhone(contact.phone || item.phone) + '</span></div>' + (contact.title ? '<div class="detail-item"><label>Title</label><span>' + esc(contact.title) + '</span></div>' : '') + (contact.adminEmail ? '<div class="detail-item full-width"><label>Admin Email</label><span>' + esc(contact.adminEmail) + '</span></div>' : '') + (contact.adminPhone ? '<div class="detail-item"><label>Admin Phone</label><span>' + formatPhone(contact.adminPhone) + '</span></div>' : '') + (contact.adminName ? '<div class="detail-item"><label>Admin Name</label><span>' + esc(contact.adminName) + '</span></div>' : '') + '</div></div>';
+      
+      // Policies section
+      if (policies && Object.keys(policies).length > 0) {
+        html += '<div class="detail-section"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Rental Policies</h3><div class="detail-grid">';
+        if (policies.goLiveDate) html += '<div class="detail-item"><label>Go Live Date</label><span>' + esc(policies.goLiveDate) + '</span></div>';
+        if (policies.requireApproval !== undefined) html += '<div class="detail-item"><label>Require Approval</label><span>' + (policies.requireApproval ? 'Yes' : 'No') + '</span></div>';
+        if (policies.cancellationDays) html += '<div class="detail-item"><label>Cancellation Notice</label><span>' + policies.cancellationDays + ' days</span></div>';
+        if (policies.timeIncrement) html += '<div class="detail-item"><label>Time Increment</label><span>' + policies.timeIncrement + ' minutes</span></div>';
+        if (policies.minRentalTime) html += '<div class="detail-item"><label>Minimum Rental</label><span>' + policies.minRentalTime + '</span></div>';
+        if (policies.maxAdvanceBooking) html += '<div class="detail-item"><label>Max Advance Booking</label><span>' + policies.maxAdvanceBooking + '</span></div>';
+        if (policies.depositRequired !== undefined) html += '<div class="detail-item"><label>Deposit Required</label><span>' + (policies.depositRequired ? 'Yes' : 'No') + '</span></div>';
+        if (policies.depositAmount) html += '<div class="detail-item"><label>Deposit Amount</label><span>$' + policies.depositAmount + '</span></div>';
+        if (policies.insuranceRequired !== undefined) html += '<div class="detail-item"><label>Insurance Required</label><span>' + (policies.insuranceRequired ? 'Yes' : 'No') + '</span></div>';
+        if (policies.paymentMethods) html += '<div class="detail-item full-width"><label>Payment Methods</label><span>' + esc(Array.isArray(policies.paymentMethods) ? policies.paymentMethods.join(', ') : policies.paymentMethods) + '</span></div>';
+        if (policies.specialTerms) html += '<div class="detail-item full-width"><label>Special Terms</label><span>' + esc(policies.specialTerms) + '</span></div>';
+        if (policies.notes) html += '<div class="detail-item full-width"><label>Notes</label><span>' + esc(policies.notes) + '</span></div>';
+        html += '</div></div>';
+      }
+      
+      // Locations section
       html += '<div class="detail-section"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Locations (' + locations.length + ') <span class="toggle-btn" onclick="toggleAllLocations()">Toggle All</span></h3>';
-      if (locations.length > 0) { locations.forEach((loc, idx) => { html += '<div class="location-card" id="loc-' + idx + '"><div class="location-header" onclick="toggleLocation(' + idx + ')"><div><h4>' + esc(loc.name || 'Unnamed Location') + '</h4><div class="location-meta">' + (loc.assets?.length || 0) + ' spaces</div></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="location-content">'; if (loc.assets?.length) loc.assets.forEach(space => { html += '<div class="space-card"><div class="space-header"><span class="space-name">' + esc(space.name || 'Unnamed') + '</span><span class="space-price">$' + (space.pricing||'0') + '/hr</span></div><div class="space-details">' + (space.type ? '<span>' + esc(space.type) + '</span>' : '') + (space.indoorOutdoor ? '<span>' + space.indoorOutdoor + '</span>' : '') + (space.maxCapacity ? '<span>Capacity: ' + space.maxCapacity + '</span>' : '') + '</div>' + (space.reservationTypes?.length ? '<div class="tag-list">' + space.reservationTypes.map(t => '<span class="tag">' + esc(t) + '</span>').join('') + '</div>' : '') + (space.features?.length ? '<div class="tag-list">' + space.features.map(f => '<span class="tag green">' + esc(f) + '</span>').join('') + '</div>' : '') + '</div>'; }); else html += '<p style="color:var(--text3);font-size:13px;padding:10px 0">No spaces added yet</p>'; html += '</div></div>'; }); } else html += '<p style="color:var(--text3)">No locations added yet</p>';
-      html += '</div></div>';
+      if (locations.length > 0) {
+        locations.forEach((loc, idx) => {
+          html += '<div class="location-card" id="loc-' + idx + '"><div class="location-header" onclick="toggleLocation(' + idx + ')"><div><h4>' + esc(loc.name || 'Unnamed Location') + '</h4><div class="location-meta">' + (loc.address ? esc(loc.address) + ' • ' : '') + (loc.assets?.length || 0) + ' spaces</div></div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="location-content">';
+          
+          // Location details
+          if (loc.address || loc.city || loc.state || loc.zip || loc.contactName || loc.contactEmail || loc.contactPhone) {
+            html += '<div class="detail-grid" style="margin-bottom:14px">';
+            if (loc.address) html += '<div class="detail-item full-width"><label>Address</label><span>' + esc(loc.address) + (loc.city ? ', ' + esc(loc.city) : '') + (loc.state ? ', ' + esc(loc.state) : '') + (loc.zip ? ' ' + esc(loc.zip) : '') + '</span></div>';
+            if (loc.contactName) html += '<div class="detail-item"><label>Site Contact</label><span>' + esc(loc.contactName) + '</span></div>';
+            if (loc.contactEmail) html += '<div class="detail-item full-width"><label>Site Email</label><span>' + esc(loc.contactEmail) + '</span></div>';
+            if (loc.contactPhone) html += '<div class="detail-item"><label>Site Phone</label><span>' + formatPhone(loc.contactPhone) + '</span></div>';
+            html += '</div>';
+          }
+          
+          if (loc.assets?.length) {
+            loc.assets.forEach(space => {
+              html += '<div class="space-card"><div class="space-header"><span class="space-name">' + esc(space.name || 'Unnamed Space') + '</span>' + (space.pricing ? '<span class="space-price">$' + space.pricing + '/hr</span>' : '') + '</div>';
+              
+              // Basic details
+              if (space.type || space.indoorOutdoor || space.maxCapacity || space.squareFeet) {
+                html += '<div class="space-details">';
+                if (space.type) html += '<span>' + esc(space.type) + '</span>';
+                if (space.indoorOutdoor) html += '<span>' + esc(space.indoorOutdoor) + '</span>';
+                if (space.maxCapacity) html += '<span>Capacity: ' + space.maxCapacity + '</span>';
+                if (space.squareFeet) html += '<span>' + space.squareFeet + ' sq ft</span>';
+                if (space.dimensions) html += '<span>' + esc(space.dimensions) + '</span>';
+                html += '</div>';
+              }
+              
+              // Reservation Types
+              if (space.reservationTypes?.length) {
+                html += '<div class="space-section"><div class="space-section-title">Reservation Types</div><div class="tag-list">' + space.reservationTypes.map(t => '<span class="tag">' + esc(t) + '</span>').join('') + '</div></div>';
+              }
+              
+              // Amenities
+              if (space.amenities?.length) {
+                html += '<div class="space-section"><div class="space-section-title">Amenities</div><div class="tag-list">' + space.amenities.map(a => '<span class="tag green">' + esc(a) + '</span>').join('') + '</div></div>';
+              }
+              
+              // Features
+              if (space.features?.length) {
+                html += '<div class="space-section"><div class="space-section-title">Features</div><div class="tag-list">' + space.features.map(f => '<span class="tag green">' + esc(f) + '</span>').join('') + '</div></div>';
+              }
+              
+              // Equipment
+              if (space.equipment?.length) {
+                html += '<div class="space-section"><div class="space-section-title">Equipment</div><div class="tag-list">' + space.equipment.map(e => '<span class="tag purple">' + esc(e) + '</span>').join('') + '</div></div>';
+              }
+              
+              // Restrictions
+              if (space.restrictions?.length) {
+                html += '<div class="space-section"><div class="space-section-title">Restrictions</div><div class="tag-list">' + space.restrictions.map(r => '<span class="tag orange">' + esc(r) + '</span>').join('') + '</div></div>';
+              }
+              
+              // Availability
+              if (space.availability || space.availableHours) {
+                html += '<div class="space-section"><div class="space-section-title">Availability</div><div class="tag-list"><span class="tag">' + esc(space.availability || space.availableHours) + '</span></div></div>';
+              }
+              
+              // Description
+              if (space.description) {
+                html += '<div class="space-section"><div class="space-section-title">Description</div><p style="font-size:13px;color:var(--text2);margin:0">' + esc(space.description) + '</p></div>';
+              }
+              
+              // Notes
+              if (space.notes) {
+                html += '<div class="space-section"><div class="space-section-title">Notes</div><p style="font-size:13px;color:var(--text2);margin:0">' + esc(space.notes) + '</p></div>';
+              }
+              
+              html += '</div>';
+            });
+          } else {
+            html += '<p style="color:var(--text3);font-size:13px;padding:10px 0">No spaces added yet</p>';
+          }
+          html += '</div></div>';
+        });
+      } else {
+        html += '<p style="color:var(--text3)">No locations added yet</p>';
+      }
+      html += '</div>';
+      
+      // Additional form data (catch-all for any fields we might have missed)
+      const knownKeys = ['contactInfo', 'policies', 'locations', 'currentStep', 'lastSaved'];
+      const additionalData = Object.keys(fd).filter(k => !knownKeys.includes(k) && fd[k] && typeof fd[k] !== 'object');
+      if (additionalData.length > 0) {
+        html += '<div class="detail-section"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Additional Information</h3><div class="additional-data-grid">';
+        additionalData.forEach(key => {
+          const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+          html += '<div class="additional-data-item"><label>' + esc(label) + '</label><span>' + esc(String(fd[key])) + '</span></div>';
+        });
+        html += '</div></div>';
+      }
+      
+      html += '</div>';
       document.getElementById('modalContent').innerHTML = html;
       document.getElementById('modalOverlay').classList.add('active');
     }
