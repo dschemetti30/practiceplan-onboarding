@@ -311,23 +311,28 @@
     .space-info-chip strong{color:var(--text);font-weight:600}
     
     .section-notes{margin-top:12px}
-    .section-notes{margin-top:16px;padding-top:12px;border-top:1px dashed var(--border)}
-    .notes-toggle{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);cursor:pointer;font-weight:500;padding:4px 0;border:none;background:none;font-family:inherit}
-    .notes-toggle:hover{color:var(--pp-blue)}
-    .notes-toggle svg{width:12px;height:12px;transition:transform 0.2s}
-    .notes-toggle.open svg{transform:rotate(90deg)}
-    .notes-panel{display:none;margin-top:10px}
-    .notes-panel.open{display:block}
+    .section-notes{margin-top:16px;padding-top:14px;border-top:1px dashed var(--border)}
+    .notes-header{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);font-weight:600;margin-bottom:10px}
+    .notes-header svg{width:14px;height:14px}
     .notes-list{margin-bottom:12px}
-    .note-item{display:flex;gap:10px;padding:12px;background:var(--card);border-radius:12px;margin-bottom:8px;border:1px solid var(--border)}
-    .note-avatar{width:32px;height:32px;border-radius:50%;background:var(--pp-blue);color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+    .note-item{display:flex;gap:10px;padding:12px;background:var(--card);border-radius:12px;margin-bottom:8px;border:1px solid var(--border);transition:border-color 0.2s}
+    .note-item:hover{border-color:rgba(0,118,187,0.2)}
+    .note-item.editing{border-color:var(--pp-blue);background:rgba(0,118,187,0.02)}
+    .note-avatar{width:32px;height:32px;border-radius:50%;background:#0e7490;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
     .note-content{flex:1;min-width:0}
     .note-header{display:flex;align-items:center;justify-content:space-between}
     .note-author{font-size:11px;font-weight:600;color:var(--text)}
     .note-date{font-size:9px;color:var(--text3)}
     .note-text{font-size:13px;color:var(--text);margin-top:4px;line-height:1.5}
-    .note-delete{background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;padding:4px;flex-shrink:0;border-radius:4px}
-    .note-delete:hover{color:#ef4444;background:rgba(239,68,68,0.08)}
+    .note-actions{display:flex;gap:4px;align-items:center;flex-shrink:0}
+    .note-action-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:10px;padding:4px 6px;border-radius:4px;font-family:inherit;font-weight:500}
+    .note-action-btn:hover{color:var(--pp-blue);background:rgba(0,118,187,0.06)}
+    .note-action-btn.delete:hover{color:#ef4444;background:rgba(239,68,68,0.06)}
+    .note-edit-input{width:100%;padding:8px 10px;border:1px solid var(--pp-blue);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);background:var(--card);resize:none;margin-top:4px}
+    .note-edit-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:6px}
+    .note-edit-actions button{padding:4px 12px;border-radius:6px;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;border:none}
+    .note-edit-save{background:var(--pp-blue);color:white}
+    .note-edit-cancel{background:var(--bg);color:var(--text2);border:1px solid var(--border) !important}
     .comment-box{display:flex;gap:10px;align-items:flex-start}
     .comment-box .note-avatar{margin-top:2px}
     .comment-input-wrap{flex:1}
@@ -338,6 +343,10 @@
     .comment-actions{display:flex;justify-content:flex-end;margin-top:6px}
     .comment-submit{padding:6px 16px;border-radius:8px;border:none;background:var(--pp-blue);color:white;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s}
     .comment-submit:hover{opacity:0.9}
+    .comment-cancel{padding:6px 16px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s}
+    .comment-cancel:hover{border-color:var(--text2);color:var(--text)}
+    .comment-actions{display:flex;justify-content:flex-end;margin-top:6px;gap:6px}
+    .comment-actions.hidden{display:none}
     .toast{position:fixed;bottom:28px;right:28px;background:var(--text);color:var(--card);padding:14px 24px;border-radius:14px;font-size:14px;font-weight:500;z-index:2000;transform:translateY(100px);opacity:0;transition:all 0.4s}
     .toast.show{transform:translateY(0);opacity:1}
     .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--pp-blue);border-radius:50%;animation:spin 0.8s linear infinite}
@@ -472,8 +481,8 @@
       return name.substring(0,2).toUpperCase();
     }
     function getOrgColor(name) {
-      if (!name) return '#64748b';
-      var colors = ['#0076bb','#00a84f','#8b5cf6','#f59e0b','#ef4444','#06b6d4','#ec4899','#14b8a6','#f97316','#6366f1','#84cc16','#d946ef'];
+      if (!name) return '#0076bb';
+      var colors = ['#0076bb','#00a84f','#0e7490','#059669','#0284c7','#0d9488','#0369a1','#16a34a','#0891b2','#047857','#0ea5e9','#10b981'];
       var hash = 0;
       for (var i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
       return colors[Math.abs(hash) % colors.length];
@@ -879,29 +888,66 @@
       var id = section.replace(/[^a-zA-Z0-9]/g, '');
       var userInitial = (currentUser?.name || '?')[0].toUpperCase();
       var userName = currentUser?.name || currentUser?.email || 'Unknown';
-      var noteCount = notes.length;
-      var h = '<div class="section-notes"><button class="notes-toggle" onclick="toggleNotes(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg> ' + (noteCount > 0 ? noteCount + ' comment' + (noteCount > 1 ? 's' : '') : 'Add comment') + '</button>';
-      h += '<div class="notes-panel" id="notes_' + id + '_' + email.replace(/[^a-zA-Z0-9]/g,'') + '">';
+      var inputId = 'noteInput_' + id + '_' + email.replace(/[^a-zA-Z0-9]/g,'');
+      var h = '<div class="section-notes">';
+      // Existing comments
       if (notes.length > 0) {
+        h += '<div class="notes-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> ' + notes.length + ' comment' + (notes.length > 1 ? 's' : '') + '</div>';
         h += '<div class="notes-list">';
         notes.forEach(function(n, i) {
           var initial = (n.author || '?')[0].toUpperCase();
-          h += '<div class="note-item"><div class="note-avatar">' + initial + '</div><div class="note-content"><div class="note-header"><span class="note-author">' + esc(n.author) + '</span><span class="note-date">' + timeAgo(n.date) + '</span></div><div class="note-text">' + esc(n.text) + '</div></div><button class="note-delete" onclick="deleteNoteAndRefresh(\'' + esc(email) + '\',\'' + section + '\',' + i + ')" title="Delete">&#x2715;</button></div>';
+          var noteId = 'note_' + id + '_' + i;
+          h += '<div class="note-item" id="' + noteId + '"><div class="note-avatar">' + initial + '</div><div class="note-content"><div class="note-header"><span class="note-author">' + esc(n.author) + '</span><span class="note-date">' + timeAgo(n.date) + '</span></div><div class="note-text" id="' + noteId + '_text">' + esc(n.text) + '</div></div><div class="note-actions"><button class="note-action-btn" onclick="startEditNote(\'' + esc(email) + '\',\'' + section + '\',' + i + ',\'' + noteId + '\')">Edit</button><button class="note-action-btn delete" onclick="deleteNoteAndRefresh(\'' + esc(email) + '\',\'' + section + '\',' + i + ')">Delete</button></div></div>';
         });
         h += '</div>';
       }
-      h += '<div class="comment-box"><div class="note-avatar">' + userInitial + '</div><div class="comment-input-wrap"><div class="comment-as">Comment as <strong>' + esc(userName) + '</strong></div><textarea class="comment-input" rows="1" placeholder="Write a comment..." id="noteInput_' + id + '_' + email.replace(/[^a-zA-Z0-9]/g,'') + '" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();submitNote(\'' + esc(email) + '\',\'' + section + '\',this)}"></textarea><div class="comment-actions"><button class="comment-submit" onclick="submitNote(\'' + esc(email) + '\',\'' + section + '\',this)">Comment</button></div></div></div>';
-      h += '</div></div>';
+      // New comment input - always visible
+      h += '<div class="comment-box"><div class="note-avatar">' + userInitial + '</div><div class="comment-input-wrap"><div class="comment-as">Comment as <strong>' + esc(userName) + '</strong></div><textarea class="comment-input" rows="1" placeholder="Write a comment..." id="' + inputId + '" onfocus="showCommentActions(this)" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();submitNote(\'' + esc(email) + '\',\'' + section + '\',this)}"></textarea><div class="comment-actions hidden" id="' + inputId + '_actions"><button class="comment-cancel" onclick="cancelComment(this)">Cancel</button><button class="comment-submit" onclick="submitNote(\'' + esc(email) + '\',\'' + section + '\',this)">Comment</button></div></div></div>';
+      h += '</div>';
       return h;
     }
-    function toggleNotes(btn) {
-      btn.classList.toggle('open');
-      var panel = btn.nextElementSibling;
-      panel.classList.toggle('open');
+    function showCommentActions(textarea) {
+      var actions = document.getElementById(textarea.id + '_actions');
+      if (actions) actions.classList.remove('hidden');
     }
+    function cancelComment(btn) {
+      var wrap = btn.closest('.comment-input-wrap');
+      var input = wrap.querySelector('.comment-input');
+      var actions = wrap.querySelector('.comment-actions');
+      input.value = '';
+      input.blur();
+      if (actions) actions.classList.add('hidden');
+    }
+    function startEditNote(email, section, idx, noteId) {
+      var notes = getNotes(email, section);
+      var note = notes[idx];
+      if (!note) return;
+      var item = document.getElementById(noteId);
+      var textEl = document.getElementById(noteId + '_text');
+      if (!textEl) return;
+      item.classList.add('editing');
+      textEl.innerHTML = '<textarea class="note-edit-input" rows="2" id="' + noteId + '_edit">' + esc(note.text) + '</textarea><div class="note-edit-actions"><button class="note-edit-cancel" onclick="cancelEditNote(\'' + noteId + '\',\'' + esc(note.text).replace(/'/g,"&#39;") + '\')">Cancel</button><button class="note-edit-save" onclick="saveEditNote(\'' + esc(email) + '\',\'' + section + '\',' + idx + ',\'' + noteId + '\')">Save</button></div>';
+      document.getElementById(noteId + '_edit').focus();
+    }
+    function cancelEditNote(noteId, originalText) {
+      var item = document.getElementById(noteId);
+      item.classList.remove('editing');
+      document.getElementById(noteId + '_text').textContent = originalText;
+    }
+    function saveEditNote(email, section, idx, noteId) {
+      var input = document.getElementById(noteId + '_edit');
+      if (!input || !input.value.trim()) return;
+      var notes = getNotes(email, section);
+      notes[idx].text = input.value.trim();
+      notes[idx].editedAt = new Date().toISOString();
+      localStorage.setItem(getNotesKey(email, section), JSON.stringify(notes));
+      var item = window._currentModalItem;
+      if (item) viewDetails(item);
+    }
+    
     function submitNote(email, section, el) {
-      var panel = el.closest('.notes-panel');
-      var input = panel.querySelector('.comment-input');
+      var wrap = el.closest('.comment-box') || el.closest('.section-notes');
+      var input = wrap.querySelector('.comment-input');
       if (input && input.value.trim()) {
         saveNote(email, section, input.value);
         var item = window._currentModalItem;
