@@ -34,7 +34,7 @@
     .user-pill{display:flex;align-items:center;gap:10px;padding:6px 16px 6px 6px;background:var(--bg);border-radius:50px}
     .user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pp-blue),var(--pp-green));color:white;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
     .user-name{font-size:13px;color:var(--text);font-weight:600;white-space:nowrap}
-    .header-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all 0.2s}
+    .header-btn{width:40px;height:40px;min-width:40px;min-height:40px;border-radius:50%;border:1px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all 0.2s;padding:0;box-sizing:border-box}
     .header-btn:hover{border-color:var(--pp-blue);color:var(--pp-blue)}
     .header-btn svg{width:18px;height:18px}
     .logout-btn{padding:10px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;font-size:13px;color:var(--text2);cursor:pointer;font-family:inherit;font-weight:500}
@@ -374,10 +374,67 @@
     .stats-section.loading-state{opacity:0.4}
     .loading{display:flex;align-items:center;justify-content:center;padding:60px}
     .mobile-cards{display:none}
-    @media(max-width:1400px){.pipeline-board{grid-template-columns:repeat(3,1fr)}}
-    @media(max-width:1200px){.pipeline-board{grid-template-columns:repeat(2,1fr)}.stats-row{grid-template-columns:1fr 1fr}.checklist-items{grid-template-columns:1fr}}
-    @media(max-width:900px){.stats-row{grid-template-columns:1fr}.detail-grid{grid-template-columns:1fr}}
-    @media(max-width:768px){.main-content{padding:20px}.header{padding:12px 16px}.view-tabs{width:100%}.table-wrapper{display:none}.mobile-cards{display:block}.pipeline-board{grid-template-columns:1fr}.calendar-day{min-height:60px}}
+    .mobile-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;transition:all 0.2s}
+    .mobile-card:active{transform:scale(0.98)}
+    .mobile-card-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+    .mobile-card-header .org-avatar{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;flex-shrink:0}
+    .mobile-card-info{flex:1;min-width:0}
+    .mobile-card-info .org-name{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .mobile-card-info .contact-email{font-size:12px;color:var(--text3);margin-top:2px}
+    .mobile-card-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+    .mobile-card-meta-item{background:var(--bg);border-radius:10px;padding:8px 10px}
+    .mobile-card-meta-item label{display:block;font-size:9px;text-transform:uppercase;color:var(--text3);font-weight:600;letter-spacing:0.5px;margin-bottom:3px}
+    .mobile-card-meta-item span{font-size:12px;color:var(--text);font-weight:500}
+    .mobile-card-footer{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .mobile-card-footer .checklist-mini{flex:1}
+    .mobile-card-actions{display:flex;gap:6px}
+    .mobile-card-actions button{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--card);font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;transition:all 0.2s}
+    .mobile-card-actions .primary{background:var(--pp-blue);color:white;border-color:var(--pp-blue)}
+    @media(max-width:1400px){.pipeline-board{grid-template-columns:repeat(4,1fr)}}
+    @media(max-width:1200px){.pipeline-board{grid-template-columns:repeat(3,1fr)}.stats-row{grid-template-columns:1fr 1fr}.checklist-items{grid-template-columns:1fr}}
+    @media(max-width:900px){.stats-row{grid-template-columns:1fr 1fr}.detail-grid{grid-template-columns:1fr}.pipeline-board{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:768px){
+      .main-content{padding:12px}
+      .header{padding:10px 14px;gap:10px}
+      .header-logo{height:28px}
+      .user-pill{padding:0;background:none;gap:0}
+      .user-name{display:none}
+      .user-avatar{width:36px;height:36px;font-size:14px}
+      .header-btn{width:36px;height:36px;flex-shrink:0}
+      .header-btn svg{width:16px;height:16px}
+      .logout-btn{padding:8px 12px;font-size:11px}
+      .header-right{gap:8px}
+      .view-tabs{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:4px}
+      .view-tab{font-size:11px;padding:8px 12px;white-space:nowrap}
+      .table-wrapper{display:none}
+      .mobile-cards{display:flex;flex-direction:column;gap:10px}
+      .pipeline-board{grid-template-columns:1fr!important}
+      .pipeline-section .controls-row{flex-wrap:wrap}
+      .calendar-day{min-height:60px}
+      .stats-row{grid-template-columns:1fr 1fr}
+      .stat-card{padding:16px}
+      .controls-row{flex-wrap:wrap;gap:8px}
+      .controls-row select,.controls-row input{font-size:12px;min-width:0}
+      .modal-overlay{padding:0}
+      .modal{width:100%;height:100%;max-height:100%;border-radius:0}
+      .modal-body{padding:16px}
+      .detail-grid{grid-template-columns:1fr}
+      .modal-toolbar{flex-wrap:wrap;gap:6px}
+      .modal-toolbar button{font-size:11px;padding:6px 10px}
+    }
+    @media(max-width:480px){
+      .header{padding:8px 10px}
+      .header-logo{height:24px}
+      .header-right{gap:6px}
+      .header-btn{width:32px;height:32px;min-width:32px;min-height:32px}
+      .header-btn svg{width:14px;height:14px}
+      .user-avatar{width:32px;height:32px;font-size:12px}
+      .logout-btn{padding:6px 10px;font-size:10px}
+      .stat-card{padding:12px}
+      .stat-value{font-size:24px}
+      .main-content{padding:8px}
+      .mobile-card-meta{gap:6px}
+    }
   </style>
 </head>
 <body>
@@ -678,7 +735,11 @@
 
     function renderTable() {
       let filtered = getFilteredData();
-      filtered.sort((a, b) => { let av = a[sortField], bv = b[sortField]; if (sortField === 'lastUpdated' || sortField === 'goLiveDate') { av = av ? new Date(av) : new Date(0); bv = bv ? new Date(bv) : new Date(0); } if (av < bv) return sortDir === 'asc' ? -1 : 1; if (av > bv) return sortDir === 'asc' ? 1 : -1; return 0; });
+      filtered.sort((a, b) => { let av, bv;
+        if (sortField === 'checklistCount') { av = getChecklistCount(a.email); bv = getChecklistCount(b.email); }
+        else if (sortField === 'accountRep') { var ra = TEAM_MEMBERS.find(m => m.email === a.accountRep); var rb = TEAM_MEMBERS.find(m => m.email === b.accountRep); av = ra ? ra.name : 'zzz'; bv = rb ? rb.name : 'zzz'; }
+        else { av = a[sortField] || ''; bv = b[sortField] || ''; }
+        if (sortField === 'lastUpdated' || sortField === 'goLiveDate') { av = av ? new Date(av) : new Date(0); bv = bv ? new Date(bv) : new Date(0); } if (av < bv) return sortDir === 'asc' ? -1 : 1; if (av > bv) return sortDir === 'asc' ? 1 : -1; return 0; });
       if (!filtered.length) { document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">No submissions found</td></tr>'; return; }
       var _rowIdx = 0;
       const labels = { new: 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', review: 'Review', complete: 'Form Complete', onboarding: 'Onboarding', live: 'Live' };
@@ -696,6 +757,41 @@
           setTimeout(function() { row.style.opacity = '1'; row.style.transform = 'translateY(0)'; }, i * 40);
         });
       }, 10);
+      // Render mobile cards
+      var mobileEl = document.getElementById('mobileCards');
+      if (mobileEl) {
+        const labels = { new: 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', review: 'Review', complete: 'Form Complete', onboarding: 'Onboarding', live: 'Live' };
+        mobileEl.innerHTML = filtered.map(function(item) {
+          var isArch = currentFilter === 'archived';
+          var statusCls = isArch ? 'archived' : item.isStale ? 'stale' : item.pipelineStatus;
+          var statusLabel = isArch ? 'Archived' : item.isStale ? 'Stale' : labels[item.pipelineStatus] || 'New';
+          var goLive = formatGoLive(item.goLiveDate);
+          var clCount = getChecklistCount(item.email);
+          var rep = TEAM_MEMBERS.find(function(m){return m.email===item.accountRep});
+          return '<div class="mobile-card">' +
+            '<div class="mobile-card-header">' +
+              '<div class="org-avatar" style="background:' + getOrgColor(item.organization) + '">' + getOrgInitials(item.organization) + '</div>' +
+              '<div class="mobile-card-info">' +
+                '<div class="org-name">' + esc(item.organization || 'Unknown') + '</div>' +
+                '<div class="contact-email">' + esc(item.contact || item.email || '') + '</div>' +
+              '</div>' +
+              '<span class="status-badge ' + statusCls + '" style="font-size:9px;flex-shrink:0">' + statusLabel + '</span>' +
+            '</div>' +
+            '<div class="mobile-card-meta">' +
+              '<div class="mobile-card-meta-item"><label>Go Live</label><span>' + (goLive || '-') + '</span></div>' +
+              '<div class="mobile-card-meta-item"><label>Updated</label><span>' + timeAgo(item.lastUpdated) + '</span></div>' +
+              '<div class="mobile-card-meta-item"><label>Rep</label><span>' + (rep ? rep.name.split(' ')[0] : 'Unassigned') + '</span></div>' +
+              '<div class="mobile-card-meta-item"><label>Checklist</label><span>' + clCount + '/' + CHECKLIST_ITEMS.length + '</span></div>' +
+            '</div>' +
+            '<div class="mobile-card-footer">' +
+              '<div class="mobile-card-actions">' +
+                '<button class="primary" onclick=\'viewDetails(' + JSON.stringify(item).replace(/'/g,"&#39;") + ')\'>View</button>' +
+                '<button onclick="archiveRow(\'' + item.sheetType + '\',' + item.rowIndex + ',\'' + esc(item.email) + '\')">' + (isArch ? 'Restore' : 'Archive') + '</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+      }
     }
 
     function getRepOptions(sel) { return '<option value="">Unassigned</option>' + TEAM_MEMBERS.map(m => '<option value="' + m.email + '"' + (sel === m.email ? ' selected' : '') + '>' + m.name + '</option>').join(''); }
