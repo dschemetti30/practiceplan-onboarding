@@ -565,6 +565,7 @@
       try {
         const result = await jsonpRequest(API_URL + '?action=getAdminData&email=' + encodeURIComponent(currentUser?.email || ''));
         if (result.success) {
+          console.log('API returned', (result.data || []).length, 'records');
           const now = new Date();
           const processed = (result.data || []).map(d => {
             const updated = new Date(d.lastUpdated), daysDiff = (now - updated) / 86400000, pct = d.completion || 0;
@@ -576,7 +577,7 @@
           archivedData = processed.filter(d => d.status === 'Archived');
           updateStats(); renderTable(); renderPipeline(); renderCalendar();
         } else if (result.error === 'Unauthorized') logout();
-        else { console.error('API returned error:', result); document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">API error: ' + (result.error || 'Unknown') + '</td></tr>'; }
+        else { console.error('API returned error:', result); document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">API error: ' + (result.error || JSON.stringify(result)) + '</td></tr>'; }
       } catch(e) { console.error('LoadData error:', e); document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">Unable to load data: ' + e.message + '<br><small style="color:var(--text3)">Check browser console for details. Email: ' + (currentUser?.email || 'none') + '</small></td></tr>'; }
     }
 
@@ -615,7 +616,7 @@
     function renderTable() {
       let filtered = getFilteredData();
       filtered.sort((a, b) => { let av = a[sortField], bv = b[sortField]; if (sortField === 'lastUpdated' || sortField === 'goLiveDate') { av = av ? new Date(av) : new Date(0); bv = bv ? new Date(bv) : new Date(0); } if (av < bv) return sortDir === 'asc' ? -1 : 1; if (av > bv) return sortDir === 'asc' ? 1 : -1; return 0; });
-      if (!filtered.length) { document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">No submissions found</td></tr>'; return; }
+      if (!filtered.length) { document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">No submissions found (filter: ' + currentFilter + ', total records: ' + allData.length + ', archived: ' + archivedData.length + ')</td></tr>'; return; }
       const labels = { new: 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', review: 'Review', complete: 'Form Complete' };
       document.getElementById('tableBody').innerHTML = filtered.map(item => {
         const goLive = formatGoLive(item.goLiveDate), isArch = currentFilter === 'archived', clCount = getChecklistCount(item.email);
