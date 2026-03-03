@@ -491,7 +491,7 @@
     function timeAgo(d) { if (!d) return '-'; const now = new Date(), diff = now - new Date(d), mins = Math.floor(diff/60000), hrs = Math.floor(diff/3600000), days = Math.floor(diff/86400000); if (mins < 1) return 'just now'; if (mins < 60) return mins + ' min ago'; if (hrs < 24) return hrs + ' hr ago'; if (days === 1) return '1 day ago'; if (days < 30) return days + ' days ago'; return Math.floor(days/30) + ' mo ago'; }
     function getLocationString(item) { const fd = item.formData || {}, locs = fd.locations || []; if (locs.length > 0) { const l = locs[0]; if (l.state && l.city) return l.city + ', ' + l.state; if (l.state) return l.state; if (l.city) return l.city; } return ''; }
     function getGoLiveDate(item) { var val = (item.formData && item.formData.policies && item.formData.policies.goLiveDate) || ''; return safeGoLiveDateStr(val); }
-    function formatGoLive(d) { if (!d) return null; try { var s = safeGoLiveDateStr(d); if (!s) return null; var p = s.split('-'); if (p.length === 3) return new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2])).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); return s; } catch(e) { return String(d); } }
+    function formatGoLive(d) { if (!d) return null; try { var s = safeGoLiveDateStr(d); if (!s) return null; var p = s.split('-'); if (p.length === 3) return new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2])).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); return s; } catch(e) { return String(d); } }
     function getChecklist(email) { return checklistData[email] || {}; }
     function setChecklist(email, id, checked) { if (!checklistData[email]) checklistData[email] = {}; checklistData[email][id] = checked; localStorage.setItem('pp_checklists', JSON.stringify(checklistData)); }
     function getChecklistCount(email) { const cl = getChecklist(email); return CHECKLIST_ITEMS.filter(i => cl[i.id]).length; }
@@ -642,11 +642,20 @@
 
     function safeGoLiveDateStr(val) {
       if (!val) return '';
-      if (typeof val === 'string') return val;
       if (val instanceof Date || (typeof val === 'object' && val.getFullYear)) {
         return val.getFullYear() + '-' + String(val.getMonth()+1).padStart(2,'0') + '-' + String(val.getDate()).padStart(2,'0');
       }
-      return String(val);
+      var s = String(val).trim();
+      // Already clean YYYY-MM-DD
+      if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+      // Try parsing verbose date strings like "Fri Feb 20 2026 00:00:00 GMT-0500 (Eastern Standard Time)"
+      var d = new Date(s);
+      if (!isNaN(d.getTime())) {
+        return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+      }
+      // If it's just a number or garbage, return empty
+      if (s.length < 4 || /^\d{1,2}$/.test(s)) return '';
+      return s;
     }
 
     function parseDateStr(s) {
