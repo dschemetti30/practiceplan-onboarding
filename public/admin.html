@@ -603,7 +603,8 @@
     function sortBy(f) { if (sortField === f) sortDir = sortDir === 'asc' ? 'desc' : 'asc'; else { sortField = f; sortDir = 'desc'; } renderTable(); }
 
     function getFilteredData() {
-      let filtered = currentFilter === 'archived' ? archivedData : getFilteredByTime(allData);
+      let filtered = currentFilter === 'archived' ? archivedData : allData.slice();
+      if (timePeriodDays > 0) { const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - timePeriodDays); filtered = filtered.filter(d => d.updatedDate >= cutoff); }
       if (currentFilter === 'complete') filtered = filtered.filter(d => d.pipelineStatus === 'complete');
       else if (currentFilter === 'active') filtered = filtered.filter(d => d.pipelineStatus !== 'complete' && d.pipelineStatus !== 'on-hold');
       else if (currentFilter === 'on-hold') filtered = filtered.filter(d => d.pipelineStatus === 'on-hold');
