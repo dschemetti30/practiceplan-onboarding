@@ -416,7 +416,7 @@
       loadData();
     }
     function logout() { sessionStorage.removeItem('pp_admin_user'); google.accounts.id.disableAutoSelect(); location.reload(); }
-    function jsonpRequest(url) { return new Promise((res, rej) => { const cb = 'cb_' + Date.now() + '_' + Math.random().toString(36).substr(2,5); window[cb] = (d) => { delete window[cb]; document.body.removeChild(s); res(d); }; const s = document.createElement('script'); s.src = url + '&callback=' + cb; s.onerror = () => { delete window[cb]; document.body.removeChild(s); rej(new Error('Failed')); }; document.body.appendChild(s); setTimeout(() => { if (window[cb]) { delete window[cb]; rej(new Error('Timeout')); } }, 15000); }); }
+    function jsonpRequest(url) { return new Promise((res, rej) => { const cb = 'cb_' + Date.now() + '_' + Math.random().toString(36).substr(2,5); console.log('JSONP request:', url.split('?')[0], 'callback:', cb); window[cb] = (d) => { console.log('JSONP response received:', d); delete window[cb]; if(document.body.contains(s)) document.body.removeChild(s); res(d); }; const s = document.createElement('script'); s.src = url + '&callback=' + cb; s.onerror = (err) => { console.error('JSONP script error:', err); delete window[cb]; if(document.body.contains(s)) document.body.removeChild(s); rej(new Error('Script load failed - check Apps Script deployment URL and permissions')); }; document.body.appendChild(s); setTimeout(() => { if (window[cb]) { console.error('JSONP timeout after 20s'); delete window[cb]; if(document.body.contains(s)) document.body.removeChild(s); rej(new Error('Timeout (20s) - Apps Script may be slow or unreachable')); } }, 20000); }); }
 
     function switchView(view) {
       document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
@@ -470,7 +470,8 @@
           archivedData = processed.filter(d => d.status === 'Archived');
           updateStats(); renderTable(); renderPipeline(); renderCalendar();
         } else if (result.error === 'Unauthorized') logout();
-      } catch(e) { console.error(e); document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">Unable to load data</td></tr>'; }
+        else { console.error('API returned error:', result); document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">API error: ' + (result.error || 'Unknown') + '</td></tr>'; }
+      } catch(e) { console.error('LoadData error:', e); document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">Unable to load data: ' + e.message + '<br><small style="color:var(--text3)">Check browser console for details. Email: ' + (currentUser?.email || 'none') + '</small></td></tr>'; }
     }
 
     function getFilteredByTime(data) { if (timePeriodDays === 0) return data; const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - timePeriodDays); return data.filter(d => d.updatedDate >= cutoff); }
