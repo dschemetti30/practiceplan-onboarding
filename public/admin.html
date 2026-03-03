@@ -52,6 +52,23 @@
     .calendar-nav{display:flex;gap:8px;align-items:center}
     .calendar-nav-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all 0.2s}
     .calendar-nav-btn:hover{border-color:var(--pp-blue);color:var(--pp-blue)}
+    .calendar-today-btn{padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:var(--card);font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;font-family:inherit;transition:all 0.2s}
+    .calendar-today-btn:hover{border-color:var(--pp-blue);color:var(--pp-blue)}
+    .cal-popover-header{padding:14px 16px;background:var(--pp-blue);color:white;border-radius:14px 14px 0 0;display:flex;justify-content:space-between;align-items:flex-start}
+    .cal-popover-header h4{font-size:14px;font-weight:700;margin:0}
+    .cal-popover-header .pop-date{font-size:11px;opacity:0.85;margin-top:2px}
+    .cal-popover-close{background:rgba(255,255,255,0.2);border:none;color:white;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .cal-popover-close:hover{background:rgba(255,255,255,0.35)}
+    .cal-popover-body{padding:14px 16px}
+    .cal-popover-item{display:flex;gap:10px;padding:10px;background:var(--bg);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:all 0.2s;border:1px solid transparent}
+    .cal-popover-item:last-child{margin-bottom:0}
+    .cal-popover-item:hover{border-color:var(--pp-blue);transform:translateX(2px)}
+    .cal-popover-icon{width:36px;height:36px;border-radius:10px;background:rgba(0,118,187,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .cal-popover-details{flex:1;min-width:0}
+    .cal-popover-org{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .cal-popover-contact{font-size:11px;color:var(--text2);margin-top:2px}
+    .cal-popover-loc{font-size:10px;color:var(--text3);margin-top:2px;display:flex;align-items:center;gap:4px}
+    .cal-popover-status{display:inline-block;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:600;text-transform:uppercase;margin-top:4px}
     .calendar-month{font-size:14px;font-weight:600;color:var(--text);min-width:140px;text-align:center}
     .calendar-grid{display:grid;grid-template-columns:repeat(7,1fr)}
     .calendar-day-header{padding:12px;text-align:center;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;background:var(--bg)}
@@ -202,12 +219,12 @@
     .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.7);backdrop-filter:blur(8px);display:none;align-items:flex-start;justify-content:center;padding:40px 20px;z-index:1000;overflow-y:auto}
     .modal-overlay.active{display:flex}
     .modal{background:var(--card);border-radius:24px;max-width:750px;width:100%;box-shadow:0 25px 80px rgba(0,0,0,0.3)}
-    .modal-header{padding:28px 32px;background:linear-gradient(135deg,#0076bb,#00a84f);color:white;position:relative}
+    .modal-header{padding:28px 32px;background:#0076bb;color:white;position:relative;border-radius:24px 24px 0 0}
     .modal-header h2{font-size:24px;font-weight:700;margin-bottom:4px}
     .modal-header .modal-subtitle{font-size:14px;opacity:0.9}
     .modal-close{position:absolute;top:24px;right:24px;width:40px;height:40px;border-radius:50%;border:none;background:rgba(255,255,255,0.15);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px}
     .modal-close:hover{background:rgba(255,255,255,0.25)}
-    .checklist-section{padding:24px 32px;background:var(--bg);border-bottom:1px solid var(--border)}
+    .checklist-section{padding:24px 32px;background:var(--card);border-bottom:1px solid var(--border)}
     .checklist-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
     .checklist-title{font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
     .checklist-title svg{width:18px;height:18px;flex-shrink:0}
@@ -222,14 +239,15 @@
     .checklist-item.checked .checklist-checkbox svg{opacity:1}
     .checklist-label{font-size:12px;color:var(--text);font-weight:500}
     .checklist-item.checked .checklist-label{color:var(--pp-green)}
-    .drive-banner{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#f0fdf4,#dcfce7);padding:20px 28px}
-    .drive-banner-text{display:flex;align-items:center;gap:16px}
-    .drive-banner-icon{width:48px;height:48px;background:white;border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--pp-green)}
-    .drive-banner-icon svg{width:24px;height:24px}
-    .drive-banner-label{font-size:12px;color:var(--text2)}
-    .drive-banner-title{font-size:15px;font-weight:600;color:var(--text)}
-    .drive-banner-btn{padding:12px 24px;background:var(--pp-green);color:white;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;text-decoration:none}
-    .progress-hero{padding:28px 32px;background:var(--bg)}
+    .modal-toolbar{display:flex;gap:8px;padding:16px 32px;background:var(--bg);border-bottom:1px solid var(--border);flex-wrap:wrap}
+    .toolbar-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px solid var(--border);background:var(--card);font-size:12px;font-weight:600;color:var(--text);cursor:pointer;font-family:inherit;text-decoration:none;transition:all 0.2s;flex:1;justify-content:center}
+    .toolbar-btn:hover{border-color:var(--pp-blue);color:var(--pp-blue)}
+    .toolbar-btn svg{width:16px;height:16px;flex-shrink:0}
+    .toolbar-btn.drive{color:var(--pp-green);border-color:rgba(0,168,79,0.3)}
+    .toolbar-btn.drive:hover{background:rgba(0,168,79,0.05);border-color:var(--pp-green)}
+    .toolbar-btn.export{color:var(--pp-blue);border-color:rgba(0,118,187,0.3)}
+    .toolbar-btn.export:hover{background:rgba(0,118,187,0.05);border-color:var(--pp-blue)}
+    .progress-hero{padding:20px 32px;background:var(--bg);border-bottom:1px solid var(--border)}
     .progress-hero-inner{display:flex;align-items:center;gap:28px}
     .progress-ring-large{width:90px;height:90px;position:relative}
     .progress-ring-large svg{transform:rotate(-90deg)}
@@ -257,8 +275,8 @@
     .timeline-desc{font-size:12px;color:var(--text2);margin-top:4px}
     .timeline-date{font-size:11px;color:var(--text3);margin-top:6px}
     .modal-body{padding:28px 32px}
-    .detail-section{margin-bottom:28px}
-    .detail-section:last-child{margin-bottom:0}
+    .detail-section{margin-bottom:0;padding-bottom:24px;padding-top:24px;border-bottom:1px solid var(--border)}
+    .detail-section:last-child{border-bottom:none;padding-bottom:0}
     .detail-section h3{font-size:12px;font-weight:700;color:var(--pp-blue);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px}
     .detail-section h3 svg{width:16px;height:16px;flex-shrink:0}
     .detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
@@ -293,29 +311,33 @@
     .space-info-chip strong{color:var(--text);font-weight:600}
     
     .section-notes{margin-top:12px}
-    .notes-toggle{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--pp-blue);cursor:pointer;font-weight:600;padding:6px 0;border:none;background:none;font-family:inherit}
-    .notes-toggle:hover{text-decoration:underline}
-    .notes-toggle svg{width:14px;height:14px;transition:transform 0.2s}
+    .section-notes{margin-top:16px;padding-top:12px;border-top:1px dashed var(--border)}
+    .notes-toggle{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);cursor:pointer;font-weight:500;padding:4px 0;border:none;background:none;font-family:inherit}
+    .notes-toggle:hover{color:var(--pp-blue)}
+    .notes-toggle svg{width:12px;height:12px;transition:transform 0.2s}
     .notes-toggle.open svg{transform:rotate(90deg)}
-    .notes-panel{display:none;margin-top:8px}
+    .notes-panel{display:none;margin-top:10px}
     .notes-panel.open{display:block}
-    .notes-list{margin-bottom:10px}
-    .note-item{display:flex;gap:10px;padding:10px;background:var(--bg);border-radius:10px;margin-bottom:6px;border-left:3px solid var(--pp-blue)}
-    .note-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--pp-blue),var(--pp-green));color:white;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+    .notes-list{margin-bottom:12px}
+    .note-item{display:flex;gap:10px;padding:12px;background:var(--card);border-radius:12px;margin-bottom:8px;border:1px solid var(--border)}
+    .note-avatar{width:32px;height:32px;border-radius:50%;background:var(--pp-blue);color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
     .note-content{flex:1;min-width:0}
-    .note-author{font-size:10px;font-weight:600;color:var(--text)}
-    .note-date{font-size:9px;color:var(--text3);margin-left:8px}
-    .note-text{font-size:12px;color:var(--text);margin-top:3px;line-height:1.4}
-    .note-delete{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px;flex-shrink:0}
-    .note-delete:hover{color:#ef4444}
-    .notes-input-row{display:flex;gap:8px}
-    .notes-input{flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-family:inherit;color:var(--text);background:var(--card);resize:none}
-    .notes-input:focus{outline:none;border-color:var(--pp-blue)}
-    .notes-submit{padding:8px 14px;border-radius:8px;border:none;background:var(--pp-blue);color:white;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
-    .notes-submit:hover{opacity:0.9}
-    .modal-export-btn{display:flex;align-items:center;gap:8px;padding:12px 20px;background:linear-gradient(135deg,var(--pp-blue),var(--pp-green));color:white;border:none;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin:0 32px 24px;width:calc(100% - 64px)}
-    .modal-export-btn:hover{opacity:0.9}
-    .modal-export-btn svg{width:16px;height:16px}
+    .note-header{display:flex;align-items:center;justify-content:space-between}
+    .note-author{font-size:11px;font-weight:600;color:var(--text)}
+    .note-date{font-size:9px;color:var(--text3)}
+    .note-text{font-size:13px;color:var(--text);margin-top:4px;line-height:1.5}
+    .note-delete{background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;padding:4px;flex-shrink:0;border-radius:4px}
+    .note-delete:hover{color:#ef4444;background:rgba(239,68,68,0.08)}
+    .comment-box{display:flex;gap:10px;align-items:flex-start}
+    .comment-box .note-avatar{margin-top:2px}
+    .comment-input-wrap{flex:1}
+    .comment-as{font-size:10px;color:var(--text3);margin-bottom:4px}
+    .comment-as strong{color:var(--text2)}
+    .comment-input{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;color:var(--text);background:var(--card);resize:none;transition:border-color 0.2s}
+    .comment-input:focus{outline:none;border-color:var(--pp-blue);box-shadow:0 0 0 3px rgba(0,118,187,0.08)}
+    .comment-actions{display:flex;justify-content:flex-end;margin-top:6px}
+    .comment-submit{padding:6px 16px;border-radius:8px;border:none;background:var(--pp-blue);color:white;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s}
+    .comment-submit:hover{opacity:0.9}
     .toast{position:fixed;bottom:28px;right:28px;background:var(--text);color:var(--card);padding:14px 24px;border-radius:14px;font-size:14px;font-weight:500;z-index:2000;transform:translateY(100px);opacity:0;transition:all 0.4s}
     .toast.show{transform:translateY(0);opacity:1}
     .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--pp-blue);border-radius:50%;animation:spin 0.8s linear infinite}
@@ -373,7 +395,7 @@
               <button class="text-action-btn" id="myAccountsBtn" onclick="toggleMyAccounts()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> My Accounts</button>
               <div class="styled-select" id="repFilterContainer"><select id="repFilter" onchange="setRepFilter(this.value)"><option value="all">All Reps</option></select></div>
               <div class="styled-select"><select id="timePeriodSelect" onchange="setTimePeriod(this.value)"><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="60">Last 60 days</option><option value="90">Last 90 days</option><option value="0">All time</option></select></div>
-              <div class="styled-select"><select id="statusFilter" onchange="setFilter(this.value)"><option value="all">All statuses</option><option value="complete">Complete</option><option value="active">Active</option><option value="on-hold">On Hold</option><option value="stale">Stale</option><option value="archived">Archived</option></select></div>
+              <div class="styled-select"><select id="statusFilter" onchange="setFilter(this.value)"><option value="all">All statuses</option><option value="complete">Form Complete</option><option value="active">Active</option><option value="on-hold">On Hold</option><option value="stale">Stale</option><option value="archived">Archived</option></select></div>
               <input type="text" class="search-input" placeholder="Search..." oninput="handleSearch(this.value)">
               <button class="text-action-btn" onclick="exportCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
               <button class="text-action-btn" onclick="loadData()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh</button>
@@ -390,7 +412,7 @@
             <div class="pipeline-column" data-status="in-progress"><div class="pipeline-column-header"><span class="pipeline-column-title"><span class="pipeline-dot"></span> In Progress</span><span class="pipeline-column-count" id="countInProgress">0</span></div><div class="pipeline-cards" id="cardsInProgress"></div></div>
             <div class="pipeline-column" data-status="on-hold"><div class="pipeline-column-header"><span class="pipeline-column-title"><span class="pipeline-dot"></span> On Hold</span><span class="pipeline-column-count" id="countOnHold">0</span></div><div class="pipeline-cards" id="cardsOnHold"></div></div>
             <div class="pipeline-column" data-status="review"><div class="pipeline-column-header"><span class="pipeline-column-title"><span class="pipeline-dot"></span> Review</span><span class="pipeline-column-count" id="countReview">0</span></div><div class="pipeline-cards" id="cardsReview"></div></div>
-            <div class="pipeline-column" data-status="complete"><div class="pipeline-column-header"><span class="pipeline-column-title"><span class="pipeline-dot"></span> Complete</span><span class="pipeline-column-count" id="countComplete">0</span></div><div class="pipeline-cards" id="cardsComplete"></div></div>
+            <div class="pipeline-column" data-status="complete"><div class="pipeline-column-header"><span class="pipeline-column-title"><span class="pipeline-dot"></span> Form Complete</span><span class="pipeline-column-count" id="countComplete">0</span></div><div class="pipeline-cards" id="cardsComplete"></div></div>
           </div>
         </div>
       </div>
@@ -400,6 +422,7 @@
           <div class="calendar-header">
             <div class="calendar-title">Go-Live Calendar</div>
             <div class="calendar-nav">
+              <button class="calendar-today-btn" onclick="goToday()">Today</button>
               <button class="calendar-nav-btn" onclick="prevMonth()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
               <span class="calendar-month" id="calendarMonth"></span>
               <button class="calendar-nav-btn" onclick="nextMonth()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
@@ -407,6 +430,7 @@
           </div>
           <div class="calendar-grid" id="calendarGrid"></div>
         </div>
+        <div id="calPopover" style="display:none;position:fixed;z-index:1500;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,0.15);padding:0;min-width:280px;max-width:340px"></div>
       </div>
     </div>
   </div>
@@ -583,7 +607,7 @@
       let filtered = getFilteredData();
       filtered.sort((a, b) => { let av = a[sortField], bv = b[sortField]; if (sortField === 'lastUpdated' || sortField === 'goLiveDate') { av = av ? new Date(av) : new Date(0); bv = bv ? new Date(bv) : new Date(0); } if (av < bv) return sortDir === 'asc' ? -1 : 1; if (av > bv) return sortDir === 'asc' ? 1 : -1; return 0; });
       if (!filtered.length) { document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">No submissions found</td></tr>'; return; }
-      const labels = { new: 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', review: 'Review', complete: 'Complete' };
+      const labels = { new: 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', review: 'Review', complete: 'Form Complete' };
       document.getElementById('tableBody').innerHTML = filtered.map(item => {
         const goLive = formatGoLive(item.goLiveDate), isArch = currentFilter === 'archived', clCount = getChecklistCount(item.email);
         return '<tr><td><div class="org-cell"><div class="org-avatar" style="background:' + getOrgColor(item.organization) + '">' + getOrgInitials(item.organization) + '</div><div><div class="org-name">' + esc(item.organization || 'Unknown') + '</div>' + (item.locationStr ? '<div class="org-location">' + esc(item.locationStr) + '</div>' : '') + '</div></div></td><td><div class="contact-name">' + esc(item.contact || '-') + '</div><div class="contact-email">' + esc(item.email) + '</div></td><td><span class="status-badge ' + (isArch ? 'archived' : item.isStale ? 'stale' : item.pipelineStatus) + '">' + (isArch ? 'Archived' : item.isStale ? 'Stale' : labels[item.pipelineStatus]) + '</span></td><td><div class="checklist-mini"><div class="checklist-dots">' + CHECKLIST_ITEMS.map(c => '<span class="checklist-dot' + (getChecklist(item.email)[c.id] ? ' done' : '') + '"></span>').join('') + '</div><span class="checklist-text">' + clCount + '/' + CHECKLIST_ITEMS.length + '</span></div></td><td>' + (goLive ? '<span class="go-live-date">' + goLive + '</span>' : '<span class="go-live-date none">-</span>') + '</td><td><span class="time-ago">' + timeAgo(item.lastUpdated) + '</span></td><td><select class="rep-select" onchange="assignRep(\'' + item.sheetType + '\',' + item.rowIndex + ',this.value)">' + getRepOptions(item.accountRep) + '</select></td><td><div class="action-cell"><button class="action-btn primary" onclick=\'viewDetails(' + JSON.stringify(item).replace(/'/g,"&#39;") + ')\'>View</button><button class="action-btn" onclick="emailContact(\'' + esc(item.email) + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email</button><button class="action-btn danger" onclick="archiveRow(\'' + item.sheetType + '\',' + item.rowIndex + ',\'' + esc(item.email) + '\')">' + (isArch ? 'Restore' : 'Archive') + '</button></div></td></tr>';
@@ -677,7 +701,7 @@
       });
       if (!evts.length) return;
       var dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-      var labels = { 'new': 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', 'review': 'Review', 'complete': 'Complete' };
+      var labels = { 'new': 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', 'review': 'Review', 'complete': 'Form Complete' };
       var h = '<div class="cal-popover-header"><div><h4>' + evts.length + ' Go-Live' + (evts.length > 1 ? 's' : '') + '</h4><div class="pop-date">' + dateStr + '</div></div><button class="cal-popover-close" onclick="closeCalPopover()">&#x2715;</button></div>';
       h += '<div class="cal-popover-body">';
       evts.forEach(function(e) {
@@ -727,8 +751,14 @@
     async function assignRep(sheetType, rowIndex, repEmail) {
       try {
         const result = await jsonpRequest(API_URL + '?action=assignRep&email=' + encodeURIComponent(currentUser?.email || '') + '&sheetType=' + sheetType + '&rowIndex=' + rowIndex + '&repEmail=' + encodeURIComponent(repEmail));
-        if (result.success) showToast('Rep assigned'); else showToast('Failed');
-      } catch(e) { showToast('Failed'); }
+        if (result.success) {
+          // Update local data immediately so UI stays in sync
+          allData.forEach(function(d) { if (d.sheetType === sheetType && d.rowIndex === rowIndex) d.accountRep = repEmail; });
+          archivedData.forEach(function(d) { if (d.sheetType === sheetType && d.rowIndex === rowIndex) d.accountRep = repEmail; });
+          showToast('Rep assigned');
+          renderPipeline();
+        } else showToast('Failed: ' + (result.error || 'Unknown'));
+      } catch(e) { showToast('Failed to assign rep'); }
     }
     function exportCSV() { const filtered = getFilteredData(); const csv = [['Organization','Location','Contact','Email','Status','Go Live','Updated','Rep','Checklist'], ...filtered.map(d => [d.organization, d.locationStr, d.contact, d.email, d.pipelineStatus, d.goLiveDate || '', d.lastUpdated, d.accountRep || '', getChecklistCount(d.email) + '/' + CHECKLIST_ITEMS.length])].map(r => r.map(c => '"' + String(c||'').replace(/"/g,'""') + '"').join(',')).join('\n'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'practiceplan-' + new Date().toISOString().split('T')[0] + '.csv'; a.click(); showToast('Exported'); }
     function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
@@ -738,7 +768,7 @@
       const fd = item.formData || {}, contact = fd.contactInfo || {}, policies = fd.policies || {}, locations = fd.locations || [];
       const pct = item.completion || 0, circ = 2 * Math.PI * 36, offset = circ - (pct / 100) * circ;
       const cl = getChecklist(item.email), clCount = CHECKLIST_ITEMS.filter(i => cl[i.id]).length;
-      const plabels = { 'new': 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', 'review': 'Review', 'complete': 'Complete' };
+      const plabels = { 'new': 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', 'review': 'Review', 'complete': 'Form Complete' };
       const statusClass = item.pipelineStatus || 'new';
       
       let html = '<div class="modal-header"><div style="display:flex;align-items:center;gap:16px"><div style="width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white;background:rgba(255,255,255,0.2);flex-shrink:0">' + getOrgInitials(item.organization) + '</div><div><h2>' + esc(item.organization || 'Details') + '</h2><div class="modal-subtitle">' + esc(contact.fullName || item.contact || '') + (item.locationStr ? ' &middot; ' + esc(item.locationStr) : '') + '</div></div></div><span class="status-badge ' + statusClass + '" style="position:absolute;top:28px;right:72px;font-size:10px">' + (plabels[statusClass] || 'New') + '</span><button class="modal-close" onclick="closeModal()">&#x2715;</button></div>';
@@ -746,11 +776,14 @@
       // Checklist
       html += '<div class="checklist-section"><div class="checklist-header"><div class="checklist-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Onboarding Checklist</div><div class="checklist-count">' + clCount + ' of ' + CHECKLIST_ITEMS.length + ' complete</div></div><div class="checklist-items">' + CHECKLIST_ITEMS.map(c => '<div class="checklist-item' + (cl[c.id] ? ' checked' : '') + '" onclick="toggleChecklistItem(\'' + item.email + '\',\'' + c.id + '\',this)"><div class="checklist-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span class="checklist-label">' + c.label + '</span></div>').join('') + '</div>' + renderNotesBlock(item.email, 'checklist') + '</div>';
       
-      // Drive folder
-      if (item.driveFolder) html += '<div class="drive-banner"><div class="drive-banner-text"><div class="drive-banner-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div><div><div class="drive-banner-label">Uploaded Files</div><div class="drive-banner-title">View in Google Drive</div></div></div><a href="' + item.driveFolder + '" target="_blank" class="drive-banner-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Open</a></div>';
+      // Toolbar - Drive + Export
+      html += '<div class="modal-toolbar">';
+      if (item.driveFolder) html += '<a href="' + item.driveFolder + '" target="_blank" class="toolbar-btn drive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> Client Attachments (Google Drive)</a>';
+      html += '<button class="toolbar-btn export" onclick="exportModalCSV(window._currentModalItem)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export Data (CSV)</button>';
+      html += '</div>';
       
       // Progress
-      html += '<div class="progress-hero"><div class="progress-hero-inner"><div class="progress-ring-large"><svg width="90" height="90" viewBox="0 0 90 90"><circle class="bg" cx="45" cy="45" r="36"/><circle class="progress" cx="45" cy="45" r="36" stroke-dasharray="' + circ + '" stroke-dashoffset="' + offset + '"/></svg><div class="center-text">' + pct + '%</div></div><div class="progress-details"><div class="progress-title">Form Progress</div><div class="progress-bar-large"><div class="progress-bar-fill" style="width:' + pct + '%"></div></div><div class="progress-meta"><span><strong>' + (item.locations||0) + '</strong> locations</span><span><strong>' + (item.spaces||0) + '</strong> spaces</span><span>Updated <strong>' + timeAgo(item.lastUpdated) + '</strong></span></div></div></div></div>';
+      html += '<div class="progress-hero"><div class="progress-hero-inner"><div class="progress-ring-large"><svg width="90" height="90" viewBox="0 0 90 90"><circle class="bg" cx="45" cy="45" r="36"/><circle class="progress" cx="45" cy="45" r="36" stroke-dasharray="' + circ + '" stroke-dashoffset="' + offset + '"/></svg><div class="center-text">' + pct + '%</div></div><div class="progress-details"><div class="progress-title">Form Submission Progress</div><div class="progress-bar-large"><div class="progress-bar-fill" style="width:' + pct + '%"></div></div><div class="progress-meta"><span><strong>' + (item.locations||0) + '</strong> locations</span><span><strong>' + (item.spaces||0) + '</strong> spaces</span><span>Updated <strong>' + timeAgo(item.lastUpdated) + '</strong></span></div></div></div></div>';
       
       // Contact info
       html += '<div class="modal-body"><div class="detail-section"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Contact Information</h3><div class="detail-grid"><div class="detail-item"><label>Name</label><span>' + esc(contact.fullName || item.contact || '-') + '</span></div><div class="detail-item"><label>Organization</label><span>' + esc(contact.organization || item.organization || '-') + '</span></div><div class="detail-item"><label>Email</label><span>' + esc(contact.email || item.email || '-') + '</span></div><div class="detail-item"><label>Phone</label><span>' + formatPhone(contact.phone || item.phone) + '</span></div>' + (contact.adminEmail ? '<div class="detail-item"><label>Admin Email</label><span>' + esc(contact.adminEmail) + '</span></div>' : '') + (contact.adminPhone ? '<div class="detail-item"><label>Admin Phone</label><span>' + formatPhone(contact.adminPhone) + '</span></div>' : '') + (policies.goLiveDate ? '<div class="detail-item"><label>Go Live Date</label><span>' + esc(safeGoLiveDateStr(policies.goLiveDate)) + '</span></div>' : '') + (item.accountRep ? '<div class="detail-item"><label>Account Rep</label><span>' + esc((TEAM_MEMBERS.find(function(m){return m.email===item.accountRep})||{}).name || item.accountRep) + '</span></div>' : '') + '</div>' + renderNotesBlock(item.email, 'contact') + '</div>';
@@ -806,8 +839,7 @@
       }
       html += '</div>';
       
-      // Export button
-      html += '<button class="modal-export-btn" onclick="exportModalCSV(window._currentModalItem)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export Client Data (CSV)</button>';
+      
       
       document.getElementById('modalContent').innerHTML = html;
       document.getElementById('modalOverlay').classList.add('active');
@@ -844,18 +876,21 @@
     }
     function renderNotesBlock(email, section) {
       var notes = getNotes(email, section);
-      var id = section.replace(/[^a-zA-Z]/g, '');
-      var h = '<div class="section-notes"><button class="notes-toggle" onclick="toggleNotes(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg> Notes (' + notes.length + ')</button>';
+      var id = section.replace(/[^a-zA-Z0-9]/g, '');
+      var userInitial = (currentUser?.name || '?')[0].toUpperCase();
+      var userName = currentUser?.name || currentUser?.email || 'Unknown';
+      var noteCount = notes.length;
+      var h = '<div class="section-notes"><button class="notes-toggle" onclick="toggleNotes(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg> ' + (noteCount > 0 ? noteCount + ' comment' + (noteCount > 1 ? 's' : '') : 'Add comment') + '</button>';
       h += '<div class="notes-panel" id="notes_' + id + '_' + email.replace(/[^a-zA-Z0-9]/g,'') + '">';
       if (notes.length > 0) {
         h += '<div class="notes-list">';
         notes.forEach(function(n, i) {
           var initial = (n.author || '?')[0].toUpperCase();
-          h += '<div class="note-item"><div class="note-avatar">' + initial + '</div><div class="note-content"><div><span class="note-author">' + esc(n.author) + '</span><span class="note-date">' + timeAgo(n.date) + '</span></div><div class="note-text">' + esc(n.text) + '</div></div><button class="note-delete" onclick="deleteNoteAndRefresh(\'' + esc(email) + '\',\'' + section + '\',' + i + ')" title="Delete">&#x2715;</button></div>';
+          h += '<div class="note-item"><div class="note-avatar">' + initial + '</div><div class="note-content"><div class="note-header"><span class="note-author">' + esc(n.author) + '</span><span class="note-date">' + timeAgo(n.date) + '</span></div><div class="note-text">' + esc(n.text) + '</div></div><button class="note-delete" onclick="deleteNoteAndRefresh(\'' + esc(email) + '\',\'' + section + '\',' + i + ')" title="Delete">&#x2715;</button></div>';
         });
         h += '</div>';
       }
-      h += '<div class="notes-input-row"><textarea class="notes-input" rows="1" placeholder="Add a note..." id="noteInput_' + id + '_' + email.replace(/[^a-zA-Z0-9]/g,'') + '"></textarea><button class="notes-submit" onclick="submitNote(\'' + esc(email) + '\',\'' + section + '\',this)">Add</button></div>';
+      h += '<div class="comment-box"><div class="note-avatar">' + userInitial + '</div><div class="comment-input-wrap"><div class="comment-as">Comment as <strong>' + esc(userName) + '</strong></div><textarea class="comment-input" rows="1" placeholder="Write a comment..." id="noteInput_' + id + '_' + email.replace(/[^a-zA-Z0-9]/g,'') + '" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();submitNote(\'' + esc(email) + '\',\'' + section + '\',this)}"></textarea><div class="comment-actions"><button class="comment-submit" onclick="submitNote(\'' + esc(email) + '\',\'' + section + '\',this)">Comment</button></div></div></div>';
       h += '</div></div>';
       return h;
     }
@@ -864,12 +899,11 @@
       var panel = btn.nextElementSibling;
       panel.classList.toggle('open');
     }
-    function submitNote(email, section, btn) {
-      var panel = btn.closest('.notes-panel');
-      var input = panel.querySelector('.notes-input');
-      if (input.value.trim()) {
+    function submitNote(email, section, el) {
+      var panel = el.closest('.notes-panel');
+      var input = panel.querySelector('.comment-input');
+      if (input && input.value.trim()) {
         saveNote(email, section, input.value);
-        // Re-render the whole modal to update notes
         var item = window._currentModalItem;
         if (item) viewDetails(item);
       }
@@ -900,6 +934,7 @@
       var rep = item.accountRep ? TEAM_MEMBERS.find(function(m){return m.email===item.accountRep}) : null;
       rows.push(['Account Rep', rep ? rep.name : (item.accountRep || '')]);
       rows.push(['Form Completion', (item.completion || 0) + '%']);
+      if (item.driveFolder) rows.push(['Google Drive Folder', item.driveFolder]);
       rows.push([]);
       rows.push(['ONBOARDING CHECKLIST']);
       CHECKLIST_ITEMS.forEach(function(c) { rows.push([c.label, cl[c.id] ? 'Complete' : 'Incomplete']); });
