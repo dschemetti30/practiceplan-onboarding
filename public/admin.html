@@ -161,6 +161,8 @@
     .status-badge.in-progress{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#b45309}
     .status-badge.review{background:linear-gradient(135deg,#ede9fe,#ddd6fe);color:#7c3aed}
     .status-badge.complete{background:linear-gradient(135deg,#dcfce7,#bbf7d0);color:#15803d}
+    .status-badge.onboarding{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#b45309}
+    .status-badge.live{background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#047857}
     .status-badge.on-hold{background:linear-gradient(135deg,#fecaca,#fca5a5);color:#b91c1c}
     .status-badge.stale{background:var(--bg);color:var(--text2)}
     .status-badge.archived{background:var(--bg);color:var(--text3)}
@@ -194,7 +196,7 @@
     .checklist-text{font-size:10px;color:var(--text2)}
     .empty-state{padding:60px 24px;text-align:center;color:var(--text2)}
     .pipeline-section{margin-top:40px}
-    .pipeline-board{display:grid;grid-template-columns:repeat(5,1fr);gap:0}
+    .pipeline-board{display:grid;grid-template-columns:repeat(7,1fr);gap:0}
     .pipeline-column{background:var(--bg);padding:14px;min-height:250px;border-right:1px solid var(--border)}
     .pipeline-column:first-child{border-radius:14px 0 0 14px}
     .pipeline-column:last-child{border-radius:0 14px 14px 0;border-right:none}
@@ -206,6 +208,8 @@
     .pipeline-column[data-status="on-hold"] .pipeline-dot{background:#ef4444}
     .pipeline-column[data-status="review"] .pipeline-dot{background:#8b5cf6}
     .pipeline-column[data-status="complete"] .pipeline-dot{background:var(--pp-green)}
+    .pipeline-column[data-status="onboarding"] .pipeline-dot{background:#f59e0b}
+    .pipeline-column[data-status="live"] .pipeline-dot{background:#10b981}
     .pipeline-column-count{font-size:10px;font-weight:600;color:var(--text2);background:var(--card);padding:2px 7px;border-radius:50px}
     .pipeline-cards{display:flex;flex-direction:column;gap:8px}
     .pipeline-card{background:var(--card);border-radius:10px;padding:10px;border:1px solid var(--border);cursor:pointer;transition:all 0.2s}
@@ -281,6 +285,9 @@
     .detail-section h3 svg{width:16px;height:16px;flex-shrink:0}
     .detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
     .detail-item{background:var(--bg);padding:14px 16px;border-radius:14px}
+    
+    .detail-section .detail-grid .detail-item span{font-size:13px;color:var(--text);word-break:break-word}
+    .detail-item.full-width{grid-column:1/-1}
     .detail-item label{display:block;font-size:10px;color:var(--text2);text-transform:uppercase;margin-bottom:6px;font-weight:600}
     .detail-item span{font-size:14px;color:var(--text);font-weight:500;word-break:break-word}
     .detail-item.full-width{grid-column:1 / -1}
@@ -310,20 +317,19 @@
     .space-info-chip svg{width:12px;height:12px;flex-shrink:0}
     .space-info-chip strong{color:var(--text);font-weight:600}
     
-    .section-notes{margin-top:12px}
-    .section-notes{margin-top:16px;padding-top:14px;border-top:1px dashed var(--border)}
-    .notes-header{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);font-weight:600;margin-bottom:10px}
-    .notes-header svg{width:14px;height:14px}
+    .section-notes{margin-top:20px;padding-top:16px;border-top:1px dashed var(--border)}
+    .notes-header{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);font-weight:600;margin-bottom:12px;letter-spacing:0.3px}
+    .notes-header svg{width:14px;height:14px;color:var(--text3)}
     .notes-list{margin-bottom:12px}
-    .note-item{display:flex;gap:10px;padding:12px;background:var(--card);border-radius:12px;margin-bottom:8px;border:1px solid var(--border);transition:border-color 0.2s}
+    .note-item{display:flex;gap:12px;padding:14px 16px;background:var(--card);border-radius:12px;margin-bottom:8px;border:1px solid var(--border);transition:border-color 0.2s}
     .note-item:hover{border-color:rgba(0,118,187,0.2)}
     .note-item.editing{border-color:var(--pp-blue);background:rgba(0,118,187,0.02)}
-    .note-avatar{width:32px;height:32px;border-radius:50%;background:#0e7490;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
-    .note-content{flex:1;min-width:0}
-    .note-header{display:flex;align-items:center;justify-content:space-between}
+    .note-avatar{width:30px;height:30px;border-radius:50%;background:#0e7490;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+    .note-content{flex:1;min-width:0;padding-top:1px}
+    .note-header{display:flex;align-items:baseline;gap:8px}
     .note-author{font-size:11px;font-weight:600;color:var(--text)}
     .note-date{font-size:9px;color:var(--text3)}
-    .note-text{font-size:13px;color:var(--text);margin-top:4px;line-height:1.5}
+    .note-text{font-size:13px;color:var(--text);margin-top:4px;line-height:1.55;white-space:pre-wrap}
     .note-actions{display:flex;gap:4px;align-items:center;flex-shrink:0}
     .note-action-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:10px;padding:4px 6px;border-radius:4px;font-family:inherit;font-weight:500}
     .note-action-btn:hover{color:var(--pp-blue);background:rgba(0,118,187,0.06)}
@@ -333,19 +339,19 @@
     .note-edit-actions button{padding:4px 12px;border-radius:6px;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;border:none}
     .note-edit-save{background:var(--pp-blue);color:white}
     .note-edit-cancel{background:var(--bg);color:var(--text2);border:1px solid var(--border) !important}
-    .comment-box{display:flex;gap:10px;align-items:flex-start}
+    .comment-box{display:flex;gap:12px;align-items:flex-start;margin-top:12px}
     .comment-box .note-avatar{margin-top:2px}
     .comment-input-wrap{flex:1}
-    .comment-as{font-size:10px;color:var(--text3);margin-bottom:4px}
+    .comment-as{font-size:10px;color:var(--text3);margin-bottom:5px}
     .comment-as strong{color:var(--text2)}
-    .comment-input{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;color:var(--text);background:var(--card);resize:none;transition:border-color 0.2s}
-    .comment-input:focus{outline:none;border-color:var(--pp-blue);box-shadow:0 0 0 3px rgba(0,118,187,0.08)}
+    .comment-input{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;color:var(--text);background:var(--bg);resize:none;transition:all 0.2s}
+    .comment-input:focus{outline:none;border-color:var(--pp-blue);box-shadow:0 0 0 3px rgba(0,118,187,0.08);background:var(--card)}
     .comment-actions{display:flex;justify-content:flex-end;margin-top:6px}
     .comment-submit{padding:6px 16px;border-radius:8px;border:none;background:var(--pp-blue);color:white;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s}
     .comment-submit:hover{opacity:0.9}
     .comment-cancel{padding:6px 16px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s}
     .comment-cancel:hover{border-color:var(--text2);color:var(--text)}
-    .comment-actions{display:flex;justify-content:flex-end;margin-top:6px;gap:6px}
+    .comment-actions{display:flex;justify-content:flex-end;margin-top:8px;gap:8px}
     .comment-actions.hidden{display:none}
     .toast{position:fixed;bottom:28px;right:28px;background:var(--text);color:var(--card);padding:14px 24px;border-radius:14px;font-size:14px;font-weight:500;z-index:2000;transform:translateY(100px);opacity:0;transition:all 0.4s;display:flex;align-items:center;gap:10px}
     .toast.show{transform:translateY(0);opacity:1}
@@ -419,13 +425,13 @@
               <button class="text-action-btn" id="myAccountsBtn" onclick="toggleMyAccounts()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> My Accounts</button>
               <div class="styled-select" id="repFilterContainer"><select id="repFilter" onchange="setRepFilter(this.value)"><option value="all">All Reps</option></select></div>
               <div class="styled-select"><select id="timePeriodSelect" onchange="setTimePeriod(this.value)"><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="60">Last 60 days</option><option value="90">Last 90 days</option><option value="0">All time</option></select></div>
-              <div class="styled-select"><select id="statusFilter" onchange="setFilter(this.value)"><option value="all">All statuses</option><option value="complete">Form Complete</option><option value="active">Active</option><option value="on-hold">On Hold</option><option value="stale">Stale</option><option value="archived">Archived</option></select></div>
+              <div class="styled-select"><select id="statusFilter" onchange="setFilter(this.value)"><option value="all">All statuses</option><option value="complete">Form Complete</option><option value="onboarding">Onboarding</option><option value="live">Live</option><option value="active">Active</option><option value="on-hold">On Hold</option><option value="stale">Stale</option><option value="archived">Archived</option></select></div>
               <input type="text" class="search-input" placeholder="Search..." oninput="handleSearch(this.value)">
               <button class="text-action-btn" onclick="exportCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
               <button class="text-action-btn" onclick="loadData()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh</button>
             </div>
           </div>
-          <div class="table-wrapper"><table><thead><tr><th onclick="sortBy('organization')">Organization</th><th onclick="sortBy('contact')">Contact</th><th onclick="sortBy('pipelineStatus')">Status</th><th>Checklist</th><th onclick="sortBy('goLiveDate')">Go Live</th><th onclick="sortBy('lastUpdated')" class="sorted">Updated</th><th>Rep</th><th>Actions</th></tr></thead><tbody id="tableBody"><tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr></tbody></table></div>
+          <div class="table-wrapper"><table><thead><tr><th onclick="sortBy('organization')">Organization <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('contact')">Contact <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('pipelineStatus')">Status <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('checklistCount')">Checklist <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('goLiveDate')">Go Live <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('lastUpdated')" class="sorted">Updated <span class="sort-arrow">&#x25BC;</span></th><th onclick="sortBy('accountRep')">Rep <span class="sort-arrow">&#x25B2;</span></th><th>Actions</th></tr></thead><tbody id="tableBody"><tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr></tbody></table></div>
           <div class="mobile-cards" id="mobileCards"></div>
         </div>
 
@@ -437,6 +443,8 @@
             <div class="pipeline-column" data-status="on-hold"><div class="pipeline-column-header"><span class="pipeline-column-title"><span class="pipeline-dot"></span> On Hold</span><span class="pipeline-column-count" id="countOnHold">0</span></div><div class="pipeline-cards" id="cardsOnHold"></div></div>
             <div class="pipeline-column" data-status="review"><div class="pipeline-column-header"><span class="pipeline-column-title"><span class="pipeline-dot"></span> Review</span><span class="pipeline-column-count" id="countReview">0</span></div><div class="pipeline-cards" id="cardsReview"></div></div>
             <div class="pipeline-column" data-status="complete"><div class="pipeline-column-header"><span class="pipeline-column-title"><span class="pipeline-dot"></span> Form Complete</span><span class="pipeline-column-count" id="countComplete">0</span></div><div class="pipeline-cards" id="cardsComplete"></div></div>
+            <div class="pipeline-column" data-status="onboarding"><div class="pipeline-column-header"><span class="pipeline-column-title"><span class="pipeline-dot"></span> Onboarding</span><span class="pipeline-column-count" id="countOnboarding">0</span></div><div class="pipeline-cards" id="cardsOnboarding"></div></div>
+            <div class="pipeline-column" data-status="live"><div class="pipeline-column-header"><span class="pipeline-column-title"><span class="pipeline-dot"></span> Live</span><span class="pipeline-column-count" id="countLive">0</span></div><div class="pipeline-cards" id="cardsLive"></div></div>
           </div>
         </div>
       </div>
@@ -593,11 +601,19 @@
             if (!ps) { if (d.status === 'Submitted') ps = 'complete'; else if (pct >= 75) ps = 'review'; else if (pct > 0) ps = 'in-progress'; else ps = 'new'; }
             return { ...d, isStale: d.status === 'In Progress' && daysDiff > STALE_DAYS, daysSinceUpdate: Math.floor(daysDiff), updatedDate: updated, pipelineStatus: ps, goLiveDate: getGoLiveDate(d), locationStr: getLocationString(d), accountRep: d.accountRep || '' };
           });
-          // Deduplicate: hide drafts if a completed submission exists for same email
-          var submittedEmails = {};
-          processed.forEach(function(d) { if (d.sheetType === 'main' && d.email) submittedEmails[d.email.toLowerCase()] = true; });
+          // Deduplicate: hide drafts if a submission exists for same email OR same org name
+          var submittedEmails = {}, submittedOrgs = {};
+          processed.forEach(function(d) {
+            if (d.sheetType === 'main') {
+              if (d.email) submittedEmails[d.email.toLowerCase()] = true;
+              if (d.organization) submittedOrgs[d.organization.toLowerCase().trim()] = true;
+            }
+          });
           var deduped = processed.filter(function(d) {
-            if (d.sheetType === 'drafts' && d.email && submittedEmails[d.email.toLowerCase()]) return false;
+            if (d.sheetType === 'drafts') {
+              if (d.email && submittedEmails[d.email.toLowerCase()]) return false;
+              if (d.organization && submittedOrgs[d.organization.toLowerCase().trim()]) return false;
+            }
             return true;
           });
           allData = deduped.filter(d => d.status !== 'Archived');
@@ -627,12 +643,31 @@
     function setTimePeriod(d) { timePeriodDays = parseInt(d); updateStats(); renderTable(); renderPipeline(); }
     function setFilter(f) { currentFilter = f; renderTable(); renderPipeline(); }
     function handleSearch(q) { searchQuery = q.toLowerCase(); renderTable(); renderPipeline(); }
-    function sortBy(f) { if (sortField === f) sortDir = sortDir === 'asc' ? 'desc' : 'asc'; else { sortField = f; sortDir = 'desc'; } renderTable(); }
+    function sortBy(f) { if (sortField === f) sortDir = sortDir === 'asc' ? 'desc' : 'asc'; else { sortField = f; sortDir = 'desc'; } renderTable(); updateSortIndicators(); }
+    function updateSortIndicators() {
+      document.querySelectorAll('th').forEach(function(th) {
+        th.classList.remove('sorted');
+        var arrow = th.querySelector('.sort-arrow');
+        if (arrow) arrow.innerHTML = '&#x25B2;';
+      });
+      var fieldMap = { organization: 0, contact: 1, pipelineStatus: 2, checklistCount: 3, goLiveDate: 4, lastUpdated: 5, accountRep: 6 };
+      var idx = fieldMap[sortField];
+      if (idx !== undefined) {
+        var th = document.querySelectorAll('th')[idx];
+        if (th) {
+          th.classList.add('sorted');
+          var arrow = th.querySelector('.sort-arrow');
+          if (arrow) arrow.innerHTML = sortDir === 'asc' ? '&#x25B2;' : '&#x25BC;';
+        }
+      }
+    }
 
     function getFilteredData() {
       let filtered = currentFilter === 'archived' ? archivedData : allData.slice();
       if (timePeriodDays > 0) { const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - timePeriodDays); filtered = filtered.filter(d => d.updatedDate >= cutoff); }
       if (currentFilter === 'complete') filtered = filtered.filter(d => d.pipelineStatus === 'complete');
+      else if (currentFilter === 'onboarding') filtered = filtered.filter(d => d.pipelineStatus === 'onboarding');
+      else if (currentFilter === 'live') filtered = filtered.filter(d => d.pipelineStatus === 'live');
       else if (currentFilter === 'active') filtered = filtered.filter(d => d.pipelineStatus !== 'complete' && d.pipelineStatus !== 'on-hold');
       else if (currentFilter === 'on-hold') filtered = filtered.filter(d => d.pipelineStatus === 'on-hold');
       else if (currentFilter === 'stale') filtered = filtered.filter(d => d.isStale);
@@ -646,7 +681,7 @@
       filtered.sort((a, b) => { let av = a[sortField], bv = b[sortField]; if (sortField === 'lastUpdated' || sortField === 'goLiveDate') { av = av ? new Date(av) : new Date(0); bv = bv ? new Date(bv) : new Date(0); } if (av < bv) return sortDir === 'asc' ? -1 : 1; if (av > bv) return sortDir === 'asc' ? 1 : -1; return 0; });
       if (!filtered.length) { document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">No submissions found</td></tr>'; return; }
       var _rowIdx = 0;
-      const labels = { new: 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', review: 'Review', complete: 'Form Complete' };
+      const labels = { new: 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', review: 'Review', complete: 'Form Complete', onboarding: 'Onboarding', live: 'Live' };
       document.getElementById('tableBody').innerHTML = filtered.map(item => {
         const goLive = formatGoLive(item.goLiveDate), isArch = currentFilter === 'archived', clCount = getChecklistCount(item.email);
         return '<tr><td><div class="org-cell"><div class="org-avatar" style="background:' + getOrgColor(item.organization) + '">' + getOrgInitials(item.organization) + '</div><div><div class="org-name">' + esc(item.organization || 'Unknown') + '</div>' + (item.locationStr ? '<div class="org-location">' + esc(item.locationStr) + '</div>' : '') + '</div></div></td><td><div class="contact-name">' + esc(item.contact || '-') + '</div><div class="contact-email">' + esc(item.email) + '</div></td><td><span class="status-badge ' + (isArch ? 'archived' : item.isStale ? 'stale' : item.pipelineStatus) + '">' + (isArch ? 'Archived' : item.isStale ? 'Stale' : labels[item.pipelineStatus]) + '</span></td><td><div class="checklist-mini"><div class="checklist-dots">' + CHECKLIST_ITEMS.map(c => '<span class="checklist-dot' + (getChecklist(item.email)[c.id] ? ' done' : '') + '"></span>').join('') + '</div><span class="checklist-text">' + clCount + '/' + CHECKLIST_ITEMS.length + '</span></div></td><td>' + (goLive ? '<span class="go-live-date">' + goLive + '</span>' : '<span class="go-live-date none">-</span>') + '</td><td><span class="time-ago">' + timeAgo(item.lastUpdated) + '</span></td><td><select class="rep-select" onchange="assignRep(\'' + item.sheetType + '\',' + item.rowIndex + ',this.value)">' + getRepOptions(item.accountRep) + '</select></td><td><div class="action-cell"><button class="action-btn primary" onclick=\'viewDetails(' + JSON.stringify(item).replace(/'/g,"&#39;") + ')\'>View</button><button class="action-btn" onclick="emailContact(\'' + esc(item.email) + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email</button><button class="action-btn danger" onclick="archiveRow(\'' + item.sheetType + '\',' + item.rowIndex + ',\'' + esc(item.email) + '\')">' + (isArch ? 'Restore' : 'Archive') + '</button></div></td></tr>';
@@ -666,9 +701,9 @@
     function getRepOptions(sel) { return '<option value="">Unassigned</option>' + TEAM_MEMBERS.map(m => '<option value="' + m.email + '"' + (sel === m.email ? ' selected' : '') + '>' + m.name + '</option>').join(''); }
 
     function renderPipeline() {
-      const filtered = getFilteredData(), byStatus = { new: [], 'in-progress': [], 'on-hold': [], review: [], complete: [] };
+      const filtered = getFilteredData(), byStatus = { new: [], 'in-progress': [], 'on-hold': [], review: [], complete: [], onboarding: [], live: [] };
       filtered.forEach(d => { if (byStatus[d.pipelineStatus]) byStatus[d.pipelineStatus].push(d); });
-      ['new', 'in-progress', 'on-hold', 'review', 'complete'].forEach(status => {
+      ['new', 'in-progress', 'on-hold', 'review', 'complete', 'onboarding', 'live'].forEach(status => {
         const cards = byStatus[status], idPart = status.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('');
         document.getElementById('count' + idPart).textContent = cards.length;
         document.getElementById('cards' + idPart).innerHTML = cards.length ? cards.map(item => {
@@ -759,7 +794,7 @@
       });
       if (!evts.length) return;
       var dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-      var labels = { 'new': 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', 'review': 'Review', 'complete': 'Form Complete' };
+      var labels = { 'new': 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', 'review': 'Review', 'complete': 'Form Complete', 'onboarding': 'Onboarding', 'live': 'Live' };
       var h = '<div class="cal-popover-header"><div><h4>' + evts.length + ' Go-Live' + (evts.length > 1 ? 's' : '') + '</h4><div class="pop-date">' + dateStr + '</div></div><button class="cal-popover-close" onclick="closeCalPopover()">&#x2715;</button></div>';
       h += '<div class="cal-popover-body">';
       evts.forEach(function(e) {
@@ -851,7 +886,7 @@
       const fd = item.formData || {}, contact = fd.contactInfo || {}, policies = fd.policies || {}, locations = fd.locations || [];
       const pct = item.completion || 0, circ = 2 * Math.PI * 36, offset = circ - (pct / 100) * circ;
       const cl = getChecklist(item.email), clCount = CHECKLIST_ITEMS.filter(i => cl[i.id]).length;
-      const plabels = { 'new': 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', 'review': 'Review', 'complete': 'Form Complete' };
+      const plabels = { 'new': 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', 'review': 'Review', 'complete': 'Form Complete', 'onboarding': 'Onboarding', 'live': 'Live' };
       const statusClass = item.pipelineStatus || 'new';
       
       let html = '<div class="modal-header"><div style="display:flex;align-items:center;gap:16px"><div style="width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white;background:rgba(255,255,255,0.2);flex-shrink:0">' + getOrgInitials(item.organization) + '</div><div><h2>' + esc(item.organization || 'Details') + '</h2><div class="modal-subtitle">' + esc(contact.fullName || item.contact || '') + (item.locationStr ? ' &middot; ' + esc(item.locationStr) : '') + '</div></div></div><span class="status-badge ' + statusClass + '" style="position:absolute;top:28px;right:72px;font-size:10px">' + (plabels[statusClass] || 'New') + '</span><button class="modal-close" onclick="closeModal()">&#x2715;</button></div>';
