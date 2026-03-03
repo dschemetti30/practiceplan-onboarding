@@ -55,16 +55,26 @@
     .calendar-month{font-size:14px;font-weight:600;color:var(--text);min-width:140px;text-align:center}
     .calendar-grid{display:grid;grid-template-columns:repeat(7,1fr)}
     .calendar-day-header{padding:12px;text-align:center;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;background:var(--bg)}
-    .calendar-day{min-height:100px;padding:8px;border:1px solid var(--border);border-top:none;border-left:none;position:relative;background:var(--card)}
+    .calendar-day{min-height:120px;padding:6px;border:1px solid var(--border);border-top:none;border-left:none;position:relative;background:var(--card);transition:background 0.2s}
     .calendar-day:nth-child(7n){border-right:none}
     .calendar-day.other-month{background:var(--bg);opacity:0.5}
     .calendar-day.today{background:rgba(0,118,187,0.05)}
+    .calendar-day.has-events{background:rgba(0,118,187,0.02)}
+    .cal-event-count{position:absolute;top:4px;right:4px;background:var(--pp-blue);color:white;font-size:8px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
     .calendar-day.today .calendar-date{background:var(--pp-blue);color:white}
     .calendar-date{font-size:12px;font-weight:600;color:var(--text);width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:6px;margin-bottom:4px}
-    .calendar-event{font-size:10px;padding:4px 6px;border-radius:4px;margin-bottom:2px;cursor:pointer;transition:all 0.2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .calendar-event:hover{transform:scale(1.02)}
-    .calendar-event.go-live{background:linear-gradient(135deg,rgba(0,168,79,0.15),rgba(0,168,79,0.25));color:#15803d;border-left:3px solid var(--pp-green)}
-    .calendar-more{font-size:9px;color:var(--text2);padding:2px 4px;cursor:pointer}
+    .calendar-event{font-size:10px;padding:0;border-radius:8px;margin-bottom:4px;cursor:pointer;transition:all 0.2s;overflow:hidden;border:1px solid var(--border);background:var(--card)}
+    .calendar-event:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+    .calendar-event .event-bar{height:3px;width:100%}
+    .calendar-event.upcoming .event-bar{background:linear-gradient(90deg,#0076bb,#38bdf8)}
+    .calendar-event.this-week .event-bar{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+    .calendar-event.past-event .event-bar{background:linear-gradient(90deg,#00a84f,#4ade80)}
+    .calendar-event.is-today .event-bar{background:linear-gradient(90deg,#8b5cf6,#a78bfa)}
+    .calendar-event .event-body{padding:5px 7px}
+    .calendar-event .event-org{display:block;font-weight:600;line-height:1.2;color:var(--text);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .calendar-event .event-meta{display:block;font-size:8px;color:var(--text2);margin-top:1px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .calendar-more{font-size:9px;color:var(--pp-blue);padding:3px 6px;cursor:pointer;font-weight:600;border-radius:4px;transition:background 0.2s}
+    .calendar-more:hover{background:rgba(0,118,187,0.08)}
     .stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-bottom:32px}
     .stat-card{background:var(--card);border-radius:20px;padding:24px;border:1px solid var(--border)}
     .stat-card h3{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px}
@@ -146,7 +156,14 @@
     .org-avatar{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;letter-spacing:0.5px}
     .org-name{font-weight:600;color:var(--text);font-size:12px}
     .org-location{font-size:10px;color:var(--text3);margin-top:2px}
-    .action-cell{display:flex;gap:4px;align-items:center}
+    .action-cell{display:flex;flex-direction:column;gap:3px;align-items:stretch;min-width:70px}
+    .action-cell .action-btn{padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card);font-size:9px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s;text-align:center;display:flex;align-items:center;justify-content:center;gap:4px;color:var(--text2)}
+    .action-cell .action-btn:hover{border-color:var(--pp-blue);color:var(--pp-blue)}
+    .action-cell .action-btn.primary{border-color:var(--pp-blue);color:var(--pp-blue)}
+    .action-cell .action-btn.primary:hover{background:var(--pp-blue);color:white}
+    .action-cell .action-btn.danger{color:var(--text3)}
+    .action-cell .action-btn.danger:hover{border-color:#ef4444;color:#ef4444}
+    .action-cell .action-btn svg{width:10px;height:10px;flex-shrink:0}
     .contact-name{font-weight:500;color:var(--text);font-size:11px}
     .contact-email{font-size:9px;color:var(--text2);margin-top:1px;word-break:break-all}
     .go-live-date{font-size:10px;color:var(--pp-green);font-weight:600}
@@ -159,8 +176,11 @@
     .checklist-dot.done{background:var(--pp-green)}
     .checklist-text{font-size:10px;color:var(--text2)}
     .empty-state{padding:60px 24px;text-align:center;color:var(--text2)}
-    .pipeline-board{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
-    .pipeline-column{background:var(--bg);border-radius:14px;padding:12px;min-height:250px}
+    .pipeline-section{margin-top:40px}
+    .pipeline-board{display:grid;grid-template-columns:repeat(5,1fr);gap:0}
+    .pipeline-column{background:var(--bg);padding:14px;min-height:250px;border-right:1px solid var(--border)}
+    .pipeline-column:first-child{border-radius:14px 0 0 14px}
+    .pipeline-column:last-child{border-radius:0 14px 14px 0;border-right:none}
     .pipeline-column-header{display:flex;justify-content:space-between;align-items:center;padding:4px 4px 12px}
     .pipeline-column-title{font-size:10px;font-weight:700;color:var(--text);text-transform:uppercase;display:flex;align-items:center;gap:5px}
     .pipeline-dot{width:7px;height:7px;border-radius:50%}
@@ -271,6 +291,31 @@
     .space-info-chip{display:flex;align-items:center;gap:5px;padding:5px 10px;background:var(--bg);border-radius:8px;font-size:11px;color:var(--text2)}
     .space-info-chip svg{width:12px;height:12px;flex-shrink:0}
     .space-info-chip strong{color:var(--text);font-weight:600}
+    
+    .section-notes{margin-top:12px}
+    .notes-toggle{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--pp-blue);cursor:pointer;font-weight:600;padding:6px 0;border:none;background:none;font-family:inherit}
+    .notes-toggle:hover{text-decoration:underline}
+    .notes-toggle svg{width:14px;height:14px;transition:transform 0.2s}
+    .notes-toggle.open svg{transform:rotate(90deg)}
+    .notes-panel{display:none;margin-top:8px}
+    .notes-panel.open{display:block}
+    .notes-list{margin-bottom:10px}
+    .note-item{display:flex;gap:10px;padding:10px;background:var(--bg);border-radius:10px;margin-bottom:6px;border-left:3px solid var(--pp-blue)}
+    .note-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--pp-blue),var(--pp-green));color:white;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+    .note-content{flex:1;min-width:0}
+    .note-author{font-size:10px;font-weight:600;color:var(--text)}
+    .note-date{font-size:9px;color:var(--text3);margin-left:8px}
+    .note-text{font-size:12px;color:var(--text);margin-top:3px;line-height:1.4}
+    .note-delete{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px;flex-shrink:0}
+    .note-delete:hover{color:#ef4444}
+    .notes-input-row{display:flex;gap:8px}
+    .notes-input{flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-family:inherit;color:var(--text);background:var(--card);resize:none}
+    .notes-input:focus{outline:none;border-color:var(--pp-blue)}
+    .notes-submit{padding:8px 14px;border-radius:8px;border:none;background:var(--pp-blue);color:white;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .notes-submit:hover{opacity:0.9}
+    .modal-export-btn{display:flex;align-items:center;gap:8px;padding:12px 20px;background:linear-gradient(135deg,var(--pp-blue),var(--pp-green));color:white;border:none;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin:0 32px 24px;width:calc(100% - 64px)}
+    .modal-export-btn:hover{opacity:0.9}
+    .modal-export-btn svg{width:16px;height:16px}
     .toast{position:fixed;bottom:28px;right:28px;background:var(--text);color:var(--card);padding:14px 24px;border-radius:14px;font-size:14px;font-weight:500;z-index:2000;transform:translateY(100px);opacity:0;transition:all 0.4s}
     .toast.show{transform:translateY(0);opacity:1}
     .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--pp-blue);border-radius:50%;animation:spin 0.8s linear infinite}
@@ -541,7 +586,7 @@
       const labels = { new: 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', review: 'Review', complete: 'Complete' };
       document.getElementById('tableBody').innerHTML = filtered.map(item => {
         const goLive = formatGoLive(item.goLiveDate), isArch = currentFilter === 'archived', clCount = getChecklistCount(item.email);
-        return '<tr><td><div class="org-name">' + esc(item.organization || 'Unknown') + '</div>' + (item.locationStr ? '<div class="org-location">' + esc(item.locationStr) + '</div>' : '') + '</td><td><div class="contact-name">' + esc(item.contact || '-') + '</div><div class="contact-email">' + esc(item.email) + '</div></td><td><span class="status-badge ' + (isArch ? 'archived' : item.isStale ? 'stale' : item.pipelineStatus) + '">' + (isArch ? 'Archived' : item.isStale ? 'Stale' : labels[item.pipelineStatus]) + '</span></td><td><div class="checklist-mini"><div class="checklist-dots">' + CHECKLIST_ITEMS.map(c => '<span class="checklist-dot' + (getChecklist(item.email)[c.id] ? ' done' : '') + '"></span>').join('') + '</div><span class="checklist-text">' + clCount + '/' + CHECKLIST_ITEMS.length + '</span></div></td><td>' + (goLive ? '<span class="go-live-date">' + goLive + '</span>' : '<span class="go-live-date none">-</span>') + '</td><td><span class="time-ago">' + timeAgo(item.lastUpdated) + '</span></td><td><select class="rep-select" onchange="assignRep(\'' + item.sheetType + '\',' + item.rowIndex + ',this.value)">' + getRepOptions(item.accountRep) + '</select></td><td class="action-btns"><button class="view-btn" onclick=\'viewDetails(' + JSON.stringify(item).replace(/'/g,"&#39;") + ')\'>View</button><button class="icon-btn" onclick="emailContact(\'' + esc(item.email) + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></button></td></tr>';
+        return '<tr><td><div class="org-cell"><div class="org-avatar" style="background:' + getOrgColor(item.organization) + '">' + getOrgInitials(item.organization) + '</div><div><div class="org-name">' + esc(item.organization || 'Unknown') + '</div>' + (item.locationStr ? '<div class="org-location">' + esc(item.locationStr) + '</div>' : '') + '</div></div></td><td><div class="contact-name">' + esc(item.contact || '-') + '</div><div class="contact-email">' + esc(item.email) + '</div></td><td><span class="status-badge ' + (isArch ? 'archived' : item.isStale ? 'stale' : item.pipelineStatus) + '">' + (isArch ? 'Archived' : item.isStale ? 'Stale' : labels[item.pipelineStatus]) + '</span></td><td><div class="checklist-mini"><div class="checklist-dots">' + CHECKLIST_ITEMS.map(c => '<span class="checklist-dot' + (getChecklist(item.email)[c.id] ? ' done' : '') + '"></span>').join('') + '</div><span class="checklist-text">' + clCount + '/' + CHECKLIST_ITEMS.length + '</span></div></td><td>' + (goLive ? '<span class="go-live-date">' + goLive + '</span>' : '<span class="go-live-date none">-</span>') + '</td><td><span class="time-ago">' + timeAgo(item.lastUpdated) + '</span></td><td><select class="rep-select" onchange="assignRep(\'' + item.sheetType + '\',' + item.rowIndex + ',this.value)">' + getRepOptions(item.accountRep) + '</select></td><td><div class="action-cell"><button class="action-btn primary" onclick=\'viewDetails(' + JSON.stringify(item).replace(/'/g,"&#39;") + ')\'>View</button><button class="action-btn" onclick="emailContact(\'' + esc(item.email) + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email</button><button class="action-btn danger" onclick="archiveRow(\'' + item.sheetType + '\',' + item.rowIndex + ',\'' + esc(item.email) + '\')">' + (isArch ? 'Restore' : 'Archive') + '</button></div></td></tr>';
       }).join('');
     }
 
@@ -615,8 +660,7 @@
         dayEvents.slice(0, 2).forEach(function(e) {
           var evtClass = getEventClass(e.date);
           var loc = e.locationStr || '';
-          var metaText = loc || e.contact || '';
-          html += '<div class="calendar-event ' + evtClass + '" onclick="event.stopPropagation();showCalPopover(event,\'' + isoStr + '\')" title="' + esc(e.organization) + (metaText ? ' - ' + esc(metaText) : '') + '"><span class="event-org">' + esc(e.organization || 'Unknown') + '</span>' + (metaText ? '<span class="event-meta">' + esc(metaText) + '</span>' : '') + '</div>';
+          html += '<div class="calendar-event ' + evtClass + '" onclick="event.stopPropagation();showCalPopover(event,\'' + isoStr + '\')" title="' + esc(e.organization) + (loc ? ' - ' + esc(loc) : '') + '"><div class="event-bar"></div><div class="event-body"><span class="event-org">' + esc(e.organization || 'Unknown') + '</span>' + (loc ? '<span class="event-meta">' + esc(loc) + '</span>' : '') + '</div></div>';
         });
         if (dayEvents.length > 2) html += '<div class="calendar-more" onclick="event.stopPropagation();showCalPopover(event,\'' + isoStr + '\')">+' + (dayEvents.length - 2) + ' more</div>';
         html += '</div>';
@@ -669,6 +713,16 @@
     function prevMonth() { calendarDate.setMonth(calendarDate.getMonth() - 1); renderCalendar(); }
     function nextMonth() { calendarDate.setMonth(calendarDate.getMonth() + 1); renderCalendar(); }
 
+    async function archiveRow(sheetType, rowIndex, email) {
+      var isArchived = currentFilter === 'archived';
+      var action = isArchived ? 'restoreSubmission' : 'archiveSubmission';
+      if (!confirm(isArchived ? 'Restore this submission?' : 'Archive this submission?')) return;
+      try {
+        var result = await jsonpRequest(API_URL + '?action=' + action + '&email=' + encodeURIComponent(currentUser?.email || '') + '&sheetType=' + sheetType + '&rowIndex=' + rowIndex);
+        if (result.success) { showToast(isArchived ? 'Restored' : 'Archived'); loadData(); }
+        else showToast('Failed: ' + (result.error || 'Unknown'));
+      } catch(e) { showToast('Failed'); }
+    }
     function emailContact(e) { window.open('mailto:' + e); }
     async function assignRep(sheetType, rowIndex, repEmail) {
       try {
@@ -680,16 +734,17 @@
     function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
 
     function viewDetails(item) {
+      window._currentModalItem = item;
       const fd = item.formData || {}, contact = fd.contactInfo || {}, policies = fd.policies || {}, locations = fd.locations || [];
       const pct = item.completion || 0, circ = 2 * Math.PI * 36, offset = circ - (pct / 100) * circ;
       const cl = getChecklist(item.email), clCount = CHECKLIST_ITEMS.filter(i => cl[i.id]).length;
-      const labels = { 'new': 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', 'review': 'Review', 'complete': 'Complete' };
+      const plabels = { 'new': 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', 'review': 'Review', 'complete': 'Complete' };
       const statusClass = item.pipelineStatus || 'new';
       
-      let html = '<div class="modal-header"><div style="display:flex;align-items:center;gap:16px"><div class="org-avatar" style="background:rgba(255,255,255,0.2);width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white">' + getOrgInitials(item.organization) + '</div><div><h2>' + esc(item.organization || 'Details') + '</h2><div class="modal-subtitle">' + esc(contact.fullName || item.contact || '') + (item.locationStr ? ' &middot; ' + esc(item.locationStr) : '') + '</div></div></div><span class="status-badge ' + statusClass + '" style="position:absolute;top:28px;right:72px;font-size:10px">' + (labels[statusClass] || 'New') + '</span><button class="modal-close" onclick="closeModal()">&#x2715;</button></div>';
+      let html = '<div class="modal-header"><div style="display:flex;align-items:center;gap:16px"><div style="width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white;background:rgba(255,255,255,0.2);flex-shrink:0">' + getOrgInitials(item.organization) + '</div><div><h2>' + esc(item.organization || 'Details') + '</h2><div class="modal-subtitle">' + esc(contact.fullName || item.contact || '') + (item.locationStr ? ' &middot; ' + esc(item.locationStr) : '') + '</div></div></div><span class="status-badge ' + statusClass + '" style="position:absolute;top:28px;right:72px;font-size:10px">' + (plabels[statusClass] || 'New') + '</span><button class="modal-close" onclick="closeModal()">&#x2715;</button></div>';
       
       // Checklist
-      html += '<div class="checklist-section"><div class="checklist-header"><div class="checklist-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Onboarding Checklist</div><div class="checklist-count">' + clCount + ' of ' + CHECKLIST_ITEMS.length + ' complete</div></div><div class="checklist-items">' + CHECKLIST_ITEMS.map(c => '<div class="checklist-item' + (cl[c.id] ? ' checked' : '') + '" onclick="toggleChecklistItem(\'' + item.email + '\',\'' + c.id + '\',this)"><div class="checklist-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span class="checklist-label">' + c.label + '</span></div>').join('') + '</div></div>';
+      html += '<div class="checklist-section"><div class="checklist-header"><div class="checklist-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Onboarding Checklist</div><div class="checklist-count">' + clCount + ' of ' + CHECKLIST_ITEMS.length + ' complete</div></div><div class="checklist-items">' + CHECKLIST_ITEMS.map(c => '<div class="checklist-item' + (cl[c.id] ? ' checked' : '') + '" onclick="toggleChecklistItem(\'' + item.email + '\',\'' + c.id + '\',this)"><div class="checklist-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span class="checklist-label">' + c.label + '</span></div>').join('') + '</div>' + renderNotesBlock(item.email, 'checklist') + '</div>';
       
       // Drive folder
       if (item.driveFolder) html += '<div class="drive-banner"><div class="drive-banner-text"><div class="drive-banner-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div><div><div class="drive-banner-label">Uploaded Files</div><div class="drive-banner-title">View in Google Drive</div></div></div><a href="' + item.driveFolder + '" target="_blank" class="drive-banner-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Open</a></div>';
@@ -698,9 +753,9 @@
       html += '<div class="progress-hero"><div class="progress-hero-inner"><div class="progress-ring-large"><svg width="90" height="90" viewBox="0 0 90 90"><circle class="bg" cx="45" cy="45" r="36"/><circle class="progress" cx="45" cy="45" r="36" stroke-dasharray="' + circ + '" stroke-dashoffset="' + offset + '"/></svg><div class="center-text">' + pct + '%</div></div><div class="progress-details"><div class="progress-title">Form Progress</div><div class="progress-bar-large"><div class="progress-bar-fill" style="width:' + pct + '%"></div></div><div class="progress-meta"><span><strong>' + (item.locations||0) + '</strong> locations</span><span><strong>' + (item.spaces||0) + '</strong> spaces</span><span>Updated <strong>' + timeAgo(item.lastUpdated) + '</strong></span></div></div></div></div>';
       
       // Contact info
-      html += '<div class="modal-body"><div class="detail-section"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Contact Information</h3><div class="detail-grid"><div class="detail-item"><label>Name</label><span>' + esc(contact.fullName || item.contact || '-') + '</span></div><div class="detail-item"><label>Organization</label><span>' + esc(contact.organization || item.organization || '-') + '</span></div><div class="detail-item"><label>Email</label><span>' + esc(contact.email || item.email || '-') + '</span></div><div class="detail-item"><label>Phone</label><span>' + formatPhone(contact.phone || item.phone) + '</span></div>' + (contact.adminEmail ? '<div class="detail-item"><label>Admin Email</label><span>' + esc(contact.adminEmail) + '</span></div>' : '') + (contact.adminPhone ? '<div class="detail-item"><label>Admin Phone</label><span>' + formatPhone(contact.adminPhone) + '</span></div>' : '') + (policies.goLiveDate ? '<div class="detail-item"><label>Go Live Date</label><span>' + esc(safeGoLiveDateStr(policies.goLiveDate)) + '</span></div>' : '') + (item.accountRep ? '<div class="detail-item"><label>Account Rep</label><span>' + esc((TEAM_MEMBERS.find(function(m){return m.email===item.accountRep})||{}).name || item.accountRep) + '</span></div>' : '') + '</div></div>';
+      html += '<div class="modal-body"><div class="detail-section"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Contact Information</h3><div class="detail-grid"><div class="detail-item"><label>Name</label><span>' + esc(contact.fullName || item.contact || '-') + '</span></div><div class="detail-item"><label>Organization</label><span>' + esc(contact.organization || item.organization || '-') + '</span></div><div class="detail-item"><label>Email</label><span>' + esc(contact.email || item.email || '-') + '</span></div><div class="detail-item"><label>Phone</label><span>' + formatPhone(contact.phone || item.phone) + '</span></div>' + (contact.adminEmail ? '<div class="detail-item"><label>Admin Email</label><span>' + esc(contact.adminEmail) + '</span></div>' : '') + (contact.adminPhone ? '<div class="detail-item"><label>Admin Phone</label><span>' + formatPhone(contact.adminPhone) + '</span></div>' : '') + (policies.goLiveDate ? '<div class="detail-item"><label>Go Live Date</label><span>' + esc(safeGoLiveDateStr(policies.goLiveDate)) + '</span></div>' : '') + (item.accountRep ? '<div class="detail-item"><label>Account Rep</label><span>' + esc((TEAM_MEMBERS.find(function(m){return m.email===item.accountRep})||{}).name || item.accountRep) + '</span></div>' : '') + '</div>' + renderNotesBlock(item.email, 'contact') + '</div>';
       
-      // Policies section
+      // Policies
       if (policies && Object.keys(policies).length > 0) {
         var policyItems = [];
         Object.keys(policies).forEach(function(key) {
@@ -710,7 +765,7 @@
           else if (val && typeof val === 'string' && val !== 'false') policyItems.push(key + ': ' + val);
         });
         if (policyItems.length > 0) {
-          html += '<div class="detail-section"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Policies &amp; Settings</h3><div class="tag-list">' + policyItems.map(function(p) { return '<span class="tag blue">' + esc(p.replace(/([A-Z])/g, ' $1').replace(/^./, function(s){return s.toUpperCase()}).trim()) + '</span>'; }).join('') + '</div></div>';
+          html += '<div class="detail-section"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Policies &amp; Settings</h3><div class="tag-list">' + policyItems.map(function(p) { return '<span class="tag blue">' + esc(p.replace(/([A-Z])/g, ' $1').replace(/^./, function(s){return s.toUpperCase()}).trim()) + '</span>'; }).join('') + '</div>' + renderNotesBlock(item.email, 'policies') + '</div>';
         }
       }
       
@@ -721,101 +776,38 @@
           var assetCount = (loc.assets && loc.assets.length) || 0;
           html += '<div class="location-card" id="loc-' + idx + '"><div class="location-header" onclick="toggleLocation(' + idx + ')"><div><h4>' + esc(loc.name || 'Unnamed Location') + '</h4><div class="location-meta">' + assetCount + ' space' + (assetCount !== 1 ? 's' : '');
           if (loc.address) html += ' &middot; ' + esc(loc.address);
-          else if (loc.city || loc.state) html += ' &middot; ' + esc((loc.city || '') + (loc.city && loc.state ? ', ' : '') + (loc.state || ''));
+          else if (loc.city || loc.state) html += ' &middot; ' + esc((loc.city||'') + (loc.city && loc.state ? ', ' : '') + (loc.state||''));
           html += '</div></div></div><div class="location-content">';
           if (assetCount > 0) {
             loc.assets.forEach(function(space) {
-              html += '<div class="space-card">';
-              html += '<div class="space-header"><span class="space-name">' + esc(space.name || 'Unnamed Space') + '</span>';
+              html += '<div class="space-card"><div class="space-header"><span class="space-name">' + esc(space.name || 'Unnamed Space') + '</span>';
               if (space.pricing) html += '<span class="space-price">$' + esc(String(space.pricing)) + '/hr</span>';
               html += '</div>';
-              
-              // Basic info chips
               var infoChips = [];
-              if (space.type) infoChips.push(typeof space.type === 'object' ? JSON.stringify(space.type) : String(space.type));
-              if (space.maxCapacity) infoChips.push('Capacity: ' + (typeof space.maxCapacity === 'object' ? JSON.stringify(space.maxCapacity) : String(space.maxCapacity)));
-              if (space.size) infoChips.push('Size: ' + (typeof space.size === 'object' ? JSON.stringify(space.size) : String(space.size)));
+              if (space.type) infoChips.push(typeof space.type==='object'?JSON.stringify(space.type):String(space.type));
+              if (space.maxCapacity) infoChips.push('Capacity: ' + (typeof space.maxCapacity==='object'?JSON.stringify(space.maxCapacity):String(space.maxCapacity)));
+              if (space.size) infoChips.push('Size: ' + (typeof space.size==='object'?JSON.stringify(space.size):String(space.size)));
               if (infoChips.length) html += '<div class="space-info-row">' + infoChips.map(function(c){return '<span class="space-info-chip">' + esc(c) + '</span>'}).join('') + '</div>';
-              
-              // Amenities
               var amenities = space.amenities || [];
-              if (amenities.length > 0) {
-                html += '<div class="space-section-title">Amenities</div><div class="tag-list">';
-                amenities.forEach(function(a) {
-                  var label = (typeof a === 'object' && a !== null) ? (a.name || a.label || a.title || JSON.stringify(a)) : String(a);
-                  html += '<span class="tag green">' + esc(label) + '</span>';
-                });
-                html += '</div>';
-              }
-              
-              // Features
+              if (amenities.length) { html += '<div class="space-section-title">Amenities</div><div class="tag-list">'; amenities.forEach(function(a){ var label=(typeof a==='object'&&a!==null)?(a.name||a.label||a.title||JSON.stringify(a)):String(a); html+='<span class="tag green">'+esc(label)+'</span>'; }); html+='</div>'; }
               var features = space.features || [];
-              if (features.length > 0) {
-                html += '<div class="space-section-title">Features</div><div class="tag-list">';
-                features.forEach(function(f) {
-                  var label = (typeof f === 'object' && f !== null) ? (f.name || f.label || f.title || JSON.stringify(f)) : String(f);
-                  html += '<span class="tag blue">' + esc(label) + '</span>';
-                });
-                html += '</div>';
-              }
-              
-              // Equipment
+              if (features.length) { html += '<div class="space-section-title">Features</div><div class="tag-list">'; features.forEach(function(f){ var label=(typeof f==='object'&&f!==null)?(f.name||f.label||f.title||JSON.stringify(f)):String(f); html+='<span class="tag blue">'+esc(label)+'</span>'; }); html+='</div>'; }
               var equipment = space.equipment || [];
-              if (equipment.length > 0) {
-                html += '<div class="space-section-title">Equipment</div><div class="tag-list">';
-                equipment.forEach(function(e) {
-                  var label = (typeof e === 'object' && e !== null) ? (e.name || e.label || e.title || JSON.stringify(e)) : String(e);
-                  html += '<span class="tag purple">' + esc(label) + '</span>';
-                });
-                html += '</div>';
-              }
-              
-              // Availability / schedule
-              if (space.availability || space.schedule) {
-                var avail = space.availability || space.schedule;
-                if (typeof avail === 'object' && avail !== null) {
-                  html += '<div class="space-section-title">Availability</div><div class="space-info-row">';
-                  Object.keys(avail).forEach(function(k) {
-                    html += '<span class="space-info-chip"><strong>' + esc(k) + ':</strong> ' + esc(String(avail[k])) + '</span>';
-                  });
-                  html += '</div>';
-                } else if (avail) {
-                  html += '<div class="space-section-title">Availability</div><div class="space-info-row"><span class="space-info-chip">' + esc(String(avail)) + '</span></div>';
-                }
-              }
-              
-              // Catch-all for any other properties we might have missed
-              var knownKeys = ['name','type','pricing','maxCapacity','size','amenities','features','equipment','availability','schedule','id','photos','images'];
-              Object.keys(space).forEach(function(key) {
-                if (knownKeys.indexOf(key) >= 0) return;
-                var val = space[key];
-                if (!val || val === '' || val === false) return;
-                if (Array.isArray(val) && val.length > 0) {
-                  html += '<div class="space-section-title">' + esc(key.replace(/([A-Z])/g, ' $1').replace(/^./, function(s){return s.toUpperCase()}).trim()) + '</div><div class="tag-list">';
-                  val.forEach(function(v) {
-                    var label = (typeof v === 'object' && v !== null) ? (v.name || v.label || v.title || JSON.stringify(v)) : String(v);
-                    html += '<span class="tag">' + esc(label) + '</span>';
-                  });
-                  html += '</div>';
-                } else if (typeof val === 'object' && val !== null && !Array.isArray(val)) {
-                  html += '<div class="space-section-title">' + esc(key.replace(/([A-Z])/g, ' $1').replace(/^./, function(s){return s.toUpperCase()}).trim()) + '</div><div class="space-info-row">';
-                  Object.keys(val).forEach(function(k) {
-                    html += '<span class="space-info-chip"><strong>' + esc(k) + ':</strong> ' + esc(String(val[k])) + '</span>';
-                  });
-                  html += '</div>';
-                }
-              });
-              
+              if (equipment.length) { html += '<div class="space-section-title">Equipment</div><div class="tag-list">'; equipment.forEach(function(e){ var label=(typeof e==='object'&&e!==null)?(e.name||e.label||e.title||JSON.stringify(e)):String(e); html+='<span class="tag purple">'+esc(label)+'</span>'; }); html+='</div>'; }
+              if (space.availability||space.schedule) { var avail=space.availability||space.schedule; if(typeof avail==='object'&&avail!==null){html+='<div class="space-section-title">Availability</div><div class="space-info-row">';Object.keys(avail).forEach(function(k){html+='<span class="space-info-chip"><strong>'+esc(k)+':</strong> '+esc(String(avail[k]))+'</span>';});html+='</div>';}else if(avail){html+='<div class="space-section-title">Availability</div><div class="space-info-row"><span class="space-info-chip">'+esc(String(avail))+'</span></div>';} }
+              var knownKeys=['name','type','pricing','maxCapacity','size','amenities','features','equipment','availability','schedule','id','photos','images'];
+              Object.keys(space).forEach(function(key){if(knownKeys.indexOf(key)>=0)return;var val=space[key];if(!val||val===''||val===false)return;if(Array.isArray(val)&&val.length>0){html+='<div class="space-section-title">'+esc(key.replace(/([A-Z])/g,' $1').replace(/^./,function(s){return s.toUpperCase()}).trim())+'</div><div class="tag-list">';val.forEach(function(v){var label=(typeof v==='object'&&v!==null)?(v.name||v.label||v.title||JSON.stringify(v)):String(v);html+='<span class="tag">'+esc(label)+'</span>';});html+='</div>';}else if(typeof val==='object'&&val!==null&&!Array.isArray(val)){html+='<div class="space-section-title">'+esc(key.replace(/([A-Z])/g,' $1').replace(/^./,function(s){return s.toUpperCase()}).trim())+'</div><div class="space-info-row">';Object.keys(val).forEach(function(k){html+='<span class="space-info-chip"><strong>'+esc(k)+':</strong> '+esc(String(val[k]))+'</span>';});html+='</div>';}});
               html += '</div>';
             });
-          } else {
-            html += '<p style="color:var(--text3);font-size:13px">No spaces added yet</p>';
-          }
-          html += '</div></div>';
+          } else { html += '<p style="color:var(--text3);font-size:13px">No spaces added yet</p>'; }
+          html += '</div>' + renderNotesBlock(item.email, 'location_' + idx) + '</div>';
         });
         html += '</div>';
       }
       html += '</div>';
+      
+      // Export button
+      html += '<button class="modal-export-btn" onclick="exportModalCSV(window._currentModalItem)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export Client Data (CSV)</button>';
       
       document.getElementById('modalContent').innerHTML = html;
       document.getElementById('modalOverlay').classList.add('active');
@@ -832,6 +824,127 @@
 
     function toggleLocation(idx) { document.getElementById('loc-' + idx).classList.toggle('collapsed'); }
     function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+    
+    // Notes system - stored in localStorage per org email + section
+    function getNotesKey(email, section) { return 'pp_notes_' + email + '_' + section; }
+    function getNotes(email, section) {
+      try { return JSON.parse(localStorage.getItem(getNotesKey(email, section)) || '[]'); }
+      catch(e) { return []; }
+    }
+    function saveNote(email, section, text) {
+      if (!text || !text.trim()) return;
+      var notes = getNotes(email, section);
+      notes.push({ text: text.trim(), author: currentUser?.name || currentUser?.email || 'Unknown', email: currentUser?.email || '', date: new Date().toISOString() });
+      localStorage.setItem(getNotesKey(email, section), JSON.stringify(notes));
+    }
+    function deleteNote(email, section, idx) {
+      var notes = getNotes(email, section);
+      notes.splice(idx, 1);
+      localStorage.setItem(getNotesKey(email, section), JSON.stringify(notes));
+    }
+    function renderNotesBlock(email, section) {
+      var notes = getNotes(email, section);
+      var id = section.replace(/[^a-zA-Z]/g, '');
+      var h = '<div class="section-notes"><button class="notes-toggle" onclick="toggleNotes(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg> Notes (' + notes.length + ')</button>';
+      h += '<div class="notes-panel" id="notes_' + id + '_' + email.replace(/[^a-zA-Z0-9]/g,'') + '">';
+      if (notes.length > 0) {
+        h += '<div class="notes-list">';
+        notes.forEach(function(n, i) {
+          var initial = (n.author || '?')[0].toUpperCase();
+          h += '<div class="note-item"><div class="note-avatar">' + initial + '</div><div class="note-content"><div><span class="note-author">' + esc(n.author) + '</span><span class="note-date">' + timeAgo(n.date) + '</span></div><div class="note-text">' + esc(n.text) + '</div></div><button class="note-delete" onclick="deleteNoteAndRefresh(\'' + esc(email) + '\',\'' + section + '\',' + i + ')" title="Delete">&#x2715;</button></div>';
+        });
+        h += '</div>';
+      }
+      h += '<div class="notes-input-row"><textarea class="notes-input" rows="1" placeholder="Add a note..." id="noteInput_' + id + '_' + email.replace(/[^a-zA-Z0-9]/g,'') + '"></textarea><button class="notes-submit" onclick="submitNote(\'' + esc(email) + '\',\'' + section + '\',this)">Add</button></div>';
+      h += '</div></div>';
+      return h;
+    }
+    function toggleNotes(btn) {
+      btn.classList.toggle('open');
+      var panel = btn.nextElementSibling;
+      panel.classList.toggle('open');
+    }
+    function submitNote(email, section, btn) {
+      var panel = btn.closest('.notes-panel');
+      var input = panel.querySelector('.notes-input');
+      if (input.value.trim()) {
+        saveNote(email, section, input.value);
+        // Re-render the whole modal to update notes
+        var item = window._currentModalItem;
+        if (item) viewDetails(item);
+      }
+    }
+    function deleteNoteAndRefresh(email, section, idx) {
+      deleteNote(email, section, idx);
+      var item = window._currentModalItem;
+      if (item) viewDetails(item);
+    }
+
+    // Export modal data as CSV
+    function exportModalCSV(item) {
+      var fd = item.formData || {}, contact = fd.contactInfo || {}, policies = fd.policies || {}, locations = fd.locations || [];
+      var cl = getChecklist(item.email);
+      var rows = [];
+      rows.push(['PracticePlan - Client Onboarding Export']);
+      rows.push(['Generated', new Date().toLocaleString()]);
+      rows.push([]);
+      rows.push(['CONTACT INFORMATION']);
+      rows.push(['Organization', contact.organization || item.organization || '']);
+      rows.push(['Contact Name', contact.fullName || item.contact || '']);
+      rows.push(['Email', contact.email || item.email || '']);
+      rows.push(['Phone', contact.phone || item.phone || '']);
+      if (contact.adminEmail) rows.push(['Admin Email', contact.adminEmail]);
+      if (contact.adminPhone) rows.push(['Admin Phone', contact.adminPhone]);
+      rows.push(['Go Live Date', safeGoLiveDateStr(policies.goLiveDate) || '']);
+      rows.push(['Pipeline Status', item.pipelineStatus || '']);
+      var rep = item.accountRep ? TEAM_MEMBERS.find(function(m){return m.email===item.accountRep}) : null;
+      rows.push(['Account Rep', rep ? rep.name : (item.accountRep || '')]);
+      rows.push(['Form Completion', (item.completion || 0) + '%']);
+      rows.push([]);
+      rows.push(['ONBOARDING CHECKLIST']);
+      CHECKLIST_ITEMS.forEach(function(c) { rows.push([c.label, cl[c.id] ? 'Complete' : 'Incomplete']); });
+      // Checklist notes
+      var clNotes = getNotes(item.email, 'checklist');
+      if (clNotes.length > 0) { rows.push([]); rows.push(['Checklist Notes']); clNotes.forEach(function(n){rows.push([n.author + ' (' + n.email + ')', n.text, new Date(n.date).toLocaleString()])}); }
+      rows.push([]);
+      // Contact notes
+      var contactNotes = getNotes(item.email, 'contact');
+      if (contactNotes.length > 0) { rows.push(['CONTACT NOTES']); contactNotes.forEach(function(n){rows.push([n.author + ' (' + n.email + ')', n.text, new Date(n.date).toLocaleString()])}); rows.push([]); }
+      // Policies notes
+      var policyNotes = getNotes(item.email, 'policies');
+      if (policyNotes.length > 0) { rows.push(['POLICY NOTES']); policyNotes.forEach(function(n){rows.push([n.author + ' (' + n.email + ')', n.text, new Date(n.date).toLocaleString()])}); rows.push([]); }
+      rows.push(['LOCATIONS (' + locations.length + ')']);
+      locations.forEach(function(loc, li) {
+        rows.push([]);
+        rows.push(['Location ' + (li+1), loc.name || 'Unnamed']);
+        if (loc.address) rows.push(['Address', loc.address]);
+        if (loc.city || loc.state) rows.push(['City/State', (loc.city || '') + ', ' + (loc.state || '')]);
+        var assets = loc.assets || [];
+        assets.forEach(function(space, si) {
+          rows.push([]);
+          rows.push(['  Space ' + (si+1), space.name || 'Unnamed']);
+          if (space.type) rows.push(['  Type', typeof space.type === 'object' ? JSON.stringify(space.type) : String(space.type)]);
+          if (space.pricing) rows.push(['  Pricing', '$' + space.pricing + '/hr']);
+          if (space.maxCapacity) rows.push(['  Max Capacity', String(space.maxCapacity)]);
+          var amenities = space.amenities || [];
+          if (amenities.length) rows.push(['  Amenities', amenities.map(function(a){return typeof a==='object'?(a.name||a.label||JSON.stringify(a)):String(a)}).join(', ')]);
+          var features = space.features || [];
+          if (features.length) rows.push(['  Features', features.map(function(f){return typeof f==='object'?(f.name||f.label||JSON.stringify(f)):String(f)}).join(', ')]);
+          var equipment = space.equipment || [];
+          if (equipment.length) rows.push(['  Equipment', equipment.map(function(e){return typeof e==='object'?(e.name||e.label||JSON.stringify(e)):String(e)}).join(', ')]);
+        });
+        // Location notes
+        var locNotes = getNotes(item.email, 'location_' + li);
+        if (locNotes.length > 0) { rows.push([]); rows.push(['  Location Notes']); locNotes.forEach(function(n){rows.push(['  ' + n.author + ' (' + n.email + ')', n.text, new Date(n.date).toLocaleString()])}); }
+      });
+      var csv = rows.map(function(r){return r.map(function(c){return '"' + String(c||'').replace(/"/g,'""') + '"'}).join(',')}).join('\n');
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+      a.download = (item.organization || 'export').replace(/[^a-zA-Z0-9]/g, '_') + '_onboarding_' + new Date().toISOString().split('T')[0] + '.csv';
+      a.click();
+      showToast('CSV exported');
+    }
+
     function esc(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;') : '-'; }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
   </script>
