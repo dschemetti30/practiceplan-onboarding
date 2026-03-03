@@ -50,8 +50,8 @@
     .user-pill:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
     .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--pp-blue), var(--pp-green)); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
     .user-name { font-size: 13px; color: var(--text); font-weight: 600; white-space: nowrap; }
-    .header-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border); background: var(--card); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); transition: all 0.2s; flex-shrink: 0; }
-    .header-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); transform: scale(1.05); }
+    .header-btn { width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); transition: all 0.2s; }
+    .header-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); transform: translateY(-1px); }
     .header-btn svg { width: 18px; height: 18px; }
     .logout-btn { padding: 10px 20px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; font-size: 13px; color: var(--text2); cursor: pointer; font-family: inherit; font-weight: 500; transition: all 0.2s; }
     .logout-btn:hover { border-color: var(--pp-blue); color: var(--pp-blue); }
@@ -159,8 +159,7 @@
     /* Pipeline Section */
     .pipeline-section { margin-bottom: 40px; }
     .pipeline-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-    .pipeline-column { background: var(--bg); border-radius: 20px; padding: 16px; min-height: 300px; position: relative; }
-    .pipeline-column:not(:last-child)::after { content: ''; position: absolute; right: -10px; top: 60px; bottom: 20px; width: 1px; background: linear-gradient(180deg, transparent, var(--border), var(--border), transparent); }
+    .pipeline-column { background: var(--bg); border-radius: 20px; padding: 16px; min-height: 300px; }
     .pipeline-column-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 8px 16px; }
     .pipeline-column-title { font-size: 12px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
     .pipeline-dot { width: 8px; height: 8px; border-radius: 50%; }
@@ -301,9 +300,9 @@
     .refresh-indicator.refreshing .dot { background: var(--pp-blue); }
     
     /* Responsive */
-    @media (max-width: 1200px) { .pipeline-board { grid-template-columns: repeat(2, 1fr); } .pipeline-column:nth-child(2)::after, .pipeline-column:nth-child(4)::after { display: none; } .stats-row { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 1200px) { .pipeline-board { grid-template-columns: repeat(2, 1fr); } .stats-row { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 900px) { .stats-row { grid-template-columns: 1fr; } .quick-stats-grid { grid-template-columns: repeat(2, 1fr); } .funnel-node { width: 56px; height: 56px; } .funnel-node .num { font-size: 18px; } .funnel-label .title { font-size: 9px; } .funnel-label .drop { display: none; } }
-    @media (max-width: 768px) { .main-content { padding: 20px; } .header { padding: 12px 16px; gap: 12px; } .header-logo { height: 28px; } .header-right { gap: 8px; } .user-pill { padding: 0; background: none; } .user-name { display: none; } .header-btn { width: 36px; height: 36px; } .logout-btn { padding: 8px 14px; font-size: 12px; } .controls-row { flex-direction: column; align-items: stretch; } .time-selector { justify-content: center; } .filters { justify-content: center; } .search-input { width: 100%; } .table-wrapper { display: none; } .mobile-cards { display: block; } .pipeline-board { grid-template-columns: 1fr; } .pipeline-column::after { display: none; } .modal { margin: 16px; border-radius: 20px; } .modal-header { padding: 24px; } .modal-body { padding: 24px; } .drive-banner { flex-direction: column; gap: 16px; text-align: center; } .progress-hero-inner { flex-direction: column; text-align: center; } }
+    @media (max-width: 768px) { .main-content { padding: 20px; } .header { padding: 12px 20px; } .controls-row { flex-direction: column; align-items: stretch; } .time-selector { justify-content: center; } .filters { justify-content: center; } .search-input { width: 100%; } .table-wrapper { display: none; } .mobile-cards { display: block; } .pipeline-board { grid-template-columns: 1fr; } .modal { margin: 16px; border-radius: 20px; } .modal-header { padding: 24px; } .modal-body { padding: 24px; } .drive-banner { flex-direction: column; gap: 16px; text-align: center; } .progress-hero-inner { flex-direction: column; text-align: center; } .header-logo { height: 28px; } }
   </style>
 </head>
 <body>
@@ -586,12 +585,8 @@
       
       playSound('drop');
       
-      // Store old status for potential rollback
-      const oldStatus = draggedData.pipelineStatus;
-      const sheetType = draggedData.sheetType;
-      const rowIndex = draggedData.rowIndex;
-      
       // Update local data optimistically
+      const oldStatus = draggedData.pipelineStatus;
       draggedData.pipelineStatus = targetStatus;
       
       // If moved to complete, trigger confetti
@@ -606,23 +601,8 @@
       renderPipeline();
       updateStats();
       
-      // Save to backend
-      try {
-        const result = await jsonpRequest(API_URL + '?action=updatePipelineStatus&email=' + encodeURIComponent(currentUser?.email || '') + '&sheetType=' + sheetType + '&rowIndex=' + rowIndex + '&newStatus=' + encodeURIComponent(targetStatus));
-        if (!result.success) {
-          // Rollback on failure
-          draggedData.pipelineStatus = oldStatus;
-          renderPipeline();
-          updateStats();
-          showToast('Failed to save - reverted');
-        }
-      } catch (err) {
-        // Rollback on error
-        draggedData.pipelineStatus = oldStatus;
-        renderPipeline();
-        updateStats();
-        showToast('Failed to save - reverted');
-      }
+      // Note: In a real app, you'd save this to the backend here
+      // For now it's just a visual change that resets on refresh
     }
     function renderTable() {
       let filtered = getFilteredData();
