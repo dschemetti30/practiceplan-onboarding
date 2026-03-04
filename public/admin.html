@@ -214,6 +214,9 @@
     .pipeline-column[data-status="live"] .pipeline-dot{background:#10b981}
     .pipeline-column-count{font-size:10px;font-weight:600;color:var(--text2);background:var(--card);padding:2px 7px;border-radius:50px}
     .pipeline-cards{display:flex;flex-direction:column;gap:8px}
+    .pipeline-card-top{cursor:pointer}
+    .pipeline-card-status{margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+    .pipeline-card-status .pipeline-status-select{width:100%;font-size:10px;padding:6px 24px 6px 8px}
     .pipeline-card{background:var(--card);border-radius:10px;padding:10px;border:1px solid var(--border);cursor:pointer;transition:all 0.2s}
     .pipeline-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.08)}
     .pipeline-card-title{font-size:11px;font-weight:600;color:var(--text)}
@@ -228,6 +231,10 @@
     .modal-header{padding:28px 32px;background:#0076bb;color:white;position:relative;border-radius:24px 24px 0 0}
     .modal-header h2{font-size:20px;font-weight:700;margin-bottom:4px;line-height:1.3;word-break:break-word}
     .modal-header .modal-subtitle{font-size:14px;opacity:0.9}
+    
+    .modal-header .pipeline-status-select{background-color:rgba(255,255,255,0.2);color:white;border-color:rgba(255,255,255,0.3)}
+    .modal-header .pipeline-status-select:focus{border-color:rgba(255,255,255,0.6);box-shadow:0 0 0 3px rgba(255,255,255,0.1)}
+    .modal-header .pipeline-status-select option{color:var(--text);background:var(--card)}
     .modal-close{position:absolute;top:20px;right:20px;width:32px;height:32px;border-radius:50%;border:none;background:rgba(255,255,255,0.15);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all 0.2s;backdrop-filter:blur(4px)};font-size:20px}
     .modal-close:hover{background:rgba(255,255,255,0.25)}
     .checklist-section{padding:24px 32px;background:var(--card);border-bottom:1px solid var(--border)}
@@ -375,6 +382,16 @@
     .stats-section{transition:opacity 0.4s}
     .stats-section.loading-state{opacity:0.4}
     .loading{display:flex;align-items:center;justify-content:center;padding:60px}
+
+    .pipeline-status-select{appearance:none;padding:5px 24px 5px 8px;border-radius:8px;border:1px solid var(--border);font-size:10px;font-weight:600;font-family:inherit;cursor:pointer;transition:all 0.2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;background-size:10px}
+    .pipeline-status-select:focus{outline:none;border-color:var(--pp-blue);box-shadow:0 0 0 3px rgba(0,118,187,0.08)}
+    .pipeline-status-select.s-new{background-color:rgba(0,118,187,0.08);color:var(--pp-blue)}
+    .pipeline-status-select.s-in-progress{background-color:rgba(245,158,11,0.08);color:#d97706}
+    .pipeline-status-select.s-on-hold{background-color:rgba(239,68,68,0.08);color:#dc2626}
+    .pipeline-status-select.s-review{background-color:rgba(139,92,246,0.08);color:#7c3aed}
+    .pipeline-status-select.s-complete{background-color:rgba(0,168,79,0.08);color:#15803d}
+    .pipeline-status-select.s-onboarding{background-color:rgba(245,158,11,0.08);color:#b45309}
+    .pipeline-status-select.s-live{background-color:rgba(16,185,129,0.1);color:#047857}
     .mobile-cards{display:none}
     .mobile-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;transition:all 0.2s}
     .mobile-card:active{transform:scale(0.98)}
@@ -567,7 +584,7 @@
           <circle class="ring-progress" cx="60" cy="60" r="52"/>
           <circle class="ring-glow" cx="60" cy="60" r="52"/>
         </svg>
-        <div class="loading-logo-inner"><img src="https://practiceplan-onboarding.vercel.app/favicon.svg" alt="PP" style="width:44px;height:44px;margin-left:2px"></div>
+        <div class="loading-logo-inner"><img src="https://practiceplan-onboarding.vercel.app/favicon.svg" alt="PP" style="width:44px;height:44px;margin-left:4px"></div>
       </div>
       <div class="loading-text-area">
         <div class="loading-title">Loading Dashboard</div>
@@ -989,7 +1006,7 @@
       const labels = { new: 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', review: 'Review', complete: 'Form Complete', onboarding: 'Onboarding', live: 'Live' };
       document.getElementById('tableBody').innerHTML = filtered.map(item => {
         const goLive = formatGoLive(item.goLiveDate), isArch = currentFilter === 'archived', clCount = getChecklistCount(item.email);
-        return '<tr><td><div class="org-cell"><div class="org-avatar" style="background:' + getOrgColor(item.organization) + '">' + getOrgInitials(item.organization) + '</div><div><div class="org-name">' + esc(item.organization || 'Unknown') + '</div>' + (item.locationStr ? '<div class="org-location">' + esc(item.locationStr) + '</div>' : '') + '</div></div></td><td><div class="contact-name">' + esc(item.contact || '-') + '</div><div class="contact-email">' + esc(item.email) + '</div></td><td><span class="status-badge ' + (isArch ? 'archived' : item.isStale ? 'stale' : item.pipelineStatus) + '">' + (isArch ? 'Archived' : item.isStale ? 'Stale' : labels[item.pipelineStatus]) + '</span></td><td><div class="checklist-mini"><div class="checklist-dots">' + CHECKLIST_ITEMS.map(c => '<span class="checklist-dot' + (getChecklist(item.email)[c.id] ? ' done' : '') + '"></span>').join('') + '</div><span class="checklist-text">' + clCount + '/' + CHECKLIST_ITEMS.length + '</span></div></td><td>' + (goLive ? '<span class="go-live-date">' + goLive + '</span>' : '<span class="go-live-date none">-</span>') + '</td><td><span class="time-ago">' + timeAgo(item.lastUpdated) + '</span></td><td><select class="rep-select" onchange="assignRep(\'' + item.sheetType + '\',' + item.rowIndex + ',this.value)">' + getRepOptions(item.accountRep) + '</select></td><td><div class="action-cell"><button class="action-btn primary" onclick=\'viewDetails(' + JSON.stringify(item).replace(/'/g,"&#39;") + ')\'>View</button><button class="action-btn" onclick="emailContact(\'' + esc(item.email) + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email</button><button class="action-btn danger" onclick="archiveRow(\'' + item.sheetType + '\',' + item.rowIndex + ',\'' + esc(item.email) + '\')">' + (isArch ? 'Restore' : 'Archive') + '</button></div></td></tr>';
+        return '<tr><td><div class="org-cell"><div class="org-avatar" style="background:' + getOrgColor(item.organization) + '">' + getOrgInitials(item.organization) + '</div><div><div class="org-name">' + esc(item.organization || 'Unknown') + '</div>' + (item.locationStr ? '<div class="org-location">' + esc(item.locationStr) + '</div>' : '') + '</div></div></td><td><div class="contact-name">' + esc(item.contact || '-') + '</div><div class="contact-email">' + esc(item.email) + '</div></td><td>' + (isArch ? '<span class="status-badge archived">Archived</span>' : '<select class="pipeline-status-select s-' + item.pipelineStatus + '" onchange="changePipelineStatus(\'' + item.sheetType + '\',' + item.rowIndex + ',this.value,\'' + esc(item.email) + '\');this.className=\'pipeline-status-select s-\'+this.value">' + getPipelineStatusOptions(item.pipelineStatus) + '</select>') + '</td><td><div class="checklist-mini"><div class="checklist-dots">' + CHECKLIST_ITEMS.map(c => '<span class="checklist-dot' + (getChecklist(item.email)[c.id] ? ' done' : '') + '"></span>').join('') + '</div><span class="checklist-text">' + clCount + '/' + CHECKLIST_ITEMS.length + '</span></div></td><td>' + (goLive ? '<span class="go-live-date">' + goLive + '</span>' : '<span class="go-live-date none">-</span>') + '</td><td><span class="time-ago">' + timeAgo(item.lastUpdated) + '</span></td><td><select class="rep-select" onchange="assignRep(\'' + item.sheetType + '\',' + item.rowIndex + ',this.value)">' + getRepOptions(item.accountRep) + '</select></td><td><div class="action-cell"><button class="action-btn primary" onclick=\'viewDetails(' + JSON.stringify(item).replace(/'/g,"&#39;") + ')\'>View</button><button class="action-btn" onclick="emailContact(\'' + esc(item.email) + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email</button><button class="action-btn danger" onclick="archiveRow(\'' + item.sheetType + '\',' + item.rowIndex + ',\'' + esc(item.email) + '\')">' + (isArch ? 'Restore' : 'Archive') + '</button></div></td></tr>';
       }).join('');
       // Animate rows
       setTimeout(function() {
@@ -1019,7 +1036,7 @@
                 '<div class="org-name">' + esc(item.organization || 'Unknown') + '</div>' +
                 '<div class="contact-email">' + esc(item.contact || item.email || '') + '</div>' +
               '</div>' +
-              '<span class="status-badge ' + statusCls + '" style="font-size:9px;flex-shrink:0">' + statusLabel + '</span>' +
+              '<select class="pipeline-status-select s-' + statusCls + '" style="font-size:9px;flex-shrink:0" onclick="event.stopPropagation()" onchange="event.stopPropagation();changePipelineStatus(\'' + item.sheetType + '\',' + item.rowIndex + ',this.value,\'' + esc(item.email) + '\');this.className=\'pipeline-status-select s-\'+this.value">' + getPipelineStatusOptions(item.pipelineStatus) + '</select>' +
             '</div>' +
             '<div class="mobile-card-meta">' +
               '<div class="mobile-card-meta-item"><label>Go Live</label><span>' + (goLive || '-') + '</span></div>' +
@@ -1049,7 +1066,7 @@
         document.getElementById('count' + idPart).textContent = cards.length;
         document.getElementById('cards' + idPart).innerHTML = cards.length ? cards.map(item => {
           const goLive = formatGoLive(item.goLiveDate);
-          return '<div class="pipeline-card" onclick="viewDetails(allData.find(d=>d.email===\'' + esc(item.email) + '\'))"><div class="pipeline-card-title">' + esc(item.organization || 'Unknown') + '</div><div class="pipeline-card-location">' + esc(item.locationStr || item.contact || item.email) + '</div><div class="pipeline-card-meta">' + (goLive ? '<span class="pipeline-card-golive">' + goLive + '</span>' : '<span class="pipeline-card-golive none">No date</span>') + '<span class="pipeline-card-time">' + timeAgo(item.lastUpdated) + '</span></div></div>';
+          return '<div class="pipeline-card"><div class="pipeline-card-top" onclick="viewDetails(allData.find(d=>d.email===\'' + esc(item.email) + '\'))"><div class="pipeline-card-title">' + esc(item.organization || 'Unknown') + '</div><div class="pipeline-card-location">' + esc(item.locationStr || item.contact || item.email) + '</div><div class="pipeline-card-meta">' + (goLive ? '<span class="pipeline-card-golive">' + goLive + '</span>' : '<span class="pipeline-card-golive none">No date</span>') + '<span class="pipeline-card-time">' + timeAgo(item.lastUpdated) + '</span></div></div><div class="pipeline-card-status"><select class="pipeline-status-select s-' + item.pipelineStatus + '" onclick="event.stopPropagation()" onchange="event.stopPropagation();changePipelineStatus(\'' + item.sheetType + '\',' + item.rowIndex + ',this.value,\'' + esc(item.email) + '\');this.className=\'pipeline-status-select s-\'+this.value">' + getPipelineStatusOptions(item.pipelineStatus) + '</select></div></div>';
         }).join('') : '<div style="text-align:center;padding:20px;color:var(--text3);font-size:11px">No items</div>';
       });
     }
@@ -1205,6 +1222,38 @@
         } else showToast('Failed: ' + (result.error || 'Unknown'), 'error');
       } catch(e) { showToast('Failed to assign rep', 'error'); }
     }
+
+    function getPipelineStatusOptions(current) {
+      var statuses = [
+        { val: 'new', label: 'New' },
+        { val: 'in-progress', label: 'In Progress' },
+        { val: 'on-hold', label: 'On Hold' },
+        { val: 'review', label: 'Review' },
+        { val: 'complete', label: 'Form Complete' },
+        { val: 'onboarding', label: 'Onboarding' },
+        { val: 'live', label: 'Live' }
+      ];
+      return statuses.map(function(s) {
+        return '<option value="' + s.val + '"' + (current === s.val ? ' selected' : '') + '>' + s.label + '</option>';
+      }).join('');
+    }
+    async function changePipelineStatus(sheetType, rowIndex, newStatus, email) {
+      try {
+        var result = await jsonpRequest(API_URL + '?action=updatePipelineStatus&email=' + encodeURIComponent(currentUser?.email || '') + '&sheetType=' + sheetType + '&rowIndex=' + rowIndex + '&newStatus=' + encodeURIComponent(newStatus));
+        if (result.success) {
+          // Update local data
+          allData.forEach(function(d) { if (d.sheetType === sheetType && d.rowIndex === rowIndex) d.pipelineStatus = newStatus; });
+          archivedData.forEach(function(d) { if (d.sheetType === sheetType && d.rowIndex === rowIndex) d.pipelineStatus = newStatus; });
+          showToast('Status updated to ' + newStatus.replace(/-/g,' '), 'success');
+          updateStats(); renderTable(); renderPipeline();
+          // If modal is open, update it too
+          if (window._currentModalItem && window._currentModalItem.email === email) {
+            window._currentModalItem.pipelineStatus = newStatus;
+            viewDetails(window._currentModalItem);
+          }
+        } else { showToast('Failed: ' + (result.error || 'Unknown'), 'error'); }
+      } catch(e) { showToast('Failed to update status', 'error'); }
+    }
     function exportCSV() { const filtered = getFilteredData(); const csv = [['Organization','Location','Contact','Email','Status','Go Live','Updated','Rep','Checklist'], ...filtered.map(d => [d.organization, d.locationStr, d.contact, d.email, d.pipelineStatus, d.goLiveDate || '', d.lastUpdated, d.accountRep || '', getChecklistCount(d.email) + '/' + CHECKLIST_ITEMS.length])].map(r => r.map(c => '"' + String(c||'').replace(/"/g,'""') + '"').join(',')).join('\n'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'practiceplan-' + new Date().toISOString().split('T')[0] + '.csv'; a.click(); showToast('Exported'); }
     function showToast(msg, type) {
       var t = document.getElementById('toast');
@@ -1230,7 +1279,7 @@
       const plabels = { 'new': 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', 'review': 'Review', 'complete': 'Form Complete', 'onboarding': 'Onboarding', 'live': 'Live' };
       const statusClass = item.pipelineStatus || 'new';
       
-      let html = '<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><div style="display:flex;align-items:center;gap:16px;padding-right:36px"><div style="width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white;background:rgba(255,255,255,0.2);flex-shrink:0">' + getOrgInitials(item.organization) + '</div><div style="min-width:0"><h2>' + esc(item.organization || 'Details') + '</h2><div class="modal-subtitle" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' + esc(contact.fullName || item.contact || '') + (item.locationStr ? ' &middot; ' + esc(item.locationStr) : '') + ' <span class="status-badge ' + statusClass + '" style="font-size:9px;vertical-align:middle">' + (plabels[statusClass] || 'New') + '</span></div></div></div></div>';
+      let html = '<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><div style="display:flex;align-items:center;gap:16px;padding-right:36px"><div style="width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white;background:rgba(255,255,255,0.2);flex-shrink:0">' + getOrgInitials(item.organization) + '</div><div style="min-width:0"><h2>' + esc(item.organization || 'Details') + '</h2><div class="modal-subtitle" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' + esc(contact.fullName || item.contact || '') + (item.locationStr ? ' &middot; ' + esc(item.locationStr) : '') + ' <select class="pipeline-status-select s-' + statusClass + '" style="font-size:9px;vertical-align:middle" onchange="changePipelineStatus(\'' + item.sheetType + '\',' + item.rowIndex + ',this.value,\'' + esc(item.email) + '\');this.className=\'pipeline-status-select s-\'+this.value">' + getPipelineStatusOptions(statusClass) + '</select></div></div></div></div>';
       
       // Checklist
       html += '<div class="checklist-section"><div class="checklist-header"><div class="checklist-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Onboarding Checklist</div><div class="checklist-count">' + clCount + ' of ' + CHECKLIST_ITEMS.length + ' complete</div></div><div class="checklist-items">' + CHECKLIST_ITEMS.map(c => '<div class="checklist-item' + (cl[c.id] ? ' checked' : '') + '" onclick="toggleChecklistItem(\'' + item.email + '\',\'' + c.id + '\',this)"><div class="checklist-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span class="checklist-label">' + c.label + '</span></div>').join('') + '</div>' + renderNotesBlock(item.email, 'checklist') + '</div>';
