@@ -504,6 +504,34 @@
       .main-content{padding:8px}
       .mobile-card-meta{gap:6px}
     }
+
+    /* Data Loading Overlay */
+    .data-loading-overlay{position:fixed;inset:0;z-index:2000;background:var(--bg);display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity 0.5s ease,visibility 0.5s ease;visibility:visible}
+    .data-loading-overlay.hidden{opacity:0;visibility:hidden;pointer-events:none}
+    .loading-content{text-align:center;max-width:340px;width:100%;padding:20px}
+    .loading-logo-ring{width:120px;height:120px;margin:0 auto 32px;position:relative}
+    .loading-ring-svg{width:120px;height:120px;transform:rotate(-90deg);position:absolute;top:0;left:0}
+    .ring-track{fill:none;stroke:var(--border);stroke-width:4}
+    .ring-progress{fill:none;stroke:url(#loadGradient);stroke-width:4;stroke-linecap:round;stroke-dasharray:327;stroke-dashoffset:327;animation:ringFill 8s ease-out forwards}
+    .ring-glow{fill:none;stroke:url(#loadGradient);stroke-width:8;stroke-linecap:round;stroke-dasharray:327;stroke-dashoffset:327;animation:ringFill 8s ease-out forwards;opacity:0.15;filter:blur(4px)}
+    @keyframes ringFill{0%{stroke-dashoffset:327}100%{stroke-dashoffset:0}}
+    .loading-logo-inner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--pp-blue),var(--pp-green));display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:white;letter-spacing:1px;animation:logoPulse 2s ease-in-out infinite}
+    @keyframes logoPulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.05)}}
+    .loading-text-area{margin-bottom:24px}
+    .loading-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px}
+    .loading-status{font-size:13px;color:var(--text2);margin-bottom:16px;min-height:20px;transition:opacity 0.3s}
+    .loading-progress-track{height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:20px}
+    .loading-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--pp-blue),var(--pp-green));border-radius:4px;transition:width 0.4s ease}
+    .loading-metrics{display:flex;justify-content:center;gap:32px;opacity:0;transform:translateY(8px);transition:all 0.5s ease}
+    .loading-metrics.visible{opacity:1;transform:translateY(0)}
+    .loading-metric{display:flex;flex-direction:column;align-items:center}
+    .loading-metric-num{font-size:24px;font-weight:700;color:var(--text);line-height:1}
+    .loading-metric-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px}
+    .loading-dots{display:flex;gap:6px;justify-content:center;margin-top:24px}
+    .loading-dots span{width:6px;height:6px;border-radius:50%;background:var(--text3);animation:dotBounce 1.4s ease-in-out infinite}
+    .loading-dots span:nth-child(2){animation-delay:0.2s}
+    .loading-dots span:nth-child(3){animation-delay:0.4s}
+    @keyframes dotBounce{0%,80%,100%{transform:translateY(0);opacity:0.3}40%{transform:translateY(-8px);opacity:1}}
   </style>
 </head>
 <body>
@@ -518,6 +546,52 @@
       <div class="login-loading" id="loginLoading"><div class="spinner"></div><span style="color:#64748b">Verifying...</span></div>
       <div id="googleButtonContainer" class="google-btn-container"></div>
       <div class="auth-info"><strong>Authorized users only</strong><br>Sign in with your approved Google account</div>
+    </div>
+  </div>
+
+  <svg style="position:absolute;width:0;height:0">
+    <defs>
+      <linearGradient id="loadGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:#0076bb"/>
+        <stop offset="100%" style="stop-color:#00a84f"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <div class="data-loading-overlay hidden" id="dataLoadingOverlay">
+    <div class="loading-content">
+      <div class="loading-logo-ring">
+        <svg class="loading-ring-svg" viewBox="0 0 120 120">
+          <circle class="ring-track" cx="60" cy="60" r="52"/>
+          <circle class="ring-progress" cx="60" cy="60" r="52"/>
+          <circle class="ring-glow" cx="60" cy="60" r="52"/>
+        </svg>
+        <div class="loading-logo-inner">PP</div>
+      </div>
+      <div class="loading-text-area">
+        <div class="loading-title">Loading Dashboard</div>
+        <div class="loading-status" id="loadingStatus">Connecting to PracticePlan...</div>
+        <div class="loading-progress-track">
+          <div class="loading-progress-fill" id="loadingProgressFill"></div>
+        </div>
+        <div class="loading-metrics" id="loadingMetrics">
+          <div class="loading-metric">
+            <span class="loading-metric-num" id="loadMetricOrgs">-</span>
+            <span class="loading-metric-label">Organizations</span>
+          </div>
+          <div class="loading-metric">
+            <span class="loading-metric-num" id="loadMetricSpaces">-</span>
+            <span class="loading-metric-label">Spaces</span>
+          </div>
+          <div class="loading-metric">
+            <span class="loading-metric-num" id="loadMetricComplete">-</span>
+            <span class="loading-metric-label">Complete</span>
+          </div>
+        </div>
+      </div>
+      <div class="loading-dots">
+        <span></span><span></span><span></span>
+      </div>
     </div>
   </div>
 
@@ -683,9 +757,72 @@
       } catch(e) { document.getElementById('loginLoading').classList.remove('active'); document.getElementById('googleButtonContainer').style.display = 'flex'; document.getElementById('loginError').textContent = 'Connection error'; document.getElementById('loginError').style.display = 'block'; }
     }
     function showDashboard() {
-      document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('dashboard').classList.add('active');
+      document.getElementById('loginScreen').classList.add('hidden');
+      // Show loading overlay instead of dashboard immediately
+      document.getElementById('dataLoadingOverlay').classList.remove('hidden');
       if (currentUser) { const name = currentUser.name.split(' ').map(n => n.charAt(0).toUpperCase() + n.slice(1).toLowerCase()).join(' '); document.getElementById('userName').textContent = name; document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase(); }
+      // Start animated loading sequence
+      startLoadingSequence();
       loadData();
+    }
+    function startLoadingSequence() {
+      var fill = document.getElementById('loadingProgressFill');
+      var status = document.getElementById('loadingStatus');
+      var steps = [
+        { pct: 15, text: 'Authenticating...', delay: 300 },
+        { pct: 30, text: 'Fetching submissions...', delay: 1200 },
+        { pct: 50, text: 'Loading organizations...', delay: 2500 },
+        { pct: 65, text: 'Processing form data...', delay: 4000 },
+        { pct: 80, text: 'Building pipeline...', delay: 6000 },
+        { pct: 90, text: 'Almost ready...', delay: 8000 }
+      ];
+      steps.forEach(function(step) {
+        setTimeout(function() {
+          if (!document.getElementById('dataLoadingOverlay').classList.contains('hidden')) {
+            fill.style.width = step.pct + '%';
+            status.style.opacity = '0';
+            setTimeout(function() { status.textContent = step.text; status.style.opacity = '1'; }, 150);
+          }
+        }, step.delay);
+      });
+    }
+    function finishLoading(data) {
+      var fill = document.getElementById('loadingProgressFill');
+      var status = document.getElementById('loadingStatus');
+      var metrics = document.getElementById('loadingMetrics');
+      // Set to 100%
+      fill.style.width = '100%';
+      status.style.opacity = '0';
+      setTimeout(function() { status.textContent = 'Ready!'; status.style.opacity = '1'; }, 150);
+      // Show metrics
+      var totalOrgs = data.length;
+      var totalSpaces = data.reduce(function(sum, d) { return sum + (d.spaces || 0); }, 0);
+      var totalComplete = data.filter(function(d) { return d.pipelineStatus === 'complete' || d.pipelineStatus === 'onboarding' || d.pipelineStatus === 'live'; }).length;
+      // Animate count up
+      setTimeout(function() {
+        metrics.classList.add('visible');
+        animateCount('loadMetricOrgs', totalOrgs, 600);
+        animateCount('loadMetricSpaces', totalSpaces, 800);
+        animateCount('loadMetricComplete', totalComplete, 700);
+      }, 300);
+      // Fade out and show dashboard
+      setTimeout(function() {
+        document.getElementById('dataLoadingOverlay').classList.add('hidden');
+        document.getElementById('dashboard').classList.add('active');
+      }, 1800);
+    }
+    function animateCount(elId, target, duration) {
+      var el = document.getElementById(elId);
+      if (!el) return;
+      var start = 0, startTime = null;
+      function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        var progress = Math.min((timestamp - startTime) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(eased * target);
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
     }
     function logout() { sessionStorage.removeItem('pp_admin_user'); google.accounts.id.disableAutoSelect(); location.reload(); }
     function jsonpRequest(url) { return new Promise((res, rej) => { const cb = 'cb_' + Date.now() + '_' + Math.random().toString(36).substr(2,5); console.log('JSONP request:', url.split('?')[0], 'callback:', cb); window[cb] = (d) => { console.log('JSONP response received:', d); delete window[cb]; if(document.body.contains(s)) document.body.removeChild(s); res(d); }; const s = document.createElement('script'); s.src = url + '&callback=' + cb; s.onerror = (err) => { console.error('JSONP script error:', err); delete window[cb]; if(document.body.contains(s)) document.body.removeChild(s); rej(new Error('Script load failed - check Apps Script deployment URL and permissions')); }; document.body.appendChild(s); setTimeout(() => { if (window[cb]) { console.error('JSONP timeout after 20s'); delete window[cb]; if(document.body.contains(s)) document.body.removeChild(s); rej(new Error('Timeout (20s) - Apps Script may be slow or unreachable')); } }, 20000); }); }
@@ -761,10 +898,10 @@
           });
           allData = deduped.filter(d => d.status !== 'Archived');
           archivedData = deduped.filter(d => d.status === 'Archived');
-          document.querySelector('.stats-section')?.classList.remove('loading-state'); updateStats(); renderTable(); renderPipeline(); renderCalendar();
+          document.querySelector('.stats-section')?.classList.remove('loading-state'); updateStats(); renderTable(); renderPipeline(); renderCalendar(); finishLoading(allData);
         } else if (result.error === 'Unauthorized') logout();
-        else { console.error('API returned error:', result); document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">API error: ' + (result.error || JSON.stringify(result)) + '</td></tr>'; }
-      } catch(e) { console.error('LoadData error:', e); document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">Unable to load data: ' + e.message + '<br><small style="color:var(--text3)">Check browser console for details. Email: ' + (currentUser?.email || 'none') + '</small></td></tr>'; }
+        else { console.error('API returned error:', result); document.getElementById('dataLoadingOverlay').classList.add('hidden'); document.getElementById('dashboard').classList.add('active'); document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">API error: ' + (result.error || JSON.stringify(result)) + '</td></tr>'; }
+      } catch(e) { console.error('LoadData error:', e); document.getElementById('dataLoadingOverlay').classList.add('hidden'); document.getElementById('dashboard').classList.add('active'); document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">Unable to load data: ' + e.message + '<br><small style="color:var(--text3)">Check browser console for details. Email: ' + (currentUser?.email || 'none') + '</small></td></tr>'; }
     }
 
     function getFilteredByTime(data) { if (timePeriodDays === 0) return data; const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - timePeriodDays); return data.filter(d => d.updatedDate >= cutoff); }
