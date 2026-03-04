@@ -72,6 +72,7 @@
     .cal-popover-status{display:inline-block;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:600;text-transform:uppercase;margin-top:4px}
     .calendar-month{font-size:14px;font-weight:600;color:var(--text);min-width:140px;text-align:center}
     .calendar-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+    .calendar-list-mobile{display:none}
     .calendar-day-header{padding:12px;text-align:center;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;background:var(--bg)}
     .calendar-day{min-height:120px;padding:6px;border:1px solid var(--border);border-top:none;border-left:none;position:relative;background:var(--card);transition:background 0.2s}
     .calendar-day:nth-child(7n){border-right:none}
@@ -232,9 +233,9 @@
     .modal-header h2{font-size:20px;font-weight:700;margin-bottom:4px;line-height:1.3;word-break:break-word}
     .modal-header .modal-subtitle{font-size:14px;opacity:0.9}
     
-    .modal-header .pipeline-status-select{background-color:rgba(255,255,255,0.2);color:white;border-color:rgba(255,255,255,0.3)}
-    .modal-header .pipeline-status-select:focus{border-color:rgba(255,255,255,0.6);box-shadow:0 0 0 3px rgba(255,255,255,0.1)}
-    .modal-header .pipeline-status-select option{color:var(--text);background:var(--card)}
+    .modal-header .pipeline-status-select{background-color:white;color:#1e293b;border-color:rgba(255,255,255,0.8);font-weight:700;padding:4px 22px 4px 8px;border-radius:6px;font-size:10px}
+    .modal-header .pipeline-status-select:focus{border-color:white;box-shadow:0 0 0 3px rgba(255,255,255,0.25)}
+    .modal-header .pipeline-status-select option{color:#1e293b;background:white}
     .modal-close{position:absolute;top:20px;right:20px;width:32px;height:32px;border-radius:50%;border:none;background:rgba(255,255,255,0.15);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all 0.2s;backdrop-filter:blur(4px)};font-size:20px}
     .modal-close:hover{background:rgba(255,255,255,0.25)}
     .checklist-section{padding:24px 32px;background:var(--card);border-bottom:1px solid var(--border)}
@@ -465,31 +466,53 @@
       .mobile-card-actions button:last-child{border-radius:0 0 12px 0}
       .pipeline-board{grid-template-columns:1fr!important}
       .pipeline-section .controls-row{flex-wrap:wrap}
-      .calendar-grid{grid-template-columns:repeat(7,1fr)}
-      .calendar-day{min-height:44px;padding:2px}
-      .calendar-day-header{padding:6px 2px;font-size:9px}
-      .calendar-day .day-num{font-size:11px}
-      .cal-event-count{font-size:8px;width:14px;height:14px;line-height:14px}
-      .modal-overlay{padding:0;background:rgba(15,23,42,0.95);backdrop-filter:none}
-      .modal{width:100%;height:100%;max-height:100%;border-radius:0;display:flex;flex-direction:column}
-      .modal-header{padding:16px;border-radius:0;flex-shrink:0}
+      .calendar-grid{display:none}
+      .calendar-day-header{display:none}
+      .calendar-list-mobile{display:block}
+      .cal-week-group{margin-bottom:16px}
+      .cal-week-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:8px 0;border-bottom:1px solid var(--border);margin-bottom:8px}
+      .cal-list-day{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+      .cal-list-day:last-child{border-bottom:none}
+      .cal-list-date{width:44px;flex-shrink:0;text-align:center}
+      .cal-list-date .cal-date-dow{font-size:9px;text-transform:uppercase;color:var(--text3);font-weight:600}
+      .cal-list-date .cal-date-num{font-size:20px;font-weight:700;color:var(--text);line-height:1.2}
+      .cal-list-date.is-today .cal-date-num{color:white;background:var(--pp-blue);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:16px}
+      .cal-list-date.is-past .cal-date-num{color:var(--text3)}
+      .cal-list-events{flex:1;min-width:0}
+      .cal-list-event{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;cursor:pointer;transition:border-color 0.2s}
+      .cal-list-event:active{border-color:var(--pp-blue)}
+      .cal-list-event:last-child{margin-bottom:0}
+      .cal-list-event-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+      .cal-list-event-dot.upcoming{background:var(--pp-blue)}
+      .cal-list-event-dot.this-week{background:#f59e0b}
+      .cal-list-event-dot.is-today{background:var(--pp-green)}
+      .cal-list-event-dot.past-event{background:var(--text3)}
+      .cal-list-event-info{flex:1;min-width:0}
+      .cal-list-event-org{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .cal-list-event-meta{font-size:11px;color:var(--text3)}
+      .cal-list-no-events{padding:10px 0;color:var(--text3);font-size:12px;font-style:italic}
+      .calendar-container{border-radius:14px}
+      .modal-overlay{padding:0;background:rgba(15,23,42,0.95);backdrop-filter:none;align-items:stretch;overflow:hidden}
+      .modal{width:100%;height:100%;max-height:100%;border-radius:0;display:flex;flex-direction:column;overflow:hidden}
+      .modal-header{padding:14px 16px;border-radius:0;flex-shrink:0}
       .modal-header h2{font-size:15px;white-space:normal;overflow:visible;text-overflow:clip;line-height:1.3}
       .modal-header .modal-subtitle{font-size:11px;flex-wrap:wrap}
       .modal-close{top:12px;right:12px;width:28px;height:28px;font-size:12px}
-      .modal-body{padding:14px;overflow-x:hidden;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
+      .modal-body{padding:0;overflow-y:auto;overflow-x:hidden;flex:1;-webkit-overflow-scrolling:touch}
+      .modal-body .detail-section{padding:16px}
       .modal-toolbar{flex-wrap:wrap;gap:6px;padding:10px 14px;flex-shrink:0}
       .modal-toolbar button,.modal-toolbar a{font-size:11px;padding:6px 10px}
-      .detail-grid{grid-template-columns:1fr}
-      .detail-section{padding-top:16px;padding-bottom:16px;overflow:hidden}
-      .progress-hero{margin:0 -14px;border-radius:0}
+      .progress-hero{padding:16px}
       .progress-hero-inner{flex-direction:column;text-align:center;gap:12px}
       .progress-ring-large{margin:0 auto}
       .progress-details{text-align:center}
       .progress-bar-large{max-width:100%}
       .progress-meta{justify-content:center;flex-wrap:wrap;gap:8px}
-      .checklist-section{margin:0 -14px;padding:16px 14px;border-radius:0}
+      .checklist-section{padding:16px}
       .checklist-items{grid-template-columns:1fr}
-      .checklist-header{flex-direction:column;align-items:flex-start;gap:8px}
+      .checklist-header{flex-direction:column;align-items:flex-start;gap:6px}
+      .detail-grid{grid-template-columns:1fr}
+      .detail-section{padding-top:16px;padding-bottom:16px;overflow:hidden}
       .location-card{overflow:hidden}
       .space-card{overflow:hidden}
       .tag-list{flex-wrap:wrap}
@@ -685,6 +708,7 @@
             </div>
           </div>
           <div class="calendar-grid" id="calendarGrid"></div>
+          <div class="calendar-list-mobile" id="calendarListMobile"></div>
         </div>
         <div id="calPopover" style="display:none;position:fixed;z-index:1500;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,0.15);padding:0;min-width:280px;max-width:340px"></div>
       </div>
@@ -1142,6 +1166,69 @@
         if (i >= 34 && day > daysInMonth) break;
       }
       document.getElementById('calendarGrid').innerHTML = html;
+      // Mobile list view
+      renderCalendarMobile(year, month, events);
+    }
+
+    function renderCalendarMobile(year, month, events) {
+      var listEl = document.getElementById('calendarListMobile');
+      if (!listEl) return;
+      var daysInMonth = new Date(year, month + 1, 0).getDate();
+      var today = new Date(); today.setHours(0,0,0,0);
+      var dows = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      var listHtml = '';
+      var currentWeekStart = null;
+
+      for (var d = 1; d <= daysInMonth; d++) {
+        var dateObj = new Date(year, month, d);
+        var dow = dateObj.getDay();
+        var isToday = dateObj.getTime() === today.getTime();
+        var isPast = dateObj < today;
+        var weekStart = new Date(dateObj);
+        weekStart.setDate(weekStart.getDate() - dow);
+        var weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekEnd.getDate() + 6);
+        var weekLabel = weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' - ' + weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+        if (currentWeekStart !== weekLabel) {
+          if (currentWeekStart !== null) listHtml += '</div>';
+          currentWeekStart = weekLabel;
+          listHtml += '<div class="cal-week-group"><div class="cal-week-label">' + weekLabel + '</div>';
+        }
+
+        var dayEvents = events.filter(function(e) { return e.date.getTime() === dateObj.getTime(); });
+        // Only show days with events or today
+        if (dayEvents.length === 0 && !isToday) continue;
+
+        var dateClass = isToday ? 'is-today' : isPast ? 'is-past' : '';
+        listHtml += '<div class="cal-list-day">';
+        listHtml += '<div class="cal-list-date ' + dateClass + '"><div class="cal-date-dow">' + dows[dow] + '</div><div class="cal-date-num">' + d + '</div></div>';
+        listHtml += '<div class="cal-list-events">';
+
+        if (dayEvents.length > 0) {
+          dayEvents.forEach(function(e) {
+            var evtClass = getEventClass(e.date);
+            var loc = e.locationStr || '';
+            var rep = e.accountRep ? TEAM_MEMBERS.find(function(m){return m.email === e.accountRep}) : null;
+            listHtml += '<div class="cal-list-event" onclick="viewDetails(allData.find(function(d){return d.email===\'' + esc(e.email) + '\'}))">';
+            listHtml += '<div class="cal-list-event-dot ' + evtClass + '"></div>';
+            listHtml += '<div class="cal-list-event-info">';
+            listHtml += '<div class="cal-list-event-org">' + esc(e.organization || 'Unknown') + '</div>';
+            listHtml += '<div class="cal-list-event-meta">' + (loc ? loc + ' - ' : '') + (rep ? rep.name : 'No rep') + '</div>';
+            listHtml += '</div></div>';
+          });
+        } else {
+          listHtml += '<div class="cal-list-no-events">Today - no go-lives scheduled</div>';
+        }
+
+        listHtml += '</div></div>';
+      }
+      if (currentWeekStart !== null) listHtml += '</div>';
+
+      if (!listHtml) {
+        listHtml = '<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px">No go-live dates this month</div>';
+      }
+      listEl.innerHTML = listHtml;
     }
 
     function showCalPopover(evt, dateIso) {
@@ -1381,6 +1468,12 @@
       
       document.getElementById('modalContent').innerHTML = html;
       document.getElementById('modalOverlay').classList.add('active');
+      // Scroll to top on open
+      var modalBody = document.querySelector('.modal-body');
+      if (modalBody) modalBody.scrollTop = 0;
+      document.getElementById('modalOverlay').scrollTop = 0;
+      document.getElementById('modalContent').scrollTop = 0;
+      document.body.style.overflow = 'hidden';
     }
 
     function toggleChecklistItem(email, id, el) {
@@ -1393,7 +1486,7 @@
     }
 
     function toggleLocation(idx) { document.getElementById('loc-' + idx).classList.toggle('collapsed'); }
-    function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+    function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); document.body.style.overflow = ''; }
     
     // Notes system - stored in localStorage per org email + section
     function getNotesKey(email, section) { return 'pp_notes_' + email + '_' + section; }
