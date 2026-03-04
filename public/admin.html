@@ -1000,7 +1000,7 @@
           });
           allData = deduped.filter(d => d.status !== 'Archived');
           archivedData = deduped.filter(d => d.status === 'Archived');
-          document.querySelector('.stats-section')?.classList.remove('loading-state'); updateStats(); renderTable(); renderPipeline(); renderCalendar(); finishLoading(allData);
+          document.querySelector('.stats-section')?.classList.remove('loading-state'); updateStats(); renderTable(); renderPipeline(); renderCalendar(); loadComments(); finishLoading(allData);
         } else if (result.error === 'Unauthorized') logout();
         else { console.error('API returned error:', result); document.getElementById('dataLoadingOverlay').classList.add('hidden'); document.getElementById('dashboard').classList.add('active'); document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">API error: ' + (result.error || JSON.stringify(result)) + '</td></tr>'; }
       } catch(e) { console.error('LoadData error:', e); document.getElementById('dataLoadingOverlay').classList.add('hidden'); document.getElementById('dashboard').classList.add('active'); document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">Unable to load data: ' + e.message + '<br><small style="color:var(--text3)">Check browser console for details. Email: ' + (currentUser?.email || 'none') + '</small></td></tr>'; }
@@ -1660,23 +1660,55 @@
       if (window._scrollY !== undefined) window.scrollTo(0, window._scrollY);
     }
     
-    // Notes system - stored in localStorage per org email + section
-    function getNotesKey(email, section) { return 'pp_notes_' + email + '_' + section; }
+    // Comments system - stored in Google Sheet, shared across all users
+    var allComments = []; // loaded from API
+
+    async function loadComments() {
+      try {
+        var result = await jsonpRequest(API_URL + '?action=getComments&email=' + encodeURIComponent(currentUser?.email || ''));
+        if (result.success) {
+          allComments = result.comments || [];
+          console.log('Loaded ' + allComments.length + ' comments from API');
+        }
+      } catch(e) { console.error('Failed to load comments:', e); }
+    }
+
     function getNotes(email, section) {
-      try { return JSON.parse(localStorage.getItem(getNotesKey(email, section)) || '[]'); }
-      catch(e) { return []; }
+      return allComments.filter(function(c) { return c.orgEmail === email && c.section === section; });
     }
-    function saveNote(email, section, text) {
+
+    async function saveNoteToAPI(orgEmail, section, text) {
       if (!text || !text.trim()) return;
-      var notes = getNotes(email, section);
-      notes.push({ text: text.trim(), author: currentUser?.name || currentUser?.email || 'Unknown', email: currentUser?.email || '', date: new Date().toISOString() });
-      localStorage.setItem(getNotesKey(email, section), JSON.stringify(notes));
+      try {
+        var result = await jsonpRequest(API_URL + '?action=saveComment&email=' + encodeURIComponent(currentUser?.email || '') + '&orgEmail=' + encodeURIComponent(orgEmail) + '&section=' + encodeURIComponent(section) + '&text=' + encodeURIComponent(text.trim()));
+        if (result.success && result.comment) {
+          allComments.push(result.comment);
+          showToast('Comment saved', 'success');
+        } else { showToast('Failed to save comment', 'error'); }
+      } catch(e) { showToast('Failed to save comment', 'error'); }
     }
-    function deleteNote(email, section, idx) {
-      var notes = getNotes(email, section);
-      notes.splice(idx, 1);
-      localStorage.setItem(getNotesKey(email, section), JSON.stringify(notes));
+
+    async function deleteNoteFromAPI(commentId) {
+      try {
+        var result = await jsonpRequest(API_URL + '?action=deleteComment&email=' + encodeURIComponent(currentUser?.email || '') + '&commentId=' + encodeURIComponent(commentId));
+        if (result.success) {
+          allComments = allComments.filter(function(c) { return c.id !== commentId; });
+          showToast('Comment deleted', 'success');
+        } else { showToast('Failed to delete', 'error'); }
+      } catch(e) { showToast('Failed to delete', 'error'); }
     }
+
+    async function editNoteInAPI(commentId, newText) {
+      try {
+        var result = await jsonpRequest(API_URL + '?action=editComment&email=' + encodeURIComponent(currentUser?.email || '') + '&commentId=' + encodeURIComponent(commentId) + '&text=' + encodeURIComponent(newText.trim()));
+        if (result.success) {
+          var c = allComments.find(function(c) { return c.id === commentId; });
+          if (c) c.text = newText.trim();
+          showToast('Comment updated', 'success');
+        } else { showToast('Failed to update', 'error'); }
+      } catch(e) { showToast('Failed to update', 'error'); }
+    }
+
     function renderNotesBlock(email, section) {
       var notes = getNotes(email, section);
       var id = section.replace(/[^a-zA-Z0-9]/g, '');
@@ -1685,19 +1717,18 @@
       var userName = currentUser?.name || currentUser?.email || 'Unknown';
       var inputId = 'noteInput_' + id + '_' + email.replace(/[^a-zA-Z0-9]/g,'');
       var h = '<div class="section-notes">';
-      // Existing comments
       if (notes.length > 0) {
         h += '<div class="notes-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> ' + notes.length + ' comment' + (notes.length > 1 ? 's' : '') + '</div>';
         h += '<div class="notes-list">';
         notes.forEach(function(n, i) {
-          var noteAuthorMember = TEAM_MEMBERS.find(function(m) { return m.email === n.email; });
+          var noteAuthorMember = TEAM_MEMBERS.find(function(m) { return m.email === n.authorEmail; });
           var noteAvatarHtml = noteAuthorMember && noteAuthorMember.photo ? '<img src="' + noteAuthorMember.photo + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">' : (n.author || '?')[0].toUpperCase();
           var noteId = 'note_' + id + '_' + i;
-          h += '<div class="note-item" id="' + noteId + '"><div class="note-avatar">' + noteAvatarHtml + '</div><div class="note-content"><div class="note-header"><span class="note-author">' + esc(n.author) + '</span><span class="note-date">' + timeAgo(n.date) + '</span></div><div class="note-text" id="' + noteId + '_text">' + esc(n.text) + '</div></div><div class="note-actions"><button class="note-action-btn" onclick="startEditNote(\'' + esc(email) + '\',\'' + section + '\',' + i + ',\'' + noteId + '\')">Edit</button><button class="note-action-btn delete" onclick="deleteNoteAndRefresh(\'' + esc(email) + '\',\'' + section + '\',' + i + ')">Delete</button></div></div>';
+          var canEdit = n.authorEmail === (currentUser?.email || '');
+          h += '<div class="note-item" id="' + noteId + '"><div class="note-avatar">' + noteAvatarHtml + '</div><div class="note-content"><div class="note-header"><span class="note-author">' + esc(n.author) + '</span><span class="note-date">' + timeAgo(n.date) + '</span></div><div class="note-text" id="' + noteId + '_text">' + esc(n.text) + '</div></div>' + (canEdit ? '<div class="note-actions"><button class="note-action-btn" onclick="startEditNote(\'' + esc(n.id) + '\',\'' + noteId + '\',\'' + esc(email) + '\')">Edit</button><button class="note-action-btn delete" onclick="deleteNoteAndRefresh(\'' + esc(n.id) + '\',\'' + esc(email) + '\')">Delete</button></div>' : '') + '</div>';
         });
         h += '</div>';
       }
-      // New comment input - always visible
       h += '<div class="comment-box"><div class="note-avatar">' + userAvatarHtml + '</div><div class="comment-input-wrap"><div class="comment-as">Comment as <strong>' + esc(userName) + '</strong></div><textarea class="comment-input" rows="1" placeholder="Write a comment..." id="' + inputId + '" onfocus="showCommentActions(this)" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();submitNote(\'' + esc(email) + '\',\'' + section + '\',this)}"></textarea><div class="comment-actions hidden" id="' + inputId + '_actions"><button class="comment-cancel" onclick="cancelComment(this)">Cancel</button><button class="comment-submit" onclick="submitNote(\'' + esc(email) + '\',\'' + section + '\',this)">Comment</button></div></div></div>';
       h += '</div>';
       return h;
@@ -1714,15 +1745,14 @@
       input.blur();
       if (actions) actions.classList.add('hidden');
     }
-    function startEditNote(email, section, idx, noteId) {
-      var notes = getNotes(email, section);
-      var note = notes[idx];
-      if (!note) return;
+    function startEditNote(commentId, noteId, email) {
+      var comment = allComments.find(function(c) { return c.id === commentId; });
+      if (!comment) return;
       var item = document.getElementById(noteId);
       var textEl = document.getElementById(noteId + '_text');
       if (!textEl) return;
       item.classList.add('editing');
-      textEl.innerHTML = '<textarea class="note-edit-input" rows="2" id="' + noteId + '_edit">' + esc(note.text) + '</textarea><div class="note-edit-actions"><button class="note-edit-cancel" onclick="cancelEditNote(\'' + noteId + '\',\'' + esc(note.text).replace(/'/g,"&#39;") + '\')">Cancel</button><button class="note-edit-save" onclick="saveEditNote(\'' + esc(email) + '\',\'' + section + '\',' + idx + ',\'' + noteId + '\')">Save</button></div>';
+      textEl.innerHTML = '<textarea class="note-edit-input" rows="2" id="' + noteId + '_edit">' + esc(comment.text) + '</textarea><div class="note-edit-actions"><button class="note-edit-cancel" onclick="cancelEditNote(\'' + noteId + '\',\'' + esc(comment.text).replace(/'/g,"&#39;") + '\')">Cancel</button><button class="note-edit-save" onclick="saveEditNoteAPI(\'' + esc(commentId) + '\',\'' + noteId + '\',\'' + esc(email) + '\')">Save</button></div>';
       document.getElementById(noteId + '_edit').focus();
     }
     function cancelEditNote(noteId, originalText) {
@@ -1730,28 +1760,30 @@
       item.classList.remove('editing');
       document.getElementById(noteId + '_text').textContent = originalText;
     }
-    function saveEditNote(email, section, idx, noteId) {
+    async function saveEditNoteAPI(commentId, noteId, email) {
       var input = document.getElementById(noteId + '_edit');
       if (!input || !input.value.trim()) return;
-      var notes = getNotes(email, section);
-      notes[idx].text = input.value.trim();
-      notes[idx].editedAt = new Date().toISOString();
-      localStorage.setItem(getNotesKey(email, section), JSON.stringify(notes));
+      await editNoteInAPI(commentId, input.value);
       var item = window._currentModalItem;
       if (item) viewDetails(item);
     }
     
-    function submitNote(email, section, el) {
+    async function submitNote(email, section, el) {
       var wrap = el.closest('.comment-box') || el.closest('.section-notes');
       var input = wrap.querySelector('.comment-input');
       if (input && input.value.trim()) {
-        saveNote(email, section, input.value);
+        var text = input.value;
+        input.value = '';
+        input.disabled = true;
+        await saveNoteToAPI(email, section, text);
+        input.disabled = false;
         var item = window._currentModalItem;
         if (item) viewDetails(item);
       }
     }
-    function deleteNoteAndRefresh(email, section, idx) {
-      deleteNote(email, section, idx);
+    async function deleteNoteAndRefresh(commentId, email) {
+      if (!confirm('Delete this comment?')) return;
+      await deleteNoteFromAPI(commentId);
       var item = window._currentModalItem;
       if (item) viewDetails(item);
     }
@@ -1806,14 +1838,14 @@
       CHECKLIST_ITEMS.forEach(function(c) { rows.push([c.label, cl[c.id] ? 'Complete' : 'Incomplete']); });
       // Checklist notes
       var clNotes = getNotes(item.email, 'checklist');
-      if (clNotes.length > 0) { rows.push([]); rows.push(['Checklist Notes']); clNotes.forEach(function(n){rows.push([n.author + ' (' + n.email + ')', n.text, new Date(n.date).toLocaleString()])}); }
+      if (clNotes.length > 0) { rows.push([]); rows.push(['Checklist Notes']); clNotes.forEach(function(n){rows.push([n.author + ' (' + (n.authorEmail||n.email||'') + ')', n.text, new Date(n.date).toLocaleString()])}); }
       rows.push([]);
       // Contact notes
       var contactNotes = getNotes(item.email, 'contact');
-      if (contactNotes.length > 0) { rows.push(['CONTACT NOTES']); contactNotes.forEach(function(n){rows.push([n.author + ' (' + n.email + ')', n.text, new Date(n.date).toLocaleString()])}); rows.push([]); }
+      if (contactNotes.length > 0) { rows.push(['CONTACT NOTES']); contactNotes.forEach(function(n){rows.push([n.author + ' (' + (n.authorEmail||n.email||'') + ')', n.text, new Date(n.date).toLocaleString()])}); rows.push([]); }
       // Policies notes
       var policyNotes = getNotes(item.email, 'policies');
-      if (policyNotes.length > 0) { rows.push(['POLICY NOTES']); policyNotes.forEach(function(n){rows.push([n.author + ' (' + n.email + ')', n.text, new Date(n.date).toLocaleString()])}); rows.push([]); }
+      if (policyNotes.length > 0) { rows.push(['POLICY NOTES']); policyNotes.forEach(function(n){rows.push([n.author + ' (' + (n.authorEmail||n.email||'') + ')', n.text, new Date(n.date).toLocaleString()])}); rows.push([]); }
       rows.push(['LOCATIONS (' + locations.length + ')']);
       locations.forEach(function(loc, li) {
         rows.push([]);
@@ -1836,7 +1868,7 @@
         });
         // Location notes
         var locNotes = getNotes(item.email, 'location_' + li);
-        if (locNotes.length > 0) { rows.push([]); rows.push(['  Location Notes']); locNotes.forEach(function(n){rows.push(['  ' + n.author + ' (' + n.email + ')', n.text, new Date(n.date).toLocaleString()])}); }
+        if (locNotes.length > 0) { rows.push([]); rows.push(['  Location Notes']); locNotes.forEach(function(n){rows.push(['  ' + n.author + ' (' + (n.authorEmail||n.email||'') + ')', n.text, new Date(n.date).toLocaleString()])}); }
       });
       var csv = rows.map(function(r){return r.map(function(c){return '"' + String(c||'').replace(/"/g,'""') + '"'}).join(',')}).join('\n');
       var a = document.createElement('a');
