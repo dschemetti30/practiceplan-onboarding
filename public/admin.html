@@ -228,12 +228,12 @@
     .pipeline-card-time{font-size:8px;color:var(--text3)}
     .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.7);backdrop-filter:blur(8px);display:none;align-items:flex-start;justify-content:center;padding:40px 20px;z-index:1000;overflow-y:auto;-webkit-overflow-scrolling:touch}
     .modal-overlay.active{display:flex}
-    .modal{background:var(--card);border-radius:24px;max-width:750px;width:100%;box-shadow:0 25px 80px rgba(0,0,0,0.3)}
+    .modal{background:var(--card);border-radius:24px;max-width:750px;width:100%;box-shadow:0 25px 80px rgba(0,0,0,0.3);overflow:hidden}
     .modal-header{padding:28px 32px;background:#0076bb;color:white;position:relative;border-radius:24px 24px 0 0}
     .modal-header h2{font-size:20px;font-weight:700;margin-bottom:4px;line-height:1.3;word-break:break-word}
     .modal-header .modal-subtitle{font-size:14px;opacity:0.9}
     
-    .modal-header .pipeline-status-select{background-color:white;color:#1e293b;border-color:rgba(255,255,255,0.8);font-weight:700;padding:4px 22px 4px 8px;border-radius:6px;font-size:10px}
+    .modal-header .pipeline-status-select,.modal-header .pipeline-status-select.s-new,.modal-header .pipeline-status-select.s-in-progress,.modal-header .pipeline-status-select.s-on-hold,.modal-header .pipeline-status-select.s-review,.modal-header .pipeline-status-select.s-complete,.modal-header .pipeline-status-select.s-onboarding,.modal-header .pipeline-status-select.s-live{background-color:white;color:#1e293b;border-color:rgba(255,255,255,0.8);font-weight:700;padding:4px 22px 4px 8px;border-radius:6px;font-size:10px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%231e293b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")}
     .modal-header .pipeline-status-select:focus{border-color:white;box-shadow:0 0 0 3px rgba(255,255,255,0.25)}
     .modal-header .pipeline-status-select option{color:#1e293b;background:white}
     .modal-close{position:absolute;top:20px;right:20px;width:32px;height:32px;border-radius:50%;border:none;background:rgba(255,255,255,0.15);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all 0.2s;backdrop-filter:blur(4px)};font-size:20px}
@@ -468,19 +468,26 @@
       .pipeline-section .controls-row{flex-wrap:wrap}
       .calendar-grid{display:none}
       .calendar-day-header{display:none}
-      .calendar-list-mobile{display:block}
-      .cal-week-group{margin-bottom:16px}
-      .cal-week-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:8px 0;border-bottom:1px solid var(--border);margin-bottom:8px}
-      .cal-list-day{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+      .calendar-list-mobile{display:block;padding:4px 0}
+      .calendar-container{border-radius:14px;border:none;background:transparent}
+      .calendar-header{padding:14px 4px;flex-direction:column;gap:10px;align-items:stretch}
+      .calendar-header .calendar-title{font-size:15px}
+      .calendar-nav{justify-content:space-between;width:100%}
+      .calendar-nav-btn{width:36px;height:36px}
+      .calendar-month{font-size:15px}
+      .calendar-today-btn{font-size:11px;padding:6px 14px}
+      .cal-week-group{margin-bottom:12px;background:var(--card);border-radius:14px;border:1px solid var(--border);overflow:hidden}
+      .cal-week-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:10px 16px;background:var(--bg);border-bottom:1px solid var(--border);margin-bottom:0}
+      .cal-list-day{display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);align-items:flex-start}
       .cal-list-day:last-child{border-bottom:none}
-      .cal-list-date{width:44px;flex-shrink:0;text-align:center}
-      .cal-list-date .cal-date-dow{font-size:9px;text-transform:uppercase;color:var(--text3);font-weight:600}
-      .cal-list-date .cal-date-num{font-size:20px;font-weight:700;color:var(--text);line-height:1.2}
-      .cal-list-date.is-today .cal-date-num{color:white;background:var(--pp-blue);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:16px}
+      .cal-list-date{width:42px;flex-shrink:0;text-align:center;padding-top:2px}
+      .cal-list-date .cal-date-dow{font-size:9px;text-transform:uppercase;color:var(--text3);font-weight:600;letter-spacing:0.3px}
+      .cal-list-date .cal-date-num{font-size:20px;font-weight:700;color:var(--text);line-height:1.3}
+      .cal-list-date.is-today .cal-date-num{color:white;background:var(--pp-blue);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;margin:2px auto 0;font-size:15px}
       .cal-list-date.is-past .cal-date-num{color:var(--text3)}
       .cal-list-events{flex:1;min-width:0}
-      .cal-list-event{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;cursor:pointer;transition:border-color 0.2s}
-      .cal-list-event:active{border-color:var(--pp-blue)}
+      .cal-list-event{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:10px;margin-bottom:6px;cursor:pointer;transition:all 0.15s;border:1px solid transparent}
+      .cal-list-event:active{background:rgba(0,118,187,0.06);border-color:rgba(0,118,187,0.15)}
       .cal-list-event:last-child{margin-bottom:0}
       .cal-list-event-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
       .cal-list-event-dot.upcoming{background:var(--pp-blue)}
@@ -489,9 +496,8 @@
       .cal-list-event-dot.past-event{background:var(--text3)}
       .cal-list-event-info{flex:1;min-width:0}
       .cal-list-event-org{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-      .cal-list-event-meta{font-size:11px;color:var(--text3)}
-      .cal-list-no-events{padding:10px 0;color:var(--text3);font-size:12px;font-style:italic}
-      .calendar-container{border-radius:14px}
+      .cal-list-event-meta{font-size:11px;color:var(--text3);margin-top:1px}
+      .cal-list-no-events{padding:6px 0;color:var(--text3);font-size:12px;font-style:italic}
       .modal-overlay{padding:0;background:rgba(15,23,42,0.95);backdrop-filter:none;align-items:stretch;overflow:hidden}
       .modal{width:100%;height:100%;max-height:100%;border-radius:0;display:flex;flex-direction:column;overflow:hidden}
       .modal-header{padding:14px 16px;border-radius:0;flex-shrink:0}
@@ -1468,12 +1474,19 @@
       
       document.getElementById('modalContent').innerHTML = html;
       document.getElementById('modalOverlay').classList.add('active');
-      // Scroll to top on open
-      var modalBody = document.querySelector('.modal-body');
-      if (modalBody) modalBody.scrollTop = 0;
-      document.getElementById('modalOverlay').scrollTop = 0;
-      document.getElementById('modalContent').scrollTop = 0;
+      // Lock body scroll (works on iOS)
+      window._scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = '-' + window._scrollY + 'px';
+      document.body.style.left = '0';
+      document.body.style.right = '0';
       document.body.style.overflow = 'hidden';
+      // Scroll modal to top
+      setTimeout(function() {
+        var modalBody = document.querySelector('.modal-body');
+        if (modalBody) modalBody.scrollTop = 0;
+        document.getElementById('modalContent').scrollTop = 0;
+      }, 10);
     }
 
     function toggleChecklistItem(email, id, el) {
@@ -1486,7 +1499,16 @@
     }
 
     function toggleLocation(idx) { document.getElementById('loc-' + idx).classList.toggle('collapsed'); }
-    function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); document.body.style.overflow = ''; }
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+      // Restore body scroll
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.overflow = '';
+      if (window._scrollY !== undefined) window.scrollTo(0, window._scrollY);
+    }
     
     // Notes system - stored in localStorage per org email + section
     function getNotesKey(email, section) { return 'pp_notes_' + email + '_' + section; }
