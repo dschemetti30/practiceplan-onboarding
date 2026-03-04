@@ -138,6 +138,7 @@
     .controls-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:16px}
     .section-title{font-size:18px;font-weight:700;color:var(--text)}
     .controls-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .controls-group{display:contents}
     .styled-select{position:relative}
     .styled-select select{appearance:none;padding:10px 36px 10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--card);font-size:12px;font-family:inherit;font-weight:500;color:var(--text);cursor:pointer;min-width:120px}
     .styled-select select:focus{outline:none;border-color:var(--pp-blue)}
@@ -224,9 +225,9 @@
     .modal-overlay.active{display:flex}
     .modal{background:var(--card);border-radius:24px;max-width:750px;width:100%;box-shadow:0 25px 80px rgba(0,0,0,0.3)}
     .modal-header{padding:28px 32px;background:#0076bb;color:white;position:relative;border-radius:24px 24px 0 0}
-    .modal-header h2{font-size:24px;font-weight:700;margin-bottom:4px}
+    .modal-header h2{font-size:20px;font-weight:700;margin-bottom:4px;line-height:1.3;word-break:break-word}
     .modal-header .modal-subtitle{font-size:14px;opacity:0.9}
-    .modal-close{position:absolute;top:24px;right:24px;width:40px;height:40px;border-radius:50%;border:none;background:rgba(255,255,255,0.15);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px}
+    .modal-close{position:absolute;top:20px;right:20px;width:32px;height:32px;border-radius:50%;border:none;background:rgba(255,255,255,0.15);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all 0.2s;backdrop-filter:blur(4px)};font-size:20px}
     .modal-close:hover{background:rgba(255,255,255,0.25)}
     .checklist-section{padding:24px 32px;background:var(--card);border-bottom:1px solid var(--border)}
     .checklist-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
@@ -400,27 +401,74 @@
       .user-pill{padding:0;background:none;gap:0}
       .user-name{display:none}
       .user-avatar{width:36px;height:36px;font-size:14px}
-      .header-btn{width:36px;height:36px;flex-shrink:0}
+      .header-btn{width:36px;height:36px;min-width:36px;min-height:36px}
       .header-btn svg{width:16px;height:16px}
       .logout-btn{padding:8px 12px;font-size:11px}
       .header-right{gap:8px}
       .view-tabs{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:4px}
       .view-tab{font-size:11px;padding:8px 12px;white-space:nowrap}
+      .stats-row{grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+      .stat-card{padding:16px;border-radius:14px}
+      .stat-value{font-size:28px}
+      .stat-label{font-size:10px}
+      .controls-row{gap:10px;margin-bottom:16px}
+      .section-title{font-size:15px;width:100%}
+      .controls-right{gap:0;width:100%;flex-wrap:nowrap;flex-direction:column}
+      .controls-group{display:flex;gap:6px;width:100%}
+      .filters-group .styled-select{flex:1;min-width:0}
+      .filters-group .styled-select select{width:100%;padding:8px 28px 8px 10px;font-size:11px}
+      .search-group{flex:1}
+      .search-group .search-input{flex:1;min-width:0;padding:8px 10px;font-size:12px}
+      .search-group .text-action-btn{white-space:nowrap;padding:8px 10px;font-size:11px}
+      .actions-group .text-action-btn{flex:1;justify-content:center;padding:8px 10px;font-size:11px}
       .table-wrapper{display:none}
-      .mobile-cards{display:flex;flex-direction:column;gap:10px}
+      .mobile-cards{display:flex;flex-direction:column;gap:8px}
+      .mobile-card{padding:12px;border-radius:12px}
+      .mobile-card-header{margin-bottom:8px;gap:10px}
+      .mobile-card-header .org-avatar{width:36px;height:36px;border-radius:10px;font-size:13px}
+      .mobile-card-info .org-name{font-size:13px}
+      .mobile-card-info .contact-email{font-size:11px}
+      .mobile-card-meta{grid-template-columns:1fr 1fr 1fr 1fr;gap:0;margin-bottom:0;background:var(--bg);border-radius:10px;overflow:hidden}
+      .mobile-card-meta-item{border-radius:0;padding:6px 8px;text-align:center}
+      .mobile-card-meta-item label{font-size:8px;margin-bottom:1px}
+      .mobile-card-meta-item span{font-size:11px}
+      .mobile-card-footer{gap:0;margin-top:0}
+      .mobile-card-actions{display:flex;gap:0;width:100%}
+      .mobile-card-actions button{flex:1;border-radius:0;padding:9px 0;font-size:11px;text-align:center}
+      .mobile-card-actions button:first-child{border-radius:0 0 0 12px}
+      .mobile-card-actions button:last-child{border-radius:0 0 12px 0}
       .pipeline-board{grid-template-columns:1fr!important}
       .pipeline-section .controls-row{flex-wrap:wrap}
-      .calendar-day{min-height:60px}
-      .stats-row{grid-template-columns:1fr 1fr}
-      .stat-card{padding:16px}
-      .controls-row{flex-wrap:wrap;gap:8px}
-      .controls-row select,.controls-row input{font-size:12px;min-width:0}
+      .calendar-grid{grid-template-columns:repeat(7,1fr)}
+      .calendar-day{min-height:44px;padding:2px}
+      .calendar-day-header{padding:6px 2px;font-size:9px}
+      .calendar-day .day-num{font-size:11px}
+      .cal-event-count{font-size:8px;width:14px;height:14px;line-height:14px}
       .modal-overlay{padding:0}
       .modal{width:100%;height:100%;max-height:100%;border-radius:0}
-      .modal-body{padding:16px}
-      .detail-grid{grid-template-columns:1fr}
-      .modal-toolbar{flex-wrap:wrap;gap:6px}
+      .modal-header{padding:16px}
+      .modal-header h2{font-size:16px;white-space:normal;overflow:visible;text-overflow:clip;line-height:1.3}
+      .modal-header .modal-subtitle{font-size:12px}
+      .modal-close{top:14px;right:14px;width:30px;height:30px;font-size:13px}
+      .modal-body{padding:16px;overflow-x:hidden}
+      .modal-toolbar{flex-wrap:wrap;gap:6px;padding:10px 16px}
       .modal-toolbar button{font-size:11px;padding:6px 10px}
+      .detail-grid{grid-template-columns:1fr}
+      .detail-section{padding-top:16px;padding-bottom:16px;overflow:hidden}
+      .section-notes{margin-left:0;margin-right:0;overflow:hidden;max-width:100%}
+      .notes-list{overflow:hidden}
+      .note-item{padding:10px 12px;gap:10px;max-width:100%;overflow:hidden}
+      .note-avatar{width:26px;height:26px;font-size:11px;flex-shrink:0}
+      .note-content{overflow:hidden}
+      .note-author{font-size:11px}
+      .note-date{font-size:10px}
+      .note-text{font-size:12px;overflow-wrap:break-word;word-break:break-word}
+      .comment-box{gap:10px;max-width:100%}
+      .comment-box .note-avatar{width:26px;height:26px;font-size:11px}
+      .comment-input-wrap{overflow:hidden}
+      .comment-input{padding:8px 10px;font-size:12px}
+      .note-actions{gap:4px}
+      .note-action-btn{font-size:10px;padding:2px 6px}
     }
     @media(max-width:480px){
       .header{padding:8px 10px}
@@ -479,13 +527,19 @@
           <div class="controls-row">
             <div class="section-title">Submissions</div>
             <div class="controls-right">
-              <button class="text-action-btn" id="myAccountsBtn" onclick="toggleMyAccounts()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> My Accounts</button>
-              <div class="styled-select" id="repFilterContainer"><select id="repFilter" onchange="setRepFilter(this.value)"><option value="all">All Reps</option></select></div>
-              <div class="styled-select"><select id="timePeriodSelect" onchange="setTimePeriod(this.value)"><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="60">Last 60 days</option><option value="90">Last 90 days</option><option value="0">All time</option></select></div>
-              <div class="styled-select"><select id="statusFilter" onchange="setFilter(this.value)"><option value="all">All statuses</option><option value="complete">Form Complete</option><option value="onboarding">Onboarding</option><option value="live">Live</option><option value="active">Active</option><option value="on-hold">On Hold</option><option value="stale">Stale</option><option value="archived">Archived</option></select></div>
-              <input type="text" class="search-input" placeholder="Search..." oninput="handleSearch(this.value)">
-              <button class="text-action-btn" onclick="exportCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
-              <button class="text-action-btn" onclick="loadData()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh</button>
+              <div class="controls-group filters-group">
+                <div class="styled-select" id="repFilterContainer"><select id="repFilter" onchange="setRepFilter(this.value)"><option value="all">All Reps</option></select></div>
+                <div class="styled-select"><select id="timePeriodSelect" onchange="setTimePeriod(this.value)"><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="60">Last 60 days</option><option value="90">Last 90 days</option><option value="0">All time</option></select></div>
+                <div class="styled-select"><select id="statusFilter" onchange="setFilter(this.value)"><option value="all">All statuses</option><option value="complete">Form Complete</option><option value="onboarding">Onboarding</option><option value="live">Live</option><option value="active">Active</option><option value="on-hold">On Hold</option><option value="stale">Stale</option><option value="archived">Archived</option></select></div>
+              </div>
+              <div class="controls-group search-group">
+                <input type="text" class="search-input" placeholder="Search..." oninput="handleSearch(this.value)">
+                <button class="text-action-btn" id="myAccountsBtn" onclick="toggleMyAccounts()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> My Accounts</button>
+              </div>
+              <div class="controls-group actions-group">
+                <button class="text-action-btn" onclick="exportCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
+                <button class="text-action-btn" onclick="loadData()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh</button>
+              </div>
             </div>
           </div>
           <div class="table-wrapper"><table><thead><tr><th onclick="sortBy('organization')">Organization <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('contact')">Contact <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('pipelineStatus')">Status <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('checklistCount')">Checklist <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('goLiveDate')">Go Live <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('lastUpdated')" class="sorted">Updated <span class="sort-arrow">&#x25BC;</span></th><th onclick="sortBy('accountRep')">Rep <span class="sort-arrow">&#x25B2;</span></th><th>Actions</th></tr></thead><tbody id="tableBody"><tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr></tbody></table></div>
@@ -786,6 +840,7 @@
             '<div class="mobile-card-footer">' +
               '<div class="mobile-card-actions">' +
                 '<button class="primary" onclick=\'viewDetails(' + JSON.stringify(item).replace(/'/g,"&#39;") + ')\'>View</button>' +
+                '<button onclick="window.open(\'mailto:' + esc(item.email || '') + '\')">Email</button>' +
                 '<button onclick="archiveRow(\'' + item.sheetType + '\',' + item.rowIndex + ',\'' + esc(item.email) + '\')">' + (isArch ? 'Restore' : 'Archive') + '</button>' +
               '</div>' +
             '</div>' +
@@ -985,7 +1040,7 @@
       const plabels = { 'new': 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', 'review': 'Review', 'complete': 'Form Complete', 'onboarding': 'Onboarding', 'live': 'Live' };
       const statusClass = item.pipelineStatus || 'new';
       
-      let html = '<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><div style="display:flex;align-items:center;gap:16px;padding-right:40px"><div style="width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white;background:rgba(255,255,255,0.2);flex-shrink:0">' + getOrgInitials(item.organization) + '</div><div style="min-width:0"><h2 style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(item.organization || 'Details') + '</h2><div class="modal-subtitle" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' + esc(contact.fullName || item.contact || '') + (item.locationStr ? ' &middot; ' + esc(item.locationStr) : '') + ' <span class="status-badge ' + statusClass + '" style="font-size:9px;vertical-align:middle">' + (plabels[statusClass] || 'New') + '</span></div></div></div></div>';
+      let html = '<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><div style="display:flex;align-items:center;gap:16px;padding-right:36px"><div style="width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:white;background:rgba(255,255,255,0.2);flex-shrink:0">' + getOrgInitials(item.organization) + '</div><div style="min-width:0"><h2>' + esc(item.organization || 'Details') + '</h2><div class="modal-subtitle" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' + esc(contact.fullName || item.contact || '') + (item.locationStr ? ' &middot; ' + esc(item.locationStr) : '') + ' <span class="status-badge ' + statusClass + '" style="font-size:9px;vertical-align:middle">' + (plabels[statusClass] || 'New') + '</span></div></div></div></div>';
       
       // Checklist
       html += '<div class="checklist-section"><div class="checklist-header"><div class="checklist-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Onboarding Checklist</div><div class="checklist-count">' + clCount + ' of ' + CHECKLIST_ITEMS.length + ' complete</div></div><div class="checklist-items">' + CHECKLIST_ITEMS.map(c => '<div class="checklist-item' + (cl[c.id] ? ' checked' : '') + '" onclick="toggleChecklistItem(\'' + item.email + '\',\'' + c.id + '\',this)"><div class="checklist-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span class="checklist-label">' + c.label + '</span></div>').join('') + '</div>' + renderNotesBlock(item.email, 'checklist') + '</div>';
