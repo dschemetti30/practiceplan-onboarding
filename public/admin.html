@@ -33,7 +33,7 @@
     .header-logo{height:36px;flex-shrink:0}
     .header-right{display:flex;align-items:center;gap:12px}
     .user-pill{display:flex;align-items:center;gap:10px;padding:6px 16px 6px 6px;background:var(--bg);border-radius:50px}
-    .user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pp-blue),var(--pp-green));color:white;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+    .user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pp-blue),var(--pp-green));color:white;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;overflow:hidden}
     .user-name{font-size:13px;color:var(--text);font-weight:600;white-space:nowrap}
     .header-btn{width:40px;height:40px;min-width:40px;min-height:40px;border-radius:50%;border:1px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all 0.2s;padding:0;box-sizing:border-box}
     .header-btn:hover{border-color:var(--pp-blue);color:var(--pp-blue)}
@@ -130,27 +130,27 @@
     .cl-meter-seg:not(.filled){background:var(--border);opacity:0.3}
     .cl-chart-pct{font-size:10px;font-weight:700;color:var(--text2);min-width:26px;text-align:right}
     .cl-chart-empty{font-size:12px;color:var(--text3);text-align:center;padding:12px}
-    .funnel-container{position:relative;padding:0}
-    .funnel-track{display:none}
-    .funnel-track-fill{display:none}
-    .funnel-bar{display:flex;height:28px;border-radius:8px;overflow:hidden;gap:2px;margin-bottom:14px}
-    .funnel-bar-seg{transition:width 0.6s ease;display:flex;align-items:center;justify-content:center;min-width:0}
-    .funnel-bar-seg span{font-size:10px;font-weight:700;color:white;text-shadow:0 1px 2px rgba(0,0,0,0.2)}
-    .funnel-bar-seg.s1{background:#0ea5e9}
-    .funnel-bar-seg.s2{background:#0891b2}
-    .funnel-bar-seg.s3{background:#0d9488}
-    .funnel-bar-seg.s4{background:#059669}
-    .funnel-bar-seg.s5{background:var(--pp-green)}
-    .funnel-stages{display:flex;justify-content:space-between;position:relative;z-index:1}
-    .funnel-stage{display:flex;flex-direction:column;align-items:center;flex:1}
-    .funnel-node{width:auto;height:auto;border-radius:0;background:none;border:none;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0}
-    .funnel-node.s1,.funnel-node.s2,.funnel-node.s3,.funnel-node.s4,.funnel-node.s5{border:none}
-    .funnel-node .num{font-size:20px;font-weight:700;color:var(--text);line-height:1}
-    .funnel-node .pct{font-size:10px;font-weight:600;color:var(--text2);margin-top:2px}
-    .funnel-label{margin-top:4px;text-align:center}
-    .funnel-label .title{font-size:10px;font-weight:600;color:var(--text2)}
-    .funnel-label .drop{font-size:10px;color:var(--text3);margin-top:3px}
-    .funnel-label .drop.negative{color:#ef4444}
+    .conversions-card{display:flex;flex-direction:column;gap:10px;height:100%}
+    .conv-hero{display:flex;align-items:baseline;gap:8px;margin-bottom:2px}
+    .conv-hero-num{font-size:36px;font-weight:800;color:var(--text);line-height:1}
+    .conv-hero-label{font-size:12px;color:var(--text2);font-weight:500}
+    .conv-bar-full{height:10px;border-radius:5px;background:var(--bg);overflow:hidden;display:flex;gap:1px}
+    .conv-bar-seg{height:100%;border-radius:5px;transition:width 0.6s ease}
+    .conv-bar-seg.seg-complete{background:var(--pp-green)}
+    .conv-bar-seg.seg-progress{background:var(--pp-blue)}
+    .conv-bar-seg.seg-remaining{background:var(--border);opacity:0.5;flex:1}
+    .conv-steps{display:flex;flex-direction:column;gap:6px;flex:1}
+    .conv-step{display:flex;align-items:center;gap:10px}
+    .conv-step-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .conv-step-dot.c1{background:#0ea5e9}
+    .conv-step-dot.c2{background:#0891b2}
+    .conv-step-dot.c3{background:#0d9488}
+    .conv-step-dot.c4{background:#059669}
+    .conv-step-dot.c5{background:var(--pp-green)}
+    .conv-step-label{font-size:11px;color:var(--text2);flex:1}
+    .conv-step-val{font-size:12px;font-weight:700;color:var(--text)}
+    .conv-step-pct{font-size:10px;color:var(--text3);min-width:32px;text-align:right}
+        .funnel-label .drop.negative{color:#ef4444}
     .time-stats-container{display:flex;flex-direction:column;gap:16px}
     .time-hero{display:flex;align-items:center;gap:16px;padding:14px;background:linear-gradient(135deg,rgba(0,118,187,0.08),rgba(0,168,79,0.08));border-radius:12px;flex-wrap:wrap}
     .time-hero-ring{width:80px;height:80px;position:relative}
@@ -375,7 +375,7 @@
     .note-item{display:flex;gap:12px;padding:14px 16px;background:var(--card);border-radius:12px;margin-bottom:8px;border:1px solid var(--border);transition:border-color 0.2s}
     .note-item:hover{border-color:rgba(0,118,187,0.2)}
     .note-item.editing{border-color:var(--pp-blue);background:rgba(0,118,187,0.02)}
-    .note-avatar{width:30px;height:30px;border-radius:50%;background:#0e7490;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+    .note-avatar{width:30px;height:30px;border-radius:50%;background:#0e7490;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;overflow:hidden}
     .note-content{flex:1;min-width:0;padding-top:1px}
     .note-header{display:flex;align-items:baseline;gap:8px}
     .note-author{font-size:11px;font-weight:600;color:var(--text)}
@@ -702,7 +702,7 @@
 
       <div class="view-content active" id="dashboardView">
         <div class="stats-row">
-          <div class="stat-card"><h3>Form Conversions</h3><div class="funnel-container"><div class="funnel-track"><div class="funnel-track-fill" id="funnelTrack"></div></div><div class="funnel-stages" id="funnelChart"></div></div></div>
+          <div class="stat-card"><h3>Form Conversions</h3><div class="conversions-card" id="conversionsCard"></div></div>
           <div class="stat-card"><h3>Form Completion Metrics</h3><div class="time-stats-container"><div class="time-hero"><div class="time-hero-ring"><svg width="100" height="100" viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="42"/><circle class="progress" id="timeRingProgress" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="264"/></svg><div class="time-hero-value"><span class="num" id="avgTime">-</span><span class="unit" id="avgTimeUnit">days</span></div></div><div class="time-hero-info"><div class="label">Average Time to Complete</div><div class="desc">From first save to final submission</div></div></div><div class="time-range"><div class="time-range-item"><div class="val" id="fastestTime">-</div><div class="lbl">Fastest</div></div><div class="time-range-item"><div class="val" id="slowestTime">-</div><div class="lbl">Slowest</div></div></div></div></div>
           <div class="stat-card"><h3>Form Overview</h3><div class="overview-grid"><div class="overview-item"><div class="overview-icon total"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></div><div class="overview-data"><div class="num" id="statTotal">0</div><div class="lbl">Total</div></div></div><div class="overview-item"><div class="overview-icon complete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="overview-data"><div class="num" id="statComplete">0</div><div class="lbl">Completed</div></div></div><div class="overview-item"><div class="overview-icon active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="overview-data"><div class="num" id="statActive">0</div><div class="lbl">In Progress</div></div></div><div class="overview-item"><div class="overview-icon stale"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="overview-data"><div class="num" id="statStale">0</div><div class="lbl">Stale (7+ days)</div></div></div></div></div>
           <div class="stat-card"><h3>Onboarding Status</h3><div class="pipeline-chart" id="pipelineChart"></div></div>
@@ -774,11 +774,11 @@
     const API_URL = 'https://script.google.com/macros/s/AKfycbxY4cTJeIBwjbCV77vSDpn1OiP2mrs5h6phU4rJazR9rAYbrQLYJF37W8d7l_QndcMB/exec';
     const STALE_DAYS = 7;
     const TEAM_MEMBERS = [
-      { email: 'donnie.schemetti@practiceplan.io', name: 'Donnie S.' },
-      { email: 'john.brochu@practiceplan.io', name: 'John B.' },
-      { email: 'jessica.difiore@practiceplan.io', name: 'Jessica D.' },
-      { email: 'kevin.parker@practiceplan.io', name: 'Kevin P.' },
-      { email: 'leslie.slovak@practiceplan.io', name: 'Leslie S.' }
+      { email: 'donnie.schemetti@practiceplan.io', name: 'Donnie S.', photo: 'https://res.cloudinary.com/dpj2i1xui/image/upload/v1764959522/Donnie-Schemetti-2025-headshot_whnbk1.jpg' },
+      { email: 'john.brochu@practiceplan.io', name: 'John B.', photo: 'https://res.cloudinary.com/dpj2i1xui/image/upload/v1770056001/brochu_py2zps.jpg' },
+      { email: 'jessica.difiore@practiceplan.io', name: 'Jessica D.', photo: 'https://res.cloudinary.com/dpj2i1xui/image/upload/v1772044734/jessica-headshot_fki13p.jpg' },
+      { email: 'kevin.parker@practiceplan.io', name: 'Kevin P.', photo: 'https://res.cloudinary.com/dpj2i1xui/image/upload/v1771277535/kevin-parker_hmeoqb.png' },
+      { email: 'leslie.slovak@practiceplan.io', name: 'Leslie S.', photo: 'https://res.cloudinary.com/dpj2i1xui/image/upload/v1771277691/leslie-slovak-headshot-2026_oa3pl6.png' }
     ];
     const CHECKLIST_ITEMS = [
       { id: 'kickoff', label: 'Kickoff Call Complete' },
@@ -812,6 +812,15 @@
         if (idx > 0 && lower.indexOf(word.toLowerCase()) >= 0) return word.toLowerCase();
         return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
       });
+    }
+    function getTeamPhoto(email, size) {
+      size = size || 28;
+      var member = TEAM_MEMBERS.find(function(m) { return m.email === email; });
+      if (member && member.photo) {
+        return '<img src="' + member.photo + '" alt="' + esc(member.name) + '" style="width:' + size + 'px;height:' + size + 'px;border-radius:50%;object-fit:cover">';
+      }
+      var initial = member ? member.name.charAt(0).toUpperCase() : '?';
+      return '<div style="width:' + size + 'px;height:' + size + 'px;border-radius:50%;background:linear-gradient(135deg,var(--pp-blue),var(--pp-green));color:white;display:flex;align-items:center;justify-content:center;font-size:' + Math.round(size * 0.4) + 'px;font-weight:600;flex-shrink:0">' + initial + '</div>';
     }
     function getOrgColor(name) {
       if (!name) return '#0076bb';
@@ -853,7 +862,7 @@
       document.getElementById('loginScreen').classList.add('hidden');
       // Show loading overlay instead of dashboard immediately
       document.getElementById('dataLoadingOverlay').classList.remove('hidden');
-      if (currentUser) { const name = currentUser.name.split(' ').map(n => n.charAt(0).toUpperCase() + n.slice(1).toLowerCase()).join(' '); document.getElementById('userName').textContent = name; document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase(); }
+      if (currentUser) { const name = currentUser.name.split(' ').map(n => n.charAt(0).toUpperCase() + n.slice(1).toLowerCase()).join(' '); document.getElementById('userName').textContent = name; var member = TEAM_MEMBERS.find(function(m) { return m.email === currentUser.email; }); if (member && member.photo) { document.getElementById('userAvatar').innerHTML = '<img src="' + member.photo + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">'; } else { document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase(); } }
       // Start animated loading sequence
       startLoadingSequence();
       loadData();
@@ -862,12 +871,14 @@
       var fill = document.getElementById('loadingProgressFill');
       var status = document.getElementById('loadingStatus');
       var steps = [
-        { pct: 15, text: 'Authenticating...', delay: 300 },
-        { pct: 30, text: 'Fetching submissions...', delay: 1200 },
-        { pct: 50, text: 'Loading organizations...', delay: 2500 },
-        { pct: 65, text: 'Processing form data...', delay: 4000 },
-        { pct: 80, text: 'Building pipeline...', delay: 6000 },
-        { pct: 90, text: 'Almost ready...', delay: 8000 }
+        { pct: 10, text: 'Authenticating...', delay: 300 },
+        { pct: 20, text: 'Fetching submissions...', delay: 1500 },
+        { pct: 35, text: 'Loading organizations...', delay: 4000 },
+        { pct: 50, text: 'Processing form data...', delay: 8000 },
+        { pct: 65, text: 'Building pipeline...', delay: 15000 },
+        { pct: 75, text: 'Almost ready...', delay: 25000 },
+        { pct: 82, text: 'Still working...', delay: 35000 },
+        { pct: 88, text: 'Hang tight...', delay: 45000 }
       ];
       steps.forEach(function(step) {
         setTimeout(function() {
@@ -918,7 +929,7 @@
       requestAnimationFrame(step);
     }
     function logout() { sessionStorage.removeItem('pp_admin_user'); google.accounts.id.disableAutoSelect(); location.reload(); }
-    function jsonpRequest(url) { return new Promise((res, rej) => { const cb = 'cb_' + Date.now() + '_' + Math.random().toString(36).substr(2,5); console.log('JSONP request:', url.split('?')[0], 'callback:', cb); window[cb] = (d) => { console.log('JSONP response received:', d); delete window[cb]; if(document.body.contains(s)) document.body.removeChild(s); res(d); }; const s = document.createElement('script'); s.src = url + '&callback=' + cb; s.onerror = (err) => { console.error('JSONP script error:', err); delete window[cb]; if(document.body.contains(s)) document.body.removeChild(s); rej(new Error('Script load failed - check Apps Script deployment URL and permissions')); }; document.body.appendChild(s); setTimeout(() => { if (window[cb]) { console.error('JSONP timeout after 20s'); delete window[cb]; if(document.body.contains(s)) document.body.removeChild(s); rej(new Error('Timeout (20s) - Apps Script may be slow or unreachable')); } }, 20000); }); }
+    function jsonpRequest(url, attempt) { attempt = attempt || 1; return new Promise((res, rej) => { const cb = 'cb_' + Date.now() + '_' + Math.random().toString(36).substr(2,5); console.log('JSONP request (attempt ' + attempt + '):', url.split('?')[0], 'callback:', cb); window[cb] = (d) => { console.log('JSONP response received:', d); delete window[cb]; if(document.body.contains(s)) document.body.removeChild(s); res(d); }; const s = document.createElement('script'); s.src = url + '&callback=' + cb; s.onerror = (err) => { console.error('JSONP script error:', err); delete window[cb]; if(document.body.contains(s)) document.body.removeChild(s); if (attempt < 3) { console.log('Retrying... attempt ' + (attempt+1)); setTimeout(function() { jsonpRequest(url, attempt+1).then(res).catch(rej); }, 2000); } else { rej(new Error('Script load failed after 3 attempts')); } }; document.body.appendChild(s); setTimeout(() => { if (window[cb]) { console.error('JSONP timeout after 45s, attempt ' + attempt); delete window[cb]; if(document.body.contains(s)) document.body.removeChild(s); if (attempt < 3) { console.log('Retrying after timeout... attempt ' + (attempt+1)); jsonpRequest(url, attempt+1).then(res).catch(rej); } else { rej(new Error('Timeout after 3 attempts - Apps Script may be slow or unreachable')); } } }, 45000); }); }
 
     function switchView(view) {
       document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
@@ -1002,21 +1013,28 @@
     function updateStats() {
       const tf = getFilteredByTime(allData), complete = tf.filter(d => d.pipelineStatus === 'complete').length, active = tf.filter(d => d.pipelineStatus !== 'complete').length, stale = tf.filter(d => d.isStale).length;
       document.getElementById('statTotal').textContent = tf.length; document.getElementById('statComplete').textContent = complete; document.getElementById('statActive').textContent = active; document.getElementById('statStale').textContent = stale;
-      const total = tf.length || 1, stages = [{l:'Started',c:tf.length,s:'s1'},{l:'25%+',c:tf.filter(d=>d.completion>=25).length,s:'s2'},{l:'50%+',c:tf.filter(d=>d.completion>=50).length,s:'s3'},{l:'75%+',c:tf.filter(d=>d.completion>=75).length,s:'s4'},{l:'Complete',c:complete,s:'s5'}];
-      document.getElementById('funnelTrack').style.width = Math.round((complete/total)*100) + '%';
-      // Stacked bar segments
-      var barHtml = '<div class="funnel-bar">';
-      var segCounts = [tf.length - tf.filter(d=>d.completion>=25).length, tf.filter(d=>d.completion>=25).length - tf.filter(d=>d.completion>=50).length, tf.filter(d=>d.completion>=50).length - tf.filter(d=>d.completion>=75).length, tf.filter(d=>d.completion>=75).length - complete, complete];
-      var segClasses = ['s1','s2','s3','s4','s5'];
-      var totalForBar = tf.length || 1;
-      segCounts.forEach(function(c, i) {
-        if (c > 0) {
-          var w = Math.max(8, Math.round((c / totalForBar) * 100));
-          barHtml += '<div class="funnel-bar-seg ' + segClasses[i] + '" style="width:' + w + '%">' + (w > 10 ? '<span>' + c + '</span>' : '') + '</div>';
-        }
+      var total = tf.length || 1;
+      var q25 = tf.filter(d=>d.completion>=25).length;
+      var q50 = tf.filter(d=>d.completion>=50).length;
+      var q75 = tf.filter(d=>d.completion>=75).length;
+      var completePct = Math.round((complete/total)*100);
+      var steps = [
+        {label:'Started', count:tf.length, pct:100, dot:'c1'},
+        {label:'25%+ done', count:q25, pct:Math.round((q25/total)*100), dot:'c2'},
+        {label:'50%+ done', count:q50, pct:Math.round((q50/total)*100), dot:'c3'},
+        {label:'75%+ done', count:q75, pct:Math.round((q75/total)*100), dot:'c4'},
+        {label:'Complete', count:complete, pct:completePct, dot:'c5'}
+      ];
+      var progressW = total > 0 ? Math.round((complete/total)*100) : 0;
+      var inProgressW = total > 0 ? Math.round(((tf.length - complete)/total)*100) : 0;
+      var convHtml = '<div class="conv-hero"><span class="conv-hero-num">' + completePct + '%</span><span class="conv-hero-label">completion rate</span></div>';
+      convHtml += '<div class="conv-bar-full"><div class="conv-bar-seg seg-complete" style="width:' + progressW + '%"></div><div class="conv-bar-seg seg-progress" style="width:' + inProgressW + '%"></div></div>';
+      convHtml += '<div class="conv-steps">';
+      steps.forEach(function(s) {
+        convHtml += '<div class="conv-step"><span class="conv-step-dot ' + s.dot + '"></span><span class="conv-step-label">' + s.label + '</span><span class="conv-step-val">' + s.count + '</span><span class="conv-step-pct">' + s.pct + '%</span></div>';
       });
-      barHtml += '</div>';
-      document.getElementById('funnelChart').innerHTML = barHtml + stages.map((s,i) => { const pct = Math.round((s.c/total)*100), prev = i > 0 ? stages[i-1].c : s.c, drop = i > 0 && prev > 0 ? Math.round(((prev - s.c)/prev)*100) : 0; return '<div class="funnel-stage"><div class="funnel-node ' + s.s + '"><span class="num">' + s.c + '</span><span class="pct">' + pct + '%</span></div><div class="funnel-label"><div class="title">' + s.l + '</div>' + (i > 0 && drop > 0 ? '<div class="drop negative">-' + drop + '%</div>' : '<div class="drop">of total</div>') + '</div></div>'; }).join('');
+      convHtml += '</div>';
+      document.getElementById('conversionsCard').innerHTML = convHtml;
       const completed = tf.filter(d => d.pipelineStatus === 'complete');
       var times = [];
       completed.forEach(function(d) {
@@ -1092,8 +1110,7 @@
       var unassigned = data.filter(function(d) { return !d.accountRep; }).length;
       var html = reps.map(function(r) {
         var pct = Math.round((r.count / max) * 100);
-        var initial = r.name.charAt(0).toUpperCase();
-        return '<div class="rep-bar-row"><div class="rep-bar-avatar">' + initial + '</div><div class="rep-bar-info"><div class="rep-bar-name">' + esc(r.name) + '</div><div class="rep-bar-track"><div class="rep-bar-fill" style="width:' + pct + '%"></div></div></div><span class="rep-bar-count">' + r.count + '</span></div>';
+        return '<div class="rep-bar-row">' + getTeamPhoto(r.email, 24) + '<div class="rep-bar-info"><div class="rep-bar-name">' + esc(r.name) + '</div><div class="rep-bar-track"><div class="rep-bar-fill" style="width:' + pct + '%"></div></div></div><span class="rep-bar-count">' + r.count + '</span></div>';
       }).join('');
       if (unassigned > 0) {
         html += '<div class="rep-bar-row"><div class="rep-bar-avatar" style="background:var(--border);color:var(--text3)">?</div><div class="rep-bar-info"><div class="rep-bar-name" style="color:var(--text3)">Unassigned</div><div class="rep-bar-track"><div class="rep-bar-fill" style="width:' + Math.round((unassigned / max) * 100) + '%;background:var(--border)"></div></div></div><span class="rep-bar-count" style="color:var(--text3)">' + unassigned + '</span></div>';
@@ -1668,7 +1685,8 @@
     function renderNotesBlock(email, section) {
       var notes = getNotes(email, section);
       var id = section.replace(/[^a-zA-Z0-9]/g, '');
-      var userInitial = (currentUser?.name || '?')[0].toUpperCase();
+      var currentMember = TEAM_MEMBERS.find(function(m) { return m.email === (currentUser?.email || ''); });
+      var userAvatarHtml = currentMember && currentMember.photo ? '<img src="' + currentMember.photo + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">' : (currentUser?.name || '?')[0].toUpperCase();
       var userName = currentUser?.name || currentUser?.email || 'Unknown';
       var inputId = 'noteInput_' + id + '_' + email.replace(/[^a-zA-Z0-9]/g,'');
       var h = '<div class="section-notes">';
@@ -1677,14 +1695,15 @@
         h += '<div class="notes-header"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> ' + notes.length + ' comment' + (notes.length > 1 ? 's' : '') + '</div>';
         h += '<div class="notes-list">';
         notes.forEach(function(n, i) {
-          var initial = (n.author || '?')[0].toUpperCase();
+          var noteAuthorMember = TEAM_MEMBERS.find(function(m) { return m.email === n.email; });
+          var noteAvatarHtml = noteAuthorMember && noteAuthorMember.photo ? '<img src="' + noteAuthorMember.photo + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">' : (n.author || '?')[0].toUpperCase();
           var noteId = 'note_' + id + '_' + i;
-          h += '<div class="note-item" id="' + noteId + '"><div class="note-avatar">' + initial + '</div><div class="note-content"><div class="note-header"><span class="note-author">' + esc(n.author) + '</span><span class="note-date">' + timeAgo(n.date) + '</span></div><div class="note-text" id="' + noteId + '_text">' + esc(n.text) + '</div></div><div class="note-actions"><button class="note-action-btn" onclick="startEditNote(\'' + esc(email) + '\',\'' + section + '\',' + i + ',\'' + noteId + '\')">Edit</button><button class="note-action-btn delete" onclick="deleteNoteAndRefresh(\'' + esc(email) + '\',\'' + section + '\',' + i + ')">Delete</button></div></div>';
+          h += '<div class="note-item" id="' + noteId + '"><div class="note-avatar">' + noteAvatarHtml + '</div><div class="note-content"><div class="note-header"><span class="note-author">' + esc(n.author) + '</span><span class="note-date">' + timeAgo(n.date) + '</span></div><div class="note-text" id="' + noteId + '_text">' + esc(n.text) + '</div></div><div class="note-actions"><button class="note-action-btn" onclick="startEditNote(\'' + esc(email) + '\',\'' + section + '\',' + i + ',\'' + noteId + '\')">Edit</button><button class="note-action-btn delete" onclick="deleteNoteAndRefresh(\'' + esc(email) + '\',\'' + section + '\',' + i + ')">Delete</button></div></div>';
         });
         h += '</div>';
       }
       // New comment input - always visible
-      h += '<div class="comment-box"><div class="note-avatar">' + userInitial + '</div><div class="comment-input-wrap"><div class="comment-as">Comment as <strong>' + esc(userName) + '</strong></div><textarea class="comment-input" rows="1" placeholder="Write a comment..." id="' + inputId + '" onfocus="showCommentActions(this)" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();submitNote(\'' + esc(email) + '\',\'' + section + '\',this)}"></textarea><div class="comment-actions hidden" id="' + inputId + '_actions"><button class="comment-cancel" onclick="cancelComment(this)">Cancel</button><button class="comment-submit" onclick="submitNote(\'' + esc(email) + '\',\'' + section + '\',this)">Comment</button></div></div></div>';
+      h += '<div class="comment-box"><div class="note-avatar">' + userAvatarHtml + '</div><div class="comment-input-wrap"><div class="comment-as">Comment as <strong>' + esc(userName) + '</strong></div><textarea class="comment-input" rows="1" placeholder="Write a comment..." id="' + inputId + '" onfocus="showCommentActions(this)" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();submitNote(\'' + esc(email) + '\',\'' + section + '\',this)}"></textarea><div class="comment-actions hidden" id="' + inputId + '_actions"><button class="comment-cancel" onclick="cancelComment(this)">Cancel</button><button class="comment-submit" onclick="submitNote(\'' + esc(email) + '\',\'' + section + '\',this)">Comment</button></div></div></div>';
       h += '</div>';
       return h;
     }
