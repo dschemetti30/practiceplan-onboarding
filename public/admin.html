@@ -33,7 +33,7 @@
     .header-logo{height:36px;flex-shrink:0}
     .header-right{display:flex;align-items:center;gap:12px}
     .user-pill{display:flex;align-items:center;gap:10px;padding:6px 16px 6px 6px;background:var(--bg);border-radius:50px}
-    .user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pp-blue),var(--pp-green));color:white;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;overflow:hidden}
+    .user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pp-blue),var(--pp-green));color:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;overflow:hidden}
     .user-name{font-size:13px;color:var(--text);font-weight:600;white-space:nowrap}
     .header-btn{width:40px;height:40px;min-width:40px;min-height:40px;border-radius:50%;border:1px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all 0.2s;padding:0;box-sizing:border-box}
     .header-btn:hover{border-color:var(--pp-blue);color:var(--pp-blue)}
@@ -124,10 +124,8 @@
     .checklist-chart{display:flex;flex-direction:column;gap:8px}
     .cl-chart-row{display:flex;align-items:center;gap:10px}
     .cl-chart-org{font-size:10px;font-weight:600;color:var(--text);width:90px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .cl-meter{display:flex;flex:1;height:18px;border-radius:6px;overflow:hidden;gap:2px;background:var(--bg);padding:2px}
-    .cl-meter-seg{flex:1;border-radius:4px;background:transparent;transition:all 0.4s ease;position:relative}
-    .cl-meter-seg.filled{background:linear-gradient(180deg,#0ea5e9,#059669);box-shadow:inset 0 1px 0 rgba(255,255,255,0.25)}
-    .cl-meter-seg:not(.filled){background:var(--border);opacity:0.3}
+    .cl-meter{flex:1;height:18px;background:var(--bg);border-radius:5px;overflow:hidden}
+    .cl-meter-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--pp-blue),var(--pp-green));transition:width 0.6s ease}
     .cl-chart-pct{font-size:10px;font-weight:700;color:var(--text2);min-width:26px;text-align:right}
     .cl-chart-empty{font-size:12px;color:var(--text3);text-align:center;padding:12px}
     .conversions-card{display:flex;flex-direction:column;gap:10px;height:100%}
@@ -375,7 +373,7 @@
     .note-item{display:flex;gap:12px;padding:14px 16px;background:var(--card);border-radius:12px;margin-bottom:8px;border:1px solid var(--border);transition:border-color 0.2s}
     .note-item:hover{border-color:rgba(0,118,187,0.2)}
     .note-item.editing{border-color:var(--pp-blue);background:rgba(0,118,187,0.02)}
-    .note-avatar{width:30px;height:30px;border-radius:50%;background:#0e7490;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;overflow:hidden}
+    .note-avatar{width:34px;height:34px;border-radius:50%;background:#0e7490;color:white;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;overflow:hidden}
     .note-content{flex:1;min-width:0;padding-top:1px}
     .note-header{display:flex;align-items:baseline;gap:8px}
     .note-author{font-size:11px;font-weight:600;color:var(--text)}
@@ -1110,7 +1108,7 @@
       var unassigned = data.filter(function(d) { return !d.accountRep; }).length;
       var html = reps.map(function(r) {
         var pct = Math.round((r.count / max) * 100);
-        return '<div class="rep-bar-row">' + getTeamPhoto(r.email, 24) + '<div class="rep-bar-info"><div class="rep-bar-name">' + esc(r.name) + '</div><div class="rep-bar-track"><div class="rep-bar-fill" style="width:' + pct + '%"></div></div></div><span class="rep-bar-count">' + r.count + '</span></div>';
+        return '<div class="rep-bar-row">' + getTeamPhoto(r.email, 28) + '<div class="rep-bar-info"><div class="rep-bar-name">' + esc(r.name) + '</div><div class="rep-bar-track"><div class="rep-bar-fill" style="width:' + pct + '%"></div></div></div><span class="rep-bar-count">' + r.count + '</span></div>';
       }).join('');
       if (unassigned > 0) {
         html += '<div class="rep-bar-row"><div class="rep-bar-avatar" style="background:var(--border);color:var(--text3)">?</div><div class="rep-bar-info"><div class="rep-bar-name" style="color:var(--text3)">Unassigned</div><div class="rep-bar-track"><div class="rep-bar-fill" style="width:' + Math.round((unassigned / max) * 100) + '%;background:var(--border)"></div></div></div><span class="rep-bar-count" style="color:var(--text3)">' + unassigned + '</span></div>';
@@ -1130,11 +1128,8 @@
         return;
       }
       var html = orgs.slice(0, 8).map(function(o) {
-        var segs = '';
-        for (var i = 0; i < o.total; i++) {
-          segs += '<div class="cl-meter-seg' + (i < o.count ? ' filled' : '') + '"></div>';
-        }
-        return '<div class="cl-chart-row"><span class="cl-chart-org" title="' + esc(o.org) + '">' + esc(o.org) + '</span><div class="cl-meter">' + segs + '</div><span class="cl-chart-pct">' + o.count + '/' + o.total + '</span></div>';
+        var pct = Math.round((o.count / o.total) * 100);
+        return '<div class="cl-chart-row"><span class="cl-chart-org" title="' + esc(o.org) + '">' + esc(o.org) + '</span><div class="cl-meter"><div class="cl-meter-fill" style="width:' + pct + '%"></div></div><span class="cl-chart-pct">' + o.count + '/' + o.total + '</span></div>';
       }).join('');
       document.getElementById('checklistChart').innerHTML = html;
     }
