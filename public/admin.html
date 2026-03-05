@@ -1230,6 +1230,20 @@
       document.getElementById('repChart').innerHTML = html;
     }
 
+    function getShortOrgName(org, email) {
+      var name = org || 'Unknown';
+      var firstWord = name.split(' ')[0];
+      // Find state from location data
+      var state = '';
+      allData.forEach(function(d) {
+        if (d.email === email && d.locationStr) {
+          var parts = d.locationStr.split(',');
+          if (parts.length >= 2) state = parts[parts.length - 1].trim();
+          else if (parts.length === 1) state = parts[0].trim();
+        }
+      });
+      return firstWord + (state ? ' (' + state + ')' : '');
+    }
     function renderChecklistChart(data) {
       var orgs = data.filter(function(d) {
         return d.pipelineStatus === 'complete' || d.pipelineStatus === 'onboarding' || d.pipelineStatus === 'published' || d.pipelineStatus === 'launched' || getChecklistCount(d.email) > 0;
@@ -1246,13 +1260,13 @@
       var html = '<div style="margin-bottom:10px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:10px;font-weight:600;color:var(--pp-green)">Onboarding</span><span style="font-size:9px;color:var(--text3)">' + CHECKLIST_ITEMS.length + ' items</span></div>';
       html += orgs.slice(0, 6).map(function(o) {
         var pct = Math.round((o.onboard / CHECKLIST_ITEMS.length) * 100);
-        return '<div class="cl-chart-row"><span class="cl-chart-org" title="' + esc(o.org) + '">' + esc(o.org) + '</span><div class="cl-meter"><div class="cl-meter-fill" style="width:' + pct + '%"></div></div><span class="cl-chart-pct">' + o.onboard + '/' + CHECKLIST_ITEMS.length + '</span></div>';
+        return '<div class="cl-chart-row"><span class="cl-chart-org" title="' + esc(o.org) + '">' + esc(getShortOrgName(o.org, o.email)) + '</span><div class="cl-meter"><div class="cl-meter-fill" style="width:' + pct + '%"></div></div><span class="cl-chart-pct">' + o.onboard + '/' + CHECKLIST_ITEMS.length + '</span></div>';
       }).join('');
       html += '</div>';
       html += '<div style="padding-top:10px;border-top:1px solid var(--border)"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:10px;font-weight:600;color:var(--pp-blue)">Launch</span><span style="font-size:9px;color:var(--text3)">' + SUCCESS_CHECKLIST_ITEMS.length + ' items</span></div>';
       html += orgs.filter(function(o) { return o.success > 0 || o.onboard >= CHECKLIST_ITEMS.length; }).slice(0, 6).map(function(o) {
         var pct = Math.round((o.success / SUCCESS_CHECKLIST_ITEMS.length) * 100);
-        return '<div class="cl-chart-row"><span class="cl-chart-org" title="' + esc(o.org) + '">' + esc(o.org) + '</span><div class="cl-meter"><div class="cl-meter-fill" style="width:' + pct + '%;background:linear-gradient(90deg,var(--pp-blue),#0891b2)"></div></div><span class="cl-chart-pct">' + o.success + '/' + SUCCESS_CHECKLIST_ITEMS.length + '</span></div>';
+        return '<div class="cl-chart-row"><span class="cl-chart-org" title="' + esc(o.org) + '">' + esc(getShortOrgName(o.org, o.email)) + '</span><div class="cl-meter"><div class="cl-meter-fill" style="width:' + pct + '%;background:linear-gradient(90deg,var(--pp-blue),#0891b2)"></div></div><span class="cl-chart-pct">' + o.success + '/' + SUCCESS_CHECKLIST_ITEMS.length + '</span></div>';
       }).join('') || '<div style="text-align:center;padding:8px;font-size:11px;color:var(--text3)">No launch items started</div>';
       html += '</div>';
       document.getElementById('checklistChart').innerHTML = html;
@@ -1678,7 +1692,7 @@
       // Customer Success Checklist (post go-live)
       var scl = getChecklist(item.email);
       var sclCount = SUCCESS_CHECKLIST_ITEMS.filter(function(i) { return scl['cs_' + i.id]; }).length;
-      html += '<div class="checklist-section" style="border-top:2px solid var(--pp-blue)"><div class="checklist-header"><div class="checklist-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Customer Success Checklist</div><div class="checklist-count">' + sclCount + ' of ' + SUCCESS_CHECKLIST_ITEMS.length + ' complete</div></div><div class="checklist-items">' + SUCCESS_CHECKLIST_ITEMS.map(function(c, ci) {
+      html += '<div class="checklist-section" style="border-top:2px solid var(--pp-blue)"><div class="checklist-header"><div class="checklist-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Launch Checklist</div><div class="checklist-count">' + sclCount + ' of ' + SUCCESS_CHECKLIST_ITEMS.length + ' complete</div></div><div class="checklist-items">' + SUCCESS_CHECKLIST_ITEMS.map(function(c, ci) {
         var isChecked = scl['cs_' + c.id];
         var fieldVal = scl['cs_' + c.id + '_field'] || '';
         var itemHtml = '<div class="checklist-item' + (isChecked ? ' checked' : '') + '" style="' + (c.hasField ? 'grid-column:1/-1;flex-wrap:wrap;gap:8px' : '') + '">';
