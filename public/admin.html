@@ -906,9 +906,17 @@
       if (!checklistData[email]) checklistData[email] = {};
       checklistData[email][id] = checked;
       jsonpRequest(API_URL + '?action=setChecklistItem&email=' + encodeURIComponent(currentUser?.email || '') + '&orgEmail=' + encodeURIComponent(email) + '&itemId=' + encodeURIComponent(id) + '&checked=' + checked).catch(function(e) { console.error('Failed to save checklist:', e); });
+      // Don't log activity for field value saves (like cs_website_link_field)
+      if (String(id).indexOf('_field') >= 0) return;
+      // Find the label from either checklist
       var itemLabel = CHECKLIST_ITEMS.find(function(c) { return c.id === id; });
+      if (!itemLabel) {
+        var csId = id.replace('cs_', '');
+        itemLabel = SUCCESS_CHECKLIST_ITEMS.find(function(c) { return c.id === csId; });
+      }
       var orgName = ''; allData.forEach(function(d) { if (d.email === email) orgName = d.organization; });
-      logActivityToServer(checked ? 'completed checklist item for' : 'unchecked checklist item for', orgName || email, itemLabel ? itemLabel.label : id, 'checklist');
+      var isLaunch = String(id).indexOf('cs_') === 0;
+      logActivityToServer(checked ? 'completed' : 'unchecked', orgName || email, (isLaunch ? 'Launch: ' : '') + (itemLabel ? itemLabel.label : id), 'checklist');
     }
     async function loadChecklists() {
       try {
@@ -2108,12 +2116,17 @@
         var userName = member ? member.name : (a.userEmail ? a.userEmail.split('@')[0] : 'Unknown');
         var typeClass = a.type || 'other';
         var typeLabel = { status: 'Status', checklist: 'Checklist', rep: 'Rep', comment: 'Comment', archive: 'Archive' }[a.type] || 'Action';
+        // Clean up bad data from old entries
+        var actionText = a.action || '';
+        if (actionText === 'logActivity' || actionText === 'logactivity') actionText = 'updated';
+        // Build the activity sentence
+        var icons = { status: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>', checklist: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>', rep: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>', comment: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>', archive: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/></svg>' };
         html += '<div class="activity-item" data-type="' + typeClass + '">';
         html += '<div class="activity-avatar">' + avatarHtml + '</div>';
         html += '<div class="activity-body">';
-        html += '<div class="activity-text"><strong>' + esc(userName) + '</strong> ' + esc(a.action);
+        html += '<div class="activity-text">' + (icons[a.type] || '') + '<strong>' + esc(userName) + '</strong> ' + esc(actionText);
         if (a.target) html += ' <span class="activity-target">' + esc(a.target) + '</span>';
-        if (a.detail) html += ' <span class="activity-value">' + esc(a.detail) + '</span>';
+        if (a.detail) html += ' - <span class="activity-value">' + esc(a.detail) + '</span>';
         html += '</div>';
         html += '<div class="activity-meta"><span class="activity-time">' + timeAgo(a.timestamp) + '</span><span class="activity-type-badge ' + typeClass + '">' + typeLabel + '</span></div>';
         html += '</div></div>';
