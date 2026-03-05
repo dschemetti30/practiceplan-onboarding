@@ -906,8 +906,14 @@
       if (!checklistData[email]) checklistData[email] = {};
       checklistData[email][id] = checked;
       jsonpRequest(API_URL + '?action=setChecklistItem&email=' + encodeURIComponent(currentUser?.email || '') + '&orgEmail=' + encodeURIComponent(email) + '&itemId=' + encodeURIComponent(id) + '&checked=' + checked).catch(function(e) { console.error('Failed to save checklist:', e); });
-      // Don't log activity for field value saves (like cs_website_link_field)
-      if (String(id).indexOf('_field') >= 0) return;
+      // Don't log activity for field value saves unless it's a meaningful URL
+      if (String(id).indexOf('_field') >= 0) {
+        if (checked && String(checked).indexOf('http') === 0) {
+          var orgName2 = ''; allData.forEach(function(d) { if (d.email === email) orgName2 = d.organization; });
+          logActivityToServer('added website link for', orgName2 || email, String(checked).substring(0, 60), 'checklist');
+        }
+        return;
+      }
       // Find the label from either checklist
       var itemLabel = CHECKLIST_ITEMS.find(function(c) { return c.id === id; });
       if (!itemLabel) {
@@ -1708,7 +1714,7 @@
         itemHtml += '<div class="checklist-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>';
         itemHtml += '<span class="checklist-label">' + c.label + '</span></div>';
         if (c.hasField) {
-          itemHtml += '<div style="width:100%;padding-left:36px" onclick="event.stopPropagation()"><input type="text" value="' + esc(fieldVal).replace(/"/g, '&quot;') + '" placeholder="' + (c.fieldLabel || 'Enter value') + ' - e.g., https://example.com/book" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-family:inherit;background:var(--card);color:var(--text);outline:none;transition:border-color 0.2s" onfocus="this.style.borderColor=\'var(--pp-blue)\'" onblur="this.style.borderColor=\'var(--border)\'" onchange="setChecklist(\'' + item.email + '\',\'cs_' + c.id + '_field\',this.value)"/></div>';
+          itemHtml += '<div style="width:100%;padding-left:36px" onclick="event.stopPropagation()"><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="' + (fieldVal ? 'var(--pp-green)' : 'var(--text3)') + '" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span style="font-size:11px;color:var(--text3)">Paste the booking page URL for ' + esc(item.organization || 'this org') + '</span></div><input type="text" value="' + esc(fieldVal).replace(/"/g, '&quot;') + '" placeholder="https://book.practice-plan.com/..." style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid ' + (fieldVal ? 'var(--pp-green)' : 'var(--border)') + ';font-size:13px;font-family:inherit;background:var(--card);color:var(--text);outline:none;transition:border-color 0.2s" onfocus="this.style.borderColor=\'var(--pp-blue)\'" onblur="this.style.borderColor=this.value?\'var(--pp-green)\':\'var(--border)\'" onchange="setChecklist(\'' + item.email + '\',\'cs_' + c.id + '_field\',this.value); if(this.value.trim() && !getChecklist(\'' + item.email + '\')[\'cs_' + c.id + '\']){toggleChecklistItem(\'' + item.email + '\',\'cs_' + c.id + '\',this.closest(\'.checklist-item\'))}"/></div>';
         }
         itemHtml += '</div>';
         return itemHtml;
