@@ -439,6 +439,7 @@
     .mobile-cards{display:none}
     /* Collapsible Sections */
     .collapsible-section{border:1px solid var(--border);border-radius:14px;margin:0 24px 14px;overflow:hidden;background:var(--card)}
+    .collapsible-section:first-of-type{margin-top:6px}
     .collapsible-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;cursor:pointer;transition:background 0.15s;user-select:none}
     .collapsible-header:hover{background:rgba(0,118,187,0.03)}
     .collapsible-title{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--text)}
@@ -1763,14 +1764,15 @@
       // Modal body - toolbar first, then progress, then collapsible sections
       html += '<div class="modal-body">';
       
-      // Toolbar - Drive + Export at very top
-      html += '<div class="modal-toolbar">';
-      if (item.driveFolder) html += '<a href="' + item.driveFolder + '" target="_blank" class="toolbar-btn drive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> Client Attachments (Google Drive)</a>';
-      html += '<button class="toolbar-btn export" onclick="exportModalCSV(window._currentModalItem)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export Data (CSV)</button>';
-      html += '</div>';
-      
-      // Progress
+      // Progress - full width at top of modal body
       html += '<div class="progress-hero"><div class="progress-hero-inner"><div class="progress-ring-large"><svg width="90" height="90" viewBox="0 0 90 90"><circle class="bg" cx="45" cy="45" r="36"/><circle class="progress" cx="45" cy="45" r="36" stroke-dasharray="' + circ + '" stroke-dashoffset="' + offset + '"/></svg><div class="center-text">' + pct + '%</div></div><div class="progress-details"><div class="progress-title">Form Submission Progress</div><div class="progress-bar-large"><div class="progress-bar-fill" style="width:' + pct + '%"></div></div><div class="progress-meta"><span><strong>' + (item.locations||0) + '</strong> locations</span><span><strong>' + (item.spaces||0) + '</strong> spaces</span><span>Updated <strong>' + timeAgo(item.lastUpdated) + '</strong></span></div></div></div></div>';
+      
+      // Toolbar - Export + Uploads
+      var hasUploads = item.driveFolder;
+      html += '<div class="modal-toolbar' + (hasUploads ? ' has-uploads' : '') + '">';
+      html += '<button class="toolbar-btn export" onclick="exportModalCSV(window._currentModalItem)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export Data (CSV)</button>';
+      if (hasUploads) html += '<a href="' + item.driveFolder + '" target="_blank" class="toolbar-btn drive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> View Uploads</a>';
+      html += '</div>';
       
       // Onboarding Checklist - collapsible
       html += '<div class="collapsible-section"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(&quot;collapsed&quot;)"><div class="collapsible-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Onboarding Checklist <span class="collapsible-count">' + clCount + '/' + CHECKLIST_ITEMS.length + '</span></div><svg class="collapsible-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="6 9 12 15 18 9"/></svg></div><div class="collapsible-body"><div class="checklist-items">' + CHECKLIST_ITEMS.map(c => '<div class="checklist-item' + (cl[c.id] ? ' checked' : '') + '" onclick="toggleChecklistItem(\'' + item.email + '\',\'' + c.id + '\',this)"><div class="checklist-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span class="checklist-label">' + c.label + '</span></div>').join('') + '</div>' + renderNotesBlock(item.email, 'checklist') + '</div></div>';
@@ -1778,7 +1780,7 @@
       // Launch Checklist - collapsible
       var scl = getChecklist(item.email);
       var sclCount = SUCCESS_CHECKLIST_ITEMS.filter(function(i) { return scl['cs_' + i.id]; }).length;
-      html += '<div class="collapsible-section"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(&quot;collapsed&quot;)"><div class="collapsible-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Launch Checklist <span class="collapsible-count">' + sclCount + '/' + SUCCESS_CHECKLIST_ITEMS.length + '</span></div><svg class="collapsible-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="6 9 12 15 18 9"/></svg></div><div class="collapsible-body"><div class="checklist-items">' + SUCCESS_CHECKLIST_ITEMS.map(function(c, ci) {
+      html += '<div class="collapsible-section collapsed"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(&quot;collapsed&quot;)"><div class="collapsible-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Launch Checklist <span class="collapsible-count">' + sclCount + '/' + SUCCESS_CHECKLIST_ITEMS.length + '</span></div><svg class="collapsible-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="6 9 12 15 18 9"/></svg></div><div class="collapsible-body"><div class="checklist-items">' + SUCCESS_CHECKLIST_ITEMS.map(function(c, ci) {
         var isChecked = scl['cs_' + c.id];
         var fieldVal = scl['cs_' + c.id + '_field'] || '';
         var itemHtml = '<div class="checklist-item' + (isChecked ? ' checked' : '') + '" style="' + (c.hasField ? 'grid-column:1/-1;flex-wrap:wrap;gap:8px' : '') + '">';
@@ -1797,7 +1799,7 @@
       var credStatus = creds.status || 'onboarding';
       var credStatusLabels = { active: 'Active', onboarding: 'Onboarding', inactive: 'Inactive' };
       var credStatusColors = { active: 'var(--pp-green)', onboarding: 'var(--pp-blue)', inactive: '#94a3b8' };
-      html += '<div class="collapsible-section"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(&quot;collapsed&quot;)"><div class="collapsible-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Login Credentials <span class="collapsible-count" style="background:' + (credStatusColors[credStatus] || 'var(--pp-blue)') + '15;color:' + (credStatusColors[credStatus] || 'var(--pp-blue)') + '">' + (credStatusLabels[credStatus] || 'Onboarding') + '</span></div><svg class="collapsible-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="6 9 12 15 18 9"/></svg></div><div class="collapsible-body">';
+      html += '<div class="collapsible-section collapsed"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(&quot;collapsed&quot;)"><div class="collapsible-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Login Credentials <span class="collapsible-count" style="background:' + (credStatusColors[credStatus] || 'var(--pp-blue)') + '15;color:' + (credStatusColors[credStatus] || 'var(--pp-blue)') + '">' + (credStatusLabels[credStatus] || 'Onboarding') + '</span></div><svg class="collapsible-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="6 9 12 15 18 9"/></svg></div><div class="collapsible-body">';
       html += '<div style="display:grid;gap:14px;padding:4px 0">';
       html += '<div><label style="display:block;font-size:12px;font-weight:600;color:var(--text3);margin-bottom:6px">Login Email</label><input type="text" value="' + esc(creds.loginEmail || '').replace(/"/g, '&quot;') + '" placeholder="client-login@example.com" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-family:inherit;background:var(--card);color:var(--text);outline:none;box-sizing:border-box" onchange="saveCredentials(\'' + esc(item.email) + '\',\'loginEmail\',this.value)"/></div>';
       html += '<div><label style="display:block;font-size:12px;font-weight:600;color:var(--text3);margin-bottom:6px">Login Password</label><input type="text" value="' + esc(creds.loginPassword || '').replace(/"/g, '&quot;') + '" placeholder="Enter password" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-family:inherit;background:var(--card);color:var(--text);outline:none;box-sizing:border-box" onchange="saveCredentials(\'' + esc(item.email) + '\',\'loginPassword\',this.value)"/></div>';
