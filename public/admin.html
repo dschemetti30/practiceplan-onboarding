@@ -1014,7 +1014,35 @@
           });
           allData = deduped.filter(d => d.status !== 'Archived');
           archivedData = deduped.filter(d => d.status === 'Archived');
-          document.querySelector('.stats-section')?.classList.remove('loading-state'); updateStats(); renderTable(); renderPipeline(); renderCalendar(); loadComments(); loadChecklists(); finishLoading(allData);
+          document.querySelector('.stats-section')?.classList.remove('loading-state');
+          // Load shared data before rendering
+          await Promise.all([loadComments(), loadChecklists()]);
+          updateStats(); renderTable(); renderPipeline(); renderCalendar(); finishLoading(allData);
+          // Start auto-refresh every 60 seconds
+          if (!window._refreshInterval) {
+            window._refreshInterval = setInterval(async function() {
+              try {
+                var result = await jsonpRequest(API_URL + '?action=getAdminData&email=' + encodeURIComponent(currentUser?.email || ''));
+                if (result.success) {
+                  var now = new Date();
+                  var processed = (result.data || []).map(function(d) {
+                    var updated = new Date(d.lastUpdated), daysDiff = (now - updated) / 86400000, pct = d.completion || 0;
+                    var ps = d.pipelineStatus;
+                    if (!ps) { if (d.status === 'Submitted') ps = 'complete'; else if (pct >= 75) ps = 'review'; else if (pct > 0) ps = 'in-progress'; else ps = 'new'; }
+                    return Object.assign({}, d, { isStale: d.status === 'In Progress' && daysDiff > STALE_DAYS, daysSinceUpdate: Math.floor(daysDiff), updatedDate: updated, pipelineStatus: ps, goLiveDate: getGoLiveDate(d), locationStr: getLocationString(d), accountRep: d.accountRep || '', organization: toTitleCase(d.organization), contact: toTitleCase(d.contact) });
+                  });
+                  var submittedEmails = {}, submittedOrgs = {};
+                  processed.forEach(function(d) { if (d.sheetType === 'main') { if (d.email) submittedEmails[d.email.toLowerCase()] = true; if (d.organization) submittedOrgs[d.organization.toLowerCase().trim()] = true; } });
+                  var deduped = processed.filter(function(d) { if (d.sheetType === 'drafts') { if (d.email && submittedEmails[d.email.toLowerCase()]) return false; if (d.organization && submittedOrgs[d.organization.toLowerCase().trim()]) return false; } return true; });
+                  allData = deduped.filter(function(d) { return d.status !== 'Archived'; });
+                  archivedData = deduped.filter(function(d) { return d.status === 'Archived'; });
+                  await Promise.all([loadComments(), loadChecklists()]);
+                  updateStats(); renderTable(); renderPipeline();
+                  console.log('Auto-refreshed at', new Date().toLocaleTimeString());
+                }
+              } catch(e) { console.log('Auto-refresh skipped:', e.message); }
+            }, 60000);
+          }
         } else if (result.error === 'Unauthorized') logout();
         else { console.error('API returned error:', result); document.getElementById('dataLoadingOverlay').classList.add('hidden'); document.getElementById('dashboard').classList.add('active'); document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">API error: ' + (result.error || JSON.stringify(result)) + '</td></tr>'; }
       } catch(e) { console.error('LoadData error:', e); document.getElementById('dataLoadingOverlay').classList.add('hidden'); document.getElementById('dashboard').classList.add('active'); document.getElementById('tableBody').innerHTML = '<tr><td colspan="8" class="empty-state">Unable to load data: ' + e.message + '<br><small style="color:var(--text3)">Check browser console for details. Email: ' + (currentUser?.email || 'none') + '</small></td></tr>'; }
@@ -1675,7 +1703,7 @@
       el.classList.toggle('checked', isChecked);
       const cl = getChecklist(email), count = CHECKLIST_ITEMS.filter(i => cl[i.id]).length;
       el.closest('.checklist-section').querySelector('.checklist-count').textContent = count + ' of ' + CHECKLIST_ITEMS.length + ' complete';
-      renderTable();
+      updateStats(); renderTable(); renderPipeline();
     }
 
     function toggleLocation(idx) { document.getElementById('loc-' + idx).classList.toggle('collapsed'); }
