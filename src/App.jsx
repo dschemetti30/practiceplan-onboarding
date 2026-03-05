@@ -3361,7 +3361,7 @@ function PoliciesStep({ data, update, isMobile }) {
         </CardSection>
       </div>
       
-      {/* Waivers & Agreements */}
+            {/* Waivers & Agreements */}
       <CardSection isMobile={isMobile}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
           <FileText size={18} color={colors.blue} />
@@ -3400,6 +3400,52 @@ function PoliciesStep({ data, update, isMobile }) {
           </div>
         </div>
       </CardSection>
+
+      {/* Partnership Announcement */}
+      <CardSection isMobile={isMobile}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+          <Sparkles size={18} color={colors.blue} />
+          <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: '#1e293b' }}>Partnership Announcement</h3>
+        </div>
+        <div 
+          onClick={() => update('permissionToAnnounce', !data.permissionToAnnounce)} 
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '12px', 
+            padding: '14px 16px',
+            borderRadius: '10px',
+            border: data.permissionToAnnounce ? `2px solid ${colors.green}` : '1px solid rgba(0, 0, 0, 0.1)',
+            background: data.permissionToAnnounce ? 'rgba(0, 168, 79, 0.04)' : 'white',
+            cursor: 'pointer',
+            transition: 'all 0.15s',
+            userSelect: 'none'
+          }}
+        >
+          <div style={{ 
+            width: '20px', 
+            height: '20px', 
+            borderRadius: '5px', 
+            border: data.permissionToAnnounce ? `2px solid ${colors.green}` : '2px solid #cbd5e1', 
+            background: data.permissionToAnnounce ? colors.green : 'white', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            flexShrink: 0,
+            transition: 'all 0.15s'
+          }}>
+            {data.permissionToAnnounce && (
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            )}
+          </div>
+          <span style={{ fontSize: '14px', fontWeight: 500, color: data.permissionToAnnounce ? '#1e293b' : '#475569', transition: 'color 0.15s' }}>
+            PracticePlan can share the news about our partnership
+          </span>
+        </div>
+      </CardSection>
+
     </div>
   );
 }
@@ -5320,6 +5366,7 @@ function ReviewStep({ policies, locations, contactInfo, isMobile }) {
         {(policies.facilityAgreementFile || policies.facilityAgreement) && (
           <ReviewItem label="Rental Policy" value={policies.facilityAgreementFile?.name || 'Text provided'} />
         )}
+        <ReviewItem label="Permission to Announce" value={policies.permissionToAnnounce ? '✓ Granted' : 'Not granted'} />
       </ReviewSection>
       {locations.map((location, idx) => (
         <ReviewSection key={location.id} title={`${typeLabels[location.type] || 'Location'}: ${location.name || `Location ${idx + 1}`}`}>
@@ -5379,7 +5426,8 @@ export default function PracticePlanOnboarding() {
     requireInsurance: '', 
     waiverText: '', 
     facilityAgreement: '', 
-    timeIncrement: '' 
+    timeIncrement: '',
+    permissionToAnnounce: false 
   });
   const [locations, setLocations] = useState([]);
   const [errors, setErrors] = useState({});
@@ -5549,7 +5597,8 @@ export default function PracticePlanOnboarding() {
         requireInsurance: 'yes', 
         waiverText: '', 
         facilityAgreement: '', 
-        timeIncrement: '60' 
+        timeIncrement: '60',
+        permissionToAnnounce: false 
       });
       setLocations([]);
       setErrors({});
