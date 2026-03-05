@@ -849,11 +849,12 @@
       { id: 'golive_call', label: 'Go Live Call Done' }
     ];
     const SUCCESS_CHECKLIST_ITEMS = [
-      { id: 'website_link', label: 'Add PracticePlan Link to Website', hasField: true, fieldLabel: 'Link URL', fieldKey: 'websiteLinkUrl' },
-      { id: 'short_link', label: 'Provide Branded Short Link' },
-      { id: 'qr_flyer', label: 'Provide QR Code Flyer' },
-      { id: 'social_graphics', label: 'Provide Social Media Graphics' },
-      { id: 'best_practices', label: 'Provide Best Practices Document' }
+      { id: 'website_link', label: 'PracticePlan Link Added to Website', hasField: true, fieldLabel: 'Website URL', fieldKey: 'websiteLinkUrl', fieldHint: 'URL where this org posts PracticePlan info for their community' },
+      { id: 'short_link', label: 'Branded Short Link Provided', hasField: true, fieldLabel: 'Short Link', fieldKey: 'shortLinkUrl', fieldHint: 'Branded link that goes directly to their PracticePlan booking page' },
+      { id: 'qr_flyer', label: 'QR Code Flyer Provided' },
+      { id: 'social_graphics', label: 'Social Media Graphics Provided' },
+      { id: 'best_practices', label: 'Best Practices Document Provided' },
+      { id: 'day15_followup', label: '15-Day Post-Launch Check-In' }
     ];
     
     let allData = [], archivedData = [], currentFilter = 'all', searchQuery = '', currentUser = null;
@@ -910,7 +911,7 @@
       if (String(id).indexOf('_field') >= 0) {
         if (checked && String(checked).indexOf('http') === 0) {
           var orgName2 = ''; allData.forEach(function(d) { if (d.email === email) orgName2 = d.organization; });
-          logActivityToServer('added website link for', orgName2 || email, String(checked).substring(0, 60), 'checklist');
+          logActivityToServer('saved link for', orgName2 || email, String(checked).substring(0, 60), 'checklist');
         }
         return;
       }
@@ -1714,7 +1715,7 @@
         itemHtml += '<div class="checklist-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>';
         itemHtml += '<span class="checklist-label">' + c.label + '</span></div>';
         if (c.hasField) {
-          itemHtml += '<div style="width:100%;padding-left:36px" onclick="event.stopPropagation()"><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="' + (fieldVal ? 'var(--pp-green)' : 'var(--text3)') + '" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span style="font-size:11px;color:var(--text3)">Paste the booking page URL for ' + esc(item.organization || 'this org') + '</span></div><input type="text" value="' + esc(fieldVal).replace(/"/g, '&quot;') + '" placeholder="https://book.practice-plan.com/..." style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid ' + (fieldVal ? 'var(--pp-green)' : 'var(--border)') + ';font-size:13px;font-family:inherit;background:var(--card);color:var(--text);outline:none;transition:border-color 0.2s" onfocus="this.style.borderColor=\'var(--pp-blue)\'" onblur="this.style.borderColor=this.value?\'var(--pp-green)\':\'var(--border)\'" onchange="setChecklist(\'' + item.email + '\',\'cs_' + c.id + '_field\',this.value); if(this.value.trim() && !getChecklist(\'' + item.email + '\')[\'cs_' + c.id + '\']){toggleChecklistItem(\'' + item.email + '\',\'cs_' + c.id + '\',this.closest(\'.checklist-item\'))}"/></div>';
+          itemHtml += '<div style="width:100%;padding-left:36px" onclick="event.stopPropagation()"><div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="' + (fieldVal ? 'var(--pp-green)' : 'var(--text3)') + '" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span style="font-size:11px;color:var(--text3)">' + esc(c.fieldHint || 'Enter URL') + '</span></div><input type="text" value="' + esc(fieldVal).replace(/"/g, '&quot;') + '" placeholder="https://..." style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid ' + (fieldVal ? 'var(--pp-green)' : 'var(--border)') + ';font-size:13px;font-family:inherit;background:var(--card);color:var(--text);outline:none;transition:border-color 0.2s" onfocus="this.style.borderColor=\'var(--pp-blue)\'" onblur="this.style.borderColor=this.value?\'var(--pp-green)\':\'var(--border)\'" onchange="setChecklist(\'' + item.email + '\',\'cs_' + c.id + '_field\',this.value); if(this.value.trim() && !getChecklist(\'' + item.email + '\')[\'cs_' + c.id + '\']){toggleChecklistItem(\'' + item.email + '\',\'cs_' + c.id + '\',this.closest(\'.checklist-item\'))}"/></div>';
         }
         itemHtml += '</div>';
         return itemHtml;
