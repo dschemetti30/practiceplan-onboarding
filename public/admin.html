@@ -727,8 +727,8 @@
     <div class="main-content">
       <div class="view-tabs">
         <button class="view-tab active" onclick="switchView('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Dashboard</button>
-        <button class="view-tab" onclick="switchView('pipeline')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Pipeline</button>
-        <button class="view-tab" onclick="switchView('calendar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Go-Live Calendar</button>
+        <button class="view-tab" onclick="switchView('pipeline')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Onboarding</button>
+        <button class="view-tab" onclick="switchView('calendar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Go-Live Dates</button>
         <button class="view-tab" onclick="switchView('activity')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Activity</button>
       </div>
 
@@ -768,7 +768,7 @@
 
       <div class="view-content" id="pipelineView">
         <div class="pipeline-section">
-          <div class="controls-row"><div class="section-title">Pipeline</div></div>
+          <div class="controls-row"><div class="section-title">Onboarding Pipeline</div></div>
           <div class="pipeline-board">
             <div class="pipeline-column" data-status="new"><div class="pipeline-column-header"><span class="pipeline-column-title"><span class="pipeline-dot"></span> New</span><span class="pipeline-column-count" id="countNew">0</span></div><div class="pipeline-cards" id="cardsNew"></div></div>
             <div class="pipeline-column" data-status="in-progress"><div class="pipeline-column-header"><span class="pipeline-column-title"><span class="pipeline-dot"></span> In Progress</span><span class="pipeline-column-count" id="countInProgress">0</span></div><div class="pipeline-cards" id="cardsInProgress"></div></div>
@@ -894,7 +894,7 @@
       jsonpRequest(API_URL + '?action=setChecklistItem&email=' + encodeURIComponent(currentUser?.email || '') + '&orgEmail=' + encodeURIComponent(email) + '&itemId=' + encodeURIComponent(id) + '&checked=' + checked).catch(function(e) { console.error('Failed to save checklist:', e); });
       var itemLabel = CHECKLIST_ITEMS.find(function(c) { return c.id === id; });
       var orgName = ''; allData.forEach(function(d) { if (d.email === email) orgName = d.organization; });
-      logActivityToServer((checked ? 'checked' : 'unchecked'), orgName || email, itemLabel ? itemLabel.label : id, 'checklist');
+      logActivityToServer(checked ? 'completed checklist item for' : 'unchecked checklist item for', orgName || email, itemLabel ? itemLabel.label : id, 'checklist');
     }
     async function loadChecklists() {
       try {
@@ -1543,7 +1543,7 @@
           }
           showToast(isArchived ? 'Restored' : 'Archived', 'success');
           var orgName = item ? item.organization : '';
-          logActivityToServer(isArchived ? 'restored' : 'archived', orgName || email, '', 'archive');
+          logActivityToServer(isArchived ? 'restored from archive' : 'moved to archive', orgName || email, '', 'archive');
           updateStats(); renderTable(); renderPipeline();
         } else showToast('Failed: ' + (result.error || 'Unknown'), 'error');
       } catch(e) { showToast('Failed', 'error'); }
@@ -1557,7 +1557,7 @@
           archivedData.forEach(function(d) { if (d.sheetType === sheetType && d.rowIndex === rowIndex) d.accountRep = repEmail; });
           var repMember = TEAM_MEMBERS.find(function(m) { return m.email === repEmail; });
           var orgName = ''; allData.concat(archivedData).forEach(function(d) { if (d.sheetType === sheetType && d.rowIndex === rowIndex) orgName = d.organization; });
-          logActivityToServer('assigned', orgName || 'account', repMember ? repMember.name : (repEmail || 'Unassigned'), 'rep');
+          logActivityToServer('assigned rep for', orgName || 'account', repMember ? repMember.name : (repEmail || 'Unassigned'), 'rep');
           showToast('Rep assigned', 'success');
           renderPipeline();
         } else showToast('Failed: ' + (result.error || 'Unknown'), 'error');
@@ -1590,7 +1590,7 @@
           showToast('Status updated to ' + (labels[newStatus] || newStatus), 'success');
           // Log activity
           var orgName = ''; allData.concat(archivedData).forEach(function(d) { if (d.sheetType === sheetType && d.rowIndex === rowIndex) orgName = d.organization; });
-          logActivityToServer('changed status of', orgName || email, labels[newStatus] || newStatus, 'status');
+          logActivityToServer('moved', orgName || email, labels[newStatus] || newStatus, 'status');
           // Save reason as a comment if provided
           if (reason && reason.trim()) {
             var noteText = 'Status changed to ' + (labels[newStatus] || newStatus) + ' - ' + reason.trim();
@@ -1805,7 +1805,7 @@
         if (result.success && result.comment) {
           allComments.push(result.comment);
           var orgName = ''; allData.forEach(function(d) { if (d.email === orgEmail) orgName = d.organization; });
-          logActivityToServer('commented on', orgName || orgEmail, text.trim().substring(0, 60), 'comment');
+          logActivityToServer('added a comment on', orgName || orgEmail, text.trim().length > 50 ? text.trim().substring(0, 50) + '...' : text.trim(), 'comment');
           showToast('Comment saved', 'success');
         } else { showToast('Failed to save comment', 'error'); }
       } catch(e) { showToast('Failed to save comment', 'error'); }
@@ -2007,10 +2007,9 @@
     var allActivities = [];
     var activityFilter = 'all';
 
-    function logActivityToServer(action, target, detail, actType) {
-      jsonpRequest(API_URL + '?action=logActivity&email=' + encodeURIComponent(currentUser?.email || '') + '&action=' + encodeURIComponent(action) + '&target=' + encodeURIComponent(target || '') + '&detail=' + encodeURIComponent(detail || '') + '&actType=' + encodeURIComponent(actType || 'other')).catch(function(e) { console.log('Activity log failed:', e.message); });
-      // Add to local array immediately
-      allActivities.unshift({ timestamp: new Date().toISOString(), userEmail: currentUser?.email || '', action: action, target: target || '', detail: detail || '', type: actType || 'other' });
+    function logActivityToServer(actAction, target, detail, actType) {
+      jsonpRequest(API_URL + '?action=logActivity&email=' + encodeURIComponent(currentUser?.email || '') + '&actAction=' + encodeURIComponent(actAction) + '&target=' + encodeURIComponent(target || '') + '&detail=' + encodeURIComponent(detail || '') + '&actType=' + encodeURIComponent(actType || 'other')).catch(function(e) { console.log('Activity log failed:', e.message); });
+      allActivities.unshift({ timestamp: new Date().toISOString(), userEmail: currentUser?.email || '', action: actAction, target: target || '', detail: detail || '', type: actType || 'other' });
     }
 
     async function loadActivity() {
