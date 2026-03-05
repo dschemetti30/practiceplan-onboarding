@@ -433,6 +433,34 @@
     .pipeline-status-select.s-onboarding{background-color:rgba(245,158,11,0.08);color:#b45309}
     .pipeline-status-select.s-live{background-color:rgba(16,185,129,0.1);color:#047857}
     .mobile-cards{display:none}
+    /* Activity Log */
+    .activity-container{background:var(--card);border-radius:20px;border:1px solid var(--border);overflow:hidden}
+    .activity-header{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px}
+    .activity-title{font-size:18px;font-weight:700;color:var(--text)}
+    .activity-filters{display:flex;gap:6px;flex-wrap:wrap}
+    .activity-filter-btn{padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s;font-family:inherit}
+    .activity-filter-btn.active{background:var(--pp-blue);color:white;border-color:var(--pp-blue)}
+    .activity-feed{max-height:700px;overflow-y:auto}
+    .activity-item{display:flex;gap:14px;padding:16px 24px;border-bottom:1px solid var(--border);transition:background 0.15s}
+    .activity-item:hover{background:rgba(0,118,187,0.02)}
+    .activity-item:last-child{border-bottom:none}
+    .activity-avatar{width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--pp-blue),var(--pp-green));color:white;font-size:13px;font-weight:600}
+    .activity-avatar img{width:100%;height:100%;object-fit:cover}
+    .activity-body{flex:1;min-width:0}
+    .activity-text{font-size:13px;color:var(--text);line-height:1.5}
+    .activity-text strong{font-weight:600;color:var(--text)}
+    .activity-text .activity-target{color:var(--pp-blue);font-weight:600}
+    .activity-text .activity-value{padding:2px 8px;border-radius:4px;background:rgba(0,118,187,0.08);color:var(--pp-blue);font-size:12px;font-weight:600}
+    .activity-meta{display:flex;align-items:center;gap:8px;margin-top:4px}
+    .activity-time{font-size:11px;color:var(--text3)}
+    .activity-type-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.3px}
+    .activity-type-badge.status{background:rgba(0,118,187,0.08);color:var(--pp-blue)}
+    .activity-type-badge.checklist{background:rgba(0,168,79,0.08);color:var(--pp-green)}
+    .activity-type-badge.rep{background:rgba(139,92,246,0.08);color:#7c3aed}
+    .activity-type-badge.comment{background:rgba(245,158,11,0.08);color:#d97706}
+    .activity-type-badge.archive{background:rgba(239,68,68,0.08);color:#dc2626}
+    .activity-empty{text-align:center;padding:60px 20px;color:var(--text3)}
+    .activity-empty svg{margin-bottom:12px}
     .mobile-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;transition:all 0.2s}
     .mobile-card:active{transform:scale(0.98)}
     .mobile-card-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
@@ -699,7 +727,9 @@
     <div class="main-content">
       <div class="view-tabs">
         <button class="view-tab active" onclick="switchView('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Dashboard</button>
+        <button class="view-tab" onclick="switchView('pipeline')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Pipeline</button>
         <button class="view-tab" onclick="switchView('calendar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Go-Live Calendar</button>
+        <button class="view-tab" onclick="switchView('activity')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Activity</button>
       </div>
 
       <div class="view-content active" id="dashboardView">
@@ -734,7 +764,9 @@
           <div class="table-wrapper"><table><thead><tr><th onclick="sortBy('organization')">Organization <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('contact')">Contact <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('pipelineStatus')">Status <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('checklistCount')">Checklist <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('goLiveDate')">Go Live <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('lastUpdated')" class="sorted">Updated <span class="sort-arrow">&#x25BC;</span></th><th onclick="sortBy('accountRep')">Rep <span class="sort-arrow">&#x25B2;</span></th><th>Actions</th></tr></thead><tbody id="tableBody"><tr><td colspan="8" class="loading"><div class="spinner"></div></td></tr></tbody></table></div>
           <div class="mobile-cards" id="mobileCards"></div>
         </div>
+      </div>
 
+      <div class="view-content" id="pipelineView">
         <div class="pipeline-section">
           <div class="controls-row"><div class="section-title">Pipeline</div></div>
           <div class="pipeline-board">
@@ -764,6 +796,25 @@
           <div class="calendar-list-mobile" id="calendarListMobile"></div>
         </div>
         <div id="calPopover" style="display:none;position:fixed;z-index:1500;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,0.15);padding:0;min-width:280px;max-width:340px"></div>
+      </div>
+      </div>
+
+      <div class="view-content" id="activityView">
+        <div class="activity-container">
+          <div class="activity-header">
+            <div class="activity-title">Activity Log</div>
+            <div class="activity-filters">
+              <button class="activity-filter-btn active" onclick="filterActivity('all')">All</button>
+              <button class="activity-filter-btn" onclick="filterActivity('status')">Status</button>
+              <button class="activity-filter-btn" onclick="filterActivity('checklist')">Checklist</button>
+              <button class="activity-filter-btn" onclick="filterActivity('rep')">Rep</button>
+              <button class="activity-filter-btn" onclick="filterActivity('comment')">Comments</button>
+            </div>
+          </div>
+          <div class="activity-feed" id="activityFeed">
+            <div style="text-align:center;padding:40px;color:var(--text3);font-size:13px">Loading activity...</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -841,6 +892,9 @@
       if (!checklistData[email]) checklistData[email] = {};
       checklistData[email][id] = checked;
       jsonpRequest(API_URL + '?action=setChecklistItem&email=' + encodeURIComponent(currentUser?.email || '') + '&orgEmail=' + encodeURIComponent(email) + '&itemId=' + encodeURIComponent(id) + '&checked=' + checked).catch(function(e) { console.error('Failed to save checklist:', e); });
+      var itemLabel = CHECKLIST_ITEMS.find(function(c) { return c.id === id; });
+      var orgName = ''; allData.forEach(function(d) { if (d.email === email) orgName = d.organization; });
+      logActivityToServer((checked ? 'checked' : 'unchecked'), orgName || email, itemLabel ? itemLabel.label : id, 'checklist');
     }
     async function loadChecklists() {
       try {
@@ -949,6 +1003,8 @@
       document.querySelector('.view-tab[onclick*="' + view + '"]').classList.add('active');
       document.getElementById(view + 'View').classList.add('active');
       if (view === 'calendar') renderCalendar();
+      if (view === 'pipeline') renderPipeline();
+      if (view === 'activity') { loadActivity().then(function() { renderActivity(); }); }
     }
 
     function populateRepFilter() {
@@ -1486,6 +1542,8 @@
             targetArr.push(item);
           }
           showToast(isArchived ? 'Restored' : 'Archived', 'success');
+          var orgName = item ? item.organization : '';
+          logActivityToServer(isArchived ? 'restored' : 'archived', orgName || email, '', 'archive');
           updateStats(); renderTable(); renderPipeline();
         } else showToast('Failed: ' + (result.error || 'Unknown'), 'error');
       } catch(e) { showToast('Failed', 'error'); }
@@ -1495,9 +1553,11 @@
       try {
         const result = await jsonpRequest(API_URL + '?action=assignRep&email=' + encodeURIComponent(currentUser?.email || '') + '&sheetType=' + sheetType + '&rowIndex=' + rowIndex + '&repEmail=' + encodeURIComponent(repEmail));
         if (result.success) {
-          // Update local data immediately so UI stays in sync
           allData.forEach(function(d) { if (d.sheetType === sheetType && d.rowIndex === rowIndex) d.accountRep = repEmail; });
           archivedData.forEach(function(d) { if (d.sheetType === sheetType && d.rowIndex === rowIndex) d.accountRep = repEmail; });
+          var repMember = TEAM_MEMBERS.find(function(m) { return m.email === repEmail; });
+          var orgName = ''; allData.concat(archivedData).forEach(function(d) { if (d.sheetType === sheetType && d.rowIndex === rowIndex) orgName = d.organization; });
+          logActivityToServer('assigned', orgName || 'account', repMember ? repMember.name : (repEmail || 'Unassigned'), 'rep');
           showToast('Rep assigned', 'success');
           renderPipeline();
         } else showToast('Failed: ' + (result.error || 'Unknown'), 'error');
@@ -1528,6 +1588,9 @@
           allData.forEach(function(d) { if (d.sheetType === sheetType && d.rowIndex === rowIndex) d.pipelineStatus = newStatus; });
           archivedData.forEach(function(d) { if (d.sheetType === sheetType && d.rowIndex === rowIndex) d.pipelineStatus = newStatus; });
           showToast('Status updated to ' + (labels[newStatus] || newStatus), 'success');
+          // Log activity
+          var orgName = ''; allData.concat(archivedData).forEach(function(d) { if (d.sheetType === sheetType && d.rowIndex === rowIndex) orgName = d.organization; });
+          logActivityToServer('changed status of', orgName || email, labels[newStatus] || newStatus, 'status');
           // Save reason as a comment if provided
           if (reason && reason.trim()) {
             var noteText = 'Status changed to ' + (labels[newStatus] || newStatus) + ' - ' + reason.trim();
@@ -1741,6 +1804,8 @@
         var result = await jsonpRequest(API_URL + '?action=saveComment&email=' + encodeURIComponent(currentUser?.email || '') + '&orgEmail=' + encodeURIComponent(orgEmail) + '&section=' + encodeURIComponent(section) + '&text=' + encodeURIComponent(text.trim()));
         if (result.success && result.comment) {
           allComments.push(result.comment);
+          var orgName = ''; allData.forEach(function(d) { if (d.email === orgEmail) orgName = d.organization; });
+          logActivityToServer('commented on', orgName || orgEmail, text.trim().substring(0, 60), 'comment');
           showToast('Comment saved', 'success');
         } else { showToast('Failed to save comment', 'error'); }
       } catch(e) { showToast('Failed to save comment', 'error'); }
@@ -1937,6 +2002,65 @@
     }
 
     function esc(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;') : '-'; }
+
+    // Activity Log
+    var allActivities = [];
+    var activityFilter = 'all';
+
+    function logActivityToServer(action, target, detail, actType) {
+      jsonpRequest(API_URL + '?action=logActivity&email=' + encodeURIComponent(currentUser?.email || '') + '&action=' + encodeURIComponent(action) + '&target=' + encodeURIComponent(target || '') + '&detail=' + encodeURIComponent(detail || '') + '&actType=' + encodeURIComponent(actType || 'other')).catch(function(e) { console.log('Activity log failed:', e.message); });
+      // Add to local array immediately
+      allActivities.unshift({ timestamp: new Date().toISOString(), userEmail: currentUser?.email || '', action: action, target: target || '', detail: detail || '', type: actType || 'other' });
+    }
+
+    async function loadActivity() {
+      try {
+        var result = await jsonpRequest(API_URL + '?action=getActivity&email=' + encodeURIComponent(currentUser?.email || ''));
+        if (result.success) { allActivities = result.activities || []; }
+      } catch(e) { console.error('Failed to load activity:', e); }
+    }
+
+    function filterActivity(type) {
+      activityFilter = type;
+      document.querySelectorAll('.activity-filter-btn').forEach(function(btn) { btn.classList.remove('active'); });
+      document.querySelector('.activity-filter-btn[onclick*="' + type + '"]').classList.add('active');
+      renderActivity();
+    }
+
+    function renderActivity() {
+      var feed = document.getElementById('activityFeed');
+      if (!feed) return;
+      var filtered = activityFilter === 'all' ? allActivities : allActivities.filter(function(a) { return a.type === activityFilter; });
+      if (filtered.length === 0) {
+        feed.innerHTML = '<div class="activity-empty"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="' + (document.documentElement.getAttribute('data-theme') === 'dark' ? '#64748b' : '#94a3b8') + '" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><p style="margin:0;font-size:14px;font-weight:600">No activity yet</p><p style="margin:4px 0 0;font-size:13px">' + (activityFilter === 'all' ? 'Actions will appear here as your team works' : 'No ' + activityFilter + ' activity found') + '</p></div>';
+        return;
+      }
+      var html = '';
+      var lastDate = '';
+      filtered.slice(0, 100).forEach(function(a) {
+        var d = new Date(a.timestamp);
+        var dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        if (dateStr !== lastDate) {
+          lastDate = dateStr;
+          html += '<div style="padding:8px 24px;background:var(--bg);font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border)">' + dateStr + '</div>';
+        }
+        var member = TEAM_MEMBERS.find(function(m) { return m.email === a.userEmail; });
+        var avatarHtml = member && member.photo ? '<img src="' + member.photo + '" alt="">' : (member ? member.name.charAt(0) : '?');
+        var userName = member ? member.name : (a.userEmail ? a.userEmail.split('@')[0] : 'Unknown');
+        var typeClass = a.type || 'other';
+        var typeLabel = { status: 'Status', checklist: 'Checklist', rep: 'Rep', comment: 'Comment', archive: 'Archive' }[a.type] || 'Action';
+        html += '<div class="activity-item" data-type="' + typeClass + '">';
+        html += '<div class="activity-avatar">' + avatarHtml + '</div>';
+        html += '<div class="activity-body">';
+        html += '<div class="activity-text"><strong>' + esc(userName) + '</strong> ' + esc(a.action);
+        if (a.target) html += ' <span class="activity-target">' + esc(a.target) + '</span>';
+        if (a.detail) html += ' <span class="activity-value">' + esc(a.detail) + '</span>';
+        html += '</div>';
+        html += '<div class="activity-meta"><span class="activity-time">' + timeAgo(a.timestamp) + '</span><span class="activity-type-badge ' + typeClass + '">' + typeLabel + '</span></div>';
+        html += '</div></div>';
+      });
+      feed.innerHTML = html;
+    }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
     document.addEventListener('touchmove', function(e) {
