@@ -851,7 +851,8 @@
       { id: 'website_link', label: 'Add PracticePlan Link to Website', hasField: true, fieldLabel: 'Link URL', fieldKey: 'websiteLinkUrl' },
       { id: 'short_link', label: 'Provide Branded Short Link' },
       { id: 'qr_flyer', label: 'Provide QR Code Flyer' },
-      { id: 'social_graphics', label: 'Provide Social Media Graphics' }
+      { id: 'social_graphics', label: 'Provide Social Media Graphics' },
+      { id: 'best_practices', label: 'Provide Best Practices Document' }
     ];
     
     let allData = [], archivedData = [], currentFilter = 'all', searchQuery = '', currentUser = null;
@@ -1670,7 +1671,15 @@
       html += '<div class="checklist-section" style="border-top:2px solid var(--pp-blue)"><div class="checklist-header"><div class="checklist-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Customer Success</div><div class="checklist-count">' + sclCount + ' of ' + SUCCESS_CHECKLIST_ITEMS.length + ' complete</div></div><div class="checklist-items">' + SUCCESS_CHECKLIST_ITEMS.map(function(c) {
         var isChecked = scl['cs_' + c.id];
         var fieldVal = scl['cs_' + c.id + '_field'] || '';
-        return '<div class="checklist-item' + (isChecked ? ' checked' : '') + '" onclick="toggleChecklistItem(\'' + item.email + '\',\'cs_' + c.id + '\',this)"><div class="checklist-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span class="checklist-label">' + c.label + '</span></div>' + (c.hasField ? '<div style="margin:-8px 0 8px 36px" onclick="event.stopPropagation()"><input type="text" value="' + esc(fieldVal).replace(/"/g, '&quot;') + '" placeholder="' + (c.fieldLabel || 'Enter value') + '" style="width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-family:inherit;background:var(--bg);color:var(--text);outline:none" onchange="setChecklist(\'' + item.email + '\',\'cs_' + c.id + '_field\',this.value)"/></div>' : '');
+        var itemHtml = '<div class="checklist-item' + (isChecked ? ' checked' : '') + '" style="' + (c.hasField ? 'flex-wrap:wrap;gap:8px' : '') + '">';
+        itemHtml += '<div style="display:flex;align-items:center;gap:10px;cursor:pointer;' + (c.hasField ? 'width:100%' : 'flex:1') + '" onclick="toggleChecklistItem(\'' + item.email + '\',\'cs_' + c.id + '\',this.closest(\'.checklist-item\'))">';
+        itemHtml += '<div class="checklist-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>';
+        itemHtml += '<span class="checklist-label">' + c.label + '</span></div>';
+        if (c.hasField) {
+          itemHtml += '<div style="width:100%;padding-left:36px" onclick="event.stopPropagation()"><input type="text" value="' + esc(fieldVal).replace(/"/g, '&quot;') + '" placeholder="' + (c.fieldLabel || 'Enter value') + ' - e.g., https://example.com/book" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-family:inherit;background:var(--card);color:var(--text);outline:none;transition:border-color 0.2s" onfocus="this.style.borderColor=\'var(--pp-blue)\'" onblur="this.style.borderColor=\'var(--border)\'" onchange="setChecklist(\'' + item.email + '\',\'cs_' + c.id + '_field\',this.value)"/></div>';
+        }
+        itemHtml += '</div>';
+        return itemHtml;
       }).join('') + '</div>' + renderNotesBlock(item.email, 'success') + '</div>';
       html += '<div class="modal-toolbar">';
       if (item.driveFolder) html += '<a href="' + item.driveFolder + '" target="_blank" class="toolbar-btn drive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> Client Attachments (Google Drive)</a>';
