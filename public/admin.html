@@ -8,8 +8,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
-    *{box-sizing:border-box}
     :root{--pp-blue:#0076bb;--pp-green:#00a84f;--bg:#f1f5f9;--card:#fff;--border:#e2e8f0;--text:#1e293b;--text2:#64748b;--text3:#94a3b8}
+    html,body{margin:0;padding:0}
     [data-theme="dark"]{--pp-blue:#38bdf8;--pp-green:#4ade80;--bg:#0f172a;--card:#1e293b;--border:#334155;--text:#f1f5f9;--text2:#94a3b8;--text3:#64748b}
     *{box-sizing:border-box}
     body{font-family:'Montserrat',sans-serif;background:var(--bg);min-height:100vh;color:var(--text);overflow-x:hidden}
@@ -945,8 +945,21 @@
     window.onload = function() {
       if (darkMode) document.documentElement.setAttribute('data-theme', 'dark');
       updateDarkModeIcon();
-      google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleCredentialResponse, auto_select: true });
-      google.accounts.id.renderButton(document.getElementById('googleButtonContainer'), { theme: 'outline', size: 'large', width: 280 });
+      function initGoogleSignIn() {
+        try {
+          if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+            google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleCredentialResponse, auto_select: true });
+            google.accounts.id.renderButton(document.getElementById('googleButtonContainer'), { theme: 'outline', size: 'large', width: 280 });
+          } else {
+            console.log('Google GSI not loaded yet, retrying...');
+            setTimeout(initGoogleSignIn, 500);
+          }
+        } catch(e) {
+          console.error('Google Sign-In init error:', e);
+          setTimeout(initGoogleSignIn, 1000);
+        }
+      }
+      initGoogleSignIn();
       const stored = sessionStorage.getItem('pp_admin_user');
       if (stored) { currentUser = JSON.parse(stored); showDashboard(); }
       populateRepFilter();
