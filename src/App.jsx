@@ -1734,6 +1734,175 @@ const TableEditor = ({ locations, setLocations, onClose, onEditDetails, isMobile
   );
 };
 
+async function exportSetupPDF({ policies, contactInfo, locations, locationScores, stats, overallScore, formatGoLiveDate, getBookingWindow }) {
+  // Dynamically load jsPDF
+  if (!window.jspdf) {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    document.head.appendChild(script);
+    await new Promise((resolve, reject) => { script.onload = resolve; script.onerror = reject; });
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const w = doc.internal.pageSize.getWidth();
+  const margin = 20;
+  const contentW = w - margin * 2;
+  let y = 0;
+
+  function checkPage(needed) { if (y + needed > 275) { doc.addPage(); y = 20; } }
+  function drawLine() { doc.setDrawColor(226,232,240); doc.line(margin, y, w - margin, y); y += 6; }
+  function sectionTitle(text) { checkPage(14); doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(30,41,59); doc.text(text, margin, y); y += 8; }
+  function labelValue(label, value, indent) {
+    indent = indent || 0;
+    doc.setFontSize(9); doc.setFont('helvetica','normal');
+    doc.setTextColor(148,163,184); doc.text(label, margin + indent, y);
+    doc.setTextColor(30,41,59); doc.text(String(value || '-'), margin + indent + 40, y);
+    y += 6;
+  }
+
+  // Header gradient
+  for (let gi = 0; gi < 60; gi++) {
+    const ratio = gi / 60;
+    doc.setFillColor(Math.round(0 + ratio * 0), Math.round(118 + ratio * 50), Math.round(187 + ratio * (79 - 187)));
+    doc.rect(w * (gi / 60), 0, w / 60 + 1, 44, 'F');
+  }
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(9); doc.setFont('helvetica','normal');
+  doc.text('PRACTICEPLAN', margin, 13);
+  doc.setFontSize(22); doc.setFont('helvetica','bold');
+  doc.text(contactInfo?.organization || 'Setup Progress', margin, 25);
+  doc.setFontSize(10); doc.setFont('helvetica','normal');
+  doc.text('Setup Progress Summary', margin, 34);
+  doc.setFontSize(8);
+  doc.text(new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }), w - margin - 35, 34);
+
+  y = 54;
+
+  // Stats row
+  const statItems = [
+    { label: 'Locations', value: String(stats.totalLocations), color: [0, 118, 187] },
+    { label: 'Spaces', value: String(stats.totalSpaces), color: [0, 168, 79] },
+    { label: 'Go-Live', value: formatGoLiveDate(), color: [30, 41, 59] },
+    { label: 'Completion', value: overallScore + '%', color: overallScore >= 80 ? [0, 168, 79] : overallScore >= 50 ? [0, 118, 187] : [148, 163, 184] }
+  ];
+  const boxW = (contentW - 12) / 4;
+  statItems.forEach((item, i) => {
+    const bx = margin + i * (boxW + 4);
+    doc.setFillColor(248, 250, 252);
+    doc.roundedRect(bx, y, boxW, 18, 2, 2, 'F');
+    doc.setDrawColor(226, 232, 240);
+    doc.roundedRect(bx, y, boxW, 18, 2, 2, 'S');
+    doc.setFontSize(16); doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...item.color);
+    doc.text(item.value, bx + boxW / 2, y + 9, { align: 'center' });
+    doc.setFontSize(7); doc.setFont('helvetica', 'normal');
+    doc.setTextColor(148, 163, 184);
+    doc.text(item.label.toUpperCase(), bx + boxW / 2, y + 15, { align: 'center' });
+  });
+  y += 28;
+
+  // Contact Information
+  sectionTitle('Contact Information');
+  labelValue('Name', contactInfo?.fullName);
+  labelValue('Organization', contactInfo?.organization);
+  labelValue('Email', contactInfo?.email);
+  if (contactInfo?.phone) labelValue('Phone', contactInfo.phone);
+  if (contactInfo?.jobTitle) labelValue('Job Title', contactInfo.jobTitle);
+  y += 2; drawLine();
+
+  // Policies
+  if (policies && Object.keys(policies).length > 0) {
+    sectionTitle('Policies & Settings');
+    if (policies.goLiveDate) labelValue('Go-Live Date', formatGoLiveDate());
+    if (policies.bookingWindowMonths) labelValue('Booking Window', getBookingWindow());
+    if (policies.requireApproval) labelValue('Require Approval', policies.requireApproval === 'yes' ? 'Yes' : 'No');
+    if (policies.cancellationDays) labelValue('Cancellation', policies.cancellationDays === 'unsure' ? 'TBD' : policies.cancellationDays + ' days');
+    if (policies.weatherRefund) labelValue('Weather Refund', policies.weatherRefund === 'yes' ? 'Yes' : policies.weatherRefund === 'credit' ? 'Credit' : 'No');
+    if (policies.requireInsurance) labelValue('Insurance', policies.requireInsurance === 'yes' ? 'Required' : policies.requireInsurance === 'sometimes' ? 'Sometimes' : 'Not required');
+    if (policies.timeIncrement) labelValue('Time Slots', policies.timeIncrement === '60' ? '1 hour' : policies.timeIncrement + ' min');
+    if (policies.permissionToAnnounce) { labelValue('Announce Partnership', 'Granted'); }
+    y += 2; drawLine();
+  }
+
+  // Locations
+  if (locations.length > 0) {
+    sectionTitle('Locations & Spaces (' + locations.length + ' location' + (locations.length !== 1 ? 's' : '') + ', ' + stats.totalSpaces + ' space' + (stats.totalSpaces !== 1 ? 's' : '') + ')');
+    
+    locationScores.forEach((loc, li) => {
+      checkPage(22);
+      // Location header bar
+      doc.setFillColor(241, 245, 249);
+      doc.roundedRect(margin, y - 2, contentW, 11, 2, 2, 'F');
+      doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(30, 41, 59);
+      doc.text(loc.name || 'Location ' + (li + 1), margin + 4, y + 5);
+      // Completion badge
+      const score = loc.completion.score;
+      doc.setFontSize(8); doc.setFont('helvetica', 'bold');
+      if (score >= 80) doc.setTextColor(0, 168, 79); else if (score >= 50) doc.setTextColor(0, 118, 187); else doc.setTextColor(148, 163, 184);
+      doc.text(score + '%', w - margin - 10, y + 5);
+      y += 14;
+
+      if (loc.address) { doc.setFontSize(8); doc.setTextColor(100, 116, 139); doc.setFont('helvetica', 'normal'); doc.text(loc.address, margin + 4, y); y += 5; }
+      if (loc.contactName) { doc.setFontSize(8); doc.setTextColor(100, 116, 139); doc.text('Contact: ' + loc.contactName + (loc.contactEmail ? ' (' + loc.contactEmail + ')' : ''), margin + 4, y); y += 5; }
+
+      (loc.assets || []).forEach(space => {
+        checkPage(18);
+        doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(30, 41, 59);
+        doc.text(space.name || 'Unnamed Space', margin + 6, y);
+        if (space.pricing) {
+          doc.setTextColor(0, 168, 79);
+          doc.text('$' + space.pricing + '/hr', w - margin - 18, y);
+        }
+        y += 5;
+
+        const details = [];
+        if (space.type) {
+          const spaceType = [{ value: 'gym', label: 'Gymnasium' }, { value: 'field', label: 'Field' }, { value: 'court', label: 'Court' }, { value: 'pool', label: 'Pool' }, { value: 'track', label: 'Track' }, { value: 'studio', label: 'Studio' }, { value: 'classroom', label: 'Classroom' }, { value: 'auditorium', label: 'Auditorium' }, { value: 'other', label: 'Other' }].find(t => t.value === space.type);
+          details.push(spaceType ? spaceType.label : space.type);
+        }
+        if (space.maxCapacity) details.push('Capacity: ' + space.maxCapacity);
+        if (space.indoorOutdoor) details.push(space.indoorOutdoor === 'indoor' ? 'Indoor' : 'Outdoor');
+        if (details.length) {
+          doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(100, 116, 139);
+          doc.text(details.join('  |  '), margin + 6, y);
+          y += 5;
+        }
+
+        const amenities = (space.amenities || []).map(a => typeof a === 'object' ? (a.name || a.label || '') : String(a)).filter(Boolean);
+        if (amenities.length) {
+          doc.setFontSize(7); doc.setTextColor(100, 116, 139);
+          doc.text('Amenities: ' + amenities.join(', '), margin + 6, y, { maxWidth: contentW - 12 });
+          y += 4;
+        }
+
+        const features = (space.features || []).map(f => typeof f === 'object' ? (f.name || f.label || '') : String(f)).filter(Boolean);
+        if (features.length) {
+          doc.setFontSize(7); doc.setTextColor(100, 116, 139);
+          doc.text('Features: ' + features.join(', '), margin + 6, y, { maxWidth: contentW - 12 });
+          y += 4;
+        }
+        y += 4;
+      });
+      y += 4;
+    });
+  }
+
+  // Footer on every page
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let p = 1; p <= pageCount; p++) {
+    doc.setPage(p);
+    doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(148, 163, 184);
+    doc.text('PracticePlan - Setup Progress', margin, 290);
+    doc.text('Page ' + p + ' of ' + pageCount, w - margin - 18, 290);
+    // Thin line above footer
+    doc.setDrawColor(226, 232, 240);
+    doc.line(margin, 287, w - margin, 287);
+  }
+
+  const filename = (contactInfo?.organization || 'PracticePlan').replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, '_') + '_Setup_Progress.pdf';
+  doc.save(filename);
+}
+
 const OverviewPanel = ({ isOpen, onClose, locations, setLocations, onLocationClick, isMobile, onClearForm, policies, contactInfo, onNavigateToStep }) => {
   const [filter, setFilter] = useState('all'); // 'all' or 'incomplete'
   const [viewMode, setViewMode] = useState('table'); // 'table' or 'status'
@@ -2433,25 +2602,48 @@ const OverviewPanel = ({ isOpen, onClose, locations, setLocations, onLocationCli
               Clear & Restart
             </button>
           )}
-          <button
-            onClick={onClose}
-            style={{
-              padding: '10px 20px',
-              borderRadius: '8px',
-              border: 'none',
-              background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`,
-              color: 'white',
-              fontSize: '13px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-          >
-            Continue Editing
-            <ArrowRight size={14} />
-          </button>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <button
+              onClick={() => {
+                exportSetupPDF({ policies, contactInfo, locations, locationScores, stats, overallScore, formatGoLiveDate, getBookingWindow });
+              }}
+              style={{
+                padding: '10px 16px',
+                borderRadius: '8px',
+                border: `1px solid rgba(0, 118, 187, 0.2)`,
+                background: 'rgba(0, 118, 187, 0.06)',
+                color: colors.blue,
+                fontSize: '13px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              <FileText size={14} />
+              Export PDF
+            </button>
+            <button
+              onClick={onClose}
+              style={{
+                padding: '10px 20px',
+                borderRadius: '8px',
+                border: 'none',
+                background: `linear-gradient(135deg, ${colors.blue} 0%, ${colors.green} 100%)`,
+                color: 'white',
+                fontSize: '13px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              Continue Editing
+              <ArrowRight size={14} />
+            </button>
+          </div>
         </div>
         </>
         )}
