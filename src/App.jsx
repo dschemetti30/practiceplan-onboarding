@@ -2722,7 +2722,10 @@ const OverviewPanel = ({ isOpen, onClose, locations, setLocations, onLocationCli
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             <button
               onClick={() => {
-                exportSetupPDF({ policies, contactInfo, locations, locationScores, stats, overallScore, formatGoLiveDate, getBookingWindow });
+                exportSetupPDF({ policies, contactInfo, locations, locationScores, stats, overallScore, formatGoLiveDate, getBookingWindow }).catch(err => {
+                  console.error('PDF export error:', err);
+                  alert('PDF export failed: ' + err.message);
+                });
               }}
               style={{
                 padding: '10px 16px',
