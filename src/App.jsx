@@ -1735,7 +1735,6 @@ const TableEditor = ({ locations, setLocations, onClose, onEditDetails, isMobile
 };
 
 async function exportSetupPDF({ policies, contactInfo, locations, locationScores, stats, overallScore, formatGoLiveDate, getBookingWindow }) {
-  // Dynamically load jsPDF
   if (!window.jspdf) {
     const script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
@@ -1745,163 +1744,281 @@ async function exportSetupPDF({ policies, contactInfo, locations, locationScores
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const w = doc.internal.pageSize.getWidth();
-  const margin = 20;
-  const contentW = w - margin * 2;
+  const m = 18;
+  const cw = w - m * 2;
   let y = 0;
+  const blue = [0, 118, 187], green = [0, 168, 79], dark = [30, 41, 59], gray = [148, 163, 184], lightBg = [248, 250, 252];
+  const amber = [245, 158, 11], red = [239, 68, 68];
 
-  function checkPage(needed) { if (y + needed > 275) { doc.addPage(); y = 20; } }
-  function drawLine() { doc.setDrawColor(226,232,240); doc.line(margin, y, w - margin, y); y += 6; }
-  function sectionTitle(text) { checkPage(14); doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(30,41,59); doc.text(text, margin, y); y += 8; }
-  function labelValue(label, value, indent) {
-    indent = indent || 0;
-    doc.setFontSize(9); doc.setFont('helvetica','normal');
-    doc.setTextColor(148,163,184); doc.text(label, margin + indent, y);
-    doc.setTextColor(30,41,59); doc.text(String(value || '-'), margin + indent + 40, y);
-    y += 6;
+  function checkPage(n) { if (y + n > 278) { doc.addPage(); y = 18; } }
+  function drawProgressBar(x, by, bw, bh, pct, col) {
+    doc.setFillColor(226, 232, 240); doc.roundedRect(x, by, bw, bh, bh/2, bh/2, 'F');
+    if (pct > 0) { doc.setFillColor(...col); doc.roundedRect(x, by, Math.max(bw * pct / 100, bh), bh, bh/2, bh/2, 'F'); }
   }
 
-  // Header gradient
-  for (let gi = 0; gi < 60; gi++) {
-    const ratio = gi / 60;
-    doc.setFillColor(Math.round(0 + ratio * 0), Math.round(118 + ratio * 50), Math.round(187 + ratio * (79 - 187)));
-    doc.rect(w * (gi / 60), 0, w / 60 + 1, 44, 'F');
+  // ============ HEADER ============
+  for (let gi = 0; gi < 80; gi++) {
+    const r = gi / 80;
+    doc.setFillColor(Math.round(0), Math.round(118 + r * 50), Math.round(187 + r * (79 - 187)));
+    doc.rect(w * (gi / 80), 0, w / 80 + 1, 50, 'F');
   }
+  // Org name
   doc.setTextColor(255, 255, 255);
-  doc.setFontSize(9); doc.setFont('helvetica','normal');
-  doc.text('PRACTICEPLAN', margin, 13);
-  doc.setFontSize(22); doc.setFont('helvetica','bold');
-  doc.text(contactInfo?.organization || 'Setup Progress', margin, 25);
-  doc.setFontSize(10); doc.setFont('helvetica','normal');
-  doc.text('Setup Progress Summary', margin, 34);
-  doc.setFontSize(8);
-  doc.text(new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }), w - margin - 35, 34);
+  doc.setFontSize(8); doc.setFont('helvetica', 'normal');
+  doc.text('PRACTICEPLAN - SETUP PROGRESS', m, 13);
+  doc.setFontSize(24); doc.setFont('helvetica', 'bold');
+  const orgName = contactInfo?.organization || 'Organization';
+  doc.text(orgName, m, 27);
+  doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+  doc.text((contactInfo?.fullName || '') + (contactInfo?.jobTitle ? '  |  ' + contactInfo.jobTitle : ''), m, 35);
+  
+  // Completion ring in header
+  const ringX = w - m - 16, ringY = 25, ringR = 12;
+  doc.setDrawColor(255, 255, 255, 0.3); doc.setLineWidth(2.5);
+  doc.circle(ringX, ringY, ringR, 'S');
+  if (overallScore > 0) {
+    doc.setDrawColor(255, 255, 255); doc.setLineWidth(2.5);
+    // Approximate arc with line segments
+    const startAngle = -Math.PI / 2;
+    const endAngle = startAngle + (2 * Math.PI * overallScore / 100);
+    const segments = Math.max(20, Math.round(overallScore));
+    for (let s = 0; s < segments; s++) {
+      const a1 = startAngle + (endAngle - startAngle) * (s / segments);
+      const a2 = startAngle + (endAngle - startAngle) * ((s + 1) / segments);
+      doc.line(ringX + ringR * Math.cos(a1), ringY + ringR * Math.sin(a1), ringX + ringR * Math.cos(a2), ringY + ringR * Math.sin(a2));
+    }
+  }
+  doc.setTextColor(255, 255, 255); doc.setFontSize(14); doc.setFont('helvetica', 'bold');
+  doc.text(overallScore + '%', ringX, ringY + 1.5, { align: 'center' });
+  doc.setFontSize(6); doc.setFont('helvetica', 'normal');
+  doc.text('COMPLETE', ringX, ringY + 6, { align: 'center' });
 
-  y = 54;
+  // Date
+  doc.setFontSize(8); doc.setTextColor(255, 255, 255);
+  doc.text(new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }), m, 44);
+  
+  y = 58;
 
-  // Stats row
-  const statItems = [
-    { label: 'Locations', value: String(stats.totalLocations), color: [0, 118, 187] },
-    { label: 'Spaces', value: String(stats.totalSpaces), color: [0, 168, 79] },
-    { label: 'Go-Live', value: formatGoLiveDate(), color: [30, 41, 59] },
-    { label: 'Completion', value: overallScore + '%', color: overallScore >= 80 ? [0, 168, 79] : overallScore >= 50 ? [0, 118, 187] : [148, 163, 184] }
+  // ============ WHAT'S STILL NEEDED ============
+  const missingItems = [];
+  // Check contact info
+  if (!contactInfo?.fullName) missingItems.push({ area: 'Contact', item: 'Full name' });
+  if (!contactInfo?.email) missingItems.push({ area: 'Contact', item: 'Email address' });
+  if (!contactInfo?.phone) missingItems.push({ area: 'Contact', item: 'Phone number' });
+  if (!policies?.goLiveDate) missingItems.push({ area: 'Policies', item: 'Go-live date' });
+  
+  // Check each location and space
+  locationScores.forEach(loc => {
+    if (!loc.name?.trim()) missingItems.push({ area: loc.name || 'Location', item: 'Location name' });
+    if (!loc.assets || loc.assets.length === 0) { missingItems.push({ area: loc.name || 'Location', item: 'No spaces added' }); return; }
+    loc.assets.forEach(space => {
+      const sn = space.name || 'Unnamed space';
+      const ln = loc.name || 'Location';
+      if (!space.name?.trim()) missingItems.push({ area: ln, item: 'Space name missing' });
+      if (!space.type) missingItems.push({ area: ln + ' > ' + sn, item: 'Space type' });
+      if (!space.pricing?.trim()) missingItems.push({ area: ln + ' > ' + sn, item: 'Pricing' });
+      if (!space.indoorOutdoor) missingItems.push({ area: ln + ' > ' + sn, item: 'Indoor/Outdoor' });
+      if (!space.approvers?.[0]?.email?.trim()) missingItems.push({ area: ln + ' > ' + sn, item: 'Approver email' });
+    });
+  });
+
+  if (missingItems.length > 0 && overallScore < 100) {
+    doc.setFillColor(254, 243, 199); doc.roundedRect(m, y, cw, Math.min(8 + missingItems.length * 5.5, 52), 3, 3, 'F');
+    doc.setDrawColor(245, 158, 11); doc.roundedRect(m, y, cw, Math.min(8 + missingItems.length * 5.5, 52), 3, 3, 'S');
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...amber);
+    doc.text('What\'s Still Needed (' + missingItems.length + ' item' + (missingItems.length !== 1 ? 's' : '') + ')', m + 6, y + 6);
+    doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(120, 80, 0);
+    const showItems = missingItems.slice(0, 7);
+    showItems.forEach((mi, i) => {
+      doc.text('\u2022  ' + mi.area + ': ' + mi.item, m + 6, y + 12 + i * 5.5);
+    });
+    if (missingItems.length > 7) {
+      doc.text('+ ' + (missingItems.length - 7) + ' more items...', m + 6, y + 12 + 7 * 5.5);
+    }
+    y += Math.min(8 + missingItems.length * 5.5, 52) + 8;
+  } else if (overallScore === 100) {
+    doc.setFillColor(220, 252, 231); doc.roundedRect(m, y, cw, 12, 3, 3, 'F');
+    doc.setDrawColor(...green); doc.roundedRect(m, y, cw, 12, 3, 3, 'S');
+    doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...green);
+    doc.text('\u2713 All required fields complete - ready for review!', m + 6, y + 8);
+    y += 18;
+  }
+
+  // ============ KEY METRICS ROW ============
+  const metrics = [
+    { label: 'LOCATIONS', value: String(stats.totalLocations), color: blue },
+    { label: 'SPACES', value: String(stats.totalSpaces), color: green },
+    { label: 'GO-LIVE', value: formatGoLiveDate(), color: dark },
+    { label: 'AVG PRICE', value: stats.avgPrice ? '$' + stats.avgPrice + '/hr' : '-', color: green }
   ];
-  const boxW = (contentW - 12) / 4;
-  statItems.forEach((item, i) => {
-    const bx = margin + i * (boxW + 4);
-    doc.setFillColor(248, 250, 252);
-    doc.roundedRect(bx, y, boxW, 18, 2, 2, 'F');
-    doc.setDrawColor(226, 232, 240);
-    doc.roundedRect(bx, y, boxW, 18, 2, 2, 'S');
-    doc.setFontSize(16); doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...item.color);
-    doc.text(item.value, bx + boxW / 2, y + 9, { align: 'center' });
-    doc.setFontSize(7); doc.setFont('helvetica', 'normal');
-    doc.setTextColor(148, 163, 184);
-    doc.text(item.label.toUpperCase(), bx + boxW / 2, y + 15, { align: 'center' });
+  const boxW = (cw - 9) / 4;
+  metrics.forEach((item, i) => {
+    const bx = m + i * (boxW + 3);
+    doc.setFillColor(...lightBg); doc.roundedRect(bx, y, boxW, 20, 2, 2, 'F');
+    doc.setDrawColor(226, 232, 240); doc.roundedRect(bx, y, boxW, 20, 2, 2, 'S');
+    doc.setFontSize(18); doc.setFont('helvetica', 'bold'); doc.setTextColor(...item.color);
+    doc.text(item.value, bx + boxW / 2, y + 10.5, { align: 'center' });
+    doc.setFontSize(6); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+    doc.text(item.label, bx + boxW / 2, y + 16.5, { align: 'center' });
   });
   y += 28;
 
-  // Contact Information
-  sectionTitle('Contact Information');
-  labelValue('Name', contactInfo?.fullName);
-  labelValue('Organization', contactInfo?.organization);
-  labelValue('Email', contactInfo?.email);
-  if (contactInfo?.phone) labelValue('Phone', contactInfo.phone);
-  if (contactInfo?.jobTitle) labelValue('Job Title', contactInfo.jobTitle);
-  y += 2; drawLine();
+  // ============ CONTACT & POLICIES SIDE BY SIDE ============
+  const colW = (cw - 6) / 2;
+  const leftX = m, rightX = m + colW + 6;
+  const startY = y;
 
-  // Policies
-  if (policies && Object.keys(policies).length > 0) {
-    sectionTitle('Policies & Settings');
-    if (policies.goLiveDate) labelValue('Go-Live Date', formatGoLiveDate());
-    if (policies.bookingWindowMonths) labelValue('Booking Window', getBookingWindow());
-    if (policies.requireApproval) labelValue('Require Approval', policies.requireApproval === 'yes' ? 'Yes' : 'No');
-    if (policies.cancellationDays) labelValue('Cancellation', policies.cancellationDays === 'unsure' ? 'TBD' : policies.cancellationDays + ' days');
-    if (policies.weatherRefund) labelValue('Weather Refund', policies.weatherRefund === 'yes' ? 'Yes' : policies.weatherRefund === 'credit' ? 'Credit' : 'No');
-    if (policies.requireInsurance) labelValue('Insurance', policies.requireInsurance === 'yes' ? 'Required' : policies.requireInsurance === 'sometimes' ? 'Sometimes' : 'Not required');
-    if (policies.timeIncrement) labelValue('Time Slots', policies.timeIncrement === '60' ? '1 hour' : policies.timeIncrement + ' min');
-    if (policies.permissionToAnnounce) { labelValue('Announce Partnership', 'Granted'); }
-    y += 2; drawLine();
-  }
+  // Left: Contact
+  doc.setFillColor(...lightBg); doc.roundedRect(leftX, y, colW, 44, 3, 3, 'F');
+  doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...gray);
+  doc.text('CONTACT INFORMATION', leftX + 6, y + 7);
+  doc.setFontSize(9); doc.setFont('helvetica', 'normal');
+  const contactRows = [
+    [contactInfo?.fullName || '-', dark],
+    [contactInfo?.email || '-', blue],
+    [contactInfo?.phone || '-', dark],
+    [contactInfo?.jobTitle || '-', gray]
+  ];
+  contactRows.forEach((cr, i) => {
+    doc.setTextColor(...cr[1]); doc.text(cr[0], leftX + 6, y + 14 + i * 7);
+  });
 
-  // Locations
-  if (locations.length > 0) {
-    sectionTitle('Locations & Spaces (' + locations.length + ' location' + (locations.length !== 1 ? 's' : '') + ', ' + stats.totalSpaces + ' space' + (stats.totalSpaces !== 1 ? 's' : '') + ')');
+  // Right: Policies
+  doc.setFillColor(...lightBg); doc.roundedRect(rightX, y, colW, 44, 3, 3, 'F');
+  doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...gray);
+  doc.text('KEY POLICIES', rightX + 6, y + 7);
+  doc.setFontSize(8); doc.setFont('helvetica', 'normal');
+  const policyRows = [
+    ['Booking Window', getBookingWindow()],
+    ['Approval', policies?.requireApproval === 'yes' ? 'Required' : 'Auto'],
+    ['Insurance', policies?.requireInsurance === 'yes' ? 'Required' : policies?.requireInsurance === 'sometimes' ? 'Sometimes' : 'No'],
+    ['Cancellation', policies?.cancellationDays ? (policies.cancellationDays === 'unsure' ? 'TBD' : policies.cancellationDays + ' days') : '-'],
+    ['Partnership OK', policies?.permissionToAnnounce ? 'Yes' : 'No']
+  ];
+  policyRows.forEach((pr, i) => {
+    doc.setTextColor(...gray); doc.text(pr[0], rightX + 6, y + 14 + i * 6);
+    doc.setTextColor(...dark); doc.setFont('helvetica', 'bold'); doc.text(pr[1], rightX + colW - 6, y + 14 + i * 6, { align: 'right' }); doc.setFont('helvetica', 'normal');
+  });
+  y += 52;
+
+  // ============ LOCATIONS & SPACES ============
+  doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(...dark);
+  doc.text('Locations & Spaces', m, y);
+  doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+  doc.text(stats.totalLocations + ' location' + (stats.totalLocations !== 1 ? 's' : '') + ', ' + stats.totalSpaces + ' space' + (stats.totalSpaces !== 1 ? 's' : ''), m + 48, y);
+  y += 8;
+
+  locationScores.forEach((loc, li) => {
+    checkPage(35);
+    const score = loc.completion.score;
+    const scoreColor = score === 100 ? green : score >= 70 ? amber : red;
+
+    // Location card
+    doc.setFillColor(...lightBg); doc.roundedRect(m, y, cw, 14, 3, 3, 'F');
+    doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...dark);
+    doc.text(loc.name || 'Location ' + (li + 1), m + 5, y + 6);
     
-    locationScores.forEach((loc, li) => {
+    // Progress bar in header
+    drawProgressBar(m + cw - 55, y + 3.5, 35, 3, score, scoreColor);
+    doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...scoreColor);
+    doc.text(score + '%', m + cw - 14, y + 6.5);
+    
+    // Space count
+    doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+    const assetCount = (loc.assets || []).length;
+    doc.text(assetCount + ' space' + (assetCount !== 1 ? 's' : ''), m + 5, y + 12);
+    if (loc.address) { doc.text(loc.address, m + 25, y + 12); }
+    y += 18;
+
+    // Spaces
+    (loc.assets || []).forEach((space, si) => {
       checkPage(22);
-      // Location header bar
-      doc.setFillColor(241, 245, 249);
-      doc.roundedRect(margin, y - 2, contentW, 11, 2, 2, 'F');
-      doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(30, 41, 59);
-      doc.text(loc.name || 'Location ' + (li + 1), margin + 4, y + 5);
-      // Completion badge
-      const score = loc.completion.score;
-      doc.setFontSize(8); doc.setFont('helvetica', 'bold');
-      if (score >= 80) doc.setTextColor(0, 168, 79); else if (score >= 50) doc.setTextColor(0, 118, 187); else doc.setTextColor(148, 163, 184);
-      doc.text(score + '%', w - margin - 10, y + 5);
-      y += 14;
+      doc.setFillColor(255, 255, 255); doc.roundedRect(m + 4, y, cw - 8, 'auto', 2, 2);
+      
+      // Space name + pricing
+      doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...dark);
+      doc.text(space.name || 'Unnamed Space', m + 8, y + 2);
+      if (space.pricing) {
+        doc.setTextColor(...green); doc.text('$' + space.pricing + '/hr', m + cw - 12, y + 2, { align: 'right' });
+      }
+      y += 6;
 
-      if (loc.address) { doc.setFontSize(8); doc.setTextColor(100, 116, 139); doc.setFont('helvetica', 'normal'); doc.text(loc.address, margin + 4, y); y += 5; }
-      if (loc.contactName) { doc.setFontSize(8); doc.setTextColor(100, 116, 139); doc.text('Contact: ' + loc.contactName + (loc.contactEmail ? ' (' + loc.contactEmail + ')' : ''), margin + 4, y); y += 5; }
+      // Type, capacity, indoor/outdoor chips
+      doc.setFontSize(7); doc.setFont('helvetica', 'normal');
+      const chips = [];
+      if (space.type) {
+        const types = { gym: 'Gymnasium', field: 'Field', court: 'Court', pool: 'Pool', track: 'Track', studio: 'Studio', classroom: 'Classroom', auditorium: 'Auditorium', other: 'Other' };
+        chips.push(types[space.type] || space.type);
+      }
+      if (space.indoorOutdoor) chips.push(space.indoorOutdoor === 'indoor' ? 'Indoor' : 'Outdoor');
+      if (space.maxCapacity) chips.push('Cap: ' + space.maxCapacity);
+      if (space.squareFootage) chips.push(space.squareFootage + ' sq ft');
+      if (chips.length) { doc.setTextColor(...gray); doc.text(chips.join('  \u00B7  '), m + 8, y); y += 4; }
 
-      (loc.assets || []).forEach(space => {
-        checkPage(18);
-        doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(30, 41, 59);
-        doc.text(space.name || 'Unnamed Space', margin + 6, y);
-        if (space.pricing) {
-          doc.setTextColor(0, 168, 79);
-          doc.text('$' + space.pricing + '/hr', w - margin - 18, y);
-        }
-        y += 5;
+      // Amenities
+      const amenities = (space.amenities || []).map(a => typeof a === 'object' ? (a.name || a.label || '') : String(a)).filter(Boolean);
+      if (amenities.length) {
+        doc.setFontSize(7); doc.setTextColor(0, 168, 79);
+        doc.text('Amenities: ' + amenities.join(', '), m + 8, y, { maxWidth: cw - 20 });
+        y += Math.ceil(amenities.join(', ').length / 80) * 3.5 + 1;
+      }
 
-        const details = [];
-        if (space.type) {
-          const spaceType = [{ value: 'gym', label: 'Gymnasium' }, { value: 'field', label: 'Field' }, { value: 'court', label: 'Court' }, { value: 'pool', label: 'Pool' }, { value: 'track', label: 'Track' }, { value: 'studio', label: 'Studio' }, { value: 'classroom', label: 'Classroom' }, { value: 'auditorium', label: 'Auditorium' }, { value: 'other', label: 'Other' }].find(t => t.value === space.type);
-          details.push(spaceType ? spaceType.label : space.type);
-        }
-        if (space.maxCapacity) details.push('Capacity: ' + space.maxCapacity);
-        if (space.indoorOutdoor) details.push(space.indoorOutdoor === 'indoor' ? 'Indoor' : 'Outdoor');
-        if (details.length) {
-          doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(100, 116, 139);
-          doc.text(details.join('  |  '), margin + 6, y);
-          y += 5;
-        }
+      // Features
+      const features = (space.features || []).map(f => typeof f === 'object' ? (f.name || f.label || '') : String(f)).filter(Boolean);
+      if (features.length) {
+        doc.setFontSize(7); doc.setTextColor(0, 118, 187);
+        doc.text('Features: ' + features.join(', '), m + 8, y, { maxWidth: cw - 20 });
+        y += Math.ceil(features.join(', ').length / 80) * 3.5 + 1;
+      }
 
-        const amenities = (space.amenities || []).map(a => typeof a === 'object' ? (a.name || a.label || '') : String(a)).filter(Boolean);
-        if (amenities.length) {
-          doc.setFontSize(7); doc.setTextColor(100, 116, 139);
-          doc.text('Amenities: ' + amenities.join(', '), margin + 6, y, { maxWidth: contentW - 12 });
-          y += 4;
-        }
-
-        const features = (space.features || []).map(f => typeof f === 'object' ? (f.name || f.label || '') : String(f)).filter(Boolean);
-        if (features.length) {
-          doc.setFontSize(7); doc.setTextColor(100, 116, 139);
-          doc.text('Features: ' + features.join(', '), margin + 6, y, { maxWidth: contentW - 12 });
-          y += 4;
-        }
+      // Missing required fields for this space
+      const spaceMissing = [];
+      if (!space.name?.trim()) spaceMissing.push('name');
+      if (!space.type) spaceMissing.push('type');
+      if (!space.pricing?.trim()) spaceMissing.push('pricing');
+      if (!space.indoorOutdoor) spaceMissing.push('indoor/outdoor');
+      if (!space.approvers?.[0]?.email?.trim()) spaceMissing.push('approver');
+      if (spaceMissing.length > 0) {
+        doc.setFontSize(7); doc.setTextColor(...red);
+        doc.text('Missing: ' + spaceMissing.join(', '), m + 8, y);
         y += 4;
-      });
+      }
+
       y += 4;
     });
-  }
+    y += 4;
+  });
 
-  // Footer on every page
+  // ============ FORM URL / QR CODE AREA ============
+  checkPage(20);
+  doc.setDrawColor(226, 232, 240); doc.line(m, y, w - m, y); y += 8;
+  doc.setFillColor(...lightBg); doc.roundedRect(m, y, cw, 16, 3, 3, 'F');
+  doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+  doc.text('Continue editing your setup at:', m + 6, y + 7);
+  doc.setTextColor(...blue); doc.setFont('helvetica', 'bold');
+  doc.text('https://onboarding.practice-plan.com', m + 55, y + 7);
+  doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+  doc.text('This PDF was generated from your in-progress setup. Return to the form anytime to make updates.', m + 6, y + 13);
+  y += 22;
+
+  // ============ FOOTER ON EVERY PAGE ============
   const pageCount = doc.internal.getNumberOfPages();
   for (let p = 1; p <= pageCount; p++) {
     doc.setPage(p);
-    doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(148, 163, 184);
-    doc.text('PracticePlan - Setup Progress', margin, 290);
-    doc.text('Page ' + p + ' of ' + pageCount, w - margin - 18, 290);
-    // Thin line above footer
-    doc.setDrawColor(226, 232, 240);
-    doc.line(margin, 287, w - margin, 287);
+    doc.setDrawColor(226, 232, 240); doc.line(m, 285, w - m, 285);
+    doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+    doc.text('PracticePlan', m, 290);
+    // Gradient dots
+    doc.setFillColor(...blue); doc.circle(m + 18, 289, 1, 'F');
+    doc.setFillColor(...green); doc.circle(m + 21, 289, 1, 'F');
+    doc.text(orgName + ' - Setup Progress', m + 25, 290);
+    doc.text('Page ' + p + ' of ' + pageCount, w - m, 290, { align: 'right' });
   }
 
-  const filename = (contactInfo?.organization || 'PracticePlan').replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, '_') + '_Setup_Progress.pdf';
+  const filename = orgName.replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, '_') + '_Setup_Progress.pdf';
   doc.save(filename);
 }
+
 
 const OverviewPanel = ({ isOpen, onClose, locations, setLocations, onLocationClick, isMobile, onClearForm, policies, contactInfo, onNavigateToStep }) => {
   const [filter, setFilter] = useState('all'); // 'all' or 'incomplete'
