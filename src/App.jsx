@@ -1933,7 +1933,7 @@ async function exportSetupPDF({ policies, contactInfo, locations, locationScores
     // Spaces
     (loc.assets || []).forEach((space, si) => {
       checkPage(22);
-      doc.setFillColor(255, 255, 255); doc.roundedRect(m + 4, y, cw - 8, 'auto', 2, 2);
+      doc.setFillColor(255, 255, 255);
       
       // Space name + pricing
       doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...dark);
