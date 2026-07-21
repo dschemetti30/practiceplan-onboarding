@@ -401,7 +401,6 @@
     .comment-actions{display:flex;justify-content:flex-end;margin-top:6px}
     .comment-submit{padding:6px 16px;border-radius:8px;border:none;background:var(--pp-blue);color:white;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s}
     .comment-submit:hover{opacity:0.9}
-    .comment-submit:disabled{opacity:0.5;cursor:not-allowed}
     .comment-cancel{padding:6px 16px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s}
     .comment-cancel:hover{border-color:var(--text2);color:var(--text)}
     .comment-actions{display:flex;justify-content:flex-end;margin-top:8px;gap:8px}
@@ -438,6 +437,65 @@
     .pipeline-status-select.s-published{background-color:rgba(16,185,129,0.1);color:#047857}
     .pipeline-status-select.s-launched{background-color:rgba(0,118,187,0.1);color:#0076bb}
     .mobile-cards{display:none}
+    /* Milestone Grid */
+    .milestone-section{margin-top:24px}
+    .milestone-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+    .milestone-legend{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);font-weight:500}
+    .ml-dot{display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid var(--border);background:var(--card)}
+    .ml-dot.done{background:var(--pp-green);border-color:var(--pp-green)}
+    .milestone-grid-wrap{background:var(--card);border-radius:16px;border:1px solid var(--border);overflow-x:auto}
+    .milestone-grid{width:100%;border-collapse:collapse;min-width:640px}
+    .milestone-grid th{padding:12px 14px;text-align:center;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px;border-bottom:1px solid var(--border);background:var(--bg);white-space:nowrap}
+    .milestone-grid th.mg-org-col{text-align:left;padding-left:20px}
+    .milestone-grid td{padding:12px 14px;text-align:center;border-bottom:1px solid var(--border);font-size:13px}
+    .milestone-grid tr:last-child td{border-bottom:none}
+    .milestone-grid tr:hover td{background:rgba(0,118,187,0.02)}
+    .mg-org{text-align:left!important;padding-left:20px!important;font-weight:600;color:var(--text);cursor:pointer;white-space:nowrap;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+    .mg-org:hover{color:var(--pp-blue)}
+    .mg-org .mg-status{display:block;font-size:10px;font-weight:500;color:var(--text3);margin-top:2px}
+    .mg-check{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;border:2px solid var(--border);background:var(--card);cursor:pointer;transition:all 0.15s;vertical-align:middle}
+    .mg-check:hover{border-color:var(--pp-green);transform:scale(1.1)}
+    .mg-check.done{background:var(--pp-green);border-color:var(--pp-green)}
+    .mg-check.done svg{stroke:white}
+    .mg-check svg{width:13px;height:13px;stroke:transparent;stroke-width:3}
+    .mg-check.derived{cursor:default}
+    .mg-check.derived:hover{transform:none;border-color:var(--border)}
+    .mg-check.derived.done{background:var(--pp-blue);border-color:var(--pp-blue)}
+    .mg-check.derived.done:hover{border-color:var(--pp-blue)}
+    /* Customer Success Grid */
+    .success-grid{min-width:1180px}
+    .success-grid th{padding:10px 8px;font-size:10px}
+    .success-grid td{padding:10px 8px}
+    .sg-group-row th{border-bottom:none;padding:8px}
+    .sg-group{font-size:10px;font-weight:700;letter-spacing:0.6px}
+    .sg-group-health{color:var(--pp-green);background:rgba(0,168,79,0.05)!important}
+    .sg-group-adv{color:#d97706;background:rgba(245,158,11,0.05)!important}
+    .sg-group-ret{color:var(--pp-blue);background:rgba(0,118,187,0.05)!important}
+    .sg-checkins{display:inline-flex;gap:3px;align-items:center}
+    .sg-checkins .mg-check{width:16px;height:16px}
+    .sg-checkins .mg-check svg{width:9px;height:9px}
+    .sg-val{display:inline-block;min-width:38px;padding:4px 8px;border-radius:6px;background:var(--bg);border:1px solid var(--border);font-size:11px;font-weight:600;color:var(--text3);cursor:pointer;transition:all 0.15s;white-space:nowrap}
+    .sg-val:hover{border-color:var(--pp-blue);color:var(--pp-blue)}
+    .sg-val.filled{color:var(--text);background:var(--card)}
+    .sg-val.good{color:#059669;background:rgba(0,168,79,0.08);border-color:rgba(0,168,79,0.2)}
+    .sg-val.warn{color:#d97706;background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.25)}
+    .sg-val.bad{color:#dc2626;background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.25)}
+    .mg-org .mg-health{display:inline-block;margin-left:6px;font-size:9px;font-weight:700;padding:1px 6px;border-radius:100px;background:rgba(0,168,79,0.1);color:var(--pp-green);vertical-align:1px}
+    /* Import overlay */
+    .import-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.7);backdrop-filter:blur(6px);z-index:1200;align-items:center;justify-content:center;padding:20px}
+    .import-overlay.active{display:flex}
+    .import-box{background:var(--card);border-radius:18px;max-width:680px;width:100%;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 25px 80px rgba(0,0,0,0.35);overflow:hidden}
+    .import-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--border)}
+    .import-title{font-size:16px;font-weight:700;color:var(--text)}
+    .import-close{width:32px;height:32px;border-radius:50%;border:none;background:var(--bg);color:var(--text2);cursor:pointer;font-size:14px}
+    .import-body{padding:20px 24px;overflow-y:auto}
+    .import-preview-table{width:100%;border-collapse:collapse;font-size:12px;margin:12px 0}
+    .import-preview-table th{text-align:left;padding:8px 10px;background:var(--bg);color:var(--text3);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.4px;border-bottom:1px solid var(--border)}
+    .import-preview-table td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text)}
+    .import-preview-table tr.invalid td{color:#dc2626;background:rgba(239,68,68,0.04)}
+    .import-btn{padding:11px 22px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--pp-blue),var(--pp-green));color:white;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+    .import-btn:disabled{opacity:0.5;cursor:default}
+    .import-btn.secondary{background:var(--bg);color:var(--text2);border:1px solid var(--border)}
     /* Collapsible Sections */
     .collapsible-section{border:1px solid var(--border);border-radius:14px;margin:0 24px 14px;overflow:hidden;background:var(--card)}
     .collapsible-section:first-of-type{margin-top:0}
@@ -494,44 +552,6 @@
     .mobile-card-actions{display:flex;gap:6px}
     .mobile-card-actions button{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--card);font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;transition:all 0.2s}
     .mobile-card-actions .primary{background:var(--pp-blue);color:white;border-color:var(--pp-blue)}
-    /* Onboarding Milestones grid */
-    .milestones-section{margin-bottom:24px;background:var(--card);border-radius:16px;border:1px solid var(--border);padding:16px;overflow-x:auto}
-    .milestones-section h3{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin:0 0 12px}
-    .ms-table{width:100%;border-collapse:collapse;min-width:640px}
-    .ms-table th{background:transparent;border-bottom:1px solid var(--border);padding:8px 6px;font-size:9px;text-align:center;cursor:default}
-    .ms-table th:first-child{text-align:left}
-    .ms-table th:hover{background:transparent}
-    .ms-table td{padding:8px 6px;text-align:center;font-size:11px;border-bottom:1px solid var(--border)}
-    .ms-table td:first-child{text-align:left}
-    .ms-table tr:last-child td{border-bottom:none}
-    .ms-org{font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;cursor:pointer;display:inline-block;vertical-align:middle}
-    .ms-org:hover{color:var(--pp-blue)}
-    .ms-dot{display:inline-block;width:16px;height:16px;border-radius:50%;border:2px solid var(--border);background:var(--card);vertical-align:middle;position:relative}
-    .ms-dot.done{background:var(--pp-green);border-color:var(--pp-green)}
-    .ms-dot.done::after{content:'✓';color:white;font-size:9px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
-    .ms-dot.live{background:var(--pp-blue);border-color:var(--pp-blue)}
-    .ms-dot.live::after{content:'★';color:white;font-size:8px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
-    .ms-empty{padding:24px;text-align:center;color:var(--text3);font-size:12px}
-    /* Customers tab */
-    .customers-grid-wrap{background:var(--card);border-radius:20px;border:1px solid var(--border);overflow-x:auto}
-    .cs-table{width:100%;border-collapse:collapse;min-width:900px}
-    .cs-table th{text-align:center;padding:12px 8px;background:var(--bg);font-size:9px;font-weight:600;color:var(--text2);text-transform:uppercase;border-bottom:1px solid var(--border);cursor:default}
-    .cs-table th:first-child{text-align:left;padding-left:14px}
-    .cs-table th:hover{background:var(--bg)}
-    .cs-table td{padding:10px 8px;text-align:center;border-bottom:1px solid var(--border)}
-    .cs-table td:first-child{text-align:left;padding-left:14px}
-    .cs-check{display:inline-flex;width:22px;height:22px;border-radius:6px;border:2px solid var(--border);align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;background:var(--card)}
-    .cs-check:hover{border-color:var(--pp-blue)}
-    .cs-check.done{background:var(--pp-green);border-color:var(--pp-green)}
-    .cs-check svg{width:12px;height:12px;color:white;opacity:0}
-    .cs-check.done svg{opacity:1}
-    .cs-link-icon{color:var(--pp-blue);margin-left:4px;vertical-align:middle}
-    /* Import modal */
-    .import-textarea{width:100%;min-height:140px;padding:12px;border-radius:10px;border:1px solid var(--border);font-family:monospace;font-size:11px;background:var(--bg);color:var(--text);resize:vertical;box-sizing:border-box}
-    .import-textarea:focus{outline:none;border-color:var(--pp-blue)}
-    .import-log{max-height:180px;overflow-y:auto;font-size:11px;font-family:monospace;background:var(--bg);border-radius:10px;padding:10px;margin-top:10px}
-    .import-log .ok{color:var(--pp-green)}
-    .import-log .err{color:#ef4444}
     @media(max-width:1400px){.pipeline-board{grid-template-columns:repeat(4,1fr)}}
     @media(max-width:1200px){.pipeline-board{grid-template-columns:repeat(3,1fr)}.stats-row{grid-template-columns:1fr 1fr}.checklist-items{grid-template-columns:1fr}}
     @media(max-width:900px){.stats-row{grid-template-columns:1fr 1fr}.detail-grid{grid-template-columns:1fr}.pipeline-board{grid-template-columns:repeat(2,1fr)}}
@@ -552,8 +572,6 @@
       .stat-card{padding:16px;border-radius:14px}
       .stat-value{font-size:28px}
       .stat-label{font-size:10px}
-      .milestones-section{padding:12px}
-      .ms-org{max-width:110px}
       .time-hero{gap:16px;padding:14px;flex-wrap:wrap;justify-content:center}
       .time-hero-ring{width:80px;height:80px}
       .time-hero-ring svg{width:80px;height:80px}
@@ -785,8 +803,8 @@
       <div class="view-tabs">
         <button class="view-tab active" onclick="switchView('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Dashboard</button>
         <button class="view-tab" onclick="switchView('pipeline')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Onboarding</button>
-        <button class="view-tab" onclick="switchView('calendar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Go-Live</button>
         <button class="view-tab" onclick="switchView('customers')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Customers</button>
+        <button class="view-tab" onclick="switchView('calendar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Go-Live</button>
         <button class="view-tab" onclick="switchView('activity')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Activity</button>
       </div>
 
@@ -798,11 +816,6 @@
           <div class="stat-card"><h3>Pipeline Overview</h3><div class="pipeline-chart" id="pipelineChart"></div></div>
           <div class="stat-card"><h3>Team Assignments</h3><div class="rep-chart" id="repChart"></div></div>
           <div class="stat-card"><h3>Checklist Completion</h3><div id="checklistChart"></div></div>
-        </div>
-
-        <div class="milestones-section">
-          <h3>Onboarding Milestones</h3>
-          <div id="milestonesGrid"></div>
         </div>
 
         <div class="table-section">
@@ -819,7 +832,8 @@
                 <button class="text-action-btn" id="myAccountsBtn" onclick="toggleMyAccounts()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> My Accounts</button>
               </div>
               <div class="controls-group actions-group">
-                <button class="text-action-btn" onclick="openImportModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button>
+                <button class="text-action-btn" onclick="startImport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button>
+                <input type="file" id="importFileInput" accept=".csv,text/csv" style="display:none" onchange="handleImportFile(this.files[0]);this.value=''">
                 <button class="text-action-btn" onclick="exportCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
                 <button class="text-action-btn" onclick="loadData()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh</button>
               </div>
@@ -844,6 +858,73 @@
             <div class="pipeline-column" data-status="launched"><div class="pipeline-column-header"><span class="pipeline-column-title"><span class="pipeline-dot"></span> Launched</span><span class="pipeline-column-count" id="countLaunched">0</span></div><div class="pipeline-cards" id="cardsLaunched"></div></div>
           </div>
         </div>
+
+        <div class="milestone-section">
+          <div class="milestone-header">
+            <div class="section-title">Onboarding Milestones</div>
+            <div class="milestone-legend"><span class="ml-dot done"></span> Complete <span class="ml-dot" style="margin-left:10px"></span> Pending</div>
+          </div>
+          <div class="milestone-grid-wrap">
+            <table class="milestone-grid" id="milestoneGrid">
+              <thead>
+                <tr>
+                  <th class="mg-org-col">Organization</th>
+                  <th>Kickoff Call</th>
+                  <th>MOU Signed</th>
+                  <th>Direct Deposit</th>
+                  <th>Announced</th>
+                  <th>Live on Platform</th>
+                </tr>
+              </thead>
+              <tbody id="milestoneGridBody">
+                <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text3);font-size:13px">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="view-content" id="customersView">
+        <div class="milestone-section" style="margin-top:0">
+          <div class="milestone-header">
+            <div class="section-title">Customer Success</div>
+            <div class="milestone-legend"><span class="ml-dot done"></span> Complete <span class="ml-dot" style="margin-left:10px"></span> Pending <span class="ml-dot" style="margin-left:10px;background:var(--pp-blue);border-color:var(--pp-blue)"></span> Auto-tracked</div>
+          </div>
+          <div class="milestone-grid-wrap">
+            <table class="milestone-grid success-grid" id="successGrid">
+              <thead>
+                <tr class="sg-group-row">
+                  <th class="mg-org-col"></th>
+                  <th colspan="7" class="sg-group sg-group-health">Health &amp; Usage</th>
+                  <th colspan="4" class="sg-group sg-group-adv">Advocacy</th>
+                  <th colspan="5" class="sg-group sg-group-ret">Retention</th>
+                </tr>
+                <tr>
+                  <th class="mg-org-col">Organization</th>
+                  <th title="First booking received through PracticePlan">1st Booking</th>
+                  <th title="Hit their first meaningful revenue milestone">Rev Milestone</th>
+                  <th title="Added more spaces or locations since launch">Expansion</th>
+                  <th title="30 / 60 / 90 day check-in calls">Check-ins</th>
+                  <th title="Facility photos collected">Photos</th>
+                  <th title="Actively using PlayoffPortal">PlayoffPortal</th>
+                  <th title="PracticePlan link on their website (from Launch checklist)">Site Link</th>
+                  <th title="Testimonial acquired">Testimonial</th>
+                  <th title="Public review posted (Google, Capterra, etc.)">Review</th>
+                  <th title="Referred a new customer">Referral</th>
+                  <th title="Case study or co-marketing">Case Study</th>
+                  <th title="NPS score 0-10 (click to enter)">NPS</th>
+                  <th title="Annual revenue before PracticePlan (click to enter)">Baseline Rev</th>
+                  <th title="Renewal date (click to enter)">Renewal</th>
+                  <th title="Renewed beyond first year">Renewed Y1</th>
+                  <th title="Date current contact was last verified (click to enter)">Contact &#x2713;</th>
+                </tr>
+              </thead>
+              <tbody id="successGridBody">
+                <tr><td colspan="17" style="text-align:center;padding:24px;color:var(--text3);font-size:13px">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       <div class="view-content" id="calendarView">
@@ -863,18 +944,6 @@
         <div id="calPopover" style="display:none;position:fixed;z-index:1500;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,0.15);padding:0;min-width:280px;max-width:340px"></div>
       </div>
 
-      <div class="view-content" id="customersView">
-        <div class="controls-row">
-          <div class="section-title">Live Customers</div>
-          <div class="controls-right">
-            <div class="controls-group search-group">
-              <input type="text" class="search-input" placeholder="Search customers..." oninput="customerSearch=this.value.toLowerCase();renderCustomers()">
-            </div>
-          </div>
-        </div>
-        <div class="customers-grid-wrap"><div id="customersGrid"></div></div>
-      </div>
-
       <div class="view-content" id="activityView">
         <div class="activity-view-wrap"><div class="activity-container">
           <div class="activity-header">
@@ -892,6 +961,16 @@
           </div>
         </div></div>
       </div>
+    </div>
+  </div>
+
+  <div class="import-overlay" id="importOverlay">
+    <div class="import-box">
+      <div class="import-head">
+        <div class="import-title">Import Customers</div>
+        <button class="import-close" onclick="closeImport()">&#x2715;</button>
+      </div>
+      <div class="import-body" id="importBody"></div>
     </div>
   </div>
 
@@ -925,20 +1004,12 @@
       { id: 'best_practices', label: 'Best Practices Document Provided' },
       { id: 'day15_followup', label: '15-Day Post-Launch Check-In' }
     ];
-    const MILESTONES = [
-      { id: 'kickoff', label: 'Kickoff' },
-      { id: 'mou', label: 'MOU' },
-      { id: 'deposit', label: 'Deposit' },
-      { id: 'announced', label: 'Announced' },
-      { id: 'golive_call', label: 'Go-Live Call' }
-    ];
     
     let allData = [], archivedData = [], currentFilter = 'all', searchQuery = '', currentUser = null;
     let sortField = 'lastUpdated', sortDir = 'desc', timePeriodDays = 30, repFilter = 'all', myAccountsOnly = false;
     let darkMode = localStorage.getItem('darkMode') === 'true';
     let calendarDate = new Date();
     let checklistData = {};
-    let customerSearch = '';
 
     function getOrgInitials(name) {
       if (!name) return '?';
@@ -980,12 +1051,10 @@
     function getGoLiveDate(item) { var val = (item.formData && item.formData.policies && item.formData.policies.goLiveDate) || ''; return safeGoLiveDateStr(val); }
     function formatGoLive(d) { if (!d) return null; try { var s = safeGoLiveDateStr(d); if (!s) return null; var p = s.split('-'); if (p.length === 3) return new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2])).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); return s; } catch(e) { return String(d); } }
     function getChecklist(email) { return checklistData[email] || {}; }
-    function isImported(d) { return d.status === 'Imported'; }
-    function formEligible(data) { return data.filter(function(d) { return !isImported(d); }); }
     function setChecklist(email, id, checked) {
       if (!checklistData[email]) checklistData[email] = {};
       checklistData[email][id] = checked;
-      jsonpRequest(API_URL + '?action=setChecklistItem&email=' + encodeURIComponent(currentUser?.email || '') + '&orgEmail=' + encodeURIComponent(email) + '&itemId=' + encodeURIComponent(id) + '&checked=' + encodeURIComponent(checked)).catch(function(e) { console.error('Failed to save checklist:', e); });
+      jsonpRequest(API_URL + '?action=setChecklistItem&email=' + encodeURIComponent(currentUser?.email || '') + '&orgEmail=' + encodeURIComponent(email) + '&itemId=' + encodeURIComponent(id) + '&checked=' + checked).catch(function(e) { console.error('Failed to save checklist:', e); });
       // Don't log activity for field value saves unless it's a meaningful URL
       if (String(id).indexOf('_field') >= 0) {
         if (checked && String(checked).indexOf('http') === 0) {
@@ -1125,7 +1194,7 @@
       document.getElementById(view + 'View').classList.add('active');
       if (view === 'calendar') renderCalendar();
       if (view === 'pipeline') renderPipeline();
-      if (view === 'customers') renderCustomers();
+      if (view === 'customers') renderSuccessGrid();
       if (view === 'activity') { loadActivity().then(function() { renderActivity(); }); }
     }
 
@@ -1196,7 +1265,7 @@
           document.querySelector('.stats-section')?.classList.remove('loading-state');
           // Load shared data before rendering
           await Promise.all([loadComments(), loadChecklists(), loadCredentials()]);
-          updateStats(); renderTable(); renderPipeline(); renderCustomers(); renderCalendar(); finishLoading(allData);
+          updateStats(); renderTable(); renderPipeline(); renderCalendar(); finishLoading(allData);
           // Start auto-refresh every 60 seconds
           if (!window._refreshInterval) {
             window._refreshInterval = setInterval(async function() {
@@ -1208,7 +1277,6 @@
                     var updated = new Date(d.lastUpdated), daysDiff = (now - updated) / 86400000, pct = d.completion || 0;
                     var ps = d.pipelineStatus;
                     if (!ps) { if (d.status === 'Submitted') ps = 'complete'; else if (pct >= 75) ps = 'review'; else if (pct > 0) ps = 'in-progress'; else ps = 'new'; }
-                    if (ps === 'live') ps = 'published';
                     return Object.assign({}, d, { isStale: d.status === 'In Progress' && daysDiff > STALE_DAYS, daysSinceUpdate: Math.floor(daysDiff), updatedDate: updated, pipelineStatus: ps, goLiveDate: getGoLiveDate(d), locationStr: getLocationString(d), accountRep: d.accountRep || '', organization: toTitleCase(d.organization), contact: toTitleCase(d.contact) });
                   });
                   var submittedEmails = {}, submittedOrgs = {};
@@ -1217,7 +1285,7 @@
                   allData = deduped.filter(function(d) { return d.status !== 'Archived'; });
                   archivedData = deduped.filter(function(d) { return d.status === 'Archived'; });
                   await Promise.all([loadComments(), loadChecklists(), loadCredentials()]);
-                  updateStats(); renderTable(); renderPipeline(); renderCustomers();
+                  updateStats(); renderTable(); renderPipeline();
                   console.log('Auto-refreshed at', new Date().toLocaleTimeString());
                 }
               } catch(e) { console.log('Auto-refresh skipped:', e.message); }
@@ -1231,26 +1299,25 @@
     function getFilteredByTime(data) { if (timePeriodDays === 0) return data; const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - timePeriodDays); return data.filter(d => d.updatedDate >= cutoff); }
     
     function updateStats() {
-      const tfAll = getFilteredByTime(allData);
-      const tf = formEligible(tfAll); // form analytics exclude imported customers
-      const complete = tf.filter(d => d.pipelineStatus === 'complete' || d.pipelineStatus === 'onboarding' || d.pipelineStatus === 'published' || d.pipelineStatus === 'launched').length,
-            active = tf.filter(d => d.pipelineStatus !== 'complete' && d.pipelineStatus !== 'onboarding' && d.pipelineStatus !== 'published' && d.pipelineStatus !== 'launched').length,
-            stale = tf.filter(d => d.isStale).length;
-      document.getElementById('statTotal').textContent = tf.length; document.getElementById('statComplete').textContent = complete; document.getElementById('statActive').textContent = active; document.getElementById('statStale').textContent = stale;
-      var total = tf.length || 1;
-      var q25 = tf.filter(d=>d.completion>=25).length;
-      var q50 = tf.filter(d=>d.completion>=50).length;
-      var q75 = tf.filter(d=>d.completion>=75).length;
+      const tf = getFilteredByTime(allData);
+      // Form-funnel stats exclude bulk-imported customers (they never went through the form)
+      const tfForm = tf.filter(d => d.status !== 'Imported');
+      const complete = tfForm.filter(d => d.pipelineStatus === 'complete' || d.pipelineStatus === 'onboarding' || d.pipelineStatus === 'published' || d.pipelineStatus === 'launched').length, active = tfForm.filter(d => d.pipelineStatus !== 'complete' && d.pipelineStatus !== 'onboarding' && d.pipelineStatus !== 'published' && d.pipelineStatus !== 'launched').length, stale = tfForm.filter(d => d.isStale).length;
+      document.getElementById('statTotal').textContent = tfForm.length; document.getElementById('statComplete').textContent = complete; document.getElementById('statActive').textContent = active; document.getElementById('statStale').textContent = stale;
+      var total = tfForm.length || 1;
+      var q25 = tfForm.filter(d=>d.completion>=25).length;
+      var q50 = tfForm.filter(d=>d.completion>=50).length;
+      var q75 = tfForm.filter(d=>d.completion>=75).length;
       var completePct = Math.round((complete/total)*100);
       var steps = [
-        {label:'Started', count:tf.length, pct:100, dot:'c1'},
+        {label:'Started', count:tfForm.length, pct:100, dot:'c1'},
         {label:'25%+ done', count:q25, pct:Math.round((q25/total)*100), dot:'c2'},
         {label:'50%+ done', count:q50, pct:Math.round((q50/total)*100), dot:'c3'},
         {label:'75%+ done', count:q75, pct:Math.round((q75/total)*100), dot:'c4'},
         {label:'Form Complete', count:complete, pct:completePct, dot:'c5'}
       ];
       var progressW = total > 0 ? Math.round((complete/total)*100) : 0;
-      var inProgressW = total > 0 ? Math.round(((tf.length - complete)/total)*100) : 0;
+      var inProgressW = total > 0 ? Math.round(((tfForm.length - complete)/total)*100) : 0;
       var convHtml = '<div class="conv-hero"><span class="conv-hero-num">' + completePct + '%</span><span class="conv-hero-label">completion rate</span></div>';
       convHtml += '<div class="conv-bar-full"><div class="conv-bar-seg seg-complete" style="width:' + progressW + '%"></div><div class="conv-bar-seg seg-progress" style="width:' + inProgressW + '%"></div></div>';
       convHtml += '<div class="conv-steps">';
@@ -1259,7 +1326,7 @@
       });
       convHtml += '</div>';
       document.getElementById('conversionsCard').innerHTML = convHtml;
-      const completed = tf.filter(d => d.pipelineStatus === 'complete' || d.pipelineStatus === 'onboarding' || d.pipelineStatus === 'published' || d.pipelineStatus === 'launched');
+      const completed = tfForm.filter(d => d.pipelineStatus === 'complete' || d.pipelineStatus === 'onboarding' || d.pipelineStatus === 'published' || d.pipelineStatus === 'launched');
       var times = [];
       completed.forEach(function(d) {
         // Calculate days between first creation and last update as proxy for completion time
@@ -1285,14 +1352,12 @@
       document.getElementById('fastestTime').textContent = fast ? fast.toFixed(1) + ' days' : '-'; document.getElementById('slowestTime').textContent = slow ? slow.toFixed(1) + ' days' : '-';
       const circ = 2 * Math.PI * 42, prog = avg ? Math.min(avg/10, 1) : 0;
       document.getElementById('timeRingProgress').style.strokeDashoffset = circ - (prog * circ);
-      // Pipeline Status Chart (full book of business, incl. imported)
-      renderPipelineChart(tfAll);
+      // Pipeline Status Chart
+      renderPipelineChart(tf);
       // Rep Workload Chart
-      renderRepChart(tfAll);
+      renderRepChart(tf);
       // Onboarding Progress Chart
-      renderChecklistChart(tfAll);
-      // Onboarding Milestones grid
-      renderMilestones(tfAll);
+      renderChecklistChart(tf);
     }
 
     function renderPipelineChart(data) {
@@ -1387,89 +1452,20 @@
       document.getElementById('checklistChart').innerHTML = html;
     }
 
-    function renderMilestones(data) {
-      var el = document.getElementById('milestonesGrid');
-      if (!el) return;
-      // Orgs actively onboarding; imported already-live customers belong in the Customers tab
-      var rows = data.filter(function(d) {
-        if (isImported(d) && (d.pipelineStatus === 'published' || d.pipelineStatus === 'launched')) return false;
-        return d.pipelineStatus === 'complete' || d.pipelineStatus === 'onboarding' || d.pipelineStatus === 'published' || d.pipelineStatus === 'launched';
-      });
-      if (!rows.length) { el.innerHTML = '<div class="ms-empty">No customers in onboarding yet</div>'; return; }
-      rows.sort(function(a, b) {
-        var order = { complete: 0, onboarding: 1, published: 2, launched: 3 };
-        return (order[a.pipelineStatus] || 0) - (order[b.pipelineStatus] || 0) || a.organization.localeCompare(b.organization);
-      });
-      var h = '<table class="ms-table"><thead><tr><th>Organization</th>';
-      MILESTONES.forEach(function(m) { h += '<th>' + m.label + '</th>'; });
-      h += '<th>Live on Platform</th></tr></thead><tbody>';
-      rows.forEach(function(d) {
-        var cl = getChecklist(d.email);
-        h += '<tr><td><span class="ms-org" title="' + esc(d.organization) + '" onclick="viewDetails(allData.find(function(x){return x.email===\'' + esc(d.email) + '\'}))">' + esc(getShortOrgName(d.organization, d.email)) + '</span></td>';
-        MILESTONES.forEach(function(m) {
-          h += '<td><span class="ms-dot' + (cl[m.id] ? ' done' : '') + '"></span></td>';
-        });
-        var isLive = d.pipelineStatus === 'published' || d.pipelineStatus === 'launched';
-        h += '<td><span class="ms-dot' + (isLive ? ' live' : '') + '" title="' + (isLive ? 'Live' : 'Not yet live') + '"></span></td></tr>';
-      });
-      h += '</tbody></table>';
-      el.innerHTML = h;
-    }
-
-    function renderCustomers() {
-      var el = document.getElementById('customersGrid');
-      if (!el) return;
-      var rows = allData.filter(function(d) { return d.pipelineStatus === 'published' || d.pipelineStatus === 'launched'; });
-      if (customerSearch) rows = rows.filter(function(d) { return (d.organization + d.contact + d.email + d.locationStr).toLowerCase().indexOf(customerSearch) >= 0; });
-      if (!rows.length) { el.innerHTML = '<div class="empty-state">No live customers yet</div>'; return; }
-      rows.sort(function(a, b) { return a.organization.localeCompare(b.organization); });
-      var shortLabels = {
-        'website_link': 'Website',
-        'short_link': 'Short Link',
-        'qr_flyer': 'QR Flyer',
-        'social_graphics': 'Social',
-        'best_practices': 'Best Practices',
-        'day15_followup': '15-Day Check'
-      };
-      var h = '<table class="cs-table"><thead><tr><th>Customer</th>';
-      SUCCESS_CHECKLIST_ITEMS.forEach(function(c) { h += '<th>' + (shortLabels[c.id] || c.label) + '</th>'; });
-      h += '<th>Rep</th></tr></thead><tbody>';
-      rows.forEach(function(d) {
-        var cl = getChecklist(d.email);
-        h += '<tr><td><div class="org-cell"><div class="org-avatar" style="background:' + getOrgColor(d.organization) + ';width:30px;height:30px;font-size:10px">' + getOrgInitials(d.organization) + '</div><div><div class="org-name" style="cursor:pointer" onclick="viewDetails(allData.find(function(x){return x.email===\'' + esc(d.email) + '\'}))">' + esc(d.organization) + '</div>' + (d.locationStr ? '<div class="org-location">' + esc(d.locationStr) + '</div>' : '') + '</div></div></td>';
-        SUCCESS_CHECKLIST_ITEMS.forEach(function(c) {
-          var key = 'cs_' + c.id, done = !!cl[key];
-          var fieldVal = c.hasField ? (cl[key + '_field'] || '') : '';
-          h += '<td><span class="cs-check' + (done ? ' done' : '') + '" onclick="toggleCustomerCheck(\'' + esc(d.email) + '\',\'' + key + '\',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>';
-          if (fieldVal && String(fieldVal).indexOf('http') === 0) h += '<a class="cs-link-icon" href="' + esc(fieldVal) + '" target="_blank" title="' + esc(fieldVal) + '"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></a>';
-          h += '</td>';
-        });
-        var rep = TEAM_MEMBERS.find(function(m) { return m.email === d.accountRep; });
-        h += '<td style="font-size:11px;color:var(--text2)">' + (rep ? esc(rep.name) : '-') + '</td></tr>';
-      });
-      h += '</tbody></table>';
-      el.innerHTML = h;
-    }
-    function toggleCustomerCheck(email, key, el) {
-      var isChecked = !el.classList.contains('done');
-      setChecklist(email, key, isChecked);
-      el.classList.toggle('done', isChecked);
-      updateStats(); renderTable();
-      }
     function setTimePeriod(d) { timePeriodDays = parseInt(d); updateStats(); renderTable(); renderPipeline(); }
     function setFilter(f) { currentFilter = f; renderTable(); renderPipeline(); }
     function handleSearch(q) { searchQuery = q.toLowerCase(); renderTable(); renderPipeline(); }
     function sortBy(f) { if (sortField === f) sortDir = sortDir === 'asc' ? 'desc' : 'asc'; else { sortField = f; sortDir = 'desc'; } renderTable(); updateSortIndicators(); }
     function updateSortIndicators() {
-      document.querySelectorAll('.table-wrapper th').forEach(function(th) {
+      document.querySelectorAll('th').forEach(function(th) {
         th.classList.remove('sorted');
         var arrow = th.querySelector('.sort-arrow');
         if (arrow) arrow.innerHTML = '&#x25B2;';
       });
-      var fieldMap = { organization: 0, contact: 1, pipelineStatus: 2, checklistCount: 3, launchCount: 4, goLiveDate: 5, lastUpdated: 6, accountRep: 7 };
+      var fieldMap = { organization: 0, contact: 1, pipelineStatus: 2, checklistCount: 3, goLiveDate: 4, lastUpdated: 5, accountRep: 6 };
       var idx = fieldMap[sortField];
       if (idx !== undefined) {
-        var th = document.querySelectorAll('.table-wrapper th')[idx];
+        var th = document.querySelectorAll('th')[idx];
         if (th) {
           th.classList.add('sorted');
           var arrow = th.querySelector('.sort-arrow');
@@ -1501,7 +1497,8 @@
         else if (sortField === 'accountRep') { var ra = TEAM_MEMBERS.find(m => m.email === a.accountRep); var rb = TEAM_MEMBERS.find(m => m.email === b.accountRep); av = ra ? ra.name : 'zzz'; bv = rb ? rb.name : 'zzz'; }
         else { av = a[sortField] || ''; bv = b[sortField] || ''; }
         if (sortField === 'lastUpdated' || sortField === 'goLiveDate') { av = av ? new Date(av) : new Date(0); bv = bv ? new Date(bv) : new Date(0); } if (av < bv) return sortDir === 'asc' ? -1 : 1; if (av > bv) return sortDir === 'asc' ? 1 : -1; return 0; });
-      if (!filtered.length) { document.getElementById('tableBody').innerHTML = '<tr><td colspan="9" class="empty-state">No submissions found</td></tr>'; document.getElementById('mobileCards').innerHTML = ''; return; }
+      if (!filtered.length) { document.getElementById('tableBody').innerHTML = '<tr><td colspan="9" class="empty-state">No submissions found</td></tr>'; return; }
+      var _rowIdx = 0;
       const labels = { new: 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', review: 'Review', complete: 'Form Complete', onboarding: 'Onboarding', published: 'Published', launched: 'Launched' };
       document.getElementById('tableBody').innerHTML = filtered.map(item => {
         const goLive = formatGoLive(item.goLiveDate), isArch = currentFilter === 'archived', clCount = getChecklistCount(item.email);
@@ -1520,9 +1517,11 @@
       // Render mobile cards
       var mobileEl = document.getElementById('mobileCards');
       if (mobileEl) {
+        const labels = { new: 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', review: 'Review', complete: 'Form Complete', onboarding: 'Onboarding', published: 'Published', launched: 'Launched' };
         mobileEl.innerHTML = filtered.map(function(item) {
           var isArch = currentFilter === 'archived';
           var statusCls = isArch ? 'archived' : item.isStale ? 'stale' : item.pipelineStatus;
+          var statusLabel = isArch ? 'Archived' : item.isStale ? 'Stale' : labels[item.pipelineStatus] || 'New';
           var goLive = formatGoLive(item.goLiveDate);
           var clCount = getChecklistCount(item.email);
           var rep = TEAM_MEMBERS.find(function(m){return m.email===item.accountRep});
@@ -1566,6 +1565,279 @@
           return '<div class="pipeline-card"><div class="pipeline-card-top" onclick="viewDetails(allData.find(d=>d.email===\'' + esc(item.email) + '\'))"><div class="pipeline-card-title">' + esc(item.organization || 'Unknown') + '</div><div class="pipeline-card-location">' + esc(item.locationStr || item.contact || item.email) + '</div><div class="pipeline-card-meta">' + (goLive ? '<span class="pipeline-card-golive">' + goLive + '</span>' : '<span class="pipeline-card-golive none">No date</span>') + '<span class="pipeline-card-time">' + timeAgo(item.lastUpdated) + '</span></div></div><div class="pipeline-card-status"><select class="pipeline-status-select s-' + item.pipelineStatus + '" onclick="event.stopPropagation()" onchange="event.stopPropagation();changePipelineStatus(\'' + item.sheetType + '\',' + item.rowIndex + ',this.value,\'' + esc(item.email) + '\');this.className=\'pipeline-status-select s-\'+this.value">' + getPipelineStatusOptions(item.pipelineStatus) + '</select></div></div>';
         }).join('') : '<div style="text-align:center;padding:20px;color:var(--text3);font-size:11px">No items</div>';
       });
+      renderMilestoneGrid();
+      renderSuccessGrid();
+    }
+
+    function renderMilestoneGrid() {
+      var body = document.getElementById('milestoneGridBody');
+      if (!body) return;
+      var checkSvg = '<svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>';
+      var statusLabels = { 'new':'New','in-progress':'In Progress','on-hold':'On Hold','review':'Review','complete':'Form Complete','onboarding':'Onboarding','published':'Published','launched':'Launched' };
+      // Orgs in onboarding stage or beyond, or with any of these milestones checked
+      var milestoneIds = ['kickoff', 'mou', 'deposit', 'announced'];
+      var rows = getFilteredData().filter(function(d) {
+        // Imported customers already live skip the onboarding grid - they're in the Customers tab
+        if (d.status === 'Imported' && (d.pipelineStatus === 'published' || d.pipelineStatus === 'launched')) return false;
+        if (['onboarding','published','launched','complete'].indexOf(d.pipelineStatus) >= 0) return true;
+        var cl = getChecklist(d.email);
+        return milestoneIds.some(function(id) { return cl[id]; });
+      }).sort(function(a, b) {
+        var order = { launched: 0, published: 1, onboarding: 2, complete: 3 };
+        var ao = order[a.pipelineStatus] !== undefined ? order[a.pipelineStatus] : 4;
+        var bo = order[b.pipelineStatus] !== undefined ? order[b.pipelineStatus] : 4;
+        return ao - bo || (a.organization || '').localeCompare(b.organization || '');
+      });
+      if (rows.length === 0) {
+        body.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text3);font-size:13px">No customers in onboarding yet</td></tr>';
+        return;
+      }
+      body.innerHTML = rows.map(function(d) {
+        var cl = getChecklist(d.email);
+        var isLive = d.pipelineStatus === 'published' || d.pipelineStatus === 'launched';
+        var cells = milestoneIds.map(function(id) {
+          var done = !!cl[id];
+          return '<td><span class="mg-check' + (done ? ' done' : '') + '" onclick="toggleMilestone(\'' + esc(d.email) + '\',\'' + id + '\',this)" title="' + (done ? 'Click to uncheck' : 'Click to mark complete') + '">' + checkSvg + '</span></td>';
+        }).join('');
+        var liveCell = '<td><span class="mg-check derived' + (isLive ? ' done' : '') + '" title="' + (isLive ? 'Live (' + (statusLabels[d.pipelineStatus] || '') + ')' : 'Set status to Published or Launched') + '">' + checkSvg + '</span></td>';
+        return '<tr><td class="mg-org" onclick="viewDetails(allData.find(function(x){return x.email===\'' + esc(d.email) + '\'}))">' + esc(d.organization || 'Unknown') + '<span class="mg-status">' + (statusLabels[d.pipelineStatus] || d.pipelineStatus || '') + '</span></td>' + cells + liveCell + '</tr>';
+      }).join('');
+    }
+
+    function toggleMilestone(email, id, el) {
+      var isChecked = !el.classList.contains('done');
+      setChecklist(email, id, isChecked);
+      el.classList.toggle('done', isChecked);
+      updateStats(); renderTable();
+    }
+
+    var SUCCESS_CHECKS = ['suc_first_booking','suc_revenue_milestone','suc_expansion','suc_checkin_30','suc_checkin_60','suc_checkin_90','suc_photos','suc_playoffportal','suc_testimonial','suc_review','suc_referral','suc_case_study','suc_renewed_y1'];
+
+    function renderSuccessGrid() {
+      var body = document.getElementById('successGridBody');
+      if (!body) return;
+      var checkSvg = '<svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>';
+      var statusLabels = { 'published':'Published','launched':'Launched' };
+      var rows = getFilteredData().filter(function(d) {
+        return d.pipelineStatus === 'published' || d.pipelineStatus === 'launched';
+      }).sort(function(a, b) {
+        return (a.pipelineStatus === 'launched' ? 0 : 1) - (b.pipelineStatus === 'launched' ? 0 : 1) || (a.organization || '').localeCompare(b.organization || '');
+      });
+      if (rows.length === 0) {
+        body.innerHTML = '<tr><td colspan="17" style="text-align:center;padding:24px;color:var(--text3);font-size:13px">No published or launched customers yet</td></tr>';
+        return;
+      }
+      function chk(email, id, done) {
+        return '<span class="mg-check' + (done ? ' done' : '') + '" onclick="toggleSuccess(\'' + esc(email) + '\',\'' + id + '\',this)">' + checkSvg + '</span>';
+      }
+      function valCell(email, key, display, cls, promptText) {
+        return '<span class="sg-val ' + cls + '" onclick="editSuccessValue(\'' + esc(email) + '\',\'' + key + '\',\'' + promptText + '\')">' + display + '</span>';
+      }
+      body.innerHTML = rows.map(function(d) {
+        var cl = getChecklist(d.email);
+        var doneCount = SUCCESS_CHECKS.filter(function(id) { return cl[id]; }).length;
+        // NPS
+        var nps = cl['suc_nps_field'];
+        var npsCls = 'sg-val', npsDisplay = '&mdash;';
+        if (nps !== undefined && nps !== '' && nps !== null && nps !== false) {
+          var n = parseFloat(nps);
+          npsDisplay = String(nps);
+          npsCls = isNaN(n) ? 'filled' : n >= 9 ? 'good' : n >= 7 ? 'warn' : 'bad';
+        }
+        // Baseline revenue
+        var baseRev = cl['suc_baseline_rev_field'];
+        var baseDisplay = (baseRev && baseRev !== 'false') ? '$' + String(baseRev).replace(/^\$/, '') : '&mdash;';
+        // Renewal date
+        var renewal = cl['suc_renewal_field'];
+        var renewCls = '', renewDisplay = '&mdash;';
+        if (renewal && renewal !== 'false') {
+          var rd = new Date(renewal);
+          if (!isNaN(rd.getTime())) {
+            var daysOut = Math.round((rd - new Date()) / 86400000);
+            renewDisplay = rd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' });
+            renewCls = daysOut < 0 ? 'bad' : daysOut <= 90 ? 'warn' : 'filled';
+          } else { renewDisplay = esc(String(renewal)); renewCls = 'filled'; }
+        }
+        // Contact verified date
+        var verified = cl['suc_contact_verified_field'];
+        var verCls = '', verDisplay = '&mdash;';
+        if (verified && verified !== 'false') {
+          var vd = new Date(verified);
+          if (!isNaN(vd.getTime())) {
+            var daysAgo = Math.round((new Date() - vd) / 86400000);
+            verDisplay = vd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' });
+            verCls = daysAgo > 365 ? 'warn' : 'good';
+          } else { verDisplay = esc(String(verified)); verCls = 'filled'; }
+        }
+        var siteDone = !!cl['cs_website_link'];
+        var checkins = '<span class="sg-checkins">' + ['30','60','90'].map(function(n) {
+          var done = !!cl['suc_checkin_' + n];
+          return '<span class="mg-check' + (done ? ' done' : '') + '" title="' + n + '-day check-in" onclick="toggleSuccess(\'' + esc(d.email) + '\',\'suc_checkin_' + n + '\',this)">' + checkSvg + '</span>';
+        }).join('') + '</span>';
+        return '<tr>'
+          + '<td class="mg-org" onclick="viewDetails(allData.find(function(x){return x.email===\'' + esc(d.email) + '\'}))">' + esc(d.organization || 'Unknown') + '<span class="mg-health">' + doneCount + '/' + SUCCESS_CHECKS.length + '</span><span class="mg-status">' + (statusLabels[d.pipelineStatus] || '') + '</span></td>'
+          + '<td>' + chk(d.email, 'suc_first_booking', cl['suc_first_booking']) + '</td>'
+          + '<td>' + chk(d.email, 'suc_revenue_milestone', cl['suc_revenue_milestone']) + '</td>'
+          + '<td>' + chk(d.email, 'suc_expansion', cl['suc_expansion']) + '</td>'
+          + '<td>' + checkins + '</td>'
+          + '<td>' + chk(d.email, 'suc_photos', cl['suc_photos']) + '</td>'
+          + '<td>' + chk(d.email, 'suc_playoffportal', cl['suc_playoffportal']) + '</td>'
+          + '<td><span class="mg-check derived' + (siteDone ? ' done' : '') + '" title="' + (siteDone ? 'Link added (from Launch checklist)' : 'Tracked in Launch checklist') + '">' + checkSvg + '</span></td>'
+          + '<td>' + chk(d.email, 'suc_testimonial', cl['suc_testimonial']) + '</td>'
+          + '<td>' + chk(d.email, 'suc_review', cl['suc_review']) + '</td>'
+          + '<td>' + chk(d.email, 'suc_referral', cl['suc_referral']) + '</td>'
+          + '<td>' + chk(d.email, 'suc_case_study', cl['suc_case_study']) + '</td>'
+          + '<td>' + valCell(d.email, 'suc_nps_field', npsDisplay, npsCls, 'Enter NPS score (0-10)') + '</td>'
+          + '<td>' + valCell(d.email, 'suc_baseline_rev_field', baseDisplay, (baseRev && baseRev !== 'false') ? 'filled' : '', 'Annual rental revenue before PracticePlan (e.g. 12000)') + '</td>'
+          + '<td>' + valCell(d.email, 'suc_renewal_field', renewDisplay, renewCls, 'Renewal date (e.g. 2027-04-15)') + '</td>'
+          + '<td>' + chk(d.email, 'suc_renewed_y1', cl['suc_renewed_y1']) + '</td>'
+          + '<td>' + valCell(d.email, 'suc_contact_verified_field', verDisplay, verCls, 'Date contact was verified (e.g. 2026-07-20)') + '</td>'
+          + '</tr>';
+      }).join('');
+    }
+
+    function toggleSuccess(email, id, el) {
+      var isChecked = !el.classList.contains('done');
+      setChecklist(email, id, isChecked);
+      el.classList.toggle('done', isChecked);
+      // Update the health count badge for this row
+      renderSuccessGrid();
+    }
+
+    function editSuccessValue(email, key, promptText) {
+      var cl = getChecklist(email);
+      var current = cl[key];
+      if (current === false || current === 'false' || current === undefined || current === null) current = '';
+      var val = prompt(promptText, current);
+      if (val === null) return;
+      setChecklist(email, key, val.trim());
+      renderSuccessGrid();
+    }
+
+    // ============ CSV IMPORT ============
+    var importRows = [];
+
+    function startImport() {
+      var body = document.getElementById('importBody');
+      body.innerHTML = '<p style="margin:0 0 14px;font-size:13px;color:var(--text2);line-height:1.6">Upload a CSV of your existing customers. Each row needs at minimum an <strong>Organization</strong> and <strong>Email</strong>. Optional columns: Contact Name, Phone, Job Title, Go-Live Date, Pipeline Status, Account Rep Email. Rows with emails already in the system are skipped automatically.</p>'
+        + '<div style="display:flex;gap:10px;flex-wrap:wrap"><button class="import-btn" onclick="document.getElementById(\'importFileInput\').click()">Choose CSV File</button>'
+        + '<button class="import-btn secondary" onclick="downloadImportTemplate()">Download Template</button></div>';
+      document.getElementById('importOverlay').classList.add('active');
+    }
+
+    function closeImport() { document.getElementById('importOverlay').classList.remove('active'); importRows = []; }
+
+    function downloadImportTemplate() {
+      var csv = 'Organization,Contact Name,Email,Phone,Job Title,Go-Live Date,Pipeline Status,Account Rep Email\n"Sample ISD","Jane Smith","jane@sampleisd.org","(555) 123-4567","Athletic Director","2026-01-15","launched","donnie.schemetti@practiceplan.io"\n"Example Academy","Bob Jones","bjones@example.edu","","Facilities Manager","","onboarding",""';
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+      a.download = 'practiceplan-import-template.csv';
+      a.click();
+    }
+
+    function parseCSV(text) {
+      var rows = [], row = [], cur = '', inQuotes = false;
+      for (var i = 0; i < text.length; i++) {
+        var c = text[i];
+        if (inQuotes) {
+          if (c === '"') { if (text[i+1] === '"') { cur += '"'; i++; } else { inQuotes = false; } }
+          else cur += c;
+        } else {
+          if (c === '"') inQuotes = true;
+          else if (c === ',') { row.push(cur); cur = ''; }
+          else if (c === '\n' || c === '\r') {
+            if (c === '\r' && text[i+1] === '\n') i++;
+            row.push(cur); cur = '';
+            if (row.some(function(v){return v.trim()!=='';})) rows.push(row);
+            row = [];
+          } else cur += c;
+        }
+      }
+      if (cur !== '' || row.length) { row.push(cur); if (row.some(function(v){return v.trim()!=='';})) rows.push(row); }
+      return rows;
+    }
+
+    function handleImportFile(file) {
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var raw = parseCSV(e.target.result);
+        if (raw.length < 2) { showToast('CSV needs a header row and at least one data row', 'error'); return; }
+        var headers = raw[0].map(function(hd) { return hd.trim().toLowerCase(); });
+        function col(names) { for (var i = 0; i < names.length; i++) { var idx = headers.indexOf(names[i]); if (idx >= 0) return idx; } return -1; }
+        var cOrg = col(['organization','org','school','district']);
+        var cName = col(['contact name','contact','name','full name']);
+        var cEmail = col(['email','email address','contact email']);
+        var cPhone = col(['phone','phone number']);
+        var cTitle = col(['job title','title','role']);
+        var cGoLive = col(['go-live date','go live date','golive','go-live','launch date']);
+        var cStatus = col(['pipeline status','status','stage']);
+        var cRep = col(['account rep email','account rep','rep','rep email']);
+        if (cOrg < 0 || cEmail < 0) { showToast('CSV must include Organization and Email columns', 'error'); return; }
+        var validStatuses = ['new','in-progress','on-hold','review','complete','onboarding','published','launched'];
+        var existingEmails = {};
+        allData.concat(archivedData).forEach(function(d) { if (d.email) existingEmails[d.email.toLowerCase()] = true; });
+        importRows = raw.slice(1).map(function(r) {
+          var email = (cEmail >= 0 ? r[cEmail] || '' : '').trim();
+          var status = (cStatus >= 0 ? (r[cStatus] || '').trim().toLowerCase() : '');
+          if (validStatuses.indexOf(status) < 0) status = 'launched';
+          var issues = [];
+          if (!(r[cOrg] || '').trim()) issues.push('missing org');
+          if (!email) issues.push('missing email');
+          else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) issues.push('invalid email');
+          else if (existingEmails[email.toLowerCase()]) issues.push('already exists');
+          return {
+            organization: (r[cOrg] || '').trim(),
+            contact: cName >= 0 ? (r[cName] || '').trim() : '',
+            email: email,
+            phone: cPhone >= 0 ? (r[cPhone] || '').trim() : '',
+            jobTitle: cTitle >= 0 ? (r[cTitle] || '').trim() : '',
+            goLiveDate: cGoLive >= 0 ? (r[cGoLive] || '').trim() : '',
+            pipelineStatus: status,
+            accountRep: cRep >= 0 ? (r[cRep] || '').trim() : '',
+            issues: issues
+          };
+        });
+        renderImportPreview();
+      };
+      reader.readAsText(file);
+    }
+
+    function renderImportPreview() {
+      var valid = importRows.filter(function(r) { return r.issues.length === 0; });
+      var invalid = importRows.filter(function(r) { return r.issues.length > 0; });
+      var html = '<p style="margin:0 0 10px;font-size:13px;color:var(--text2)"><strong>' + valid.length + '</strong> row' + (valid.length !== 1 ? 's' : '') + ' ready to import' + (invalid.length ? ', <strong style="color:#dc2626">' + invalid.length + '</strong> will be skipped' : '') + '.</p>';
+      html += '<div style="max-height:280px;overflow-y:auto;border:1px solid var(--border);border-radius:10px"><table class="import-preview-table"><tr><th>Organization</th><th>Email</th><th>Status</th><th>Issue</th></tr>';
+      importRows.slice(0, 50).forEach(function(r) {
+        html += '<tr class="' + (r.issues.length ? 'invalid' : '') + '"><td>' + esc(r.organization || '-') + '</td><td>' + esc(r.email || '-') + '</td><td>' + esc(r.pipelineStatus) + '</td><td>' + esc(r.issues.join(', ') || '') + '</td></tr>';
+      });
+      if (importRows.length > 50) html += '<tr><td colspan="4" style="text-align:center;color:var(--text3)">+ ' + (importRows.length - 50) + ' more rows...</td></tr>';
+      html += '</table></div>';
+      html += '<div style="display:flex;gap:10px;margin-top:16px;justify-content:flex-end"><button class="import-btn secondary" onclick="closeImport()">Cancel</button><button class="import-btn" id="importRunBtn" onclick="runImport()"' + (valid.length === 0 ? ' disabled' : '') + '>Import ' + valid.length + ' Customer' + (valid.length !== 1 ? 's' : '') + '</button></div>';
+      document.getElementById('importBody').innerHTML = html;
+    }
+
+    async function runImport() {
+      var valid = importRows.filter(function(r) { return r.issues.length === 0; });
+      if (valid.length === 0) return;
+      var btn = document.getElementById('importRunBtn');
+      btn.disabled = true;
+      var imported = 0, failed = 0;
+      var batchSize = 8;
+      for (var i = 0; i < valid.length; i += batchSize) {
+        var batch = valid.slice(i, i + batchSize).map(function(r) {
+          return { organization: r.organization, contact: r.contact, email: r.email, phone: r.phone, jobTitle: r.jobTitle, goLiveDate: r.goLiveDate, pipelineStatus: r.pipelineStatus, accountRep: r.accountRep };
+        });
+        btn.textContent = 'Importing ' + Math.min(i + batchSize, valid.length) + ' of ' + valid.length + '...';
+        try {
+          var result = await jsonpRequest(API_URL + '?action=bulkImport&email=' + encodeURIComponent(currentUser?.email || '') + '&rows=' + encodeURIComponent(JSON.stringify(batch)));
+          if (result.success) { imported += result.imported || 0; failed += (batch.length - (result.imported || 0)); }
+          else failed += batch.length;
+        } catch(e) { failed += batch.length; }
+      }
+      closeImport();
+      showToast('Imported ' + imported + ' customer' + (imported !== 1 ? 's' : '') + (failed ? ' (' + failed + ' failed)' : ''), failed ? 'error' : 'success');
+      loadData();
     }
 
     function safeGoLiveDateStr(val) {
@@ -1799,7 +2071,7 @@
           var orgName = item ? item.organization : '';
           logActivityToServer(isArchived ? 'restored from archive' : 'moved to archive', orgName || email, '', 'archive');
           // Wait for animation to finish then re-render
-          setTimeout(function() { updateStats(); renderTable(); renderPipeline(); renderCustomers(); }, 300);
+          setTimeout(function() { updateStats(); renderTable(); renderPipeline(); }, 300);
         } else {
           showToast('Failed: ' + (result.error || 'Unknown'), 'error');
           // Undo animation
@@ -1821,7 +2093,7 @@
           var orgName = ''; allData.concat(archivedData).forEach(function(d) { if (d.sheetType === sheetType && d.rowIndex === rowIndex) orgName = d.organization; });
           logActivityToServer('assigned rep for', orgName || 'account', repMember ? repMember.name : (repEmail || 'Unassigned'), 'rep');
           showToast('Rep assigned', 'success');
-          renderPipeline(); renderCustomers();
+          renderPipeline();
         } else showToast('Failed: ' + (result.error || 'Unknown'), 'error');
       } catch(e) { showToast('Failed to assign rep', 'error'); }
     }
@@ -1859,7 +2131,7 @@
             var noteText = 'Status changed to ' + (labels[newStatus] || newStatus) + ' - ' + reason.trim();
             await saveNoteToAPI(email, 'checklist', noteText);
           }
-          updateStats(); renderTable(); renderPipeline(); renderCustomers();
+          updateStats(); renderTable(); renderPipeline();
           if (window._currentModalItem && window._currentModalItem.email === email) {
             window._currentModalItem.pipelineStatus = newStatus;
             viewDetails(window._currentModalItem);
@@ -1878,70 +2150,6 @@
       var csv = rows.map(function(r) { return r.map(function(c) { return '"' + String(c||'').replace(/"/g,'""') + '"'; }).join(','); }).join('\n');
       var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'practiceplan-' + new Date().toISOString().split('T')[0] + '.csv'; a.click(); showToast('Exported', 'success');
     }
-
-    function openImportModal() {
-      var html = '<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>Import Existing Customers</h2><div class="modal-subtitle">Paste CSV rows - one customer per line</div></div>';
-      html += '<div class="modal-body" style="padding:24px">';
-      html += '<div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6">Columns (in order): <strong>Organization, Email, Contact, Phone, City, State, Go-Live Date (YYYY-MM-DD), Pipeline Status, Rep Email</strong><br>Only Organization and Email are required. Pipeline Status defaults to <strong>launched</strong>; use <strong>onboarding</strong> for in-flight customers. Header row optional.</div>';
-      html += '<textarea class="import-textarea" id="importCsvInput" placeholder="Springfield ISD,admin@springfield.k12.tx.us,Jane Smith,5125551234,Springfield,TX,2026-01-15,launched,kevin.parker@practiceplan.io"></textarea>';
-      html += '<div style="display:flex;gap:10px;margin-top:12px;justify-content:flex-end"><button class="comment-cancel" onclick="closeModal()">Cancel</button><button class="comment-submit" id="importRunBtn" onclick="runImport()">Import</button></div>';
-      html += '<div class="import-log" id="importLog" style="display:none"></div>';
-      html += '</div>';
-      document.getElementById('modalContent').innerHTML = html;
-      document.getElementById('modalOverlay').classList.add('active');
-    }
-    function parseCsvLine(line) {
-      var out = [], cur = '', inQ = false;
-      for (var i = 0; i < line.length; i++) {
-        var ch = line[i];
-        if (inQ) {
-          if (ch === '"' && line[i+1] === '"') { cur += '"'; i++; }
-          else if (ch === '"') inQ = false;
-          else cur += ch;
-        } else {
-          if (ch === '"') inQ = true;
-          else if (ch === ',') { out.push(cur); cur = ''; }
-          else cur += ch;
-        }
-      }
-      out.push(cur);
-      return out.map(function(s) { return s.trim(); });
-    }
-    async function runImport() {
-      var raw = document.getElementById('importCsvInput').value.trim();
-      if (!raw) return;
-      var lines = raw.split(/\r?\n/).filter(function(l) { return l.trim(); });
-      // Skip header row if detected
-      if (lines.length && /organization/i.test(lines[0]) && /email/i.test(lines[0])) lines.shift();
-      var log = document.getElementById('importLog');
-      log.style.display = 'block';
-      log.innerHTML = 'Importing ' + lines.length + ' customer(s)...<br>';
-      document.getElementById('importRunBtn').disabled = true;
-      var ok = 0, fail = 0;
-      for (var i = 0; i < lines.length; i++) {
-        var f = parseCsvLine(lines[i]);
-        var params = '&org=' + encodeURIComponent(f[0] || '') +
-          '&custEmail=' + encodeURIComponent(f[1] || '') +
-          '&contact=' + encodeURIComponent(f[2] || '') +
-          '&phone=' + encodeURIComponent(f[3] || '') +
-          '&city=' + encodeURIComponent(f[4] || '') +
-          '&state=' + encodeURIComponent(f[5] || '') +
-          '&goLiveDate=' + encodeURIComponent(f[6] || '') +
-          '&pipelineStatus=' + encodeURIComponent(f[7] || '') +
-          '&accountRep=' + encodeURIComponent(f[8] || '');
-        try {
-          var r = await jsonpRequest(API_URL + '?action=importCustomer&email=' + encodeURIComponent(currentUser?.email || '') + params);
-          if (r.success) { ok++; log.innerHTML += '<span class="ok">&#10003; ' + esc(f[0]) + '</span><br>'; }
-          else if (r.error === 'duplicate') { fail++; log.innerHTML += '<span class="err">&#10007; ' + esc(f[0]) + ' - already exists (' + esc(f[1]) + ')</span><br>'; }
-          else { fail++; log.innerHTML += '<span class="err">&#10007; ' + esc(f[0]) + ' - ' + esc(r.error || 'failed') + '</span><br>'; }
-        } catch(e) { fail++; log.innerHTML += '<span class="err">&#10007; ' + esc(f[0]) + ' - request failed</span><br>'; }
-        log.scrollTop = log.scrollHeight;
-      }
-      log.innerHTML += '<br><strong>Done: ' + ok + ' imported, ' + fail + ' skipped/failed</strong>';
-      document.getElementById('importRunBtn').disabled = false;
-      if (ok > 0) { logActivityToServer('imported', ok + ' customer(s)', '', 'other'); loadData(); }
-    }
-
     function showToast(msg, type) {
       var t = document.getElementById('toast');
       t.className = 'toast';
@@ -1957,6 +2165,7 @@
       t.classList.add('show');
       setTimeout(function() { t.classList.remove('show'); }, 2500);
     }
+
     function viewDetails(item) {
       window._currentModalItem = item;
       const fd = item.formData || {}, contact = fd.contactInfo || {}, policies = fd.policies || {}, locations = fd.locations || [];
@@ -1982,7 +2191,7 @@
       html += '<div style="border-top:1px solid var(--border);margin:0 0 14px"></div>';
       
       // Onboarding Checklist - collapsible
-      html += '<div class="collapsible-section"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(&quot;collapsed&quot;)"><div class="collapsible-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Onboarding Checklist <span class="collapsible-count" id="onboardClCount">' + clCount + '/' + CHECKLIST_ITEMS.length + '</span></div><svg class="collapsible-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="6 9 12 15 18 9"/></svg></div><div class="collapsible-body"><div class="checklist-items">' + CHECKLIST_ITEMS.map(c => '<div class="checklist-item' + (cl[c.id] ? ' checked' : '') + '" onclick="toggleChecklistItem(\'' + item.email + '\',\'' + c.id + '\',this)"><div class="checklist-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span class="checklist-label">' + c.label + '</span></div>').join('') + '</div>' + renderNotesBlock(item.email, 'checklist') + '</div></div>';
+      html += '<div class="collapsible-section"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(&quot;collapsed&quot;)"><div class="collapsible-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Onboarding Checklist <span class="collapsible-count">' + clCount + '/' + CHECKLIST_ITEMS.length + '</span></div><svg class="collapsible-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="6 9 12 15 18 9"/></svg></div><div class="collapsible-body"><div class="checklist-items">' + CHECKLIST_ITEMS.map(c => '<div class="checklist-item' + (cl[c.id] ? ' checked' : '') + '" onclick="toggleChecklistItem(\'' + item.email + '\',\'' + c.id + '\',this)"><div class="checklist-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span class="checklist-label">' + c.label + '</span></div>').join('') + '</div>' + renderNotesBlock(item.email, 'checklist') + '</div></div>';
       
       // Launch Checklist - collapsible
       var scl = getChecklist(item.email);
@@ -2097,6 +2306,8 @@
       }
       html += '</div>';
       
+      
+      
       document.getElementById('modalContent').innerHTML = html;
       document.getElementById('modalOverlay').classList.add('active');
       // Lock body scroll
@@ -2123,9 +2334,8 @@
       setChecklist(email, id, isChecked);
       el.classList.toggle('checked', isChecked);
       const cl = getChecklist(email), count = CHECKLIST_ITEMS.filter(i => cl[i.id]).length;
-      var countEl = document.getElementById('onboardClCount');
-      if (countEl && String(id).indexOf('cs_') !== 0) countEl.textContent = count + '/' + CHECKLIST_ITEMS.length;
-      updateStats(); renderTable(); renderPipeline(); renderCustomers();
+      el.closest('.checklist-section').querySelector('.checklist-count').textContent = count + ' of ' + CHECKLIST_ITEMS.length + ' complete';
+      updateStats(); renderTable(); renderPipeline();
     }
 
     function toggleLocation(idx) { document.getElementById('loc-' + idx).classList.toggle('collapsed'); }
@@ -2318,12 +2528,6 @@
       if (fd.waiverFileUrl || fd.agreementFileUrl) rows.push([]);
       rows.push(['ONBOARDING CHECKLIST']);
       CHECKLIST_ITEMS.forEach(function(c) { rows.push([c.label, cl[c.id] ? 'Complete' : 'Incomplete']); });
-      rows.push([]);
-      rows.push(['LAUNCH CHECKLIST']);
-      SUCCESS_CHECKLIST_ITEMS.forEach(function(c) {
-        rows.push([c.label, cl['cs_' + c.id] ? 'Complete' : 'Incomplete']);
-        if (c.hasField && cl['cs_' + c.id + '_field']) rows.push(['  ' + (c.fieldLabel || 'Link'), cl['cs_' + c.id + '_field']]);
-      });
       // Checklist notes
       var clNotes = getNotes(item.email, 'checklist');
       if (clNotes.length > 0) { rows.push([]); rows.push(['Checklist Notes']); clNotes.forEach(function(n){rows.push([n.author + ' (' + (n.authorEmail||n.email||'') + ')', n.text, new Date(n.date).toLocaleString()])}); }
@@ -2364,6 +2568,252 @@
       a.download = (item.organization || 'export').replace(/[^a-zA-Z0-9]/g, '_') + '_onboarding_' + new Date().toISOString().split('T')[0] + '.csv';
       a.click();
       showToast('CSV exported', 'success');
+    }
+
+    function exportModalPDF(item) {
+      var jsPDF = window.jspdf.jsPDF;
+      var doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      var w = doc.internal.pageSize.getWidth();
+      var fd = item.formData || {}, contact = fd.contactInfo || {}, policies = fd.policies || {}, locations = fd.locations || [];
+      var cl = getChecklist(item.email);
+      var rep = item.accountRep ? TEAM_MEMBERS.find(function(m){return m.email===item.accountRep}) : null;
+      var y = 0;
+      var margin = 20;
+      var contentW = w - margin * 2;
+
+      function checkPage(needed) { if (y + needed > 275) { doc.addPage(); y = 20; } }
+      function drawLine() { doc.setDrawColor(226,232,240); doc.line(margin, y, w - margin, y); y += 6; }
+
+      // Header gradient bar
+      doc.setFillColor(0, 118, 187);
+      doc.rect(0, 0, w, 42, 'F');
+      // Green overlay on right
+      doc.setFillColor(0, 168, 79);
+      doc.rect(w * 0.5, 0, w * 0.5, 42, 'F');
+      // Blend
+      for (var gi = 0; gi < 40; gi++) {
+        var ratio = gi / 40;
+        var r = Math.round(0 + ratio * 0);
+        var g = Math.round(118 + ratio * (168 - 118));
+        var b = Math.round(187 + ratio * (79 - 187));
+        doc.setFillColor(r, g, b);
+        doc.rect(w * (gi/40), 0, w/40 + 1, 42, 'F');
+      }
+
+      // Header text
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text('PRACTICEPLAN - CLIENT ONBOARDING', margin, 14);
+      doc.setFontSize(20);
+      doc.setFont('helvetica', 'bold');
+      doc.text(contact.organization || item.organization || 'Organization', margin, 26);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Setup Progress Summary - Generated ' + new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), margin, 35);
+
+      y = 52;
+
+      // Status bar
+      doc.setFillColor(241, 245, 249);
+      doc.roundedRect(margin, y, contentW, 14, 3, 3, 'F');
+      doc.setFontSize(9);
+      doc.setTextColor(100, 116, 139);
+      doc.setFont('helvetica', 'bold');
+      var statusLabels = { 'new':'New','in-progress':'In Progress','on-hold':'On Hold','review':'Review','complete':'Form Complete','onboarding':'Onboarding','published':'Published','launched':'Launched' };
+      doc.text('Status: ' + (statusLabels[item.pipelineStatus] || item.pipelineStatus || 'New'), margin + 6, y + 9);
+      doc.text('Completion: ' + (item.completion || 0) + '%', margin + 55, y + 9);
+      doc.text('Rep: ' + (rep ? rep.name : 'Unassigned'), margin + 100, y + 9);
+      y += 22;
+
+      // Contact Information
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(30, 41, 59);
+      doc.text('Contact Information', margin, y);
+      y += 8;
+
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      var contactRows = [
+        ['Name', contact.fullName || item.contact || '-'],
+        ['Email', contact.email || item.email || '-'],
+        ['Phone', contact.phone || item.phone || '-'],
+        ['Organization', contact.organization || item.organization || '-']
+      ];
+      if (contact.jobTitle) contactRows.push(['Job Title', contact.jobTitle]);
+      if (policies.goLiveDate) contactRows.push(['Go-Live Date', safeGoLiveDateStr(policies.goLiveDate) || String(policies.goLiveDate)]);
+
+      contactRows.forEach(function(row) {
+        doc.setTextColor(148, 163, 184);
+        doc.text(row[0], margin, y);
+        doc.setTextColor(30, 41, 59);
+        doc.text(String(row[1]), margin + 35, y);
+        y += 6;
+      });
+      y += 4;
+      drawLine();
+
+      // Policies
+      if (policies && Object.keys(policies).length > 0) {
+        checkPage(30);
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(30, 41, 59);
+        doc.text('Policies & Settings', margin, y);
+        y += 8;
+
+        doc.setFontSize(9);
+        var policyLabels = {
+          bookingWindowMonths: 'Booking Window', requireApproval: 'Require Approval',
+          notifyOnBooking: 'Notify on Booking', cancellationDays: 'Cancellation (days)',
+          weatherRefund: 'Weather Refund', requireInsurance: 'Require Insurance',
+          timeIncrement: 'Time Increment (min)', permissionToAnnounce: 'Permission to Announce'
+        };
+        var skipKeys = ['goLiveDate','waiverText','facilityAgreement','waiverFile','facilityAgreementFile','customBookingWindow','customBookingWindowMonths','customCancellationDays','customTimeIncrement'];
+        Object.keys(policies).forEach(function(key) {
+          if (skipKeys.indexOf(key) >= 0) return;
+          var val = policies[key];
+          if (!val && val !== 0 && val !== false) return;
+          var label = policyLabels[key] || key.replace(/([A-Z])/g, ' $1').trim();
+          var display = val === true ? 'Yes' : val === false ? 'No' : String(val);
+          if (display === 'yes') display = 'Yes'; if (display === 'no') display = 'No';
+          checkPage(8);
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(148, 163, 184);
+          doc.text(label, margin, y);
+          doc.setTextColor(30, 41, 59);
+          doc.text(display, margin + 55, y);
+          y += 6;
+        });
+        y += 4;
+        drawLine();
+      }
+
+      // Onboarding Checklist
+      checkPage(30);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(30, 41, 59);
+      var clDone = CHECKLIST_ITEMS.filter(function(c){return cl[c.id]}).length;
+      doc.text('Onboarding Checklist (' + clDone + '/' + CHECKLIST_ITEMS.length + ')', margin, y);
+      y += 8;
+      doc.setFontSize(9);
+      CHECKLIST_ITEMS.forEach(function(c) {
+        checkPage(8);
+        var done = cl[c.id];
+        if (done) { doc.setFillColor(0, 168, 79); } else { doc.setFillColor(203, 213, 225); }
+        doc.circle(margin + 3, y - 1.5, 2, 'F');
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(done ? 30 : 148, done ? 41 : 163, done ? 59 : 184);
+        doc.text(c.label, margin + 9, y);
+        if (done) {
+          doc.setTextColor(0, 168, 79);
+          doc.text('Complete', margin + 80, y);
+        }
+        y += 7;
+      });
+      y += 4;
+
+      // Launch Checklist
+      checkPage(30);
+      var sclDone = SUCCESS_CHECKLIST_ITEMS.filter(function(c){return cl['cs_'+c.id]}).length;
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(30, 41, 59);
+      doc.text('Launch Checklist (' + sclDone + '/' + SUCCESS_CHECKLIST_ITEMS.length + ')', margin, y);
+      y += 8;
+      doc.setFontSize(9);
+      SUCCESS_CHECKLIST_ITEMS.forEach(function(c) {
+        checkPage(8);
+        var done = cl['cs_' + c.id];
+        if (done) { doc.setFillColor(0, 118, 187); } else { doc.setFillColor(203, 213, 225); }
+        doc.circle(margin + 3, y - 1.5, 2, 'F');
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(done ? 30 : 148, done ? 41 : 163, done ? 59 : 184);
+        doc.text(c.label, margin + 9, y);
+        if (done) {
+          doc.setTextColor(0, 118, 187);
+          doc.text('Complete', margin + 80, y);
+        }
+        if (c.hasField && cl['cs_' + c.id + '_field']) {
+          y += 5;
+          doc.setTextColor(0, 118, 187);
+          doc.setFontSize(8);
+          doc.text(cl['cs_' + c.id + '_field'], margin + 9, y);
+          doc.setFontSize(9);
+        }
+        y += 7;
+      });
+      y += 4;
+      drawLine();
+
+      // Locations
+      if (locations.length > 0) {
+        checkPage(20);
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(30, 41, 59);
+        doc.text('Locations (' + locations.length + ')', margin, y);
+        y += 8;
+
+        locations.forEach(function(loc, li) {
+          checkPage(20);
+          doc.setFillColor(241, 245, 249);
+          doc.roundedRect(margin, y - 3, contentW, 10, 2, 2, 'F');
+          doc.setFontSize(10);
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(30, 41, 59);
+          doc.text((loc.name || 'Location ' + (li+1)), margin + 4, y + 3);
+          var assetCount = (loc.assets || []).length;
+          doc.setFontSize(8);
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(100, 116, 139);
+          doc.text(assetCount + ' space' + (assetCount !== 1 ? 's' : ''), w - margin - 20, y + 3);
+          y += 12;
+
+          if (loc.address) { doc.setFontSize(8); doc.setTextColor(148,163,184); doc.text(loc.address, margin + 4, y); y += 5; }
+
+          (loc.assets || []).forEach(function(space) {
+            checkPage(15);
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(30, 41, 59);
+            doc.text(space.name || 'Unnamed Space', margin + 6, y);
+            if (space.pricing) {
+              doc.setTextColor(0, 168, 79);
+              doc.text('$' + space.pricing + '/hr', w - margin - 20, y);
+            }
+            y += 5;
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'normal');
+            var details = [];
+            if (space.type) details.push(typeof space.type === 'object' ? JSON.stringify(space.type) : String(space.type));
+            if (space.maxCapacity) details.push('Cap: ' + space.maxCapacity);
+            if (details.length) { doc.setTextColor(100,116,139); doc.text(details.join(' - '), margin + 6, y); y += 4; }
+
+            var amenities = (space.amenities || []).map(function(a){return typeof a==='object'?(a.name||a.label||''):String(a)}).filter(Boolean);
+            if (amenities.length) { doc.setTextColor(100,116,139); doc.text('Amenities: ' + amenities.join(', '), margin + 6, y, { maxWidth: contentW - 12 }); y += 4; }
+
+            y += 3;
+          });
+          y += 4;
+        });
+      }
+
+      // Footer on last page
+      var pageCount = doc.internal.getNumberOfPages();
+      for (var p = 1; p <= pageCount; p++) {
+        doc.setPage(p);
+        doc.setFontSize(7);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(148, 163, 184);
+        doc.text('PracticePlan - Client Onboarding', margin, 290);
+        doc.text('Page ' + p + ' of ' + pageCount, w - margin - 20, 290);
+      }
+
+      doc.save((item.organization || 'export').replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, '_') + '_Setup_Progress.pdf');
+      showToast('PDF exported', 'success');
     }
 
     function esc(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;') : '-'; }
