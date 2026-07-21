@@ -401,6 +401,7 @@
     .comment-actions{display:flex;justify-content:flex-end;margin-top:6px}
     .comment-submit{padding:6px 16px;border-radius:8px;border:none;background:var(--pp-blue);color:white;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s}
     .comment-submit:hover{opacity:0.9}
+    .comment-submit:disabled{opacity:0.5;cursor:not-allowed}
     .comment-cancel{padding:6px 16px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.2s}
     .comment-cancel:hover{border-color:var(--text2);color:var(--text)}
     .comment-actions{display:flex;justify-content:flex-end;margin-top:8px;gap:8px}
@@ -493,6 +494,44 @@
     .mobile-card-actions{display:flex;gap:6px}
     .mobile-card-actions button{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--card);font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;transition:all 0.2s}
     .mobile-card-actions .primary{background:var(--pp-blue);color:white;border-color:var(--pp-blue)}
+    /* Onboarding Milestones grid */
+    .milestones-section{margin-bottom:24px;background:var(--card);border-radius:16px;border:1px solid var(--border);padding:16px;overflow-x:auto}
+    .milestones-section h3{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin:0 0 12px}
+    .ms-table{width:100%;border-collapse:collapse;min-width:640px}
+    .ms-table th{background:transparent;border-bottom:1px solid var(--border);padding:8px 6px;font-size:9px;text-align:center;cursor:default}
+    .ms-table th:first-child{text-align:left}
+    .ms-table th:hover{background:transparent}
+    .ms-table td{padding:8px 6px;text-align:center;font-size:11px;border-bottom:1px solid var(--border)}
+    .ms-table td:first-child{text-align:left}
+    .ms-table tr:last-child td{border-bottom:none}
+    .ms-org{font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;cursor:pointer;display:inline-block;vertical-align:middle}
+    .ms-org:hover{color:var(--pp-blue)}
+    .ms-dot{display:inline-block;width:16px;height:16px;border-radius:50%;border:2px solid var(--border);background:var(--card);vertical-align:middle;position:relative}
+    .ms-dot.done{background:var(--pp-green);border-color:var(--pp-green)}
+    .ms-dot.done::after{content:'✓';color:white;font-size:9px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+    .ms-dot.live{background:var(--pp-blue);border-color:var(--pp-blue)}
+    .ms-dot.live::after{content:'★';color:white;font-size:8px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+    .ms-empty{padding:24px;text-align:center;color:var(--text3);font-size:12px}
+    /* Customers tab */
+    .customers-grid-wrap{background:var(--card);border-radius:20px;border:1px solid var(--border);overflow-x:auto}
+    .cs-table{width:100%;border-collapse:collapse;min-width:900px}
+    .cs-table th{text-align:center;padding:12px 8px;background:var(--bg);font-size:9px;font-weight:600;color:var(--text2);text-transform:uppercase;border-bottom:1px solid var(--border);cursor:default}
+    .cs-table th:first-child{text-align:left;padding-left:14px}
+    .cs-table th:hover{background:var(--bg)}
+    .cs-table td{padding:10px 8px;text-align:center;border-bottom:1px solid var(--border)}
+    .cs-table td:first-child{text-align:left;padding-left:14px}
+    .cs-check{display:inline-flex;width:22px;height:22px;border-radius:6px;border:2px solid var(--border);align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;background:var(--card)}
+    .cs-check:hover{border-color:var(--pp-blue)}
+    .cs-check.done{background:var(--pp-green);border-color:var(--pp-green)}
+    .cs-check svg{width:12px;height:12px;color:white;opacity:0}
+    .cs-check.done svg{opacity:1}
+    .cs-link-icon{color:var(--pp-blue);margin-left:4px;vertical-align:middle}
+    /* Import modal */
+    .import-textarea{width:100%;min-height:140px;padding:12px;border-radius:10px;border:1px solid var(--border);font-family:monospace;font-size:11px;background:var(--bg);color:var(--text);resize:vertical;box-sizing:border-box}
+    .import-textarea:focus{outline:none;border-color:var(--pp-blue)}
+    .import-log{max-height:180px;overflow-y:auto;font-size:11px;font-family:monospace;background:var(--bg);border-radius:10px;padding:10px;margin-top:10px}
+    .import-log .ok{color:var(--pp-green)}
+    .import-log .err{color:#ef4444}
     @media(max-width:1400px){.pipeline-board{grid-template-columns:repeat(4,1fr)}}
     @media(max-width:1200px){.pipeline-board{grid-template-columns:repeat(3,1fr)}.stats-row{grid-template-columns:1fr 1fr}.checklist-items{grid-template-columns:1fr}}
     @media(max-width:900px){.stats-row{grid-template-columns:1fr 1fr}.detail-grid{grid-template-columns:1fr}.pipeline-board{grid-template-columns:repeat(2,1fr)}}
@@ -513,6 +552,8 @@
       .stat-card{padding:16px;border-radius:14px}
       .stat-value{font-size:28px}
       .stat-label{font-size:10px}
+      .milestones-section{padding:12px}
+      .ms-org{max-width:110px}
       .time-hero{gap:16px;padding:14px;flex-wrap:wrap;justify-content:center}
       .time-hero-ring{width:80px;height:80px}
       .time-hero-ring svg{width:80px;height:80px}
@@ -745,6 +786,7 @@
         <button class="view-tab active" onclick="switchView('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Dashboard</button>
         <button class="view-tab" onclick="switchView('pipeline')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Onboarding</button>
         <button class="view-tab" onclick="switchView('calendar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Go-Live</button>
+        <button class="view-tab" onclick="switchView('customers')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Customers</button>
         <button class="view-tab" onclick="switchView('activity')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Activity</button>
       </div>
 
@@ -756,6 +798,11 @@
           <div class="stat-card"><h3>Pipeline Overview</h3><div class="pipeline-chart" id="pipelineChart"></div></div>
           <div class="stat-card"><h3>Team Assignments</h3><div class="rep-chart" id="repChart"></div></div>
           <div class="stat-card"><h3>Checklist Completion</h3><div id="checklistChart"></div></div>
+        </div>
+
+        <div class="milestones-section">
+          <h3>Onboarding Milestones</h3>
+          <div id="milestonesGrid"></div>
         </div>
 
         <div class="table-section">
@@ -772,6 +819,7 @@
                 <button class="text-action-btn" id="myAccountsBtn" onclick="toggleMyAccounts()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> My Accounts</button>
               </div>
               <div class="controls-group actions-group">
+                <button class="text-action-btn" onclick="openImportModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button>
                 <button class="text-action-btn" onclick="exportCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
                 <button class="text-action-btn" onclick="loadData()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh</button>
               </div>
@@ -813,6 +861,18 @@
           <div class="calendar-list-mobile" id="calendarListMobile"></div>
         </div>
         <div id="calPopover" style="display:none;position:fixed;z-index:1500;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,0.15);padding:0;min-width:280px;max-width:340px"></div>
+      </div>
+
+      <div class="view-content" id="customersView">
+        <div class="controls-row">
+          <div class="section-title">Live Customers</div>
+          <div class="controls-right">
+            <div class="controls-group search-group">
+              <input type="text" class="search-input" placeholder="Search customers..." oninput="customerSearch=this.value.toLowerCase();renderCustomers()">
+            </div>
+          </div>
+        </div>
+        <div class="customers-grid-wrap"><div id="customersGrid"></div></div>
       </div>
 
       <div class="view-content" id="activityView">
@@ -865,12 +925,20 @@
       { id: 'best_practices', label: 'Best Practices Document Provided' },
       { id: 'day15_followup', label: '15-Day Post-Launch Check-In' }
     ];
+    const MILESTONES = [
+      { id: 'kickoff', label: 'Kickoff' },
+      { id: 'mou', label: 'MOU' },
+      { id: 'deposit', label: 'Deposit' },
+      { id: 'announced', label: 'Announced' },
+      { id: 'golive_call', label: 'Go-Live Call' }
+    ];
     
     let allData = [], archivedData = [], currentFilter = 'all', searchQuery = '', currentUser = null;
     let sortField = 'lastUpdated', sortDir = 'desc', timePeriodDays = 30, repFilter = 'all', myAccountsOnly = false;
     let darkMode = localStorage.getItem('darkMode') === 'true';
     let calendarDate = new Date();
     let checklistData = {};
+    let customerSearch = '';
 
     function getOrgInitials(name) {
       if (!name) return '?';
@@ -912,10 +980,12 @@
     function getGoLiveDate(item) { var val = (item.formData && item.formData.policies && item.formData.policies.goLiveDate) || ''; return safeGoLiveDateStr(val); }
     function formatGoLive(d) { if (!d) return null; try { var s = safeGoLiveDateStr(d); if (!s) return null; var p = s.split('-'); if (p.length === 3) return new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2])).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); return s; } catch(e) { return String(d); } }
     function getChecklist(email) { return checklistData[email] || {}; }
+    function isImported(d) { return d.status === 'Imported'; }
+    function formEligible(data) { return data.filter(function(d) { return !isImported(d); }); }
     function setChecklist(email, id, checked) {
       if (!checklistData[email]) checklistData[email] = {};
       checklistData[email][id] = checked;
-      jsonpRequest(API_URL + '?action=setChecklistItem&email=' + encodeURIComponent(currentUser?.email || '') + '&orgEmail=' + encodeURIComponent(email) + '&itemId=' + encodeURIComponent(id) + '&checked=' + checked).catch(function(e) { console.error('Failed to save checklist:', e); });
+      jsonpRequest(API_URL + '?action=setChecklistItem&email=' + encodeURIComponent(currentUser?.email || '') + '&orgEmail=' + encodeURIComponent(email) + '&itemId=' + encodeURIComponent(id) + '&checked=' + encodeURIComponent(checked)).catch(function(e) { console.error('Failed to save checklist:', e); });
       // Don't log activity for field value saves unless it's a meaningful URL
       if (String(id).indexOf('_field') >= 0) {
         if (checked && String(checked).indexOf('http') === 0) {
@@ -1055,6 +1125,7 @@
       document.getElementById(view + 'View').classList.add('active');
       if (view === 'calendar') renderCalendar();
       if (view === 'pipeline') renderPipeline();
+      if (view === 'customers') renderCustomers();
       if (view === 'activity') { loadActivity().then(function() { renderActivity(); }); }
     }
 
@@ -1125,7 +1196,7 @@
           document.querySelector('.stats-section')?.classList.remove('loading-state');
           // Load shared data before rendering
           await Promise.all([loadComments(), loadChecklists(), loadCredentials()]);
-          updateStats(); renderTable(); renderPipeline(); renderCalendar(); finishLoading(allData);
+          updateStats(); renderTable(); renderPipeline(); renderCustomers(); renderCalendar(); finishLoading(allData);
           // Start auto-refresh every 60 seconds
           if (!window._refreshInterval) {
             window._refreshInterval = setInterval(async function() {
@@ -1137,6 +1208,7 @@
                     var updated = new Date(d.lastUpdated), daysDiff = (now - updated) / 86400000, pct = d.completion || 0;
                     var ps = d.pipelineStatus;
                     if (!ps) { if (d.status === 'Submitted') ps = 'complete'; else if (pct >= 75) ps = 'review'; else if (pct > 0) ps = 'in-progress'; else ps = 'new'; }
+                    if (ps === 'live') ps = 'published';
                     return Object.assign({}, d, { isStale: d.status === 'In Progress' && daysDiff > STALE_DAYS, daysSinceUpdate: Math.floor(daysDiff), updatedDate: updated, pipelineStatus: ps, goLiveDate: getGoLiveDate(d), locationStr: getLocationString(d), accountRep: d.accountRep || '', organization: toTitleCase(d.organization), contact: toTitleCase(d.contact) });
                   });
                   var submittedEmails = {}, submittedOrgs = {};
@@ -1145,7 +1217,7 @@
                   allData = deduped.filter(function(d) { return d.status !== 'Archived'; });
                   archivedData = deduped.filter(function(d) { return d.status === 'Archived'; });
                   await Promise.all([loadComments(), loadChecklists(), loadCredentials()]);
-                  updateStats(); renderTable(); renderPipeline();
+                  updateStats(); renderTable(); renderPipeline(); renderCustomers();
                   console.log('Auto-refreshed at', new Date().toLocaleTimeString());
                 }
               } catch(e) { console.log('Auto-refresh skipped:', e.message); }
@@ -1159,7 +1231,11 @@
     function getFilteredByTime(data) { if (timePeriodDays === 0) return data; const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - timePeriodDays); return data.filter(d => d.updatedDate >= cutoff); }
     
     function updateStats() {
-      const tf = getFilteredByTime(allData), complete = tf.filter(d => d.pipelineStatus === 'complete' || d.pipelineStatus === 'onboarding' || d.pipelineStatus === 'published' || d.pipelineStatus === 'launched').length, active = tf.filter(d => d.pipelineStatus !== 'complete' && d.pipelineStatus !== 'onboarding' && d.pipelineStatus !== 'published' && d.pipelineStatus !== 'launched').length, stale = tf.filter(d => d.isStale).length;
+      const tfAll = getFilteredByTime(allData);
+      const tf = formEligible(tfAll); // form analytics exclude imported customers
+      const complete = tf.filter(d => d.pipelineStatus === 'complete' || d.pipelineStatus === 'onboarding' || d.pipelineStatus === 'published' || d.pipelineStatus === 'launched').length,
+            active = tf.filter(d => d.pipelineStatus !== 'complete' && d.pipelineStatus !== 'onboarding' && d.pipelineStatus !== 'published' && d.pipelineStatus !== 'launched').length,
+            stale = tf.filter(d => d.isStale).length;
       document.getElementById('statTotal').textContent = tf.length; document.getElementById('statComplete').textContent = complete; document.getElementById('statActive').textContent = active; document.getElementById('statStale').textContent = stale;
       var total = tf.length || 1;
       var q25 = tf.filter(d=>d.completion>=25).length;
@@ -1209,12 +1285,14 @@
       document.getElementById('fastestTime').textContent = fast ? fast.toFixed(1) + ' days' : '-'; document.getElementById('slowestTime').textContent = slow ? slow.toFixed(1) + ' days' : '-';
       const circ = 2 * Math.PI * 42, prog = avg ? Math.min(avg/10, 1) : 0;
       document.getElementById('timeRingProgress').style.strokeDashoffset = circ - (prog * circ);
-      // Pipeline Status Chart
-      renderPipelineChart(tf);
+      // Pipeline Status Chart (full book of business, incl. imported)
+      renderPipelineChart(tfAll);
       // Rep Workload Chart
-      renderRepChart(tf);
+      renderRepChart(tfAll);
       // Onboarding Progress Chart
-      renderChecklistChart(tf);
+      renderChecklistChart(tfAll);
+      // Onboarding Milestones grid
+      renderMilestones(tfAll);
     }
 
     function renderPipelineChart(data) {
@@ -1309,20 +1387,89 @@
       document.getElementById('checklistChart').innerHTML = html;
     }
 
+    function renderMilestones(data) {
+      var el = document.getElementById('milestonesGrid');
+      if (!el) return;
+      // Orgs actively onboarding; imported already-live customers belong in the Customers tab
+      var rows = data.filter(function(d) {
+        if (isImported(d) && (d.pipelineStatus === 'published' || d.pipelineStatus === 'launched')) return false;
+        return d.pipelineStatus === 'complete' || d.pipelineStatus === 'onboarding' || d.pipelineStatus === 'published' || d.pipelineStatus === 'launched';
+      });
+      if (!rows.length) { el.innerHTML = '<div class="ms-empty">No customers in onboarding yet</div>'; return; }
+      rows.sort(function(a, b) {
+        var order = { complete: 0, onboarding: 1, published: 2, launched: 3 };
+        return (order[a.pipelineStatus] || 0) - (order[b.pipelineStatus] || 0) || a.organization.localeCompare(b.organization);
+      });
+      var h = '<table class="ms-table"><thead><tr><th>Organization</th>';
+      MILESTONES.forEach(function(m) { h += '<th>' + m.label + '</th>'; });
+      h += '<th>Live on Platform</th></tr></thead><tbody>';
+      rows.forEach(function(d) {
+        var cl = getChecklist(d.email);
+        h += '<tr><td><span class="ms-org" title="' + esc(d.organization) + '" onclick="viewDetails(allData.find(function(x){return x.email===\'' + esc(d.email) + '\'}))">' + esc(getShortOrgName(d.organization, d.email)) + '</span></td>';
+        MILESTONES.forEach(function(m) {
+          h += '<td><span class="ms-dot' + (cl[m.id] ? ' done' : '') + '"></span></td>';
+        });
+        var isLive = d.pipelineStatus === 'published' || d.pipelineStatus === 'launched';
+        h += '<td><span class="ms-dot' + (isLive ? ' live' : '') + '" title="' + (isLive ? 'Live' : 'Not yet live') + '"></span></td></tr>';
+      });
+      h += '</tbody></table>';
+      el.innerHTML = h;
+    }
+
+    function renderCustomers() {
+      var el = document.getElementById('customersGrid');
+      if (!el) return;
+      var rows = allData.filter(function(d) { return d.pipelineStatus === 'published' || d.pipelineStatus === 'launched'; });
+      if (customerSearch) rows = rows.filter(function(d) { return (d.organization + d.contact + d.email + d.locationStr).toLowerCase().indexOf(customerSearch) >= 0; });
+      if (!rows.length) { el.innerHTML = '<div class="empty-state">No live customers yet</div>'; return; }
+      rows.sort(function(a, b) { return a.organization.localeCompare(b.organization); });
+      var shortLabels = {
+        'website_link': 'Website',
+        'short_link': 'Short Link',
+        'qr_flyer': 'QR Flyer',
+        'social_graphics': 'Social',
+        'best_practices': 'Best Practices',
+        'day15_followup': '15-Day Check'
+      };
+      var h = '<table class="cs-table"><thead><tr><th>Customer</th>';
+      SUCCESS_CHECKLIST_ITEMS.forEach(function(c) { h += '<th>' + (shortLabels[c.id] || c.label) + '</th>'; });
+      h += '<th>Rep</th></tr></thead><tbody>';
+      rows.forEach(function(d) {
+        var cl = getChecklist(d.email);
+        h += '<tr><td><div class="org-cell"><div class="org-avatar" style="background:' + getOrgColor(d.organization) + ';width:30px;height:30px;font-size:10px">' + getOrgInitials(d.organization) + '</div><div><div class="org-name" style="cursor:pointer" onclick="viewDetails(allData.find(function(x){return x.email===\'' + esc(d.email) + '\'}))">' + esc(d.organization) + '</div>' + (d.locationStr ? '<div class="org-location">' + esc(d.locationStr) + '</div>' : '') + '</div></div></td>';
+        SUCCESS_CHECKLIST_ITEMS.forEach(function(c) {
+          var key = 'cs_' + c.id, done = !!cl[key];
+          var fieldVal = c.hasField ? (cl[key + '_field'] || '') : '';
+          h += '<td><span class="cs-check' + (done ? ' done' : '') + '" onclick="toggleCustomerCheck(\'' + esc(d.email) + '\',\'' + key + '\',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>';
+          if (fieldVal && String(fieldVal).indexOf('http') === 0) h += '<a class="cs-link-icon" href="' + esc(fieldVal) + '" target="_blank" title="' + esc(fieldVal) + '"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></a>';
+          h += '</td>';
+        });
+        var rep = TEAM_MEMBERS.find(function(m) { return m.email === d.accountRep; });
+        h += '<td style="font-size:11px;color:var(--text2)">' + (rep ? esc(rep.name) : '-') + '</td></tr>';
+      });
+      h += '</tbody></table>';
+      el.innerHTML = h;
+    }
+    function toggleCustomerCheck(email, key, el) {
+      var isChecked = !el.classList.contains('done');
+      setChecklist(email, key, isChecked);
+      el.classList.toggle('done', isChecked);
+      updateStats(); renderTable();
+      }
     function setTimePeriod(d) { timePeriodDays = parseInt(d); updateStats(); renderTable(); renderPipeline(); }
     function setFilter(f) { currentFilter = f; renderTable(); renderPipeline(); }
     function handleSearch(q) { searchQuery = q.toLowerCase(); renderTable(); renderPipeline(); }
     function sortBy(f) { if (sortField === f) sortDir = sortDir === 'asc' ? 'desc' : 'asc'; else { sortField = f; sortDir = 'desc'; } renderTable(); updateSortIndicators(); }
     function updateSortIndicators() {
-      document.querySelectorAll('th').forEach(function(th) {
+      document.querySelectorAll('.table-wrapper th').forEach(function(th) {
         th.classList.remove('sorted');
         var arrow = th.querySelector('.sort-arrow');
         if (arrow) arrow.innerHTML = '&#x25B2;';
       });
-      var fieldMap = { organization: 0, contact: 1, pipelineStatus: 2, checklistCount: 3, goLiveDate: 4, lastUpdated: 5, accountRep: 6 };
+      var fieldMap = { organization: 0, contact: 1, pipelineStatus: 2, checklistCount: 3, launchCount: 4, goLiveDate: 5, lastUpdated: 6, accountRep: 7 };
       var idx = fieldMap[sortField];
       if (idx !== undefined) {
-        var th = document.querySelectorAll('th')[idx];
+        var th = document.querySelectorAll('.table-wrapper th')[idx];
         if (th) {
           th.classList.add('sorted');
           var arrow = th.querySelector('.sort-arrow');
@@ -1354,8 +1501,7 @@
         else if (sortField === 'accountRep') { var ra = TEAM_MEMBERS.find(m => m.email === a.accountRep); var rb = TEAM_MEMBERS.find(m => m.email === b.accountRep); av = ra ? ra.name : 'zzz'; bv = rb ? rb.name : 'zzz'; }
         else { av = a[sortField] || ''; bv = b[sortField] || ''; }
         if (sortField === 'lastUpdated' || sortField === 'goLiveDate') { av = av ? new Date(av) : new Date(0); bv = bv ? new Date(bv) : new Date(0); } if (av < bv) return sortDir === 'asc' ? -1 : 1; if (av > bv) return sortDir === 'asc' ? 1 : -1; return 0; });
-      if (!filtered.length) { document.getElementById('tableBody').innerHTML = '<tr><td colspan="9" class="empty-state">No submissions found</td></tr>'; return; }
-      var _rowIdx = 0;
+      if (!filtered.length) { document.getElementById('tableBody').innerHTML = '<tr><td colspan="9" class="empty-state">No submissions found</td></tr>'; document.getElementById('mobileCards').innerHTML = ''; return; }
       const labels = { new: 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', review: 'Review', complete: 'Form Complete', onboarding: 'Onboarding', published: 'Published', launched: 'Launched' };
       document.getElementById('tableBody').innerHTML = filtered.map(item => {
         const goLive = formatGoLive(item.goLiveDate), isArch = currentFilter === 'archived', clCount = getChecklistCount(item.email);
@@ -1374,11 +1520,9 @@
       // Render mobile cards
       var mobileEl = document.getElementById('mobileCards');
       if (mobileEl) {
-        const labels = { new: 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', review: 'Review', complete: 'Form Complete', onboarding: 'Onboarding', published: 'Published', launched: 'Launched' };
         mobileEl.innerHTML = filtered.map(function(item) {
           var isArch = currentFilter === 'archived';
           var statusCls = isArch ? 'archived' : item.isStale ? 'stale' : item.pipelineStatus;
-          var statusLabel = isArch ? 'Archived' : item.isStale ? 'Stale' : labels[item.pipelineStatus] || 'New';
           var goLive = formatGoLive(item.goLiveDate);
           var clCount = getChecklistCount(item.email);
           var rep = TEAM_MEMBERS.find(function(m){return m.email===item.accountRep});
@@ -1655,7 +1799,7 @@
           var orgName = item ? item.organization : '';
           logActivityToServer(isArchived ? 'restored from archive' : 'moved to archive', orgName || email, '', 'archive');
           // Wait for animation to finish then re-render
-          setTimeout(function() { updateStats(); renderTable(); renderPipeline(); }, 300);
+          setTimeout(function() { updateStats(); renderTable(); renderPipeline(); renderCustomers(); }, 300);
         } else {
           showToast('Failed: ' + (result.error || 'Unknown'), 'error');
           // Undo animation
@@ -1677,7 +1821,7 @@
           var orgName = ''; allData.concat(archivedData).forEach(function(d) { if (d.sheetType === sheetType && d.rowIndex === rowIndex) orgName = d.organization; });
           logActivityToServer('assigned rep for', orgName || 'account', repMember ? repMember.name : (repEmail || 'Unassigned'), 'rep');
           showToast('Rep assigned', 'success');
-          renderPipeline();
+          renderPipeline(); renderCustomers();
         } else showToast('Failed: ' + (result.error || 'Unknown'), 'error');
       } catch(e) { showToast('Failed to assign rep', 'error'); }
     }
@@ -1715,7 +1859,7 @@
             var noteText = 'Status changed to ' + (labels[newStatus] || newStatus) + ' - ' + reason.trim();
             await saveNoteToAPI(email, 'checklist', noteText);
           }
-          updateStats(); renderTable(); renderPipeline();
+          updateStats(); renderTable(); renderPipeline(); renderCustomers();
           if (window._currentModalItem && window._currentModalItem.email === email) {
             window._currentModalItem.pipelineStatus = newStatus;
             viewDetails(window._currentModalItem);
@@ -1734,6 +1878,70 @@
       var csv = rows.map(function(r) { return r.map(function(c) { return '"' + String(c||'').replace(/"/g,'""') + '"'; }).join(','); }).join('\n');
       var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'practiceplan-' + new Date().toISOString().split('T')[0] + '.csv'; a.click(); showToast('Exported', 'success');
     }
+
+    function openImportModal() {
+      var html = '<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>Import Existing Customers</h2><div class="modal-subtitle">Paste CSV rows - one customer per line</div></div>';
+      html += '<div class="modal-body" style="padding:24px">';
+      html += '<div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6">Columns (in order): <strong>Organization, Email, Contact, Phone, City, State, Go-Live Date (YYYY-MM-DD), Pipeline Status, Rep Email</strong><br>Only Organization and Email are required. Pipeline Status defaults to <strong>launched</strong>; use <strong>onboarding</strong> for in-flight customers. Header row optional.</div>';
+      html += '<textarea class="import-textarea" id="importCsvInput" placeholder="Springfield ISD,admin@springfield.k12.tx.us,Jane Smith,5125551234,Springfield,TX,2026-01-15,launched,kevin.parker@practiceplan.io"></textarea>';
+      html += '<div style="display:flex;gap:10px;margin-top:12px;justify-content:flex-end"><button class="comment-cancel" onclick="closeModal()">Cancel</button><button class="comment-submit" id="importRunBtn" onclick="runImport()">Import</button></div>';
+      html += '<div class="import-log" id="importLog" style="display:none"></div>';
+      html += '</div>';
+      document.getElementById('modalContent').innerHTML = html;
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+    function parseCsvLine(line) {
+      var out = [], cur = '', inQ = false;
+      for (var i = 0; i < line.length; i++) {
+        var ch = line[i];
+        if (inQ) {
+          if (ch === '"' && line[i+1] === '"') { cur += '"'; i++; }
+          else if (ch === '"') inQ = false;
+          else cur += ch;
+        } else {
+          if (ch === '"') inQ = true;
+          else if (ch === ',') { out.push(cur); cur = ''; }
+          else cur += ch;
+        }
+      }
+      out.push(cur);
+      return out.map(function(s) { return s.trim(); });
+    }
+    async function runImport() {
+      var raw = document.getElementById('importCsvInput').value.trim();
+      if (!raw) return;
+      var lines = raw.split(/\r?\n/).filter(function(l) { return l.trim(); });
+      // Skip header row if detected
+      if (lines.length && /organization/i.test(lines[0]) && /email/i.test(lines[0])) lines.shift();
+      var log = document.getElementById('importLog');
+      log.style.display = 'block';
+      log.innerHTML = 'Importing ' + lines.length + ' customer(s)...<br>';
+      document.getElementById('importRunBtn').disabled = true;
+      var ok = 0, fail = 0;
+      for (var i = 0; i < lines.length; i++) {
+        var f = parseCsvLine(lines[i]);
+        var params = '&org=' + encodeURIComponent(f[0] || '') +
+          '&custEmail=' + encodeURIComponent(f[1] || '') +
+          '&contact=' + encodeURIComponent(f[2] || '') +
+          '&phone=' + encodeURIComponent(f[3] || '') +
+          '&city=' + encodeURIComponent(f[4] || '') +
+          '&state=' + encodeURIComponent(f[5] || '') +
+          '&goLiveDate=' + encodeURIComponent(f[6] || '') +
+          '&pipelineStatus=' + encodeURIComponent(f[7] || '') +
+          '&accountRep=' + encodeURIComponent(f[8] || '');
+        try {
+          var r = await jsonpRequest(API_URL + '?action=importCustomer&email=' + encodeURIComponent(currentUser?.email || '') + params);
+          if (r.success) { ok++; log.innerHTML += '<span class="ok">&#10003; ' + esc(f[0]) + '</span><br>'; }
+          else if (r.error === 'duplicate') { fail++; log.innerHTML += '<span class="err">&#10007; ' + esc(f[0]) + ' - already exists (' + esc(f[1]) + ')</span><br>'; }
+          else { fail++; log.innerHTML += '<span class="err">&#10007; ' + esc(f[0]) + ' - ' + esc(r.error || 'failed') + '</span><br>'; }
+        } catch(e) { fail++; log.innerHTML += '<span class="err">&#10007; ' + esc(f[0]) + ' - request failed</span><br>'; }
+        log.scrollTop = log.scrollHeight;
+      }
+      log.innerHTML += '<br><strong>Done: ' + ok + ' imported, ' + fail + ' skipped/failed</strong>';
+      document.getElementById('importRunBtn').disabled = false;
+      if (ok > 0) { logActivityToServer('imported', ok + ' customer(s)', '', 'other'); loadData(); }
+    }
+
     function showToast(msg, type) {
       var t = document.getElementById('toast');
       t.className = 'toast';
@@ -1749,7 +1957,6 @@
       t.classList.add('show');
       setTimeout(function() { t.classList.remove('show'); }, 2500);
     }
-
     function viewDetails(item) {
       window._currentModalItem = item;
       const fd = item.formData || {}, contact = fd.contactInfo || {}, policies = fd.policies || {}, locations = fd.locations || [];
@@ -1775,7 +1982,7 @@
       html += '<div style="border-top:1px solid var(--border);margin:0 0 14px"></div>';
       
       // Onboarding Checklist - collapsible
-      html += '<div class="collapsible-section"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(&quot;collapsed&quot;)"><div class="collapsible-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Onboarding Checklist <span class="collapsible-count">' + clCount + '/' + CHECKLIST_ITEMS.length + '</span></div><svg class="collapsible-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="6 9 12 15 18 9"/></svg></div><div class="collapsible-body"><div class="checklist-items">' + CHECKLIST_ITEMS.map(c => '<div class="checklist-item' + (cl[c.id] ? ' checked' : '') + '" onclick="toggleChecklistItem(\'' + item.email + '\',\'' + c.id + '\',this)"><div class="checklist-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span class="checklist-label">' + c.label + '</span></div>').join('') + '</div>' + renderNotesBlock(item.email, 'checklist') + '</div></div>';
+      html += '<div class="collapsible-section"><div class="collapsible-header" onclick="this.parentElement.classList.toggle(&quot;collapsed&quot;)"><div class="collapsible-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Onboarding Checklist <span class="collapsible-count" id="onboardClCount">' + clCount + '/' + CHECKLIST_ITEMS.length + '</span></div><svg class="collapsible-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="6 9 12 15 18 9"/></svg></div><div class="collapsible-body"><div class="checklist-items">' + CHECKLIST_ITEMS.map(c => '<div class="checklist-item' + (cl[c.id] ? ' checked' : '') + '" onclick="toggleChecklistItem(\'' + item.email + '\',\'' + c.id + '\',this)"><div class="checklist-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span class="checklist-label">' + c.label + '</span></div>').join('') + '</div>' + renderNotesBlock(item.email, 'checklist') + '</div></div>';
       
       // Launch Checklist - collapsible
       var scl = getChecklist(item.email);
@@ -1890,8 +2097,6 @@
       }
       html += '</div>';
       
-      
-      
       document.getElementById('modalContent').innerHTML = html;
       document.getElementById('modalOverlay').classList.add('active');
       // Lock body scroll
@@ -1918,8 +2123,9 @@
       setChecklist(email, id, isChecked);
       el.classList.toggle('checked', isChecked);
       const cl = getChecklist(email), count = CHECKLIST_ITEMS.filter(i => cl[i.id]).length;
-      el.closest('.checklist-section').querySelector('.checklist-count').textContent = count + ' of ' + CHECKLIST_ITEMS.length + ' complete';
-      updateStats(); renderTable(); renderPipeline();
+      var countEl = document.getElementById('onboardClCount');
+      if (countEl && String(id).indexOf('cs_') !== 0) countEl.textContent = count + '/' + CHECKLIST_ITEMS.length;
+      updateStats(); renderTable(); renderPipeline(); renderCustomers();
     }
 
     function toggleLocation(idx) { document.getElementById('loc-' + idx).classList.toggle('collapsed'); }
@@ -2112,6 +2318,12 @@
       if (fd.waiverFileUrl || fd.agreementFileUrl) rows.push([]);
       rows.push(['ONBOARDING CHECKLIST']);
       CHECKLIST_ITEMS.forEach(function(c) { rows.push([c.label, cl[c.id] ? 'Complete' : 'Incomplete']); });
+      rows.push([]);
+      rows.push(['LAUNCH CHECKLIST']);
+      SUCCESS_CHECKLIST_ITEMS.forEach(function(c) {
+        rows.push([c.label, cl['cs_' + c.id] ? 'Complete' : 'Incomplete']);
+        if (c.hasField && cl['cs_' + c.id + '_field']) rows.push(['  ' + (c.fieldLabel || 'Link'), cl['cs_' + c.id + '_field']]);
+      });
       // Checklist notes
       var clNotes = getNotes(item.email, 'checklist');
       if (clNotes.length > 0) { rows.push([]); rows.push(['Checklist Notes']); clNotes.forEach(function(n){rows.push([n.author + ' (' + (n.authorEmail||n.email||'') + ')', n.text, new Date(n.date).toLocaleString()])}); }
