@@ -726,6 +726,140 @@
     .loading-dots span:nth-child(2){animation-delay:0.2s}
     .loading-dots span:nth-child(3){animation-delay:0.4s}
     @keyframes dotBounce{0%,80%,100%{transform:translateY(0);opacity:0.3}40%{transform:translateY(-8px);opacity:1}}
+    /* ===== Credentials + Trade Shows (added Sept 2026) ===== */
+    .pp-stat-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+    .pp-stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;cursor:pointer;transition:all 0.2s;min-width:0}
+    .pp-stat:hover{border-color:var(--pp-blue)}
+    .pp-stat.active{border-color:var(--pp-blue);background:rgba(0,118,187,0.05)}
+    .pp-stat .v{font-size:24px;font-weight:700;color:var(--text);line-height:1.1}
+    .pp-stat .l{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-top:4px}
+    .pp-stat .s{font-size:11px;color:var(--text3);margin-top:3px}
+    .pp-stat.warn .v{color:#d97706}
+    .pp-stat.danger .v{color:#dc2626}
+    .pp-stat.good .v{color:var(--pp-green)}
+    .pp-table{width:100%;border-collapse:collapse;min-width:900px}
+    .pp-table th{position:sticky;top:0;z-index:1;white-space:nowrap}
+    .pp-table th .sort-arrow{opacity:0.25;margin-left:4px;font-size:8px}
+    .pp-table th.sorted .sort-arrow{opacity:1;color:var(--pp-blue)}
+    .pp-table td{white-space:nowrap}
+    .pp-table tr.clickable{cursor:pointer}
+    .pp-table tr.clickable:hover td{background:rgba(0,118,187,0.03)}
+    .pp-table tr.past td{opacity:0.6}
+    .pp-org-cell{display:flex;align-items:center;gap:10px;min-width:0}
+    .pp-org-avatar{width:32px;height:32px;border-radius:9px;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+    .pp-org-name{font-weight:600;font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}
+    .pp-org-sub{font-size:10px;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}
+    .pp-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:50px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;white-space:nowrap;border:1px solid transparent}
+    .pp-chip.click{cursor:pointer;user-select:none}
+    .pp-chip.click:hover{filter:brightness(0.95);transform:translateY(-1px)}
+    .pp-chip.active,.pp-chip.paid,.pp-chip.booked{background:#dcfce7;color:#15803d}
+    .pp-chip.onboarding,.pp-chip.need-to-pay,.pp-chip.need-to-book{background:#fef3c7;color:#b45309}
+    .pp-chip.on-hold{background:#fee2e2;color:#b91c1c}
+    .pp-chip.inactive,.pp-chip.na,.pp-chip.skip{background:var(--bg);color:var(--text3)}
+    .pp-chip.sold-out{background:#fee2e2;color:#b91c1c}
+    .pp-chip.driving{background:#e0f2fe;color:#0369a1}
+    .pp-chip.unset{background:var(--bg);color:var(--text3);border-style:dashed;border-color:var(--border)}
+    .pp-chip.aud-supers{background:#ede9fe;color:#6d28d9}
+    .pp-chip.aud-ads{background:#e0f2fe;color:#0369a1}
+    .pp-chip.aud-sbo{background:#dcfce7;color:#15803d}
+    .pp-chip.aud-munis{background:#ffedd5;color:#c2410c}
+    .pp-chip.aud-heads{background:#fce7f3;color:#be185d}
+    .pp-chip.aud-other{background:var(--bg);color:var(--text2)}
+    [data-theme="dark"] .pp-chip.active,[data-theme="dark"] .pp-chip.paid,[data-theme="dark"] .pp-chip.booked,[data-theme="dark"] .pp-chip.aud-sbo{background:rgba(74,222,128,0.15);color:#4ade80}
+    [data-theme="dark"] .pp-chip.onboarding,[data-theme="dark"] .pp-chip.need-to-pay,[data-theme="dark"] .pp-chip.need-to-book{background:rgba(251,191,36,0.15);color:#fbbf24}
+    [data-theme="dark"] .pp-chip.on-hold,[data-theme="dark"] .pp-chip.sold-out{background:rgba(248,113,113,0.15);color:#f87171}
+    [data-theme="dark"] .pp-chip.driving,[data-theme="dark"] .pp-chip.aud-ads{background:rgba(56,189,248,0.15);color:#38bdf8}
+    [data-theme="dark"] .pp-chip.aud-supers{background:rgba(167,139,250,0.15);color:#a78bfa}
+    [data-theme="dark"] .pp-chip.aud-munis{background:rgba(251,146,60,0.15);color:#fb923c}
+    [data-theme="dark"] .pp-chip.aud-heads{background:rgba(244,114,182,0.15);color:#f472b6}
+    .pp-avatars{display:flex;align-items:center}
+    .pp-avatars > *{margin-left:-8px;border:2px solid var(--card);border-radius:50%}
+    .pp-avatars > *:first-child{margin-left:0}
+    .pp-avatar-text{height:26px;padding:0 8px;border-radius:50px;background:var(--bg);font-size:10px;font-weight:600;color:var(--text2);display:inline-flex;align-items:center}
+    .pp-pw{display:inline-flex;align-items:center;gap:6px;font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;font-size:12px}
+    .pp-pw .dots{letter-spacing:2px;color:var(--text3)}
+    .pp-pw .val{color:var(--text);user-select:all}
+    .pp-mini-btn{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:var(--card);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);transition:all 0.15s;flex-shrink:0}
+    .pp-mini-btn:hover{border-color:var(--pp-blue);color:var(--pp-blue)}
+    .pp-mini-btn svg{width:12px;height:12px}
+    .pp-mini-btn.danger:hover{border-color:#ef4444;color:#ef4444}
+    .pp-copyable{cursor:pointer;border-bottom:1px dashed transparent}
+    .pp-copyable:hover{border-bottom-color:var(--pp-blue);color:var(--pp-blue)}
+    .pp-empty{padding:48px 24px;text-align:center;color:var(--text2);font-size:13px}
+    .pp-empty strong{display:block;font-size:15px;color:var(--text);margin-bottom:6px}
+    .pp-empty code{background:var(--bg);padding:2px 6px;border-radius:4px;font-size:11px}
+    .pp-form{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .pp-form .full{grid-column:1/-1}
+    .pp-form label{display:block;font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px}
+    .pp-form input,.pp-form select,.pp-form textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);font-family:inherit;font-size:13px;color:var(--text)}
+    .pp-form input:focus,.pp-form select:focus,.pp-form textarea:focus{outline:none;border-color:var(--pp-blue);background:var(--card)}
+    .pp-form textarea{min-height:72px;resize:vertical}
+    .pp-form .hint{font-size:10px;color:var(--text3);margin-top:4px}
+    .pp-reps-pick{display:flex;flex-wrap:wrap;gap:8px}
+    .pp-rep-opt{display:inline-flex;align-items:center;gap:8px;padding:6px 12px 6px 6px;border-radius:50px;border:1px solid var(--border);background:var(--bg);cursor:pointer;font-size:12px;font-weight:500;color:var(--text2);transition:all 0.15s}
+    .pp-rep-opt.on{border-color:var(--pp-blue);background:rgba(0,118,187,0.08);color:var(--text)}
+    .pp-modal-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 24px 24px;flex-wrap:wrap}
+    .pp-modal-actions .right{display:flex;gap:10px;margin-left:auto}
+    .pp-btn{padding:11px 20px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text2);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s}
+    .pp-btn:hover{border-color:var(--pp-blue);color:var(--pp-blue)}
+    .pp-btn.primary{border:none;background:linear-gradient(135deg,var(--pp-blue),var(--pp-green));color:white}
+    .pp-btn.primary:hover{opacity:0.92;color:white}
+    .pp-btn.danger{color:var(--text3)}
+    .pp-btn.danger:hover{border-color:#ef4444;color:#ef4444}
+    .pp-btn:disabled{opacity:0.5;cursor:default}
+    .ts-next{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:24px}
+    .ts-next-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden}
+    .ts-next-card:hover{border-color:var(--pp-blue);transform:translateY(-1px)}
+    .ts-next-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--pp-blue),var(--pp-green))}
+    .ts-next-card.soon::before{background:linear-gradient(180deg,#f59e0b,#fbbf24)}
+    .ts-next-days{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--pp-blue)}
+    .ts-next-card.soon .ts-next-days{color:#d97706}
+    .ts-next-name{font-size:14px;font-weight:700;color:var(--text);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ts-next-meta{font-size:11px;color:var(--text2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ts-next-foot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:8px}
+    .ts-next-todo{display:flex;gap:4px;flex-wrap:wrap}
+    .ts-group{background:var(--card);border:1px solid var(--border);border-radius:16px;margin-bottom:16px;overflow:hidden}
+    .ts-group-head{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:var(--bg);border-bottom:1px solid var(--border);cursor:pointer;gap:12px;flex-wrap:wrap}
+    .ts-group-title{font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px}
+    .ts-group-title .n{font-size:10px;font-weight:600;color:var(--text2);background:var(--card);border:1px solid var(--border);padding:2px 8px;border-radius:50px}
+    .ts-group-meta{font-size:11px;color:var(--text2);display:flex;gap:14px;flex-wrap:wrap}
+    .ts-group-meta b{color:var(--text)}
+    .ts-group.collapsed .ts-group-body{display:none}
+    .ts-group .ts-caret{transition:transform 0.2s;font-size:10px;color:var(--text3)}
+    .ts-group.collapsed .ts-caret{transform:rotate(-90deg)}
+    .ts-group-body{overflow-x:auto}
+    .ts-date{font-size:12px;font-weight:600;color:var(--text)}
+    .ts-date .sub{display:block;font-size:10px;font-weight:500;color:var(--text3);margin-top:1px}
+    .ts-date.soon .sub{color:#d97706;font-weight:600}
+    .ts-outcome{display:inline-flex;gap:4px}
+    .ts-outcome span{min-width:26px;text-align:center;padding:3px 5px;border-radius:6px;background:var(--bg);font-size:10px;font-weight:700;color:var(--text2);cursor:pointer}
+    .ts-outcome span:hover{color:var(--pp-blue)}
+    .ts-outcome span b{display:block;font-size:8px;font-weight:600;color:var(--text3);text-transform:uppercase}
+    .ts-link{color:var(--pp-blue);text-decoration:none;display:inline-flex;align-items:center}
+    .ts-link svg{width:13px;height:13px}
+    .ts-cal-event{font-size:10px;padding:4px 7px;border-radius:7px;margin-bottom:3px;cursor:pointer;color:white;background:var(--pp-blue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+    .ts-cal-event.aud-supers{background:#7c3aed}.ts-cal-event.aud-ads{background:#0076bb}.ts-cal-event.aud-sbo{background:#059669}.ts-cal-event.aud-munis{background:#ea580c}.ts-cal-event.aud-heads{background:#db2777}.ts-cal-event.aud-other{background:#64748b}
+    .ts-cal-event.past{opacity:0.55}
+    .pp-mobile-cards{display:none}
+    .pp-mcard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
+    .pp-mcard-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .pp-mcard-title{font-size:14px;font-weight:700;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .pp-mcard-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border-top:1px solid var(--border);font-size:12px}
+    .pp-mcard-row .k{font-size:10px;color:var(--text3);text-transform:uppercase;font-weight:600;flex-shrink:0}
+    .pp-mcard-row .v{text-align:right;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .pp-view-toggle{display:inline-flex;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:3px}
+    .pp-view-toggle button{padding:7px 14px;border:none;background:transparent;border-radius:9px;font-family:inherit;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer}
+    .pp-view-toggle button.on{background:var(--card);color:var(--pp-blue);box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+    .pp-toolbar-note{font-size:11px;color:var(--text3)}
+    @media(max-width:768px){
+      .pp-stat-strip{grid-template-columns:1fr 1fr;gap:8px}
+      .pp-stat{padding:12px}.pp-stat .v{font-size:20px}
+      .pp-form{grid-template-columns:1fr}
+      .table-wrapper.pp-desktop-only{display:none}
+      .pp-mobile-cards{display:block}
+      .ts-group-body .table-wrapper{display:none}
+      .ts-next{grid-template-columns:1fr}
+    }
   </style>
 </head>
 <body>
@@ -804,6 +938,8 @@
         <button class="view-tab active" onclick="switchView('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Dashboard</button>
         <button class="view-tab" onclick="switchView('pipeline')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Onboarding</button>
         <button class="view-tab" onclick="switchView('customers')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Customers</button>
+        <button class="view-tab" onclick="switchView('credentials')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Credentials</button>
+        <button class="view-tab" onclick="switchView('tradeshows')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M3 21V10l9-7 9 7v11"/><path d="M9 21v-6h6v6"/></svg> Trade Shows</button>
         <button class="view-tab" onclick="switchView('calendar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Go-Live</button>
         <button class="view-tab" onclick="switchView('activity')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Activity</button>
       </div>
@@ -923,6 +1059,96 @@
                 <tr><td colspan="17" style="text-align:center;padding:24px;color:var(--text3);font-size:13px">Loading...</td></tr>
               </tbody>
             </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Credentials view (added Sept 2026) ===== -->
+      <div class="view-content" id="credentialsView">
+        <div class="pp-stat-strip" id="credStats"></div>
+        <div class="table-section">
+          <div class="controls-row">
+            <div class="section-title">Client Credentials</div>
+            <div class="controls-right">
+              <div class="controls-group filters-group">
+                <div class="styled-select"><select id="credStatusFilter" onchange="credStatusFilter=this.value;renderCredentials()"><option value="all">All statuses</option><option value="active">Active</option><option value="onboarding">Onboarding</option><option value="on-hold">On Hold</option><option value="inactive">Inactive</option></select></div>
+                <div class="styled-select"><select id="credRepFilter" onchange="credRepFilter=this.value;renderCredentials()"><option value="all">All reps</option></select></div>
+              </div>
+              <div class="controls-group search-group">
+                <input type="text" class="search-input" id="credSearchInput" placeholder="Search org, admin, email..." oninput="credSearch=this.value.toLowerCase();renderCredentials()" style="width:220px">
+                <button class="text-action-btn" id="credRevealBtn" onclick="toggleCredRevealAll()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Show passwords</button>
+              </div>
+              <div class="controls-group actions-group">
+                <button class="text-action-btn" onclick="openCredModal(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add</button>
+                <button class="text-action-btn" onclick="startCredImport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button>
+                <input type="file" id="credImportFile" accept=".csv,text/csv" style="display:none" onchange="handleCredImportFile(this.files[0]);this.value=''">
+                <button class="text-action-btn" onclick="exportCredCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
+                <button class="text-action-btn" onclick="loadCredList(true).then(renderCredentials)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Refresh</button>
+              </div>
+            </div>
+          </div>
+          <div class="table-wrapper pp-desktop-only">
+            <table class="pp-table" id="credTable">
+              <thead><tr>
+                <th onclick="credSortBy('organization')" data-col="organization">Organization <span class="sort-arrow">&#x25B2;</span></th>
+                <th onclick="credSortBy('status')" data-col="status">Status <span class="sort-arrow">&#x25B2;</span></th>
+                <th onclick="credSortBy('rep')" data-col="rep">PP Rep <span class="sort-arrow">&#x25B2;</span></th>
+                <th onclick="credSortBy('adminName')" data-col="adminName">Location Admin <span class="sort-arrow">&#x25B2;</span></th>
+                <th>Cell Phone</th>
+                <th onclick="credSortBy('loginEmail')" data-col="loginEmail">Login Email <span class="sort-arrow">&#x25B2;</span></th>
+                <th>Password</th>
+                <th onclick="credSortBy('updatedAt')" data-col="updatedAt">Updated <span class="sort-arrow">&#x25B2;</span></th>
+                <th style="cursor:default"></th>
+              </tr></thead>
+              <tbody id="credTableBody"><tr><td colspan="9" class="pp-empty">Loading credentials...</td></tr></tbody>
+            </table>
+          </div>
+          <div class="pp-mobile-cards" id="credMobileCards"></div>
+        </div>
+      </div>
+
+      <!-- ===== Trade Shows view (added Sept 2026) ===== -->
+      <div class="view-content" id="tradeshowsView">
+        <div class="pp-stat-strip" id="tsStats"></div>
+        <div class="controls-row">
+          <div class="section-title">Trade Shows &amp; Events</div>
+          <div class="controls-right">
+            <div class="pp-view-toggle"><button class="on" id="tsViewList" onclick="setTsView('list')">List</button><button id="tsViewCal" onclick="setTsView('calendar')">Calendar</button></div>
+            <div class="controls-group filters-group">
+              <div class="styled-select"><select id="tsAudFilter" onchange="tsAudFilter=this.value;renderTradeShows()"><option value="all">All audiences</option><option value="supers">Superintendents</option><option value="ads">Athletic Directors</option><option value="sbo">Business Officials</option><option value="munis">Parks &amp; Rec / Municipal</option><option value="heads">Heads of School</option><option value="other">Other</option></select></div>
+              <div class="styled-select"><select id="tsRepFilter" onchange="tsRepFilter=this.value;renderTradeShows()"><option value="all">All reps</option><option value="none">Unassigned</option></select></div>
+              <div class="styled-select"><select id="tsScopeFilter" onchange="tsScope=this.value;renderTradeShows()"><option value="upcoming">Upcoming</option><option value="all">All shows</option><option value="past">Past</option><option value="archived">Archived</option></select></div>
+            </div>
+            <div class="controls-group search-group">
+              <input type="text" class="search-input" id="tsSearchInput" placeholder="Search shows, cities..." oninput="tsSearch=this.value.toLowerCase();renderTradeShows()" style="width:200px">
+              <button class="text-action-btn" id="tsMyShowsBtn" onclick="toggleTsMyShows()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> My Shows</button>
+            </div>
+            <div class="controls-group actions-group">
+              <button class="text-action-btn" onclick="openTsModal(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Show</button>
+              <button class="text-action-btn" onclick="startTsImport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button>
+              <input type="file" id="tsImportFile" accept=".csv,text/csv" style="display:none" onchange="handleTsImportFile(this.files[0]);this.value=''">
+              <button class="text-action-btn" onclick="exportTsCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
+              <button class="text-action-btn" onclick="loadTradeShows(true).then(renderTradeShows)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Refresh</button>
+            </div>
+          </div>
+        </div>
+        <div id="tsListView">
+          <div class="ts-next" id="tsNext"></div>
+          <div id="tsGroups"></div>
+        </div>
+        <div id="tsCalView" style="display:none">
+          <div class="calendar-container">
+            <div class="calendar-header">
+              <div class="calendar-title">Event Calendar</div>
+              <div class="calendar-nav">
+                <button class="calendar-today-btn" onclick="tsCalDate=new Date();renderTsCalendar()">Today</button>
+                <button class="calendar-nav-btn" onclick="tsCalDate.setMonth(tsCalDate.getMonth()-1);renderTsCalendar()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polyline points="15 18 9 12 15 6"/></svg></button>
+                <span class="calendar-month" id="tsCalMonth"></span>
+                <button class="calendar-nav-btn" onclick="tsCalDate.setMonth(tsCalDate.getMonth()+1);renderTsCalendar()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polyline points="9 18 15 12 9 6"/></svg></button>
+              </div>
+            </div>
+            <div class="calendar-grid" id="tsCalGrid"></div>
+            <div class="calendar-list-mobile" id="tsCalMobile"></div>
           </div>
         </div>
       </div>
@@ -1196,6 +1422,8 @@
       if (view === 'pipeline') renderPipeline();
       if (view === 'customers') renderSuccessGrid();
       if (view === 'activity') { loadActivity().then(function() { renderActivity(); }); }
+      if (view === 'credentials') { renderCredentials(); loadCredList(false).then(function() { renderCredentials(); }); }
+      if (view === 'tradeshows') { renderTradeShows(); loadTradeShows(false).then(function() { renderTradeShows(); }); }
     }
 
     function populateRepFilter() {
@@ -1718,6 +1946,7 @@
     var importRows = [];
 
     function startImport() {
+      document.querySelector('.import-title').textContent = 'Import Customers';
       var body = document.getElementById('importBody');
       body.innerHTML = '<p style="margin:0 0 14px;font-size:13px;color:var(--text2);line-height:1.6">Upload a CSV of your existing customers. Each row needs at minimum an <strong>Organization</strong> and <strong>Email</strong>. Optional columns: Contact Name, Phone, Job Title, Go-Live Date, Pipeline Status, Account Rep Email. Rows with emails already in the system are skipped automatically.</p>'
         + '<div style="display:flex;gap:10px;flex-wrap:wrap"><button class="import-btn" onclick="document.getElementById(\'importFileInput\').click()">Choose CSV File</button>'
@@ -2896,6 +3125,572 @@
         html += '</div></div>';
       });
       feed.innerHTML = html;
+    }
+    // =====================================================================
+    // CREDENTIALS + TRADE SHOWS (added Sept 2026)
+    // Both tabs read/write two new sheet tabs ("Credentials", "TradeShows")
+    // through new Apps Script actions. If the backend doesn't have them yet,
+    // the tabs show a setup message instead of breaking the rest of the admin.
+    // =====================================================================
+    var CRED_STATUSES = [{val:'active',label:'Active'},{val:'onboarding',label:'Onboarding'},{val:'on-hold',label:'On Hold'},{val:'inactive',label:'Inactive'}];
+    var TS_AUDIENCES = [{val:'supers',label:'Superintendents'},{val:'ads',label:'Athletic Directors'},{val:'sbo',label:'Business Officials'},{val:'munis',label:'Parks & Rec / Municipal'},{val:'heads',label:'Heads of School'},{val:'other',label:'Other'}];
+    var TS_REG = [{val:'',label:'Not registered'},{val:'need-to-pay',label:'Need to Pay'},{val:'paid',label:'Paid'},{val:'sold-out',label:'Sold Out'},{val:'skip',label:'Not Attending'}];
+    var TS_TRAVEL = [{val:'',label:'Not set'},{val:'need-to-book',label:'Need to Book'},{val:'booked',label:'Booked'},{val:'driving',label:'Driving'},{val:'na',label:'N/A'}];
+    var CRED_COLS = ['id','organization','status','rep','adminName','adminPhone','loginEmail','loginPassword','notes','updatedAt','updatedBy'];
+    var TS_COLS = ['id','name','audience','reps','eventDate','exhibitStart','exhibitEnd','location','link','registration','cost','boothSize','podcast','hotel','flight','leads','demos','deals','plannedQuarter','notes','archived','updatedAt','updatedBy'];
+
+    var credList = [], credLoaded = false, credError = '', credSearch = '', credStatusFilter = 'all', credRepFilter = 'all', credSort = 'organization', credSortDir = 'asc', credRevealAll = false, credRevealed = {};
+    var tsList = [], tsLoaded = false, tsError = '', tsSearch = '', tsAudFilter = 'all', tsRepFilter = 'all', tsScope = 'upcoming', tsView = 'list', tsMyShows = false, tsCalDate = new Date(), tsCollapsed = {};
+
+    // ---------- shared helpers ----------
+    function ppEsc(s) { return (s === undefined || s === null) ? '' : String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+    function ppApi(action, params) {
+      var url = API_URL + '?action=' + encodeURIComponent(action) + '&email=' + encodeURIComponent(currentUser?.email || '');
+      Object.keys(params || {}).forEach(function(k) {
+        var v = params[k]; if (v === undefined || v === null) v = '';
+        url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(typeof v === 'object' ? JSON.stringify(v) : String(v));
+      });
+      return jsonpRequest(url);
+    }
+    function ppTodayISO() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+    function ppParseISO(s) { if (!s) return null; var p = String(s).split('-'); if (p.length < 3) return null; return new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2])); }
+    function ppDaysBetween(aISO, bISO) { var a = ppParseISO(aISO), b = ppParseISO(bISO); if (!a || !b) return null; return Math.round((a - b) / 86400000); }
+    function ppNormalizeDate(v) {
+      // Accepts ISO, US m/d/yyyy, "Jan 25, 2026", Excel serial numbers, or JS Date. Returns YYYY-MM-DD or ''.
+      if (v === undefined || v === null || v === '' || v === false) return '';
+      if (v instanceof Date) return isNaN(v) ? '' : v.getFullYear() + '-' + String(v.getMonth()+1).padStart(2,'0') + '-' + String(v.getDate()).padStart(2,'0');
+      var s = String(v).trim();
+      if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+      if (/^\d{4,6}(\.\d+)?$/.test(s)) { var base = new Date(Date.UTC(1899, 11, 30)); var d = new Date(base.getTime() + parseFloat(s) * 86400000); return d.getUTCFullYear() + '-' + String(d.getUTCMonth()+1).padStart(2,'0') + '-' + String(d.getUTCDate()).padStart(2,'0'); }
+      var m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+      if (m) { var y = m[3].length === 2 ? '20' + m[3] : m[3]; return y + '-' + m[1].padStart(2,'0') + '-' + m[2].padStart(2,'0'); }
+      var d2 = new Date(s); if (!isNaN(d2)) return d2.getFullYear() + '-' + String(d2.getMonth()+1).padStart(2,'0') + '-' + String(d2.getDate()).padStart(2,'0');
+      return '';
+    }
+    function ppFmtDate(iso, opts) { var d = ppParseISO(iso); if (!d) return ''; return d.toLocaleDateString('en-US', opts || { month: 'short', day: 'numeric', year: 'numeric' }); }
+    function ppFmtRange(startISO, endISO) {
+      var a = ppParseISO(startISO), b = ppParseISO(endISO);
+      if (!a) return 'Date TBD';
+      if (!b || b.getTime() === a.getTime()) return ppFmtDate(startISO);
+      if (a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth()) return a.toLocaleDateString('en-US', { month: 'short' }) + ' ' + a.getDate() + '-' + b.getDate() + ', ' + a.getFullYear();
+      if (a.getFullYear() === b.getFullYear()) return a.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' - ' + b.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + a.getFullYear();
+      return ppFmtDate(startISO) + ' - ' + ppFmtDate(endISO);
+    }
+    function ppFmtMoney(v) { var n = parseFloat(String(v).replace(/[^0-9.\-]/g, '')); if (isNaN(n)) return ''; return '$' + n.toLocaleString('en-US', { maximumFractionDigits: 0 }); }
+    function ppRepName(email) { if (!email) return ''; var m = TEAM_MEMBERS.find(function(x) { return x.email === email; }); if (m) return m.name; return email.indexOf('@') > 0 ? email.split('@')[0].split('.').map(function(p) { return p.charAt(0).toUpperCase() + p.slice(1); }).join(' ') : email; }
+    function ppRepFull(email) { if (!email) return ''; var m = TEAM_MEMBERS.find(function(x) { return x.email === email; }); return m ? m.name : email; }
+    function ppSplitReps(s) { return String(s || '').split(/[,;]/).map(function(x) { return x.trim(); }).filter(Boolean); }
+    function ppRepAvatars(repsStr, size) {
+      var reps = ppSplitReps(repsStr); size = size || 26;
+      if (!reps.length) return '<span class="pp-avatar-text" style="color:var(--text3)">Unassigned</span>';
+      return '<span class="pp-avatars">' + reps.map(function(r) {
+        var m = TEAM_MEMBERS.find(function(x) { return x.email === r; });
+        if (m) return '<span title="' + ppEsc(m.name) + '">' + getTeamPhoto(r, size) + '</span>';
+        var initials = r.split(/\s+/).map(function(w) { return w.charAt(0); }).join('').slice(0, 2).toUpperCase();
+        return '<span title="' + ppEsc(r) + '" style="width:' + size + 'px;height:' + size + 'px;background:var(--text3);color:white;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">' + ppEsc(initials) + '</span>';
+      }).join('') + '</span>';
+    }
+    function ppOpenModal(html) {
+      document.getElementById('modalContent').innerHTML = html;
+      document.getElementById('modalOverlay').classList.add('active');
+      window._scrollY = window.scrollY;
+      document.body.style.position = 'fixed'; document.body.style.top = '-' + window._scrollY + 'px'; document.body.style.left = '0'; document.body.style.right = '0'; document.body.style.overflow = 'hidden';
+      setTimeout(function() { var mb = document.querySelector('.modal-body'), mh = document.querySelector('.modal-header'); if (mb && mh && window.innerWidth <= 768) mb.style.top = mh.offsetHeight + 'px'; if (mb) mb.scrollTop = 0; var f = document.querySelector('#modalContent input[autofocus]'); if (f) f.focus(); }, 20);
+    }
+    function ppCopy(text, label) {
+      if (!text) return;
+      var done = function() { showToast((label || 'Copied') + ' to clipboard', 'success'); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(function() { ppCopyFallback(text); done(); });
+      else { ppCopyFallback(text); done(); }
+    }
+    function ppCopyFallback(text) { var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch(e) {} document.body.removeChild(ta); }
+    function ppCsvCell(v) { v = (v === undefined || v === null) ? '' : String(v); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+    function ppDownloadCSV(filename, cols, rows) {
+      var lines = [cols.join(',')].concat(rows.map(function(r) { return cols.map(function(c) { return ppCsvCell(r[c]); }).join(','); }));
+      var blob = new Blob(['\ufeff' + lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    }
+    function ppReadFileText(file) { return new Promise(function(res, rej) { var r = new FileReader(); r.onload = function() { res(r.result); }; r.onerror = rej; r.readAsText(file); }); }
+    function ppNewId(prefix) { return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+    function ppSetupEmpty(what) {
+      return '<div class="pp-empty"><strong>' + what + ' backend not connected yet</strong>The Apps Script behind this admin needs the new actions for this tab. Once <code>Code.gs</code> is updated and redeployed, hit Refresh.</div>';
+    }
+    function ppSvg(name) {
+      var icons = {
+        eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+        eyeoff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>',
+        copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+        edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+        link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
+        pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+        mic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>'
+      };
+      return icons[name] || '';
+    }
+
+    // =====================================================================
+    // CREDENTIALS
+    // =====================================================================
+    async function loadCredList(force) {
+      if (credLoaded && !force) return credList;
+      try {
+        var result = await ppApi('getCredentialsList');
+        if (result.success) { credList = (result.rows || []).map(credNormalize); credLoaded = true; credError = ''; }
+        else { credError = result.error || 'Unknown error'; if (result.error === 'Unauthorized') logout(); }
+      } catch(e) { credError = e.message || 'Request failed'; }
+      populateCredRepFilter();
+      return credList;
+    }
+    function credNormalize(r) {
+      var o = {}; CRED_COLS.forEach(function(c) { o[c] = (r[c] === undefined || r[c] === null) ? '' : String(r[c]); });
+      o.status = CRED_STATUSES.some(function(s) { return s.val === o.status; }) ? o.status : (o.status || 'active');
+      o.updatedAt = ppNormalizeDate(o.updatedAt) || o.updatedAt;
+      return o;
+    }
+    function populateCredRepFilter() {
+      var sel = document.getElementById('credRepFilter'); if (!sel) return;
+      var extras = {}; credList.forEach(function(c) { ppSplitReps(c.rep).forEach(function(r) { if (!TEAM_MEMBERS.some(function(m) { return m.email === r; })) extras[r] = true; }); });
+      var cur = sel.value || 'all';
+      sel.innerHTML = '<option value="all">All reps</option>' + TEAM_MEMBERS.map(function(m) { return '<option value="' + ppEsc(m.email) + '">' + ppEsc(m.name) + '</option>'; }).join('') + Object.keys(extras).sort().map(function(r) { return '<option value="' + ppEsc(r) + '">' + ppEsc(r) + '</option>'; }).join('') + '<option value="none">Unassigned</option>';
+      sel.value = cur;
+    }
+    function credFiltered() {
+      var q = credSearch.trim();
+      var rows = credList.filter(function(c) {
+        if (credStatusFilter !== 'all' && c.status !== credStatusFilter) return false;
+        if (credRepFilter === 'none') { if (ppSplitReps(c.rep).length) return false; }
+        else if (credRepFilter !== 'all' && ppSplitReps(c.rep).indexOf(credRepFilter) < 0) return false;
+        if (q) { var hay = [c.organization, c.adminName, c.adminPhone, c.loginEmail, c.notes, ppSplitReps(c.rep).map(ppRepFull).join(' ')].join(' ').toLowerCase(); if (hay.indexOf(q) < 0) return false; }
+        return true;
+      });
+      var statusRank = { active: 0, onboarding: 1, 'on-hold': 2, inactive: 3 };
+      rows.sort(function(a, b) {
+        var va, vb;
+        if (credSort === 'status') { va = statusRank[a.status]; vb = statusRank[b.status]; }
+        else if (credSort === 'rep') { va = ppSplitReps(a.rep).map(ppRepFull).join(', ').toLowerCase(); vb = ppSplitReps(b.rep).map(ppRepFull).join(', ').toLowerCase(); }
+        else { va = String(a[credSort] || '').toLowerCase(); vb = String(b[credSort] || '').toLowerCase(); }
+        if (va < vb) return credSortDir === 'asc' ? -1 : 1; if (va > vb) return credSortDir === 'asc' ? 1 : -1;
+        return String(a.organization).localeCompare(String(b.organization));
+      });
+      return rows;
+    }
+    function credSortBy(col) { if (credSort === col) credSortDir = credSortDir === 'asc' ? 'desc' : 'asc'; else { credSort = col; credSortDir = col === 'updatedAt' ? 'desc' : 'asc'; } renderCredentials(); }
+    function toggleCredRevealAll() { credRevealAll = !credRevealAll; credRevealed = {}; var b = document.getElementById('credRevealBtn'); if (b) { b.classList.toggle('active', credRevealAll); b.innerHTML = (credRevealAll ? ppSvg('eyeoff') : ppSvg('eye')) + (credRevealAll ? ' Hide passwords' : ' Show passwords'); } renderCredentials(); }
+    function toggleCredReveal(id) { credRevealed[id] = !credRevealed[id]; renderCredentials(); }
+    function credPwCell(c) {
+      if (!c.loginPassword) return '<span style="color:var(--text3)">-</span>';
+      var shown = credRevealAll || credRevealed[c.id];
+      return '<span class="pp-pw">' + (shown ? '<span class="val">' + ppEsc(c.loginPassword) + '</span>' : '<span class="dots">&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</span>')
+        + '<button class="pp-mini-btn" title="' + (shown ? 'Hide' : 'Show') + '" onclick="event.stopPropagation();toggleCredReveal(\'' + ppEsc(c.id) + '\')">' + (shown ? ppSvg('eyeoff') : ppSvg('eye')) + '</button>'
+        + '<button class="pp-mini-btn" title="Copy password" onclick="event.stopPropagation();ppCopy(credList.find(function(x){return x.id===\'' + ppEsc(c.id) + '\'}).loginPassword,\'Password\')">' + ppSvg('copy') + '</button></span>';
+    }
+    function renderCredStats() {
+      var el = document.getElementById('credStats'); if (!el) return;
+      var counts = { all: credList.length }; CRED_STATUSES.forEach(function(s) { counts[s.val] = credList.filter(function(c) { return c.status === s.val; }).length; });
+      var missing = credList.filter(function(c) { return c.status !== 'inactive' && (!c.loginEmail || !c.loginPassword); }).length;
+      el.innerHTML = [{ key: 'all', label: 'All clients', v: counts.all, cls: '' }].concat(CRED_STATUSES.map(function(s) { return { key: s.val, label: s.label, v: counts[s.val], cls: s.val === 'active' ? 'good' : s.val === 'on-hold' ? 'warn' : '' }; }))
+        .map(function(s) { return '<div class="pp-stat ' + s.cls + (credStatusFilter === s.key ? ' active' : '') + '" onclick="credStatusFilter=\'' + s.key + '\';document.getElementById(\'credStatusFilter\').value=\'' + s.key + '\';renderCredentials()"><div class="v">' + s.v + '</div><div class="l">' + s.label + '</div></div>'; }).join('')
+        + '<div class="pp-stat ' + (missing ? 'warn' : '') + '" style="cursor:default"><div class="v">' + missing + '</div><div class="l">Missing login</div><div class="s">active or onboarding without email/password</div></div>';
+    }
+    function renderCredentials() {
+      var body = document.getElementById('credTableBody'), mobile = document.getElementById('credMobileCards'); if (!body) return;
+      renderCredStats();
+      document.querySelectorAll('#credTable th[data-col]').forEach(function(th) { th.classList.toggle('sorted', th.getAttribute('data-col') === credSort); var ar = th.querySelector('.sort-arrow'); if (ar) ar.innerHTML = (th.getAttribute('data-col') === credSort && credSortDir === 'desc') ? '&#x25BC;' : '&#x25B2;'; });
+      if (!credLoaded) { var msg = credError ? ppSetupEmpty('Credentials') + '<div class="pp-toolbar-note" style="text-align:center;padding-bottom:20px">Error: ' + ppEsc(credError) + '</div>' : '<div class="pp-empty">Loading credentials...</div>'; body.innerHTML = '<tr><td colspan="9">' + msg + '</td></tr>'; mobile.innerHTML = msg; return; }
+      var rows = credFiltered();
+      if (!rows.length) { var e2 = '<div class="pp-empty"><strong>No credentials match</strong>' + (credList.length ? 'Try clearing the search or filters.' : 'Add a client with the Add button, or import your Monday.com export.') + '</div>'; body.innerHTML = '<tr><td colspan="9">' + e2 + '</td></tr>'; mobile.innerHTML = e2; return; }
+      var statusLabel = {}; CRED_STATUSES.forEach(function(s) { statusLabel[s.val] = s.label; });
+      body.innerHTML = rows.map(function(c) {
+        return '<tr class="clickable" onclick="openCredModal(\'' + ppEsc(c.id) + '\')">'
+          + '<td><div class="pp-org-cell"><div class="pp-org-avatar" style="background:' + getOrgColor(c.organization) + '">' + ppEsc(getOrgInitials(c.organization)) + '</div><div><div class="pp-org-name">' + ppEsc(c.organization) + '</div>' + (c.notes ? '<div class="pp-org-sub" title="' + ppEsc(c.notes) + '">' + ppEsc(c.notes) + '</div>' : '') + '</div></div></td>'
+          + '<td><span class="pp-chip ' + c.status + '">' + statusLabel[c.status] + '</span></td>'
+          + '<td><div style="display:flex;align-items:center;gap:8px">' + ppRepAvatars(c.rep, 24) + '<span style="font-size:11px;color:var(--text2)">' + ppEsc(ppSplitReps(c.rep).map(ppRepName).join(', ')) + '</span></div></td>'
+          + '<td class="contact-name">' + ppEsc(c.adminName || '-') + '</td>'
+          + '<td>' + (c.adminPhone ? '<span class="pp-copyable" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(c.adminPhone) + '\',\'Phone\')">' + ppEsc(formatPhone(c.adminPhone)) + '</span>' : '<span style="color:var(--text3)">-</span>') + '</td>'
+          + '<td>' + (c.loginEmail ? '<span class="pp-copyable" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(c.loginEmail) + '\',\'Email\')">' + ppEsc(c.loginEmail) + '</span>' : '<span style="color:var(--text3)">-</span>') + '</td>'
+          + '<td>' + credPwCell(c) + '</td>'
+          + '<td class="time-ago">' + (c.updatedAt ? ppFmtDate(c.updatedAt, { month: 'short', day: 'numeric', year: '2-digit' }) : '-') + (c.updatedBy && c.updatedBy !== 'import' ? '<br><span style="font-size:9px">' + ppEsc(ppRepName(c.updatedBy)) + '</span>' : '') + '</td>'
+          + '<td><button class="pp-mini-btn" title="Edit" onclick="event.stopPropagation();openCredModal(\'' + ppEsc(c.id) + '\')">' + ppSvg('edit') + '</button></td>'
+          + '</tr>';
+      }).join('');
+      mobile.innerHTML = rows.map(function(c) {
+        return '<div class="pp-mcard" onclick="openCredModal(\'' + ppEsc(c.id) + '\')"><div class="pp-mcard-head"><div class="pp-org-avatar" style="background:' + getOrgColor(c.organization) + '">' + ppEsc(getOrgInitials(c.organization)) + '</div><div class="pp-mcard-title">' + ppEsc(c.organization) + '</div><span class="pp-chip ' + c.status + '">' + statusLabel[c.status] + '</span></div>'
+          + '<div class="pp-mcard-row"><span class="k">Admin</span><span class="v">' + ppEsc(c.adminName || '-') + (c.adminPhone ? ' &middot; ' + ppEsc(formatPhone(c.adminPhone)) : '') + '</span></div>'
+          + '<div class="pp-mcard-row"><span class="k">Login</span><span class="v pp-copyable" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(c.loginEmail) + '\',\'Email\')">' + ppEsc(c.loginEmail || '-') + '</span></div>'
+          + '<div class="pp-mcard-row"><span class="k">Password</span><span class="v">' + credPwCell(c) + '</span></div>'
+          + '<div class="pp-mcard-row"><span class="k">Rep</span><span class="v">' + ppEsc(ppSplitReps(c.rep).map(ppRepName).join(', ') || 'Unassigned') + '</span></div></div>';
+      }).join('');
+    }
+    function credRepOptions(sel) {
+      var reps = ppSplitReps(sel); var known = TEAM_MEMBERS.map(function(m) { return m.email; });
+      return TEAM_MEMBERS.map(function(m) { return '<span class="pp-rep-opt' + (reps.indexOf(m.email) >= 0 ? ' on' : '') + '" data-rep="' + ppEsc(m.email) + '" onclick="this.classList.toggle(\'on\')">' + getTeamPhoto(m.email, 22) + ppEsc(m.name) + '</span>'; }).join('')
+        + reps.filter(function(r) { return known.indexOf(r) < 0; }).map(function(r) { return '<span class="pp-rep-opt on" data-rep="' + ppEsc(r) + '" onclick="this.classList.toggle(\'on\')">' + ppEsc(r) + '</span>'; }).join('');
+    }
+    function openCredModal(id) {
+      var c = id ? credList.find(function(x) { return x.id === id; }) : null;
+      var isNew = !c; c = c || { id: '', organization: '', status: 'active', rep: '', adminName: '', adminPhone: '', loginEmail: '', loginPassword: '', notes: '' };
+      var html = '<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + (isNew ? 'Add Client Credentials' : ppEsc(c.organization)) + '</h2><div class="modal-subtitle">' + (isNew ? 'Login details for a client admin account' : 'Edit credentials') + '</div></div>'
+        + '<div class="modal-body"><div class="detail-section" style="margin-top:20px"><div class="pp-form" id="credForm">'
+        + '<div class="full"><label>Organization</label><input id="cf_org" value="' + ppEsc(c.organization) + '" placeholder="e.g. Lovejoy ISD" autofocus></div>'
+        + '<div><label>Status</label><select id="cf_status">' + CRED_STATUSES.map(function(s) { return '<option value="' + s.val + '"' + (c.status === s.val ? ' selected' : '') + '>' + s.label + '</option>'; }).join('') + '</select></div>'
+        + '<div><label>Location Admin</label><input id="cf_admin" value="' + ppEsc(c.adminName) + '" placeholder="Name of the district admin"></div>'
+        + '<div><label>Cell Phone</label><input id="cf_phone" value="' + ppEsc(c.adminPhone) + '" placeholder="214-555-0100"></div>'
+        + '<div><label>Login Email</label><input id="cf_email" value="' + ppEsc(c.loginEmail) + '" placeholder="admin@district.org"></div>'
+        + '<div class="full"><label>Login Password</label><div style="display:flex;gap:8px;align-items:center"><input id="cf_pw" type="password" value="' + ppEsc(c.loginPassword) + '" style="flex:1"><button class="pp-mini-btn" type="button" style="width:38px;height:38px" onclick="var p=document.getElementById(\'cf_pw\');p.type=p.type===\'password\'?\'text\':\'password\'">' + ppSvg('eye') + '</button><button class="pp-mini-btn" type="button" style="width:38px;height:38px" title="Copy" onclick="ppCopy(document.getElementById(\'cf_pw\').value,\'Password\')">' + ppSvg('copy') + '</button></div></div>'
+        + '<div class="full"><label>PracticePlan Rep</label><div class="pp-reps-pick" id="cf_reps">' + credRepOptions(c.rep) + '</div></div>'
+        + '<div class="full"><label>Notes</label><textarea id="cf_notes" placeholder="Anything the team should know (second admin, SSO quirks, etc.)">' + ppEsc(c.notes) + '</textarea></div>'
+        + '</div></div>'
+        + '<div class="pp-modal-actions">' + (isNew ? '<span></span>' : '<button class="pp-btn danger" onclick="deleteCred(\'' + ppEsc(c.id) + '\')">Delete</button>') + '<div class="right"><button class="pp-btn" onclick="closeModal()">Cancel</button><button class="pp-btn primary" id="credSaveBtn" onclick="saveCredModal(\'' + ppEsc(c.id) + '\')">' + (isNew ? 'Add Client' : 'Save Changes') + '</button></div></div>'
+        + '</div>';
+      ppOpenModal(html);
+    }
+    async function saveCredModal(id) {
+      var org = document.getElementById('cf_org').value.trim();
+      if (!org) { showToast('Organization name is required', 'error'); document.getElementById('cf_org').focus(); return; }
+      var rec = { id: id || ppNewId('cr'), organization: org, status: document.getElementById('cf_status').value, rep: Array.from(document.querySelectorAll('#cf_reps .pp-rep-opt.on')).map(function(el) { return el.getAttribute('data-rep'); }).join(', '), adminName: document.getElementById('cf_admin').value.trim(), adminPhone: document.getElementById('cf_phone').value.trim(), loginEmail: document.getElementById('cf_email').value.trim(), loginPassword: document.getElementById('cf_pw').value, notes: document.getElementById('cf_notes').value.trim(), updatedAt: ppTodayISO(), updatedBy: currentUser?.email || '' };
+      var btn = document.getElementById('credSaveBtn'); btn.disabled = true; btn.textContent = 'Saving...';
+      try {
+        var r = await ppApi('saveCredential', { row: rec });
+        if (!r.success) throw new Error(r.error || 'Save failed');
+        var idx = credList.findIndex(function(x) { return x.id === rec.id; }); if (idx >= 0) credList[idx] = rec; else credList.push(rec);
+        closeModal(); populateCredRepFilter(); renderCredentials(); showToast(id ? 'Credentials updated' : 'Client added', 'success');
+        logActivityToServer(id ? 'updated credentials for' : 'added credentials for', org, rec.status, 'other');
+      } catch(e) { btn.disabled = false; btn.textContent = 'Save Changes'; showToast('Could not save: ' + e.message, 'error'); }
+    }
+    async function deleteCred(id) {
+      var c = credList.find(function(x) { return x.id === id; }); if (!c) return;
+      if (!confirm('Delete credentials for ' + c.organization + '? This cannot be undone.')) return;
+      try { var r = await ppApi('deleteCredential', { id: id }); if (!r.success) throw new Error(r.error || 'Delete failed'); credList = credList.filter(function(x) { return x.id !== id; }); closeModal(); renderCredentials(); showToast('Deleted ' + c.organization, 'success'); logActivityToServer('deleted credentials for', c.organization, '', 'archive'); }
+      catch(e) { showToast('Could not delete: ' + e.message, 'error'); }
+    }
+    function exportCredCSV() { ppDownloadCSV('practiceplan-credentials-' + ppTodayISO() + '.csv', CRED_COLS, credFiltered()); }
+    // Import: accepts this admin's own export OR a Monday.com "Client Credentials" export (group rows set the status)
+    var credImportRows = [];
+    function startCredImport() {
+      document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2);margin-bottom:14px">Upload a CSV. Two formats work: the Export from this tab, or a Monday.com export of the Client Credentials board (group headers like "Client Active Credentials" set each row\'s status). Existing organizations are updated by name; new ones are added.</p><button class="import-btn" onclick="document.getElementById(\'credImportFile\').click()">Choose CSV</button>';
+      document.querySelector('.import-title').textContent = 'Import Credentials';
+      document.getElementById('importOverlay').classList.add('active');
+    }
+    async function handleCredImportFile(file) {
+      if (!file) return;
+      var rows = parseCSV(await ppReadFileText(file)); if (!rows.length) { showToast('That file looks empty', 'error'); return; }
+      var byName = {}; credList.forEach(function(c) { byName[c.organization.toLowerCase().trim()] = c; });
+      credImportRows = []; var groupStatus = 'active';
+      var hIdx = rows.findIndex(function(r) { return r.map(function(v) { return v.trim().toLowerCase(); }).indexOf('organization') >= 0 || r.map(function(v) { return v.trim().toLowerCase(); }).indexOf('login email') >= 0; });
+      var header = hIdx >= 0 ? rows[hIdx].map(function(v) { return v.trim().toLowerCase(); }) : [];
+      var isOurs = header.indexOf('organization') >= 0;
+      var col = function(names) { for (var i = 0; i < names.length; i++) { var k = header.indexOf(names[i]); if (k >= 0) return k; } return -1; };
+      var iOrg = isOurs ? col(['organization']) : col(['name']), iRep = col(['rep', 'people']), iAdmin = col(['adminname', 'location admin']), iPhone = col(['adminphone', 'cell phone']), iEmail = col(['loginemail', 'login email']), iPw = col(['loginpassword', 'login pw', 'password']), iStatus = col(['status']), iNotes = col(['notes']);
+      var GROUPS = { 'client active credentials': 'active', 'client onboarding credentials': 'onboarding', 'on-hold': 'on-hold', 'on hold': 'on-hold', 'in-active credentials': 'inactive', 'inactive credentials': 'inactive', 'inactive': 'inactive' };
+      rows.forEach(function(r, ri) {
+        if (ri <= hIdx) { var g0 = (r[0] || '').trim().toLowerCase(); if (GROUPS[g0]) groupStatus = GROUPS[g0]; return; }
+        var first = (r[0] || '').trim(); var gl = first.toLowerCase();
+        if (GROUPS[gl]) { groupStatus = GROUPS[gl]; return; }
+        if (gl === 'name' || gl === 'organization') return;
+        var org = iOrg >= 0 ? (r[iOrg] || '').trim() : first; if (!org) return;
+        var restEmpty = [iAdmin, iEmail, iPw, iRep].every(function(k) { return k < 0 || !(r[k] || '').trim(); });
+        if (restEmpty && !isOurs) { return; } // Monday group/summary row with only a name
+        var status = iStatus >= 0 && (r[iStatus] || '').trim() ? (r[iStatus] || '').trim().toLowerCase() : groupStatus;
+        if (!CRED_STATUSES.some(function(s) { return s.val === status; })) status = 'active';
+        var existing = byName[org.toLowerCase()];
+        var phone = iPhone >= 0 ? (r[iPhone] || '').trim() : ''; var notes = iNotes >= 0 ? (r[iNotes] || '').trim() : '';
+        if (/^don'?t have/i.test(phone)) { phone = ''; if (!notes) notes = 'Phone not available'; }
+        credImportRows.push({ id: existing ? existing.id : ppNewId('cr'), organization: org, status: status, rep: ppSplitReps(iRep >= 0 ? r[iRep] : '').map(function(x) { var m = TEAM_MEMBERS.find(function(t) { return t.email === x || t.name.replace(/\.$/, '').toLowerCase() === x.toLowerCase().slice(0, t.name.length - 1) || (x.toLowerCase().indexOf(t.name.split(' ')[0].toLowerCase()) === 0 && x.indexOf(' ') > 0); }); return m ? m.email : x; }).join(', '), adminName: iAdmin >= 0 ? (r[iAdmin] || '').trim() : '', adminPhone: phone, loginEmail: iEmail >= 0 ? (r[iEmail] || '').trim() : '', loginPassword: iPw >= 0 ? (r[iPw] || '') : '', notes: notes, updatedAt: ppTodayISO(), updatedBy: currentUser?.email || '', _update: !!existing });
+      });
+      var upd = credImportRows.filter(function(x) { return x._update; }).length;
+      document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2)">' + credImportRows.length + ' rows found: <b>' + (credImportRows.length - upd) + ' new</b>, <b>' + upd + ' updates</b>.</p><table class="import-preview-table"><thead><tr><th>Organization</th><th>Status</th><th>Admin</th><th>Login</th></tr></thead><tbody>' + credImportRows.slice(0, 12).map(function(x) { return '<tr><td>' + ppEsc(x.organization) + (x._update ? ' <span class="tag amber" style="font-size:9px">update</span>' : '') + '</td><td>' + ppEsc(x.status) + '</td><td>' + ppEsc(x.adminName) + '</td><td>' + ppEsc(x.loginEmail) + '</td></tr>'; }).join('') + (credImportRows.length > 12 ? '<tr><td colspan="4" style="color:var(--text3)">...and ' + (credImportRows.length - 12) + ' more</td></tr>' : '') + '</tbody></table><div style="display:flex;gap:10px;justify-content:flex-end"><button class="import-btn secondary" onclick="closeImport()">Cancel</button><button class="import-btn" id="credImportRunBtn" onclick="runCredImport()"' + (credImportRows.length ? '' : ' disabled') + '>Import ' + credImportRows.length + ' rows</button></div>';
+    }
+    async function runCredImport() {
+      var btn = document.getElementById('credImportRunBtn'); btn.disabled = true; var ok = 0, failed = 0, batch = 6;
+      for (var i = 0; i < credImportRows.length; i += batch) {
+        var chunk = credImportRows.slice(i, i + batch).map(function(x) { var o = {}; CRED_COLS.forEach(function(c) { o[c] = x[c] === undefined ? '' : x[c]; }); return o; });
+        btn.textContent = 'Importing ' + Math.min(i + batch, credImportRows.length) + ' of ' + credImportRows.length + '...';
+        try { var r = await ppApi('bulkSaveCredentials', { rows: chunk }); if (r.success) ok += (r.saved || chunk.length); else failed += chunk.length; } catch(e) { failed += chunk.length; }
+      }
+      closeImport(); showToast('Imported ' + ok + ' credential rows' + (failed ? ' (' + failed + ' failed)' : ''), failed ? 'error' : 'success');
+      logActivityToServer('imported credentials', ok + ' rows', '', 'other');
+      await loadCredList(true); renderCredentials();
+    }
+
+    // =====================================================================
+    // TRADE SHOWS
+    // =====================================================================
+    async function loadTradeShows(force) {
+      if (tsLoaded && !force) return tsList;
+      try {
+        var result = await ppApi('getTradeShows');
+        if (result.success) { tsList = (result.rows || []).map(tsNormalize); tsLoaded = true; tsError = ''; }
+        else { tsError = result.error || 'Unknown error'; if (result.error === 'Unauthorized') logout(); }
+      } catch(e) { tsError = e.message || 'Request failed'; }
+      populateTsRepFilter();
+      return tsList;
+    }
+    function tsNormalize(r) {
+      var o = {}; TS_COLS.forEach(function(c) { o[c] = (r[c] === undefined || r[c] === null) ? '' : String(r[c]); });
+      ['eventDate', 'exhibitStart', 'exhibitEnd', 'updatedAt'].forEach(function(k) { o[k] = ppNormalizeDate(o[k]); });
+      o.podcast = /^(true|yes|1)$/i.test(o.podcast) ? 'TRUE' : ''; o.archived = /^(true|yes|1)$/i.test(o.archived) ? 'TRUE' : '';
+      if (!TS_AUDIENCES.some(function(a) { return a.val === o.audience; })) o.audience = o.audience ? 'other' : '';
+      return tsDerive(o);
+    }
+    function tsDerive(s) {
+      var dates = [s.eventDate, s.exhibitStart, s.exhibitEnd].filter(Boolean).sort();
+      s._start = dates[0] || ''; s._end = dates[dates.length - 1] || '';
+      var today = ppTodayISO();
+      s._isPast = !!s._end && s._end < today; s._isLive = !!s._start && s._start <= today && !s._isPast;
+      s._daysUntil = s._start ? ppDaysBetween(s._start, today) : null;
+      if (s._start) { var d = ppParseISO(s._start); s._quarter = d.getFullYear() + '-Q' + (Math.floor(d.getMonth() / 3) + 1); } else s._quarter = s.plannedQuarter || 'TBD';
+      s._reps = ppSplitReps(s.reps);
+      s._todo = [];
+      if (!s._isPast && s.registration !== 'skip') {
+        if (!s.registration || s.registration === 'need-to-pay') s._todo.push('Register');
+        if (s.hotel === 'need-to-book') s._todo.push('Hotel');
+        if (s.flight === 'need-to-book') s._todo.push('Flight');
+        if (!s._reps.length) s._todo.push('Assign rep');
+      }
+      return s;
+    }
+    function populateTsRepFilter() {
+      var sel = document.getElementById('tsRepFilter'); if (!sel) return;
+      var extras = {}; tsList.forEach(function(s) { s._reps.forEach(function(r) { if (!TEAM_MEMBERS.some(function(m) { return m.email === r; })) extras[r] = true; }); });
+      var cur = sel.value || 'all';
+      sel.innerHTML = '<option value="all">All reps</option>' + TEAM_MEMBERS.map(function(m) { return '<option value="' + ppEsc(m.email) + '">' + ppEsc(m.name) + '</option>'; }).join('') + Object.keys(extras).sort().map(function(r) { return '<option value="' + ppEsc(r) + '">' + ppEsc(r) + '</option>'; }).join('') + '<option value="none">Unassigned</option>';
+      sel.value = cur;
+    }
+    function toggleTsMyShows() { tsMyShows = !tsMyShows; var b = document.getElementById('tsMyShowsBtn'); if (b) b.classList.toggle('active', tsMyShows); renderTradeShows(); }
+    function setTsView(v) { tsView = v; document.getElementById('tsViewList').classList.toggle('on', v === 'list'); document.getElementById('tsViewCal').classList.toggle('on', v === 'calendar'); document.getElementById('tsListView').style.display = v === 'list' ? '' : 'none'; document.getElementById('tsCalView').style.display = v === 'calendar' ? '' : 'none'; renderTradeShows(); }
+    function tsFiltered() {
+      var q = tsSearch.trim(), me = currentUser?.email || '';
+      return tsList.filter(function(s) {
+        if (tsScope === 'archived') { if (!s.archived) return false; }
+        else { if (s.archived) return false; if (tsScope === 'upcoming' && s._isPast) return false; if (tsScope === 'past' && !s._isPast) return false; }
+        if (tsAudFilter !== 'all' && (s.audience || 'other') !== tsAudFilter) return false;
+        if (tsRepFilter === 'none') { if (s._reps.length) return false; } else if (tsRepFilter !== 'all' && s._reps.indexOf(tsRepFilter) < 0) return false;
+        if (tsMyShows && s._reps.indexOf(me) < 0) return false;
+        if (q) { var hay = [s.name, s.location, s.boothSize, s.notes, s._reps.map(ppRepFull).join(' '), tsAudLabel(s.audience)].join(' ').toLowerCase(); if (hay.indexOf(q) < 0) return false; }
+        return true;
+      }).sort(function(a, b) { var ka = a._start || '9999', kb = b._start || '9999'; return ka < kb ? -1 : ka > kb ? 1 : a.name.localeCompare(b.name); });
+    }
+    function tsAudLabel(v) { var a = TS_AUDIENCES.find(function(x) { return x.val === v; }); return a ? a.label : (v || 'Audience TBD'); }
+    function tsChip(s, field) {
+      var list = field === 'registration' ? TS_REG : TS_TRAVEL, val = s[field] || '', item = list.find(function(x) { return x.val === val; }) || list[0];
+      var label = item.label; if (!val) label = field === 'registration' ? 'Register' : (field === 'hotel' ? 'Hotel?' : 'Flight?');
+      return '<span class="pp-chip click ' + (val || 'unset') + '" title="Click to change" onclick="event.stopPropagation();tsCycle(\'' + ppEsc(s.id) + '\',\'' + field + '\')">' + ppEsc(label) + '</span>';
+    }
+    async function tsCycle(id, field) {
+      var s = tsList.find(function(x) { return x.id === id; }); if (!s) return;
+      var list = field === 'registration' ? TS_REG : TS_TRAVEL, vals = list.map(function(x) { return x.val; });
+      var next = vals[(vals.indexOf(s[field] || '') + 1) % vals.length];
+      var prev = s[field]; s[field] = next; tsDerive(s); renderTradeShows();
+      try { await tsSave(s, false); var lbl = (list.find(function(x) { return x.val === next; }) || {}).label; showToast(s.name + ': ' + field + ' set to ' + lbl, 'success'); logActivityToServer('set ' + field + ' for', s.name, lbl, 'status'); }
+      catch(e) { s[field] = prev; tsDerive(s); renderTradeShows(); showToast('Could not save: ' + e.message, 'error'); }
+    }
+    async function tsSave(s, showToastOnSuccess) {
+      var rec = {}; TS_COLS.forEach(function(c) { rec[c] = s[c] === undefined ? '' : s[c]; });
+      rec.updatedAt = ppTodayISO(); rec.updatedBy = currentUser?.email || ''; s.updatedAt = rec.updatedAt; s.updatedBy = rec.updatedBy;
+      var r = await ppApi('saveTradeShow', { row: rec }); if (!r.success) throw new Error(r.error || 'Save failed');
+      if (showToastOnSuccess) showToast('Saved ' + s.name, 'success');
+    }
+    function renderTsStats() {
+      var el = document.getElementById('tsStats'); if (!el) return;
+      var today = ppTodayISO(), year = today.slice(0, 4), active = tsList.filter(function(s) { return !s.archived; });
+      var next90 = active.filter(function(s) { return !s._isPast && s._daysUntil !== null && s._daysUntil <= 90; }).length;
+      var needReg = active.filter(function(s) { return !s._isPast && s._todo.indexOf('Register') >= 0; }).length;
+      var needTravel = active.filter(function(s) { return !s._isPast && (s._todo.indexOf('Hotel') >= 0 || s._todo.indexOf('Flight') >= 0); }).length;
+      var thisYear = active.filter(function(s) { return s._quarter.indexOf(year) === 0; });
+      var spend = thisYear.reduce(function(sum, s) { return sum + (parseFloat(String(s.cost).replace(/[^0-9.]/g, '')) || 0); }, 0);
+      var outs = thisYear.filter(function(s) { return s._isPast; }).reduce(function(o, s) { o.l += parseInt(s.leads) || 0; o.d += parseInt(s.demos) || 0; o.w += parseInt(s.deals) || 0; return o; }, { l: 0, d: 0, w: 0 });
+      el.innerHTML = '<div class="pp-stat" onclick="tsScope=\'upcoming\';document.getElementById(\'tsScopeFilter\').value=\'upcoming\';renderTradeShows()"><div class="v">' + next90 + '</div><div class="l">Next 90 days</div><div class="s">' + active.filter(function(s) { return !s._isPast; }).length + ' upcoming total</div></div>'
+        + '<div class="pp-stat ' + (needReg ? 'warn' : 'good') + '" style="cursor:default"><div class="v">' + needReg + '</div><div class="l">Need to register</div><div class="s">unpaid or unregistered</div></div>'
+        + '<div class="pp-stat ' + (needTravel ? 'warn' : 'good') + '" style="cursor:default"><div class="v">' + needTravel + '</div><div class="l">Travel to book</div><div class="s">hotel or flight outstanding</div></div>'
+        + '<div class="pp-stat" style="cursor:default"><div class="v">' + ppFmtMoney(spend) + '</div><div class="l">' + year + ' event spend</div><div class="s">' + thisYear.length + ' shows on the calendar</div></div>'
+        + '<div class="pp-stat" style="cursor:default"><div class="v">' + outs.l + ' <span style="font-size:12px;color:var(--text3);font-weight:600">/ ' + outs.d + ' / ' + outs.w + '</span></div><div class="l">' + year + ' leads / demos / deals</div><div class="s">from completed shows</div></div>';
+    }
+    function tsRow(s) {
+      var soon = s._daysUntil !== null && s._daysUntil >= 0 && s._daysUntil <= 21;
+      var when = s._isLive ? 'Happening now' : s._isPast ? 'Done' : s._daysUntil === null ? 'Date TBD' : s._daysUntil === 0 ? 'Today' : 'in ' + s._daysUntil + ' day' + (s._daysUntil === 1 ? '' : 's');
+      var out = '<span class="ts-outcome" onclick="event.stopPropagation();openTsModal(\'' + ppEsc(s.id) + '\',true)" title="Click to record outcomes"><span><b>Leads</b>' + ppEsc(s.leads || '-') + '</span><span><b>Demos</b>' + ppEsc(s.demos || '-') + '</span><span><b>Deals</b>' + ppEsc(s.deals || '-') + '</span></span>';
+      return '<tr class="clickable' + (s._isPast ? ' past' : '') + '" onclick="openTsModal(\'' + ppEsc(s.id) + '\')">'
+        + '<td><div class="pp-org-cell"><div><div class="pp-org-name" style="max-width:280px">' + ppEsc(s.name) + (s.podcast ? ' <span title="Includes podcast" style="color:var(--pp-blue);display:inline-flex;vertical-align:middle;width:12px;height:12px">' + ppSvg('mic') + '</span>' : '') + '</div><div class="pp-org-sub" style="max-width:280px">' + (s.location ? ppEsc(s.location) : '<span style="opacity:0.7">Location TBD</span>') + '</div></div></div></td>'
+        + '<td><div class="ts-date' + (soon ? ' soon' : '') + '">' + ppFmtRange(s._start, s._end) + '<span class="sub">' + when + '</span></div></td>'
+        + '<td><span class="pp-chip aud-' + (s.audience || 'other') + '">' + ppEsc(tsAudLabel(s.audience)) + '</span></td>'
+        + '<td>' + ppRepAvatars(s.reps, 26) + '</td>'
+        + '<td>' + tsChip(s, 'registration') + '</td>'
+        + '<td style="font-weight:600">' + (s.cost ? ppFmtMoney(s.cost) : '<span style="color:var(--text3);font-weight:400">-</span>') + '</td>'
+        + '<td style="color:var(--text2)">' + ppEsc(s.boothSize || '-') + '</td>'
+        + '<td>' + tsChip(s, 'hotel') + '</td>'
+        + '<td>' + tsChip(s, 'flight') + '</td>'
+        + '<td>' + out + '</td>'
+        + '<td style="text-align:right;white-space:nowrap">' + (s.link ? '<a class="pp-mini-btn ts-link" href="' + ppEsc(s.link) + '" target="_blank" rel="noopener" title="Open event site" onclick="event.stopPropagation()">' + ppSvg('link') + '</a> ' : '') + '<button class="pp-mini-btn" title="Edit" onclick="event.stopPropagation();openTsModal(\'' + ppEsc(s.id) + '\')">' + ppSvg('edit') + '</button></td>'
+        + '</tr>';
+    }
+    function tsCard(s) {
+      var soon = s._daysUntil !== null && s._daysUntil >= 0 && s._daysUntil <= 21;
+      return '<div class="pp-mcard" onclick="openTsModal(\'' + ppEsc(s.id) + '\')"><div class="pp-mcard-head"><div class="pp-mcard-title">' + ppEsc(s.name) + '</div><span class="pp-chip aud-' + (s.audience || 'other') + '">' + ppEsc(tsAudLabel(s.audience)) + '</span></div>'
+        + '<div class="pp-mcard-row"><span class="k">When</span><span class="v ' + (soon ? 'ts-date soon' : '') + '">' + ppFmtRange(s._start, s._end) + (s._daysUntil !== null && !s._isPast ? ' <span style="color:' + (soon ? '#d97706' : 'var(--text3)') + '">(' + (s._daysUntil === 0 ? 'today' : 'in ' + s._daysUntil + 'd') + ')</span>' : '') + '</span></div>'
+        + '<div class="pp-mcard-row"><span class="k">Where</span><span class="v">' + ppEsc(s.location || 'TBD') + '</span></div>'
+        + '<div class="pp-mcard-row"><span class="k">Reps</span><span class="v">' + ppRepAvatars(s.reps, 22) + '</span></div>'
+        + '<div class="pp-mcard-row"><span class="k">Status</span><span class="v" style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">' + tsChip(s, 'registration') + tsChip(s, 'hotel') + tsChip(s, 'flight') + '</span></div>'
+        + (s.cost ? '<div class="pp-mcard-row"><span class="k">Cost</span><span class="v">' + ppFmtMoney(s.cost) + (s.boothSize ? ' &middot; ' + ppEsc(s.boothSize) : '') + '</span></div>' : '') + '</div>';
+    }
+    function renderTradeShows() {
+      renderTsStats();
+      if (tsView === 'calendar') { renderTsCalendar(); return; }
+      var nextEl = document.getElementById('tsNext'), groupsEl = document.getElementById('tsGroups'); if (!groupsEl) return;
+      if (!tsLoaded) { nextEl.innerHTML = ''; groupsEl.innerHTML = tsError ? ppSetupEmpty('Trade Shows') + '<div class="pp-toolbar-note" style="text-align:center;padding-bottom:20px">Error: ' + ppEsc(tsError) + '</div>' : '<div class="pp-empty">Loading shows...</div>'; return; }
+      var rows = tsFiltered();
+      // Up next strip: next 4 upcoming shows from the full (unfiltered by scope) active list
+      var upcoming = tsList.filter(function(s) { return !s.archived && !s._isPast && s._start; }).sort(function(a, b) { return a._start < b._start ? -1 : 1; }).slice(0, 4);
+      nextEl.innerHTML = (tsScope === 'upcoming' && !tsSearch && tsAudFilter === 'all' && tsRepFilter === 'all' && !tsMyShows) ? upcoming.map(function(s) {
+        var soon = s._daysUntil <= 21;
+        return '<div class="ts-next-card' + (soon ? ' soon' : '') + '" onclick="openTsModal(\'' + ppEsc(s.id) + '\')"><div class="ts-next-days">' + (s._isLive ? 'Happening now' : s._daysUntil === 0 ? 'Today' : 'In ' + s._daysUntil + ' day' + (s._daysUntil === 1 ? '' : 's')) + '</div><div class="ts-next-name">' + ppEsc(s.name) + '</div><div class="ts-next-meta">' + ppFmtRange(s._start, s._end) + (s.location ? ' &middot; ' + ppEsc(s.location.replace(/, USA$/, '')) : '') + '</div><div class="ts-next-foot">' + ppRepAvatars(s.reps, 22) + '<div class="ts-next-todo">' + (s._todo.length ? s._todo.map(function(t) { return '<span class="pp-chip need-to-book">' + ppEsc(t) + '</span>'; }).join('') : '<span class="pp-chip booked">Ready</span>') + '</div></div></div>';
+      }).join('') : '';
+      if (!rows.length) { groupsEl.innerHTML = '<div class="ts-group"><div class="pp-empty"><strong>No shows match</strong>' + (tsList.length ? 'Try a different scope, audience, or rep.' : 'Add your first show, or import the Monday.com export.') + '</div></div>'; return; }
+      var groups = {}; rows.forEach(function(s) { (groups[s._quarter] = groups[s._quarter] || []).push(s); });
+      var keys = Object.keys(groups).sort(function(a, b) { if (a === 'TBD') return 1; if (b === 'TBD') return -1; return a < b ? -1 : 1; });
+      var hdr = '<thead><tr><th>Show</th><th>Dates</th><th>Audience</th><th>Reps</th><th>Registration</th><th>Cost</th><th>Booth</th><th>Hotel</th><th>Flight</th><th>Outcomes</th><th></th></tr></thead>';
+      groupsEl.innerHTML = keys.map(function(k) {
+        var list = groups[k], spend = list.reduce(function(sum, s) { return sum + (parseFloat(String(s.cost).replace(/[^0-9.]/g, '')) || 0); }, 0), todo = list.filter(function(s) { return s._todo.length; }).length;
+        var title = k === 'TBD' ? 'Dates to be determined' : 'Q' + k.split('-Q')[1] + ' ' + k.split('-Q')[0];
+        var repSet = {}; list.forEach(function(s) { s._reps.forEach(function(r) { repSet[r] = true; }); });
+        var collapsed = tsCollapsed[k] === true || (tsCollapsed[k] === undefined && list.every(function(s) { return s._isPast; }) && tsScope !== 'past');
+        return '<div class="ts-group' + (collapsed ? ' collapsed' : '') + '" id="tsg_' + ppEsc(k) + '"><div class="ts-group-head" onclick="tsCollapsed[\'' + ppEsc(k) + '\']=!this.parentNode.classList.contains(\'collapsed\');this.parentNode.classList.toggle(\'collapsed\')"><div class="ts-group-title"><span class="ts-caret">&#x25BC;</span>' + title + '<span class="n">' + list.length + ' show' + (list.length === 1 ? '' : 's') + '</span></div><div class="ts-group-meta"><span><b>' + ppFmtMoney(spend) + '</b> committed</span><span>' + ppRepAvatars(Object.keys(repSet).join(','), 20) + '</span>' + (todo ? '<span style="color:#d97706"><b>' + todo + '</b> need attention</span>' : '<span style="color:var(--pp-green)">All set</span>') + '</div></div>'
+          + '<div class="ts-group-body"><div class="table-wrapper" style="border:none;border-radius:0"><table class="pp-table" style="min-width:1100px">' + hdr + '<tbody>' + list.map(tsRow).join('') + '</tbody></table></div><div class="pp-mobile-cards" style="padding:10px">' + list.map(tsCard).join('') + '</div></div></div>';
+      }).join('');
+    }
+    // ---- calendar ----
+    function renderTsCalendar() {
+      var grid = document.getElementById('tsCalGrid'), mobile = document.getElementById('tsCalMobile'), title = document.getElementById('tsCalMonth'); if (!grid) return;
+      var y = tsCalDate.getFullYear(), m = tsCalDate.getMonth();
+      title.textContent = tsCalDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      var shows = tsList.filter(function(s) { return !s.archived && s._start; });
+      var first = new Date(y, m, 1), startDow = first.getDay(), daysInMonth = new Date(y, m + 1, 0).getDate(), today = ppTodayISO();
+      var eventsOn = function(iso) { return shows.filter(function(s) { return s._start <= iso && s._end >= iso; }); };
+      var html = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(function(d) { return '<div class="calendar-day-header">' + d + '</div>'; }).join('');
+      var prevDays = new Date(y, m, 0).getDate();
+      for (var i = 0; i < startDow; i++) html += '<div class="calendar-day other-month"><div class="calendar-date">' + (prevDays - startDow + i + 1) + '</div></div>';
+      for (var d = 1; d <= daysInMonth; d++) {
+        var iso = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0'), evs = eventsOn(iso);
+        html += '<div class="calendar-day' + (iso === today ? ' today' : '') + (evs.length ? ' has-events' : '') + '"><div class="calendar-date">' + d + '</div>' + evs.slice(0, 3).map(function(s) { return '<div class="ts-cal-event aud-' + (s.audience || 'other') + (s._isPast ? ' past' : '') + '" title="' + ppEsc(s.name + (s.location ? ' - ' + s.location : '')) + '" onclick="openTsModal(\'' + ppEsc(s.id) + '\')">' + (s._start === iso ? '' : '&rsaquo; ') + ppEsc(s.name) + '</div>'; }).join('') + (evs.length > 3 ? '<div class="calendar-more">+' + (evs.length - 3) + ' more</div>' : '') + '</div>';
+      }
+      var total = startDow + daysInMonth, trailing = (7 - (total % 7)) % 7;
+      for (var t = 1; t <= trailing; t++) html += '<div class="calendar-day other-month"><div class="calendar-date">' + t + '</div></div>';
+      grid.innerHTML = html;
+      var monthShows = shows.filter(function(s) { var mStart = y + '-' + String(m + 1).padStart(2, '0') + '-01', mEnd = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(daysInMonth).padStart(2, '0'); return s._start <= mEnd && s._end >= mStart; }).sort(function(a, b) { return a._start < b._start ? -1 : 1; });
+      mobile.innerHTML = monthShows.length ? monthShows.map(function(s) { var sd = ppParseISO(s._start); return '<div class="cal-list-day"><div class="cal-list-date' + (s._isPast ? ' is-past' : '') + '"><div class="cal-date-dow">' + sd.toLocaleDateString('en-US', { weekday: 'short' }) + '</div><div class="cal-date-num">' + sd.getDate() + '</div></div><div class="cal-list-events"><div class="cal-list-event" onclick="openTsModal(\'' + ppEsc(s.id) + '\')"><span class="cal-list-event-dot ' + (s._isPast ? 'past-event' : 'upcoming') + '"></span><div class="cal-list-event-info"><div class="cal-list-event-org">' + ppEsc(s.name) + '</div><div class="cal-list-event-meta">' + ppFmtRange(s._start, s._end) + (s.location ? ' &middot; ' + ppEsc(s.location) : '') + '</div></div></div></div></div>'; }).join('') : '<div class="cal-list-no-events" style="padding:20px 16px">No shows this month</div>';
+    }
+    // ---- add / edit modal ----
+    function openTsModal(id, focusOutcomes) {
+      var s = id ? tsList.find(function(x) { return x.id === id; }) : null; var isNew = !s;
+      s = s || { id: '', name: '', audience: '', reps: '', eventDate: '', exhibitStart: '', exhibitEnd: '', location: '', link: '', registration: '', cost: '', boothSize: '', podcast: '', hotel: '', flight: '', leads: '', demos: '', deals: '', plannedQuarter: '', notes: '', archived: '' };
+      var opt = function(list, val) { return list.map(function(x) { return '<option value="' + x.val + '"' + (val === x.val ? ' selected' : '') + '>' + x.label + '</option>'; }).join(''); };
+      var html = '<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + (isNew ? 'Add Trade Show' : ppEsc(s.name)) + '</h2><div class="modal-subtitle">' + (isNew ? 'A conference, workshop, or regional meeting' : ppFmtRange(s._start, s._end) + (s.location ? ' &middot; ' + ppEsc(s.location) : '')) + '</div></div>'
+        + '<div class="modal-body"><div class="detail-section" style="margin-top:20px"><h3>Event</h3><div class="pp-form">'
+        + '<div class="full"><label>Show / Event Name</label><input id="tf_name" value="' + ppEsc(s.name) + '" placeholder="e.g. THSADA Fall Forum" autofocus></div>'
+        + '<div><label>Audience</label><select id="tf_aud"><option value="">Select...</option>' + opt(TS_AUDIENCES, s.audience) + '</select></div>'
+        + '<div><label>Location</label><input id="tf_loc" value="' + ppEsc(s.location) + '" placeholder="City, ST"></div>'
+        + '<div><label>Event Date</label><input id="tf_date" type="date" value="' + ppEsc(s.eventDate) + '"></div>'
+        + '<div><label>Planned quarter (if dates TBD)</label><input id="tf_pq" value="' + ppEsc(s.plannedQuarter) + '" placeholder="e.g. 2027-Q1"><div class="hint">Only used when no date is set</div></div>'
+        + '<div><label>Exhibitor Days Start</label><input id="tf_es" type="date" value="' + ppEsc(s.exhibitStart) + '"></div>'
+        + '<div><label>Exhibitor Days End</label><input id="tf_ee" type="date" value="' + ppEsc(s.exhibitEnd) + '"></div>'
+        + '<div class="full"><label>Event Link</label><input id="tf_link" value="' + ppEsc(s.link) + '" placeholder="https://"></div>'
+        + '</div></div>'
+        + '<div class="detail-section"><h3>Booth &amp; Logistics</h3><div class="pp-form">'
+        + '<div><label>Registration</label><select id="tf_reg">' + opt(TS_REG, s.registration) + '</select></div>'
+        + '<div><label>Event Cost ($)</label><input id="tf_cost" value="' + ppEsc(s.cost) + '" placeholder="2200" inputmode="numeric"></div>'
+        + '<div><label>Booth Size</label><input id="tf_booth" value="' + ppEsc(s.boothSize) + '" placeholder="10 x 10, 8 x 8, No Booth Needed"></div>'
+        + '<div><label>Includes Podcast</label><select id="tf_pod"><option value=""' + (!s.podcast ? ' selected' : '') + '>No</option><option value="TRUE"' + (s.podcast ? ' selected' : '') + '>Yes</option></select></div>'
+        + '<div><label>Hotel</label><select id="tf_hotel">' + opt(TS_TRAVEL, s.hotel) + '</select></div>'
+        + '<div><label>Flight</label><select id="tf_flight">' + opt(TS_TRAVEL, s.flight) + '</select></div>'
+        + '<div class="full"><label>PP Reps Attending</label><div class="pp-reps-pick" id="tf_reps">' + credRepOptions(s.reps) + '</div></div>'
+        + '</div></div>'
+        + '<div class="detail-section" id="tf_outcomes_section"><h3>Outcomes</h3><div class="pp-form" style="grid-template-columns:repeat(3,1fr)">'
+        + '<div><label>Leads</label><input id="tf_leads" value="' + ppEsc(s.leads) + '" inputmode="numeric" placeholder="0"></div>'
+        + '<div><label>Demos Booked</label><input id="tf_demos" value="' + ppEsc(s.demos) + '" inputmode="numeric" placeholder="0"></div>'
+        + '<div><label>Deals</label><input id="tf_deals" value="' + ppEsc(s.deals) + '" inputmode="numeric" placeholder="0"></div>'
+        + '<div class="full"><label>Notes</label><textarea id="tf_notes" placeholder="Booth number, shipping, who we met, follow-ups...">' + ppEsc(s.notes) + '</textarea></div>'
+        + '</div></div>'
+        + '<div class="pp-modal-actions">' + (isNew ? '<span></span>' : '<div style="display:flex;gap:8px"><button class="pp-btn danger" onclick="deleteTs(\'' + ppEsc(s.id) + '\')">Delete</button><button class="pp-btn" onclick="archiveTs(\'' + ppEsc(s.id) + '\')">' + (s.archived ? 'Unarchive' : 'Archive') + '</button></div>') + '<div class="right"><button class="pp-btn" onclick="closeModal()">Cancel</button><button class="pp-btn primary" id="tsSaveBtn" onclick="saveTsModal(\'' + ppEsc(s.id) + '\')">' + (isNew ? 'Add Show' : 'Save Changes') + '</button></div></div>'
+        + '</div>';
+      ppOpenModal(html);
+      if (focusOutcomes) setTimeout(function() { var sec = document.getElementById('tf_outcomes_section'); if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' }); var l = document.getElementById('tf_leads'); if (l) l.focus(); }, 60);
+    }
+    async function saveTsModal(id) {
+      var name = document.getElementById('tf_name').value.trim();
+      if (!name) { showToast('Show name is required', 'error'); document.getElementById('tf_name').focus(); return; }
+      var existing = id ? tsList.find(function(x) { return x.id === id; }) : null;
+      var s = Object.assign({}, existing || {}, { id: id || ppNewId('ts'), name: name, audience: document.getElementById('tf_aud').value, location: document.getElementById('tf_loc').value.trim(), eventDate: document.getElementById('tf_date').value, exhibitStart: document.getElementById('tf_es').value, exhibitEnd: document.getElementById('tf_ee').value, plannedQuarter: document.getElementById('tf_pq').value.trim(), link: document.getElementById('tf_link').value.trim(), registration: document.getElementById('tf_reg').value, cost: document.getElementById('tf_cost').value.replace(/[^0-9.]/g, ''), boothSize: document.getElementById('tf_booth').value.trim(), podcast: document.getElementById('tf_pod').value, hotel: document.getElementById('tf_hotel').value, flight: document.getElementById('tf_flight').value, reps: Array.from(document.querySelectorAll('#tf_reps .pp-rep-opt.on')).map(function(el) { return el.getAttribute('data-rep'); }).join(', '), leads: document.getElementById('tf_leads').value.trim(), demos: document.getElementById('tf_demos').value.trim(), deals: document.getElementById('tf_deals').value.trim(), notes: document.getElementById('tf_notes').value.trim(), archived: existing ? existing.archived : '' });
+      tsDerive(s);
+      var btn = document.getElementById('tsSaveBtn'); btn.disabled = true; btn.textContent = 'Saving...';
+      try {
+        await tsSave(s, false);
+        var idx = tsList.findIndex(function(x) { return x.id === s.id; }); if (idx >= 0) tsList[idx] = s; else tsList.push(s);
+        closeModal(); populateTsRepFilter(); renderTradeShows(); showToast(id ? 'Show updated' : 'Show added', 'success');
+        logActivityToServer(id ? 'updated trade show' : 'added trade show', name, ppFmtRange(s._start, s._end), 'other');
+      } catch(e) { btn.disabled = false; btn.textContent = 'Save Changes'; showToast('Could not save: ' + e.message, 'error'); }
+    }
+    async function archiveTs(id) {
+      var s = tsList.find(function(x) { return x.id === id; }); if (!s) return;
+      var prev = s.archived; s.archived = prev ? '' : 'TRUE';
+      try { await tsSave(s, false); closeModal(); renderTradeShows(); showToast((prev ? 'Restored ' : 'Archived ') + s.name, 'success'); logActivityToServer(prev ? 'restored trade show' : 'archived trade show', s.name, '', 'archive'); }
+      catch(e) { s.archived = prev; showToast('Could not save: ' + e.message, 'error'); }
+    }
+    async function deleteTs(id) {
+      var s = tsList.find(function(x) { return x.id === id; }); if (!s) return;
+      if (!confirm('Delete "' + s.name + '"? Use Archive if you want to keep the history.')) return;
+      try { var r = await ppApi('deleteTradeShow', { id: id }); if (!r.success) throw new Error(r.error || 'Delete failed'); tsList = tsList.filter(function(x) { return x.id !== id; }); closeModal(); renderTradeShows(); showToast('Deleted ' + s.name, 'success'); logActivityToServer('deleted trade show', s.name, '', 'archive'); }
+      catch(e) { showToast('Could not delete: ' + e.message, 'error'); }
+    }
+    function exportTsCSV() { ppDownloadCSV('practiceplan-tradeshows-' + ppTodayISO() + '.csv', TS_COLS, tsFiltered()); }
+    // Import: accepts this admin's export OR a Monday.com "Trade Show / Event Calendar" export saved as CSV (quarter group rows set plannedQuarter)
+    var tsImportRows = [];
+    function startTsImport() {
+      document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2);margin-bottom:14px">Upload a CSV. Two formats work: the Export from this tab, or a Monday.com export of the Trade Show board (open the .xlsx in Excel or Sheets and save as CSV first). Shows are matched by Monday Item ID or by name + date; matches are updated, everything else is added.</p><button class="import-btn" onclick="document.getElementById(\'tsImportFile\').click()">Choose CSV</button>';
+      document.querySelector('.import-title').textContent = 'Import Trade Shows';
+      document.getElementById('importOverlay').classList.add('active');
+    }
+    async function handleTsImportFile(file) {
+      if (!file) return;
+      var rows = parseCSV(await ppReadFileText(file)); if (!rows.length) { showToast('That file looks empty', 'error'); return; }
+      var norm = function(v) { return String(v || '').trim().toLowerCase(); };
+      var hIdx = rows.findIndex(function(r) { var h = r.map(norm); return h.indexOf('name') >= 0 && h.indexOf('audience') >= 0; });
+      if (hIdx < 0) { showToast('Could not find a header row with Name and Audience', 'error'); return; }
+      var header = rows[hIdx].map(norm), isOurs = header.indexOf('exhibitstart') >= 0;
+      var col = function(names) { for (var i = 0; i < names.length; i++) { var k = header.indexOf(names[i]); if (k >= 0) return k; } return -1; };
+      var C = { id: col(['id', 'item id (auto generated)', 'item id']), name: col(['name']), audience: col(['audience']), reps: col(['reps', 'pp rep attending']), eventDate: col(['eventdate', 'date(s)', 'date']), exhibitStart: col(['exhibitstart', 'exhibitor days - start']), exhibitEnd: col(['exhibitend', 'exhibitor days - end']), location: col(['location', 'location 1']), link: col(['link']), registration: col(['registration', 'registration paid']), cost: col(['cost', 'event cost']), boothSize: col(['boothsize', 'booth size']), podcast: col(['podcast', 'includes podcast']), hotel: col(['hotel', 'hotel booked?']), flight: col(['flight', 'flight booked?']), leads: col(['leads', 'outcome leads']), demos: col(['demos', 'outcome demos']), deals: col(['deals', 'outcome deals']), plannedQuarter: col(['plannedquarter']), notes: col(['notes']), archived: col(['archived']) };
+      var AUD = { supers: 'supers', "ad's only": 'ads', ads: 'ads', sbo: 'sbo', "muni's": 'munis', munis: 'munis', 'head of schools': 'heads', heads: 'heads' };
+      var REG = { paid: 'paid', 'need to pay': 'need-to-pay', 'need-to-pay': 'need-to-pay', 'sold out': 'sold-out', 'sold-out': 'sold-out', skip: 'skip', 'not attending': 'skip' };
+      var TRV = { booked: 'booked', 'need to book': 'need-to-book', 'need-to-book': 'need-to-book', driving: 'driving', na: 'na', 'n/a': 'na' };
+      var repMap = function(x) { var l = x.toLowerCase(); var m = TEAM_MEMBERS.find(function(t) { return t.email === l || (l.indexOf(t.name.split(' ')[0].toLowerCase()) === 0 && l.indexOf(' ') > 0 && l.split(' ')[1].charAt(0) === t.name.split(' ')[1].charAt(0).toLowerCase()); }); return m ? m.email : x; };
+      var byId = {}, byKey = {}; tsList.forEach(function(s) { byId[s.id] = s; byKey[(s.name + '|' + s._start).toLowerCase()] = s; });
+      tsImportRows = []; var group = '';
+      rows.forEach(function(r, ri) {
+        var first = (r[0] || '').trim(); var h = r.map(norm);
+        if (h.indexOf('name') >= 0 && h.indexOf('audience') >= 0) return;
+        if (ri < hIdx) { group = first; return; }
+        var others = [C.audience, C.reps, C.eventDate, C.location].every(function(k) { return k < 0 || !(r[k] || '').trim(); });
+        if (first && others && !isOurs) { group = first.replace(/^"/, ''); return; }
+        if (!first) return;
+        var g = function(k) { return k >= 0 ? String(r[k] || '').trim() : ''; };
+        var m = group.match(/(?:(\d{4})\s*-\s*)?Q(\d)/i);
+        var rec = { id: g(C.id).replace(/\.0$/, ''), name: g(C.name) || first, audience: AUD[norm(g(C.audience))] || (g(C.audience) ? 'other' : ''), reps: ppSplitReps(g(C.reps)).map(repMap).join(', '), eventDate: ppNormalizeDate(g(C.eventDate)), exhibitStart: ppNormalizeDate(g(C.exhibitStart)), exhibitEnd: ppNormalizeDate(g(C.exhibitEnd)), location: g(C.location), link: g(C.link).replace(/^link\s*-\s*/i, ''), registration: REG[norm(g(C.registration))] || '', cost: g(C.cost).replace(/[^0-9.]/g, ''), boothSize: g(C.boothSize), podcast: /^(true|yes|1|x)$/i.test(g(C.podcast)) ? 'TRUE' : '', hotel: TRV[norm(g(C.hotel))] || '', flight: TRV[norm(g(C.flight))] || '', leads: g(C.leads), demos: g(C.demos), deals: g(C.deals), plannedQuarter: g(C.plannedQuarter) || (m ? (m[1] || '2026') + '-Q' + m[2] : ''), notes: g(C.notes), archived: (/^(true|yes|1)$/i.test(g(C.archived)) || /^archived/i.test(group)) ? 'TRUE' : '', updatedAt: ppTodayISO(), updatedBy: currentUser?.email || '' };
+        tsDerive(rec);
+        var existing = (rec.id && byId[rec.id]) || byKey[(rec.name + '|' + rec._start).toLowerCase()];
+        if (existing) { rec.id = existing.id; rec._update = true; } else if (!rec.id) rec.id = ppNewId('ts');
+        tsImportRows.push(rec);
+      });
+      var upd = tsImportRows.filter(function(x) { return x._update; }).length;
+      document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2)">' + tsImportRows.length + ' shows found: <b>' + (tsImportRows.length - upd) + ' new</b>, <b>' + upd + ' updates</b>.</p><table class="import-preview-table"><thead><tr><th>Show</th><th>Dates</th><th>Audience</th><th>Reps</th></tr></thead><tbody>' + tsImportRows.slice(0, 12).map(function(x) { return '<tr><td>' + ppEsc(x.name) + (x._update ? ' <span class="tag amber" style="font-size:9px">update</span>' : '') + (x.archived ? ' <span class="tag" style="font-size:9px">archived</span>' : '') + '</td><td>' + ppFmtRange(x._start, x._end) + '</td><td>' + ppEsc(tsAudLabel(x.audience)) + '</td><td>' + ppEsc(x._reps.map(ppRepName).join(', ')) + '</td></tr>'; }).join('') + (tsImportRows.length > 12 ? '<tr><td colspan="4" style="color:var(--text3)">...and ' + (tsImportRows.length - 12) + ' more</td></tr>' : '') + '</tbody></table><div style="display:flex;gap:10px;justify-content:flex-end"><button class="import-btn secondary" onclick="closeImport()">Cancel</button><button class="import-btn" id="tsImportRunBtn" onclick="runTsImport()"' + (tsImportRows.length ? '' : ' disabled') + '>Import ' + tsImportRows.length + ' shows</button></div>';
+    }
+    async function runTsImport() {
+      var btn = document.getElementById('tsImportRunBtn'); btn.disabled = true; var ok = 0, failed = 0, batch = 5;
+      for (var i = 0; i < tsImportRows.length; i += batch) {
+        var chunk = tsImportRows.slice(i, i + batch).map(function(x) { var o = {}; TS_COLS.forEach(function(c) { o[c] = x[c] === undefined ? '' : x[c]; }); return o; });
+        btn.textContent = 'Importing ' + Math.min(i + batch, tsImportRows.length) + ' of ' + tsImportRows.length + '...';
+        try { var r = await ppApi('bulkSaveTradeShows', { rows: chunk }); if (r.success) ok += (r.saved || chunk.length); else failed += chunk.length; } catch(e) { failed += chunk.length; }
+      }
+      closeImport(); showToast('Imported ' + ok + ' shows' + (failed ? ' (' + failed + ' failed)' : ''), failed ? 'error' : 'success');
+      logActivityToServer('imported trade shows', ok + ' rows', '', 'other');
+      await loadTradeShows(true); renderTradeShows();
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
