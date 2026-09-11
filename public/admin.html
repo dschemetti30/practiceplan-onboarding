@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PracticePlan - Client Onboarding Admin</title>
   <link rel="icon" type="image/svg+xml" href="https://practiceplan-onboarding.vercel.app/favicon.svg">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#0076bb">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     :root{--pp-blue:#0076bb;--pp-green:#00a84f;--bg:#f1f5f9;--card:#fff;--border:#e2e8f0;--text:#1e293b;--text2:#64748b;--text3:#94a3b8}
@@ -860,6 +862,232 @@
       .ts-group-body .table-wrapper{display:none}
       .ts-next{grid-template-columns:1fr}
     }
+    /* =====================================================================
+       PREMIUM UI LAYER (Sept 2026)
+       Tokens, motion system, surfaces, splash, mobile navigation.
+       Loaded after all other rules so it wins the cascade without !important.
+       ===================================================================== */
+    :root{
+      --bg:#f4f6fa;--card:#ffffff;--card-2:#f9fafc;--border:#e6e9f0;--border-2:#d9dee7;
+      --text:#0f172a;--text2:#5b6b82;--text3:#94a3b8;
+      --pp-blue:#0076bb;--pp-blue-2:#0a8fdc;--pp-green:#00a84f;--pp-green-2:#12c265;
+      --ring:rgba(0,118,187,0.28);
+      --sh-xs:0 1px 2px rgba(15,23,42,0.05);
+      --sh-sm:0 1px 3px rgba(15,23,42,0.06),0 4px 12px -2px rgba(15,23,42,0.05);
+      --sh-md:0 4px 14px -4px rgba(15,23,42,0.10),0 12px 32px -12px rgba(15,23,42,0.12);
+      --sh-lg:0 24px 64px -16px rgba(15,23,42,0.28),0 8px 24px -8px rgba(15,23,42,0.12);
+      --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:22px;
+      --ease:cubic-bezier(.22,1,.36,1);--spring:cubic-bezier(.34,1.45,.64,1);
+      --t-fast:140ms;--t-base:240ms;--t-slow:380ms;
+      --font-ui:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+      --font-display:'Montserrat',var(--font-ui);
+    }
+    [data-theme="dark"]{
+      --bg:#0b1220;--card:#121a2b;--card-2:#172134;--border:#1f2a3d;--border-2:#2b3850;
+      --text:#eef2f8;--text2:#9aa8bc;--text3:#65748c;
+      --pp-blue:#3fb1f5;--pp-blue-2:#67c3ff;--pp-green:#34d47a;--pp-green-2:#5be497;
+      --ring:rgba(63,177,245,0.32);
+      --sh-xs:0 1px 2px rgba(0,0,0,0.35);
+      --sh-sm:0 1px 3px rgba(0,0,0,0.4),0 6px 16px -4px rgba(0,0,0,0.45);
+      --sh-md:0 8px 24px -6px rgba(0,0,0,0.55);
+      --sh-lg:0 30px 80px -20px rgba(0,0,0,0.75);
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-ui);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;font-size:13px;letter-spacing:-0.005em}
+    ::selection{background:rgba(0,118,187,0.18)}
+    *:focus-visible{outline:2px solid var(--pp-blue);outline-offset:2px;border-radius:6px}
+    button,input,select,textarea{font-family:inherit}
+    ::-webkit-scrollbar{width:10px;height:10px}
+    ::-webkit-scrollbar-thumb{background:rgba(100,116,139,0.28);border-radius:10px;border:3px solid transparent;background-clip:padding-box}
+    ::-webkit-scrollbar-thumb:hover{background:rgba(100,116,139,0.5);background-clip:padding-box;border:3px solid transparent}
+    ::-webkit-scrollbar-track{background:transparent}
+    .section-title,.modal-header h2,.calendar-title,.activity-title,.loading-title,.import-title,.login-box h1,.pp-stat .v,.overview-data .num,.conv-hero-num,.stat-value,.time-hero-value .num{font-family:var(--font-display);letter-spacing:-0.01em}
+
+    /* ---- shell ---- */
+    .header{background:rgba(255,255,255,0.78);backdrop-filter:saturate(180%) blur(18px);-webkit-backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid rgba(15,23,42,0.06);transition:box-shadow var(--t-base) var(--ease),border-color var(--t-base)}
+    .header.scrolled{box-shadow:0 1px 0 rgba(15,23,42,0.04),0 8px 24px -12px rgba(15,23,42,0.14)}
+    [data-theme="dark"] .header{background:rgba(11,18,32,0.72);border-bottom-color:rgba(255,255,255,0.06)}
+    .header-btn,.logout-btn,.text-action-btn,.calendar-nav-btn,.calendar-today-btn,.import-btn,.pp-btn,.pp-mini-btn,.activity-filter-btn,.view-btn,.comment-submit,.comment-cancel{transition:transform var(--t-fast) var(--ease),box-shadow var(--t-base) var(--ease),background var(--t-base),color var(--t-base),border-color var(--t-base)}
+    .header-btn:active,.logout-btn:active,.text-action-btn:active,.calendar-nav-btn:active,.import-btn:active,.pp-btn:active,.pp-mini-btn:active,.activity-filter-btn:active{transform:scale(0.96)}
+    .text-action-btn:hover,.logout-btn:hover,.pp-btn:hover{box-shadow:var(--sh-xs)}
+    .user-pill{border:1px solid var(--border);background:var(--card)}
+    .main-content{padding:28px 32px 48px}
+
+    /* ---- tabs with sliding ink ---- */
+    .view-tabs{position:relative;box-shadow:var(--sh-xs);padding:5px;gap:2px;isolation:isolate}
+    #ppTabInk{position:absolute;top:5px;left:0;height:38px;width:0;border-radius:10px;background:linear-gradient(135deg,var(--pp-blue),var(--pp-green));box-shadow:0 6px 16px -6px rgba(0,118,187,0.55);transition:transform var(--t-slow) var(--ease),width var(--t-slow) var(--ease),height var(--t-slow) var(--ease);z-index:0;pointer-events:none;opacity:0}
+    #ppTabInk.ready{opacity:1}
+    .view-tab{position:relative;z-index:1;background:transparent;transition:color var(--t-base) var(--ease),transform var(--t-fast)}
+    .view-tab.active{background:transparent;color:white}
+    .view-tab:not(.active):hover{background:rgba(15,23,42,0.04);color:var(--text)}
+    [data-theme="dark"] .view-tab:not(.active):hover{background:rgba(255,255,255,0.05)}
+    .view-tab:active{transform:scale(0.97)}
+
+    /* ---- view + element entrances ---- */
+    @keyframes ppViewIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    @keyframes ppRowIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    @keyframes ppCardIn{from{opacity:0;transform:translateY(10px) scale(0.985)}to{opacity:1;transform:none}}
+    @keyframes ppChipPop{0%{transform:scale(0.85)}55%{transform:scale(1.12)}100%{transform:scale(1)}}
+    @keyframes ppPulseDot{0%,100%{box-shadow:0 0 0 0 rgba(0,168,79,0.45)}70%{box-shadow:0 0 0 7px rgba(0,168,79,0)}}
+    .view-content.active{animation:ppViewIn var(--t-slow) var(--ease) both}
+    .table-wrapper tbody tr,.milestone-grid tbody tr,.ts-group tbody tr{animation:ppRowIn .42s var(--ease) both}
+    tbody tr:nth-child(1){animation-delay:0ms}tbody tr:nth-child(2){animation-delay:22ms}tbody tr:nth-child(3){animation-delay:44ms}tbody tr:nth-child(4){animation-delay:66ms}tbody tr:nth-child(5){animation-delay:88ms}tbody tr:nth-child(6){animation-delay:110ms}tbody tr:nth-child(7){animation-delay:132ms}tbody tr:nth-child(8){animation-delay:154ms}tbody tr:nth-child(9){animation-delay:176ms}tbody tr:nth-child(10){animation-delay:198ms}tbody tr:nth-child(11){animation-delay:220ms}tbody tr:nth-child(12){animation-delay:242ms}tbody tr:nth-child(n+13){animation-delay:260ms}
+    .stat-card,.pp-stat,.ts-next-card,.pipeline-card,.pp-mcard,.mobile-card,.ts-group,.activity-item{animation:ppCardIn .5s var(--ease) both}
+    .stats-row>*:nth-child(1),.pp-stat-strip>*:nth-child(1),.ts-next>*:nth-child(1){animation-delay:0ms}
+    .stats-row>*:nth-child(2),.pp-stat-strip>*:nth-child(2),.ts-next>*:nth-child(2){animation-delay:50ms}
+    .stats-row>*:nth-child(3),.pp-stat-strip>*:nth-child(3),.ts-next>*:nth-child(3){animation-delay:100ms}
+    .stats-row>*:nth-child(4),.pp-stat-strip>*:nth-child(4),.ts-next>*:nth-child(4){animation-delay:150ms}
+    .stats-row>*:nth-child(5),.pp-stat-strip>*:nth-child(5){animation-delay:200ms}
+    .stats-row>*:nth-child(6),.pp-stat-strip>*:nth-child(6){animation-delay:250ms}
+    .ts-group:nth-child(2){animation-delay:60ms}.ts-group:nth-child(3){animation-delay:120ms}.ts-group:nth-child(4){animation-delay:180ms}
+    .pp-chip.pop{animation:ppChipPop .38s var(--spring)}
+    .pp-chip{transition:background var(--t-base),color var(--t-base),transform var(--t-fast) var(--ease)}
+
+    /* ---- surfaces ---- */
+    .stat-card,.pp-stat,.table-wrapper,.milestone-grid-wrap,.pipeline-board,.calendar-container,.activity-container,.ts-group,.ts-next-card,.pp-mcard,.mobile-card{box-shadow:var(--sh-sm);border-color:var(--border);transition:box-shadow var(--t-base) var(--ease),transform var(--t-base) var(--ease),border-color var(--t-base)}
+    .stat-card:hover,.pp-stat:hover,.ts-next-card:hover,.pp-mcard:active,.mobile-card:active{box-shadow:var(--sh-md)}
+    .stat-card{border-radius:var(--r-lg)}
+    .table-wrapper,.milestone-grid-wrap,.calendar-container,.activity-container{border-radius:var(--r-lg);overflow:hidden}
+    .table-wrapper{overflow-x:auto}
+    th{font-size:10.5px;letter-spacing:0.06em;color:var(--text3);background:var(--card-2);padding:13px 12px;border-bottom:1px solid var(--border);transition:color var(--t-fast),background var(--t-fast)}
+    th:hover{background:var(--card-2);color:var(--text)}
+    td{padding:12px;font-size:12.5px;line-height:1.35;transition:background var(--t-fast)}
+    tr:hover{background:transparent}
+    tbody tr:hover td{background:rgba(0,118,187,0.035)}
+    [data-theme="dark"] tbody tr:hover td{background:rgba(63,177,245,0.06)}
+    .pp-table tr.clickable:hover td{background:rgba(0,118,187,0.045)}
+    .pipeline-column{transition:background var(--t-base)}
+    .pipeline-card{box-shadow:var(--sh-xs)}
+    .pipeline-card:hover{box-shadow:var(--sh-md);transform:translateY(-2px)}
+    .styled-select select,.search-input{box-shadow:var(--sh-xs);transition:border-color var(--t-base),box-shadow var(--t-base)}
+    .styled-select select:focus,.search-input:focus,.pp-form input:focus,.pp-form select:focus,.pp-form textarea:focus,.comment-input:focus{border-color:var(--pp-blue);box-shadow:0 0 0 4px var(--ring)}
+    .search-input{padding-left:36px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cline x1='20' y1='20' x2='16.5' y2='16.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:13px center;width:210px}
+    .status-badge,.pp-chip,.tag{letter-spacing:0.04em}
+    .mg-check{transition:transform var(--t-fast) var(--spring),background var(--t-base),border-color var(--t-base)}
+    .mg-check.done{animation:ppChipPop .35s var(--spring)}
+    .ts-group-head{transition:background var(--t-base)}
+    .ts-group-head:hover{background:rgba(0,118,187,0.04)}
+    .pp-stat.active{box-shadow:0 0 0 3px var(--ring),var(--sh-sm)}
+    .pp-form input,.pp-form select,.pp-form textarea{transition:border-color var(--t-base),box-shadow var(--t-base),background var(--t-base)}
+    .pp-rep-opt{transition:all var(--t-base) var(--ease)}
+    .pp-rep-opt:hover{transform:translateY(-1px);box-shadow:var(--sh-xs)}
+    .pp-rep-opt.on{box-shadow:0 0 0 3px var(--ring)}
+
+    /* ---- modal ---- */
+    @keyframes ppModalIn{from{opacity:0;transform:translateY(14px) scale(0.97)}to{opacity:1;transform:none}}
+    @keyframes ppFadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes ppSheetUp{from{transform:translateY(100%)}to{transform:none}}
+    .modal-overlay.active{animation:ppFadeIn var(--t-base) var(--ease) both}
+    .modal{animation:ppModalIn var(--t-slow) var(--ease) both;box-shadow:var(--sh-lg);border-radius:var(--r-xl)}
+    .modal-header{background:linear-gradient(135deg,#0076bb 0%,#0a8fdc 60%,#0c9e8a 140%);border-radius:var(--r-xl) var(--r-xl) 0 0}
+    .modal-close{transition:background var(--t-fast),transform var(--t-fast) var(--ease)}
+    .modal-close:hover{transform:rotate(90deg)}
+    .detail-section{box-shadow:none;background:var(--card-2)}
+    .pp-btn.primary{box-shadow:0 8px 20px -8px rgba(0,118,187,0.6)}
+    .pp-btn.primary:hover{transform:translateY(-1px);box-shadow:0 12px 26px -10px rgba(0,118,187,0.7)}
+
+    /* ---- toast ---- */
+    .toast{border-radius:14px;box-shadow:var(--sh-lg);font-size:13px;padding:12px 18px;transition:transform var(--t-slow) var(--spring),opacity var(--t-base)}
+    .toast{transform:translateY(24px) scale(0.96)}
+    .toast.show{transform:none}
+
+    /* ---- import overlay ---- */
+    .import-overlay.active{animation:ppFadeIn var(--t-base) var(--ease) both}
+    .import-box{animation:ppModalIn var(--t-slow) var(--ease) both;box-shadow:var(--sh-lg)}
+
+    /* ---- login ---- */
+    .login-screen{background:radial-gradient(1200px 800px at 15% 10%,rgba(0,168,79,0.55),transparent 60%),radial-gradient(1000px 700px at 85% 90%,rgba(10,143,220,0.7),transparent 60%),linear-gradient(135deg,#053a5c,#0076bb 45%,#0a8f77)}
+    .login-screen::before{background:radial-gradient(ellipse at 50% 0%,rgba(255,255,255,0.14),transparent 55%)}
+    .login-box{border-radius:26px;box-shadow:0 40px 100px -30px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.35) inset;animation:ppModalIn .6s var(--ease) both}
+    .login-box h1{font-size:19px}
+    .auth-info{border-radius:14px;font-size:12px}
+
+    /* ---- splash (new markup) ---- */
+    .data-loading-overlay{background:var(--bg);transition:opacity .55s var(--ease),visibility .55s,transform .55s var(--ease)}
+    .data-loading-overlay.leaving{opacity:0;transform:scale(1.035)}
+    .splash-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+    .splash-bg .orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:0.55;animation:ppOrb 14s ease-in-out infinite alternate}
+    .splash-bg .o1{width:520px;height:520px;background:#0076bb;left:-140px;top:-160px}
+    .splash-bg .o2{width:460px;height:460px;background:#00a84f;right:-120px;bottom:-140px;animation-delay:-5s}
+    .splash-bg .o3{width:340px;height:340px;background:#0a8fdc;right:22%;top:-120px;opacity:0.35;animation-delay:-9s}
+    [data-theme="dark"] .splash-bg .orb{opacity:0.32}
+    @keyframes ppOrb{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(60px,40px,0) scale(1.12)}}
+    .splash{position:relative;text-align:center;width:min(360px,90vw);animation:ppCardIn .6s var(--ease) both}
+    .splash-mark{width:132px;height:132px;margin:0 auto 22px;position:relative}
+    .splash-ring{position:absolute;inset:0;width:132px;height:132px;transform:rotate(-90deg)}
+    .splash-ring .t{fill:none;stroke:rgba(100,116,139,0.18);stroke-width:5}
+    .splash-ring .p{fill:none;stroke:url(#loadGradient);stroke-width:5;stroke-linecap:round;stroke-dasharray:339.3;stroke-dashoffset:339.3;transition:stroke-dashoffset .6s var(--ease)}
+    .splash-ring .p.indeterminate{stroke-dashoffset:255;animation:ppSpin 1.4s linear infinite;transform-origin:50% 50%}
+    @keyframes ppSpin{to{transform:rotate(360deg)}}
+    .splash-logo{position:absolute;inset:14px;border-radius:50%;background:var(--card);box-shadow:var(--sh-md),0 0 0 1px rgba(15,23,42,0.05);display:flex;align-items:center;justify-content:center;animation:ppBreathe 2.6s ease-in-out infinite}
+    .splash-logo img{width:48px;height:48px;margin-left:4px}
+    @keyframes ppBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+    .splash-word{font-family:var(--font-display);font-size:19px;font-weight:700;color:var(--text);letter-spacing:-0.01em}
+    .splash-word span{background:linear-gradient(135deg,var(--pp-blue),var(--pp-green));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .splash .loading-status{margin:6px 0 16px;min-height:18px;font-size:12.5px}
+    .splash .loading-progress-track{height:3px;border-radius:3px;margin:0 auto 22px;width:220px;background:rgba(100,116,139,0.18)}
+    .splash .loading-progress-fill{transition:width .5s var(--ease)}
+    .splash .loading-metrics{gap:28px}
+    .splash .loading-metric-num{font-family:var(--font-display)}
+    .splash-cached{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:11px;color:var(--text3)}
+    .splash-cached i{width:6px;height:6px;border-radius:50%;background:var(--pp-green);animation:ppPulseDot 1.6s infinite}
+
+    /* ---- sync pill in header ---- */
+    .pp-sync{display:none;align-items:center;gap:7px;padding:6px 12px;border-radius:50px;background:var(--card);border:1px solid var(--border);font-size:11px;font-weight:600;color:var(--text2);box-shadow:var(--sh-xs)}
+    .pp-sync.on{display:inline-flex;animation:ppFadeIn var(--t-base) both}
+    .pp-sync i{width:7px;height:7px;border-radius:50%;background:var(--pp-green);animation:ppPulseDot 1.6s infinite}
+
+    /* ---- dashboard reveal ---- */
+    .dashboard.active .main-content>*{animation:ppCardIn .55s var(--ease) both}
+    .dashboard.active .main-content>*:nth-child(2){animation-delay:60ms}
+
+    /* ---- fixed column grids so every group table lines up and nothing spills ---- */
+    #credTable{table-layout:fixed;min-width:1040px}
+    #credTable th:nth-child(1){width:20%}#credTable th:nth-child(2){width:8%}#credTable th:nth-child(3){width:12%}#credTable th:nth-child(4){width:13%}#credTable th:nth-child(5){width:9%}#credTable th:nth-child(6){width:17%}#credTable th:nth-child(7){width:11%}#credTable th:nth-child(8){width:6%}#credTable th:nth-child(9){width:4%}
+    #credTable td{overflow:hidden;text-overflow:ellipsis}
+    .ts-group table{table-layout:fixed;min-width:1080px}
+    .ts-group th:nth-child(1){width:17%}.ts-group th:nth-child(2){width:11%}.ts-group th:nth-child(3){width:12%}.ts-group th:nth-child(4){width:8%}.ts-group th:nth-child(5){width:9%}.ts-group th:nth-child(6){width:6%}.ts-group th:nth-child(7){width:6%}.ts-group th:nth-child(8){width:9%}.ts-group th:nth-child(9){width:9%}.ts-group th:nth-child(10){width:9%}.ts-group th:nth-child(11){width:4%}
+    .ts-group td{overflow:hidden;text-overflow:ellipsis}
+    .ts-group td .pp-org-name,.ts-group td .pp-org-sub{max-width:100%}
+    .pp-chip{max-width:100%;overflow:hidden;text-overflow:ellipsis;display:inline-block;line-height:1.5;letter-spacing:0.02em;padding:4px 8px}
+    .pp-org-cell>div{min-width:0}
+    .ts-outcome span{min-width:24px;padding:3px 3px}
+    .pp-icon-only{width:40px;padding:0;justify-content:center}
+    .pp-icon-only svg{width:15px;height:15px}
+
+    /* ---- reduced motion ---- */
+    @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.001ms!important;animation-iteration-count:1!important;transition-duration:0.001ms!important;scroll-behavior:auto!important}}
+
+    /* ---- mobile: app-style bottom navigation + touch sizing ---- */
+    @media(max-width:768px){
+      .main-content{padding:14px 12px calc(86px + env(safe-area-inset-bottom))}
+      .view-tabs{position:fixed;left:0;right:0;bottom:0;width:100%;margin:0;border-radius:0;border:none;border-top:1px solid var(--border);padding:6px 6px calc(6px + env(safe-area-inset-bottom));display:flex;justify-content:space-between;gap:0;background:rgba(255,255,255,0.9);backdrop-filter:saturate(180%) blur(18px);-webkit-backdrop-filter:saturate(180%) blur(18px);z-index:300;box-shadow:0 -6px 24px -12px rgba(15,23,42,0.18);overflow-x:auto;scrollbar-width:none}
+      .view-tabs::-webkit-scrollbar{display:none}
+      [data-theme="dark"] .view-tabs{background:rgba(11,18,32,0.9);border-top-color:var(--border)}
+      #ppTabInk{display:none}
+      .view-tab{flex:1 1 0;min-width:0;flex-direction:column;gap:4px;padding:6px 2px;font-size:0;color:var(--text3);border-radius:10px}
+      .view-tab::after{content:attr(data-short);font-size:9px;font-weight:600;letter-spacing:0;line-height:1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+      .search-group .search-input{padding-left:34px}
+      .actions-group .text-action-btn{white-space:nowrap}
+      .view-tab svg{width:21px;height:21px;transition:transform var(--t-base) var(--spring)}
+      .view-tab.active{color:var(--pp-blue);background:rgba(0,118,187,0.08)}
+      .view-tab.active svg{transform:translateY(-1px) scale(1.08)}
+      .view-tab:not(.active):hover{background:transparent}
+      .header{padding:10px 12px}
+      .header-right .pp-sync{display:none!important}
+      .search-input{width:100%}
+      .pp-chip.click{min-height:30px;padding:0 11px;font-size:10px}
+      .pp-mini-btn{width:32px;height:32px}
+      .pp-mini-btn svg{width:14px;height:14px}
+      .toast{left:12px;right:12px;bottom:calc(74px + env(safe-area-inset-bottom));justify-content:center}
+      .modal{animation:ppSheetUp .42s var(--ease) both;border-radius:0}
+      .modal-header{border-radius:0}
+      .pp-modal-actions{position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--border);padding:12px 14px calc(12px + env(safe-area-inset-bottom));margin-top:8px}
+      .pp-modal-actions .right{flex:1}
+      .pp-modal-actions .right .pp-btn{flex:1}
+      .splash-mark,.splash-ring{width:112px;height:112px}
+      .stats-row>*,.pp-stat-strip>*{animation-delay:0ms!important}
+    }
   </style>
 </head>
 <body>
@@ -887,39 +1115,23 @@
   </svg>
 
   <div class="data-loading-overlay hidden" id="dataLoadingOverlay">
-    <div class="loading-content">
-      <div class="loading-logo-ring">
-        <svg class="loading-ring-svg" viewBox="0 0 120 120">
-          <circle class="ring-track" cx="60" cy="60" r="52"/>
-          <circle class="ring-progress" cx="60" cy="60" r="52"/>
-          <circle class="ring-glow" cx="60" cy="60" r="52"/>
-        </svg>
-        <div class="loading-logo-inner"><img src="https://practiceplan-onboarding.vercel.app/favicon.svg" alt="PP" style="width:44px;height:44px;margin-left:4px"></div>
+    <div class="splash-bg"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span></div>
+    <div class="splash">
+      <div class="splash-mark">
+        <svg class="splash-ring" viewBox="0 0 120 120"><circle class="t" cx="60" cy="60" r="54"/><circle class="p" id="splashRing" cx="60" cy="60" r="54"/></svg>
+        <div class="splash-logo"><img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMiIgZGF0YS1uYW1lPSJMYXllciAyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTYuNTggMTc5LjcyIj4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmNscy0xIHsKICAgICAgICBmaWxsOiAjMDBhODRmOwogICAgICB9CgogICAgICAuY2xzLTEsIC5jbHMtMiB7CiAgICAgICAgc3Ryb2tlOiAjZmZmOwogICAgICAgIHN0cm9rZS1taXRlcmxpbWl0OiAxMDsKICAgICAgICBzdHJva2Utd2lkdGg6IDEuNjJweDsKICAgICAgfQoKICAgICAgLmNscy0yIHsKICAgICAgICBmaWxsOiAjMDA3N2JjOwogICAgICB9CiAgICA8L3N0eWxlPgogIDwvZGVmcz4KICA8ZyBpZD0iTGF5ZXJfMS0yIiBkYXRhLW5hbWU9IkxheWVyIDEiPgogICAgPGc+CiAgICAgIDxnPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTk1LjM1LDg2LjA5bC01MS4wNS0yMS40OWMtMi44LTEuMTgtNS4wNy00LjU5LTUuMDctNy42M3YtMjMuMjZjMC0zLjA0LDIuMjctNC41NCw1LjA3LTMuMzZsNTcuMTQsMjQuMDZjOS41NSw0LjAyLDE0LjMzLDkuMjksMTQuMzMsMTQuNTYsMCw1LjI3LTQuNzgsMTAuNTQtMTQuMzMsMTQuNTZsLTYuMDksMi41NloiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik03MS40MSwxMzAuNDN2MzEuMTdjMCwzLjA0LTIuMjcsNi40NS01LjA3LDcuNjNsLTIyLjA0LDkuMjhjLTIuOCwxLjE4LTUuMDctLjMzLTUuMDctMy4zNnYtNTkuOTNjMC0zLjA0LDIuMjctNi40NSw1LjA3LTcuNjNsNTcuMTQtMjQuMDZjOS41NS00LjAyLDE0LjMzLTkuMjksMTQuMzMtMTQuNTZ2MjkuNDljMCw4LjI2LTQuNzgsMTUuMzEtMTQuMzMsMTkuMzNsLTMwLjAzLDEyLjY0WiIvPgogICAgICA8L2c+CiAgICAgIDxnPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTU2LjkzLDU2Ljk2TDUuODgsMzUuNDdjLTIuOC0xLjE4LTUuMDctNC41OS01LjA3LTcuNjNWNC41OEMuODEsMS41NCwzLjA4LjAzLDUuODgsMS4yMWw1Ny4xNCwyNC4wNmM5LjU1LDQuMDIsMTQuMzMsOS4yOSwxNC4zMywxNC41NiwwLDUuMjctNC43OCwxMC41NC0xNC4zMywxNC41NmwtNi4wOSwyLjU2WiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTMyLjk4LDEwMS4zdjMxLjE3YzAsMy4wNC0yLjI3LDYuNDUtNS4wNyw3LjYzbC0yMi4wNCw5LjI4Yy0yLjgsMS4xOC01LjA3LS4zMy01LjA3LTMuMzZ2LTU5LjkzYzAtMy4wNCwyLjI3LTYuNDUsNS4wNy03LjYzbDU3LjE0LTI0LjA2YzkuNTUtNC4wMiwxNC4zMy05LjI5LDE0LjMzLTE0LjU2djI5LjQ5YzAsOC4yNi00Ljc4LDE1LjMxLTE0LjMzLDE5LjMzbC0zMC4wMywxMi42NFoiLz4KICAgICAgPC9nPgogICAgPC9nPgogIDwvZz4KPC9zdmc+" alt="PracticePlan"></div>
       </div>
-      <div class="loading-text-area">
-        <div class="loading-title">Loading Dashboard</div>
-        <div class="loading-status" id="loadingStatus">Connecting to PracticePlan...</div>
-        <div class="loading-progress-track">
-          <div class="loading-progress-fill" id="loadingProgressFill"></div>
-        </div>
-        <div class="loading-metrics" id="loadingMetrics">
-          <div class="loading-metric">
-            <span class="loading-metric-num" id="loadMetricOrgs">-</span>
-            <span class="loading-metric-label">Organizations</span>
-          </div>
-          <div class="loading-metric">
-            <span class="loading-metric-num" id="loadMetricSpaces">-</span>
-            <span class="loading-metric-label">Spaces</span>
-          </div>
-          <div class="loading-metric">
-            <span class="loading-metric-num" id="loadMetricComplete">-</span>
-            <span class="loading-metric-label">Complete</span>
-          </div>
-        </div>
+      <div class="splash-word">PracticePlan <span>Admin</span></div>
+      <div class="loading-status" id="loadingStatus">Connecting...</div>
+      <div class="loading-progress-track"><div class="loading-progress-fill" id="loadingProgressFill"></div></div>
+      <div class="loading-metrics" id="loadingMetrics">
+        <div class="loading-metric"><span class="loading-metric-num" id="loadMetricOrgs">-</span><span class="loading-metric-label">Organizations</span></div>
+        <div class="loading-metric"><span class="loading-metric-num" id="loadMetricSpaces">-</span><span class="loading-metric-label">Spaces</span></div>
+        <div class="loading-metric"><span class="loading-metric-num" id="loadMetricComplete">-</span><span class="loading-metric-label">Complete</span></div>
       </div>
-      <div class="loading-dots">
-        <span></span><span></span><span></span>
-      </div>
+      <div class="splash-cached" id="splashCached" style="display:none"><i></i>Restored from your last session</div>
+    </div>
+  </div>
     </div>
   </div>
 
@@ -928,20 +1140,20 @@
       <img class="header-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMiIgZGF0YS1uYW1lPSJMYXllciAyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzOTYuMzcgNjYuNyI+CiAgPGRlZnM+CiAgICA8c3R5bGU+CiAgICAgIC5jbHMtMSwgLmNscy0yIHsKICAgICAgICBzdHJva2U6ICNmZmY7CiAgICAgICAgc3Ryb2tlLW1pdGVybGltaXQ6IDEwOwogICAgICAgIHN0cm9rZS13aWR0aDogMS40cHg7CiAgICAgIH0KCiAgICAgIC5jbHMtMSwgLmNscy0zIHsKICAgICAgICBmaWxsOiAjMDA3NmJiOwogICAgICB9CgogICAgICAuY2xzLTQgewogICAgICAgIGZpbGw6ICNmMTVhMjk7CiAgICAgIH0KCiAgICAgIC5jbHMtMiB7CiAgICAgICAgZmlsbDogIzAwYTg0ZjsKICAgICAgfQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPGcgaWQ9IkxheWVyXzEtMiIgZGF0YS1uYW1lPSJMYXllciAxIj4KICAgIDxnPgogICAgICA8cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik0uNzIsNDkuN2MtLjI0LS4wNC0uNDgtLjA5LS43Mi0uMTQuMjQuMDUuNDguMDkuNzIuMTRaIi8+CiAgICAgIDxnPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTM4LjUyLDMxLjk3bC0xOC43Mi03Ljg4Yy0xLjAzLS40My0xLjg2LTEuNjgtMS44Ni0yLjh2LTguNTNjMC0xLjExLjgzLTEuNjcsMS44Ni0xLjIzbDIwLjk1LDguODJjMy41LDEuNDcsNS4yNSwzLjQxLDUuMjUsNS4zNCwwLDEuOTMtMS43NSwzLjg3LTUuMjUsNS4zNGwtMi4yMy45NFoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0yOS43NCw0OC4yMnYxMS40M2MwLDEuMTEtLjgzLDIuMzctMS44NiwyLjhsLTguMDgsMy40Yy0xLjAzLjQzLTEuODYtLjEyLTEuODYtMS4yM3YtMjEuOTdjMC0xLjExLjgzLTIuMzcsMS44Ni0yLjhsMjAuOTUtOC44MmMzLjUtMS40Nyw1LjI1LTMuNDEsNS4yNS01LjM0djEwLjgxYzAsMy4wMy0xLjc1LDUuNjEtNS4yNSw3LjA5bC0xMS4wMSw0LjY0WiIvPgogICAgICA8L2c+CiAgICAgIDxnPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTI0LjQzLDIxLjI5TDUuNzEsMTMuNDFjLTEuMDMtLjQzLTEuODYtMS42OC0xLjg2LTIuOFYyLjA4YzAtMS4xMS44My0xLjY3LDEuODYtMS4yM2wyMC45NSw4LjgyYzMuNSwxLjQ3LDUuMjUsMy40MSw1LjI1LDUuMzQsMCwxLjkzLTEuNzUsMy44Ny01LjI1LDUuMzRsLTIuMjMuOTRaIi8+CiAgICAgICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMTUuNjUsMzcuNTR2MTEuNDNjMCwxLjExLS44MywyLjM3LTEuODYsMi44bC04LjA4LDMuNGMtMS4wMy40My0xLjg2LS4xMi0xLjg2LTEuMjN2LTIxLjk3YzAtMS4xMS44My0yLjM3LDEuODYtMi44bDIwLjk1LTguODJjMy41LTEuNDcsNS4yNS0zLjQxLDUuMjUtNS4zNHYxMC44MWMwLDMuMDMtMS43NSw1LjYxLTUuMjUsNy4wOWwtMTEuMDEsNC42NFoiLz4KICAgICAgPC9nPgogICAgICA8Zz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik04Ny44LDM4LjA4aC0xMS42NGwtMSw1LjY5aC02Ljg1bDItMTEuMzhoMTkuMTZjMi4zOSwwLDMuODYtMS4yMywzLjg2LTIuOTYsMC0xLjMtMS4wMy0yLjEzLTIuOTYtMi4xM2gtMTkuMTZsMS4zMi01Ljc5aDE4LjI0YzYuMTksMCw5LjU4LDIuODksOS41OCw3LjE1LDAsNS41Mi00LjgyLDkuNDEtMTIuNTQsOS40MVoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0xMzAuMjksNDMuNzdoLTkuMjFsLTMuOTItNS44OWgtMTAuNThsLTEuMDMsNS44OWgtNi44OGwyLTExLjM4aDE5LjM2YzIuMjksMCw0LjI5LTEuMSw0LjI5LTIuODksMC0xLjQ2LTEuMjYtMi4yLTMuMzktMi4yaC0xOS4zNmwxLjMzLTUuNzloMTguNWM0LjY2LDAsMTAuMTgsMS40MywxMC4xOCw2Ljc1LDAsNC4wMi0yLjg5LDcuNDItNy4xOCw4LjI1LjYzLjU3LDEuMzMsMS4zNiwyLjU2LDIuOTNsMy4zNiw0LjMyWiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTEzOCw0My43N2w1LjE5LTUuNzJoNS41NWMxLjM2LDAsMi44OSwwLDMuOTYuMDctLjQ3LS44LTEuMTYtMi4xNi0xLjctMy4yM2wtMi45Ni01Ljg5LTEzLjA0LDE0Ljc3aC04LjE1bDE3LjgzLTIwLjEyYzEuMTYtMS4zLDIuNzMtMi40OSw0Ljg5LTIuNDlzMy4yMywxLjEsMy45NiwyLjQ5bDEwLjM0LDIwLjEyaC0yNS44OFoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0xOTAuMTgsMzguMDVsLTUuNDIsNS43MmgtMTEuMThjLTYuOTUsMC0xMS41Ny00LjE5LTExLjU3LTkuODEsMC03LjMyLDYuOTgtMTIuNDQsMTUuNS0xMi40NGgxNS42bC01LjQ1LDUuNzloLTExLjE4Yy00LjA5LDAtNy41NSwyLjYzLTcuNTUsNi4xNSwwLDIuNzYsMi4yOSw0LjU5LDUuNjUsNC41OWgxNS42WiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTIxNi42NSwyMS41MmwtMS4wOCw1Ljc5aC04bC0yLjkzLDE2LjQ2aC02Ljg4bDIuODktMTYuNDZoLTEwLjQ0bDUuNTItNS43OWgyMC45M1oiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yMjEuMTgsNDMuNzdoLTYuODhsMy45Ni0yMi4yNWg2Ljg1bC0zLjkzLDIyLjI1WiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTI1MS40NywzOC4wNWwtMS42NCw1LjcyaC0xNC4wNWMtNi45NSwwLTExLjU3LTQuMTktMTEuNTctOS44MSwwLTcuMzIsNi45OC0xMi40NCwxNS41LTEyLjQ0aDE0LjkzbC0xLjgzLDUuNzloLTE0LjE0Yy00LjA5LDAtNy41NSwyLjYzLTcuNTUsNi4xNSwwLDIuNzYsMi4yOSw0LjU5LDUuNjUsNC41OWgxNC42OVoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yNzguMzUsMzguMDVsLTQuNTksNS43MmgtMjEuNDJsMy45Ni0yMi4yNWgyNC44OGwtNC42Miw1Ljc5aC0xNC40bC0uNDcsMi42NmgxNi43M2wtMy45Miw1LjA2aC0xMy43bC0uNTMsMy4wM2gxOC4wOVoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yOTguMDUsMzguMDhoLTExLjY0bC0xLDUuNjloLTYuODVsMi0xMS4zOGgxOS4xNmMyLjM5LDAsMy44Ni0xLjIzLDMuODYtMi45NiwwLTEuMy0xLjAzLTIuMTMtMi45Ni0yLjEzaC0xOS4xNmw0LjE0LTUuNzloMTUuNDJjNi4xOSwwLDkuNTgsMi44OSw5LjU4LDcuMTUsMCw1LjUyLTQuODIsOS40MS0xMi41NCw5LjQxWiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTMzNC42MSwzOC4wNWwtNS40OSw1LjcyaC0xOS42NmwzLjk2LTIyLjI1aDYuODVsLTIuOTMsMTYuNTNoMTcuMjZaIi8+CiAgICAgICAgPHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMzQyLjMsNDMuNzdsNS4xOS01LjcyaDUuNTVjMS4zNiwwLDIuODksMCwzLjk2LjA3LS40Ny0uOC0xLjE2LTIuMTYtMS43LTMuMjNsLTIuOTYtNS44OS0xMy4wNCwxNC43N2gtOC4xNWwxNy44My0yMC4xMmMxLjE2LTEuMywyLjczLTIuNDksNC44OS0yLjQ5czMuMjMsMS4xLDMuOTYsMi40OWwxMC4zNCwyMC4xMmgtMjUuODhaIi8+CiAgICAgICAgPHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMzg2LjAyLDQyLjk0bC0xMS40Ny0xMi4yNC0yLjMsMTMuMDdoLTYuMjVsMy4yMy0xOC40NmMuNS0yLjk2LDIuNDYtNC4xNiw0LjUyLTQuMTYuODMsMCwxLjY2LjIsMi41NiwxLjJsMTEuNDcsMTIuMjQsMi4zMy0xMy4wN2g2LjI1bC0zLjI5LDE4LjQzYy0uNTMsMi45Ni0yLjQ5LDQuMTktNC40OSw0LjE5LS45MywwLTEuNjMtLjItMi41Ni0xLjJaIi8+CiAgICAgIDwvZz4KICAgIDwvZz4KICA8L2c+Cjwvc3ZnPg==" alt="PracticePlan">
       <div class="header-right">
         <button class="header-btn" onclick="toggleDarkMode()" id="darkModeBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
-        <div class="user-pill"><div class="user-avatar" id="userAvatar">?</div><span class="user-name" id="userName"></span></div>
+        <div class="pp-sync" id="ppSyncPill"><i></i><span>Syncing latest</span></div><div class="user-pill"><div class="user-avatar" id="userAvatar">?</div><span class="user-name" id="userName"></span></div>
         <button class="logout-btn" onclick="logout()">Sign Out</button>
       </div>
     </div>
     
     <div class="main-content">
       <div class="view-tabs">
-        <button class="view-tab active" onclick="switchView('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Dashboard</button>
-        <button class="view-tab" onclick="switchView('pipeline')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Onboarding</button>
-        <button class="view-tab" onclick="switchView('customers')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Customers</button>
-        <button class="view-tab" onclick="switchView('credentials')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Credentials</button>
-        <button class="view-tab" onclick="switchView('tradeshows')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M3 21V10l9-7 9 7v11"/><path d="M9 21v-6h6v6"/></svg> Trade Shows</button>
-        <button class="view-tab" onclick="switchView('calendar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Go-Live</button>
-        <button class="view-tab" onclick="switchView('activity')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Activity</button>
+        <button class="view-tab active" onclick="switchView('dashboard')" data-short="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Dashboard</button>
+        <button class="view-tab" onclick="switchView('pipeline')" data-short="Pipeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Onboarding</button>
+        <button class="view-tab" onclick="switchView('customers')" data-short="Clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Customers</button>
+        <button class="view-tab" onclick="switchView('credentials')" data-short="Logins"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Credentials</button>
+        <button class="view-tab" onclick="switchView('tradeshows')" data-short="Shows"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M3 21V10l9-7 9 7v11"/><path d="M9 21v-6h6v6"/></svg> Trade Shows</button>
+        <button class="view-tab" onclick="switchView('calendar')" data-short="Go-Live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Go-Live</button>
+        <button class="view-tab" onclick="switchView('activity')" data-short="Activity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Activity</button>
       </div>
 
       <div class="view-content active" id="dashboardView">
@@ -1083,7 +1295,7 @@
                 <button class="text-action-btn" onclick="startCredImport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button>
                 <input type="file" id="credImportFile" accept=".csv,text/csv" style="display:none" onchange="handleCredImportFile(this.files[0]);this.value=''">
                 <button class="text-action-btn" onclick="exportCredCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
-                <button class="text-action-btn" onclick="loadCredList(true).then(renderCredentials)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Refresh</button>
+                <button class="text-action-btn pp-icon-only" title="Refresh" onclick="loadCredList(true).then(renderCredentials)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
               </div>
             </div>
           </div>
@@ -1115,7 +1327,7 @@
           <div class="controls-right">
             <div class="pp-view-toggle"><button class="on" id="tsViewList" onclick="setTsView('list')">List</button><button id="tsViewCal" onclick="setTsView('calendar')">Calendar</button></div>
             <div class="controls-group filters-group">
-              <div class="styled-select"><select id="tsAudFilter" onchange="tsAudFilter=this.value;renderTradeShows()"><option value="all">All audiences</option><option value="supers">Superintendents</option><option value="ads">Athletic Directors</option><option value="sbo">Business Officials</option><option value="munis">Parks &amp; Rec / Municipal</option><option value="heads">Heads of School</option><option value="other">Other</option></select></div>
+              <div class="styled-select"><select id="tsAudFilter" onchange="tsAudFilter=this.value;renderTradeShows()"><option value="all">All audiences</option><option value="supers">Superintendents</option><option value="ads">Athletic Directors</option><option value="sbo">Business Officials</option><option value="munis">Parks &amp; Rec</option><option value="heads">Heads of School</option><option value="other">Other</option></select></div>
               <div class="styled-select"><select id="tsRepFilter" onchange="tsRepFilter=this.value;renderTradeShows()"><option value="all">All reps</option><option value="none">Unassigned</option></select></div>
               <div class="styled-select"><select id="tsScopeFilter" onchange="tsScope=this.value;renderTradeShows()"><option value="upcoming">Upcoming</option><option value="all">All shows</option><option value="past">Past</option><option value="archived">Archived</option></select></div>
             </div>
@@ -1128,7 +1340,7 @@
               <button class="text-action-btn" onclick="startTsImport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button>
               <input type="file" id="tsImportFile" accept=".csv,text/csv" style="display:none" onchange="handleTsImportFile(this.files[0]);this.value=''">
               <button class="text-action-btn" onclick="exportTsCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
-              <button class="text-action-btn" onclick="loadTradeShows(true).then(renderTradeShows)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Refresh</button>
+              <button class="text-action-btn pp-icon-only" title="Refresh" onclick="loadTradeShows(true).then(renderTradeShows)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
             </div>
           </div>
         </div>
@@ -1346,56 +1558,52 @@
       document.getElementById('dataLoadingOverlay').classList.remove('hidden');
       if (currentUser) { const name = currentUser.name.split(' ').map(n => n.charAt(0).toUpperCase() + n.slice(1).toLowerCase()).join(' '); document.getElementById('userName').textContent = name; var member = TEAM_MEMBERS.find(function(m) { return m.email === currentUser.email; }); if (member && member.photo) { document.getElementById('userAvatar').innerHTML = '<img src="' + member.photo + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">'; } else { document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase(); } }
       // Start animated loading sequence
+      window._ppLoadStart = Date.now(); window._ppLoadFinished = false; window._ppCachedRender = false;
+      var cached = ppCacheRead();
+      if (cached) {
+        try { ppProcessAdminData(cached.data); updateStats(); renderTable(); renderPipeline(); renderCalendar(); window._ppCachedRender = true; var sc = document.getElementById('splashCached'); if (sc) sc.style.display = 'inline-flex'; finishLoading(allData, true); ppSyncPill(true, 'Syncing latest'); }
+        catch(e) { console.log('Cached render skipped:', e.message); window._ppCachedRender = false; }
+      }
       startLoadingSequence();
       loadData();
     }
     function startLoadingSequence() {
-      var fill = document.getElementById('loadingProgressFill');
-      var status = document.getElementById('loadingStatus');
+      var ring = document.getElementById('splashRing'); if (ring) ring.classList.add('indeterminate');
       var steps = [
-        { pct: 10, text: 'Authenticating...', delay: 300 },
-        { pct: 20, text: 'Fetching submissions...', delay: 1500 },
-        { pct: 35, text: 'Loading organizations...', delay: 4000 },
-        { pct: 50, text: 'Processing form data...', delay: 8000 },
-        { pct: 65, text: 'Building pipeline...', delay: 15000 },
-        { pct: 75, text: 'Almost ready...', delay: 25000 },
-        { pct: 82, text: 'Still working...', delay: 35000 },
-        { pct: 88, text: 'Hang tight...', delay: 45000 }
+        { pct: 12, text: 'Signed in. Fetching submissions...', delay: 250 },
+        { pct: 28, text: 'Loading organizations...', delay: 1400 },
+        { pct: 46, text: 'Reading form data...', delay: 3200 },
+        { pct: 62, text: 'Building the pipeline...', delay: 6000 },
+        { pct: 74, text: 'Almost there...', delay: 10000 },
+        { pct: 84, text: 'Google Sheets is taking its time...', delay: 18000 },
+        { pct: 90, text: 'Still working, hang tight...', delay: 30000 }
       ];
       steps.forEach(function(step) {
         setTimeout(function() {
-          if (!document.getElementById('dataLoadingOverlay').classList.contains('hidden')) {
-            fill.style.width = step.pct + '%';
-            status.style.opacity = '0';
-            setTimeout(function() { status.textContent = step.text; status.style.opacity = '1'; }, 150);
-          }
+          var ov = document.getElementById('dataLoadingOverlay');
+          if (ov && !ov.classList.contains('hidden') && !window._ppLoadFinished) ppSplashProgress(step.pct, step.text);
         }, step.delay);
       });
     }
-    function finishLoading(data) {
-      var fill = document.getElementById('loadingProgressFill');
-      var status = document.getElementById('loadingStatus');
+    function finishLoading(data, fromCache) {
+      if (window._ppLoadFinished) return;
+      window._ppLoadFinished = true;
+      ppSplashProgress(100, fromCache ? 'Restored. Syncing the latest in the background.' : 'Ready');
       var metrics = document.getElementById('loadingMetrics');
-      // Set to 100%
-      fill.style.width = '100%';
-      status.style.opacity = '0';
-      setTimeout(function() { status.textContent = 'Ready!'; status.style.opacity = '1'; }, 150);
-      // Show metrics
-      var totalOrgs = data.length;
-      var totalSpaces = data.reduce(function(sum, d) { return sum + (d.spaces || 0); }, 0);
-      var totalComplete = data.filter(function(d) { return d.pipelineStatus === 'complete' || d.pipelineStatus === 'onboarding' || d.pipelineStatus === 'published' || d.pipelineStatus === 'launched'; }).length;
-      // Animate count up
+      var totalOrgs = data.length, totalSpaces = data.reduce(function(s, d) { return s + (d.spaces || 0); }, 0);
+      var totalComplete = data.filter(function(d) { return ['complete', 'onboarding', 'published', 'launched'].indexOf(d.pipelineStatus) >= 0; }).length;
+      if (metrics) metrics.classList.add('visible');
+      animateCount('loadMetricOrgs', totalOrgs, 500); animateCount('loadMetricSpaces', totalSpaces, 600); animateCount('loadMetricComplete', totalComplete, 550);
+      // Hold the finished state just long enough to read it (max ~0.9s), never longer than the data took
+      var elapsed = Date.now() - (window._ppLoadStart || Date.now());
+      var hold = Math.max(0, 900 - elapsed);
       setTimeout(function() {
-        metrics.classList.add('visible');
-        animateCount('loadMetricOrgs', totalOrgs, 600);
-        animateCount('loadMetricSpaces', totalSpaces, 800);
-        animateCount('loadMetricComplete', totalComplete, 700);
-      }, 300);
-      // Fade out and show dashboard
-      setTimeout(function() {
-        document.getElementById('dataLoadingOverlay').classList.add('hidden');
+        var ov = document.getElementById('dataLoadingOverlay');
+        if (ov) ov.classList.add('leaving');
         document.getElementById('dashboard').classList.add('active');
-      }, 1800);
+        requestAnimationFrame(function() { ppTabInk(); });
+        setTimeout(function() { if (ov) { ov.classList.add('hidden'); ov.classList.remove('leaving'); } }, 560);
+      }, hold);
     }
     function animateCount(elId, target, duration) {
       var el = document.getElementById(elId);
@@ -1410,7 +1618,7 @@
       }
       requestAnimationFrame(step);
     }
-    function logout() { sessionStorage.removeItem('pp_admin_user'); google.accounts.id.disableAutoSelect(); location.reload(); }
+    function logout() { sessionStorage.removeItem('pp_admin_user'); ppCacheClear(); google.accounts.id.disableAutoSelect(); location.reload(); }
     function jsonpRequest(url, attempt) { attempt = attempt || 1; return new Promise((res, rej) => { const cb = 'cb_' + Date.now() + '_' + Math.random().toString(36).substr(2,5); console.log('JSONP request (attempt ' + attempt + '):', url.split('?')[0], 'callback:', cb); window[cb] = (d) => { console.log('JSONP response received:', d); delete window[cb]; if(document.body.contains(s)) document.body.removeChild(s); res(d); }; const s = document.createElement('script'); s.src = url + '&callback=' + cb; s.onerror = (err) => { console.error('JSONP script error:', err); delete window[cb]; if(document.body.contains(s)) document.body.removeChild(s); if (attempt < 3) { console.log('Retrying... attempt ' + (attempt+1)); setTimeout(function() { jsonpRequest(url, attempt+1).then(res).catch(rej); }, 2000); } else { rej(new Error('Script load failed after 3 attempts')); } }; document.body.appendChild(s); setTimeout(() => { if (window[cb]) { console.error('JSONP timeout after 45s, attempt ' + attempt); delete window[cb]; if(document.body.contains(s)) document.body.removeChild(s); if (attempt < 3) { console.log('Retrying after timeout... attempt ' + (attempt+1)); jsonpRequest(url, attempt+1).then(res).catch(rej); } else { rej(new Error('Timeout after 3 attempts - Apps Script may be slow or unreachable')); } } }, 45000); }); }
 
     function switchView(view) {
@@ -1424,6 +1632,8 @@
       if (view === 'activity') { loadActivity().then(function() { renderActivity(); }); }
       if (view === 'credentials') { renderCredentials(); loadCredList(false).then(function() { renderCredentials(); }); }
       if (view === 'tradeshows') { renderTradeShows(); loadTradeShows(false).then(function() { renderTradeShows(); }); }
+      ppTabInk();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function populateRepFilter() {
@@ -1459,59 +1669,25 @@
       for (var sk = 0; sk < 5; sk++) {
         skeletonRows += '<tr class="skeleton-row"><td><div style="display:flex;align-items:center;gap:10px"><div class="skeleton-avatar"></div><div><div class="skeleton-bar short" style="width:120px;margin-bottom:4px"></div><div class="skeleton-bar tiny" style="width:80px;height:8px"></div></div></div></td><td><div class="skeleton-bar medium" style="width:100px;margin-bottom:4px"></div><div class="skeleton-bar tiny" style="width:130px;height:8px"></div></td><td><div class="skeleton-badge"></div></td><td><div class="skeleton-bar tiny" style="width:60px"></div></td><td><div class="skeleton-bar short" style="width:70px"></div></td><td><div class="skeleton-bar tiny" style="width:60px"></div></td><td><div class="skeleton-bar short" style="width:90px;height:28px;border-radius:6px"></div></td><td><div class="skeleton-bar tiny" style="width:60px"></div></td></tr>';
       }
-      document.getElementById('tableBody').innerHTML = skeletonRows;
-      document.querySelector('.stats-section')?.classList.add('loading-state');
+      if (!window._ppCachedRender) { document.getElementById('tableBody').innerHTML = skeletonRows; document.querySelector('.stats-section')?.classList.add('loading-state'); }
       try {
+        var sideLoads = Promise.all([loadComments(), loadChecklists(), loadCredentials()]).catch(function(e) { console.log('Side loads:', e.message); });
         const result = await jsonpRequest(API_URL + '?action=getAdminData&email=' + encodeURIComponent(currentUser?.email || ''));
         if (result.success) {
           console.log('API returned', (result.data || []).length, 'records');
-          const now = new Date();
-          const processed = (result.data || []).map(d => {
-            const updated = new Date(d.lastUpdated), daysDiff = (now - updated) / 86400000, pct = d.completion || 0;
-            let ps = d.pipelineStatus;
-            if (!ps) { if (d.status === 'Submitted') ps = 'complete'; else if (pct >= 75) ps = 'review'; else if (pct > 0) ps = 'in-progress'; else ps = 'new'; }
-            if (ps === 'live') ps = 'published';
-            return { ...d, isStale: d.status === 'In Progress' && daysDiff > STALE_DAYS, daysSinceUpdate: Math.floor(daysDiff), updatedDate: updated, pipelineStatus: ps, goLiveDate: getGoLiveDate(d), locationStr: getLocationString(d), accountRep: d.accountRep || '', organization: toTitleCase(d.organization), contact: toTitleCase(d.contact) };
-          });
-          // Deduplicate: hide drafts if a submission exists for same email OR same org name
-          var submittedEmails = {}, submittedOrgs = {};
-          processed.forEach(function(d) {
-            if (d.sheetType === 'main') {
-              if (d.email) submittedEmails[d.email.toLowerCase()] = true;
-              if (d.organization) submittedOrgs[d.organization.toLowerCase().trim()] = true;
-            }
-          });
-          var deduped = processed.filter(function(d) {
-            if (d.sheetType === 'drafts') {
-              if (d.email && submittedEmails[d.email.toLowerCase()]) return false;
-              if (d.organization && submittedOrgs[d.organization.toLowerCase().trim()]) return false;
-            }
-            return true;
-          });
-          allData = deduped.filter(d => d.status !== 'Archived');
-          archivedData = deduped.filter(d => d.status === 'Archived');
+          ppProcessAdminData(result.data); ppCacheWrite(result.data);
           document.querySelector('.stats-section')?.classList.remove('loading-state');
           // Load shared data before rendering
-          await Promise.all([loadComments(), loadChecklists(), loadCredentials()]);
-          updateStats(); renderTable(); renderPipeline(); renderCalendar(); finishLoading(allData);
+          await sideLoads;
+          updateStats(); renderTable(); renderPipeline(); renderCalendar(); finishLoading(allData); ppSyncPill(false); window._ppCachedRender = false;
+          setTimeout(function() { loadCredList(false).then(function() { if (document.getElementById('credentialsView').classList.contains('active')) renderCredentials(); }); loadTradeShows(false).then(function() { if (document.getElementById('tradeshowsView').classList.contains('active')) renderTradeShows(); }); }, 1500);
           // Start auto-refresh every 60 seconds
           if (!window._refreshInterval) {
             window._refreshInterval = setInterval(async function() {
               try {
                 var result = await jsonpRequest(API_URL + '?action=getAdminData&email=' + encodeURIComponent(currentUser?.email || ''));
                 if (result.success) {
-                  var now = new Date();
-                  var processed = (result.data || []).map(function(d) {
-                    var updated = new Date(d.lastUpdated), daysDiff = (now - updated) / 86400000, pct = d.completion || 0;
-                    var ps = d.pipelineStatus;
-                    if (!ps) { if (d.status === 'Submitted') ps = 'complete'; else if (pct >= 75) ps = 'review'; else if (pct > 0) ps = 'in-progress'; else ps = 'new'; }
-                    return Object.assign({}, d, { isStale: d.status === 'In Progress' && daysDiff > STALE_DAYS, daysSinceUpdate: Math.floor(daysDiff), updatedDate: updated, pipelineStatus: ps, goLiveDate: getGoLiveDate(d), locationStr: getLocationString(d), accountRep: d.accountRep || '', organization: toTitleCase(d.organization), contact: toTitleCase(d.contact) });
-                  });
-                  var submittedEmails = {}, submittedOrgs = {};
-                  processed.forEach(function(d) { if (d.sheetType === 'main') { if (d.email) submittedEmails[d.email.toLowerCase()] = true; if (d.organization) submittedOrgs[d.organization.toLowerCase().trim()] = true; } });
-                  var deduped = processed.filter(function(d) { if (d.sheetType === 'drafts') { if (d.email && submittedEmails[d.email.toLowerCase()]) return false; if (d.organization && submittedOrgs[d.organization.toLowerCase().trim()]) return false; } return true; });
-                  allData = deduped.filter(function(d) { return d.status !== 'Archived'; });
-                  archivedData = deduped.filter(function(d) { return d.status === 'Archived'; });
+                  ppProcessAdminData(result.data); ppCacheWrite(result.data);
                   await Promise.all([loadComments(), loadChecklists(), loadCredentials()]);
                   updateStats(); renderTable(); renderPipeline();
                   console.log('Auto-refreshed at', new Date().toLocaleTimeString());
@@ -1520,8 +1696,9 @@
             }, 60000);
           }
         } else if (result.error === 'Unauthorized') logout();
+        else if (window._ppCachedRender) { console.error('API returned error:', result); ppSyncPill(false); showToast('Could not refresh from Google Sheets. Showing your last saved data.', 'error'); }
         else { console.error('API returned error:', result); document.getElementById('dataLoadingOverlay').classList.add('hidden'); document.getElementById('dashboard').classList.add('active'); document.getElementById('tableBody').innerHTML = '<tr><td colspan="9" class="empty-state">API error: ' + (result.error || JSON.stringify(result)) + '</td></tr>'; }
-      } catch(e) { console.error('LoadData error:', e); document.getElementById('dataLoadingOverlay').classList.add('hidden'); document.getElementById('dashboard').classList.add('active'); document.getElementById('tableBody').innerHTML = '<tr><td colspan="9" class="empty-state">Unable to load data: ' + e.message + '<br><small style="color:var(--text3)">Check browser console for details. Email: ' + (currentUser?.email || 'none') + '</small></td></tr>'; }
+      } catch(e) { console.error('LoadData error:', e); if (window._ppCachedRender) { ppSyncPill(false); showToast('Could not reach Google Sheets. Showing your last saved data.', 'error'); return; } document.getElementById('dataLoadingOverlay').classList.add('hidden'); document.getElementById('dashboard').classList.add('active'); document.getElementById('tableBody').innerHTML = '<tr><td colspan="9" class="empty-state">Unable to load data: ' + e.message + '<br><small style="color:var(--text3)">Check browser console for details. Email: ' + (currentUser?.email || 'none') + '</small></td></tr>'; }
     }
 
     function getFilteredByTime(data) { if (timePeriodDays === 0) return data; const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - timePeriodDays); return data.filter(d => d.updatedDate >= cutoff); }
@@ -3133,7 +3310,7 @@
     // the tabs show a setup message instead of breaking the rest of the admin.
     // =====================================================================
     var CRED_STATUSES = [{val:'active',label:'Active'},{val:'onboarding',label:'Onboarding'},{val:'on-hold',label:'On Hold'},{val:'inactive',label:'Inactive'}];
-    var TS_AUDIENCES = [{val:'supers',label:'Superintendents'},{val:'ads',label:'Athletic Directors'},{val:'sbo',label:'Business Officials'},{val:'munis',label:'Parks & Rec / Municipal'},{val:'heads',label:'Heads of School'},{val:'other',label:'Other'}];
+    var TS_AUDIENCES = [{val:'supers',label:'Superintendents'},{val:'ads',label:'Athletic Directors'},{val:'sbo',label:'Business Officials'},{val:'munis',label:'Parks & Rec'},{val:'heads',label:'Heads of School'},{val:'other',label:'Other'}];
     var TS_REG = [{val:'',label:'Not registered'},{val:'need-to-pay',label:'Need to Pay'},{val:'paid',label:'Paid'},{val:'sold-out',label:'Sold Out'},{val:'skip',label:'Not Attending'}];
     var TS_TRAVEL = [{val:'',label:'Not set'},{val:'need-to-book',label:'Need to Book'},{val:'booked',label:'Booked'},{val:'driving',label:'Driving'},{val:'na',label:'N/A'}];
     var CRED_COLS = ['id','organization','status','rep','adminName','adminPhone','loginEmail','loginPassword','notes','updatedAt','updatedBy'];
@@ -3144,13 +3321,26 @@
 
     // ---------- shared helpers ----------
     function ppEsc(s) { return (s === undefined || s === null) ? '' : String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+    function ppJsonp(url, timeoutMs, attempt) {
+      attempt = attempt || 1;
+      return new Promise(function(res, rej) {
+        var cb = 'ppcb_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7), done = false;
+        var s = document.createElement('script');
+        var finish = function(fn, val) { if (done) return; done = true; delete window[cb]; if (s.parentNode) s.parentNode.removeChild(s); fn(val); };
+        window[cb] = function(d) { finish(res, d); };
+        s.onerror = function() { finish(rej, new Error('Script load failed (the deployment URL did not answer)')); };
+        s.src = url + '&callback=' + cb;
+        document.body.appendChild(s);
+        setTimeout(function() { finish(rej, new Error('Timeout after ' + Math.round(timeoutMs / 1000) + 's (no JSONP reply)')); }, timeoutMs);
+      }).catch(function(e) { if (attempt < 2) return new Promise(function(r) { setTimeout(r, 1200); }).then(function() { return ppJsonp(url, timeoutMs, attempt + 1); }); throw e; });
+    }
     function ppApi(action, params) {
       var url = API_URL + '?action=' + encodeURIComponent(action) + '&email=' + encodeURIComponent(currentUser?.email || '');
       Object.keys(params || {}).forEach(function(k) {
         var v = params[k]; if (v === undefined || v === null) v = '';
         url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(typeof v === 'object' ? JSON.stringify(v) : String(v));
       });
-      return jsonpRequest(url);
+      return ppJsonp(url, 30000);
     }
     function ppTodayISO() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
     function ppParseISO(s) { if (!s) return null; var p = String(s).split('-'); if (p.length < 3) return null; return new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2])); }
@@ -3212,8 +3402,18 @@
     }
     function ppReadFileText(file) { return new Promise(function(res, rej) { var r = new FileReader(); r.onload = function() { res(r.result); }; r.onerror = rej; r.readAsText(file); }); }
     function ppNewId(prefix) { return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-    function ppSetupEmpty(what) {
-      return '<div class="pp-empty"><strong>' + what + ' backend not connected yet</strong>The Apps Script behind this admin needs the new actions for this tab. Once <code>Code.gs</code> is updated and redeployed, hit Refresh.</div>';
+    function ppSetupEmpty(what, err) {
+      err = String(err || '');
+      var hint = '';
+      if (/No active spreadsheet/i.test(err)) hint = 'The Extras.gs that is deployed is the earlier copy without the Sheet ID. Paste the updated <code>AppsScript_additions.gs</code> over it, then Deploy > Manage deployments > pencil > New version.';
+      else if (/Unknown action|unhandled|Invalid action|not recognized|not found/i.test(err)) hint = 'The web app is still serving the previous version. In Apps Script: Deploy > Manage deployments > pencil icon > Version: New version > Deploy.';
+      else if (/Timeout|Script load failed|unreachable/i.test(err)) hint = 'No reply came back from the script. Usually the one-line hook is missing from doGet (<code>var pp = ppHandleExtra_(e); if (pp) return pp;</code>) or the deployment has not been updated to a new version.';
+      else if (/Unauthorized/i.test(err)) hint = 'Your signed-in email (' + ppEsc(currentUser?.email || '') + ') is not in <code>PP_ADMIN_EMAILS</code> at the top of Extras.gs.';
+      else hint = 'The Apps Script behind this admin needs the new actions for this tab. Paste <code>AppsScript_additions.gs</code> in as Extras.gs, add the one-line hook to doGet, and deploy a new version.';
+      var retry = what === 'Credentials' ? 'loadCredList(true).then(renderCredentials)' : 'loadTradeShows(true).then(renderTradeShows)';
+      return '<div class="pp-empty"><strong>' + what + ': backend not connected yet</strong><div style="max-width:520px;margin:0 auto;line-height:1.6">' + hint + '</div>'
+        + (err ? '<div class="pp-toolbar-note" style="margin-top:10px">Reply from server: ' + ppEsc(err) + '</div>' : '')
+        + '<div style="margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><a class="pp-btn" target="_blank" rel="noopener" href="' + ppEsc(API_URL + '?action=ppPing&email=' + encodeURIComponent(currentUser?.email || '')) + '">Test backend</a><button class="pp-btn primary" onclick="' + retry + '">Retry</button></div></div>';
     }
     function ppSvg(name) {
       var icons = {
@@ -3236,7 +3436,7 @@
       try {
         var result = await ppApi('getCredentialsList');
         if (result.success) { credList = (result.rows || []).map(credNormalize); credLoaded = true; credError = ''; }
-        else { credError = result.error || 'Unknown error'; if (result.error === 'Unauthorized') logout(); }
+        else { credError = result.error || 'Unknown error'; }
       } catch(e) { credError = e.message || 'Request failed'; }
       populateCredRepFilter();
       return credList;
@@ -3296,7 +3496,7 @@
       var body = document.getElementById('credTableBody'), mobile = document.getElementById('credMobileCards'); if (!body) return;
       renderCredStats();
       document.querySelectorAll('#credTable th[data-col]').forEach(function(th) { th.classList.toggle('sorted', th.getAttribute('data-col') === credSort); var ar = th.querySelector('.sort-arrow'); if (ar) ar.innerHTML = (th.getAttribute('data-col') === credSort && credSortDir === 'desc') ? '&#x25BC;' : '&#x25B2;'; });
-      if (!credLoaded) { var msg = credError ? ppSetupEmpty('Credentials') + '<div class="pp-toolbar-note" style="text-align:center;padding-bottom:20px">Error: ' + ppEsc(credError) + '</div>' : '<div class="pp-empty">Loading credentials...</div>'; body.innerHTML = '<tr><td colspan="9">' + msg + '</td></tr>'; mobile.innerHTML = msg; return; }
+      if (!credLoaded) { var msg = credError ? ppSetupEmpty('Credentials', credError) : '<div class="pp-empty">Loading credentials...</div>'; body.innerHTML = '<tr><td colspan="9">' + msg + '</td></tr>'; mobile.innerHTML = msg; return; }
       var rows = credFiltered();
       if (!rows.length) { var e2 = '<div class="pp-empty"><strong>No credentials match</strong>' + (credList.length ? 'Try clearing the search or filters.' : 'Add a client with the Add button, or import your Monday.com export.') + '</div>'; body.innerHTML = '<tr><td colspan="9">' + e2 + '</td></tr>'; mobile.innerHTML = e2; return; }
       var statusLabel = {}; CRED_STATUSES.forEach(function(s) { statusLabel[s.val] = s.label; });
@@ -3420,7 +3620,7 @@
       try {
         var result = await ppApi('getTradeShows');
         if (result.success) { tsList = (result.rows || []).map(tsNormalize); tsLoaded = true; tsError = ''; }
-        else { tsError = result.error || 'Unknown error'; if (result.error === 'Unauthorized') logout(); }
+        else { tsError = result.error || 'Unknown error'; }
       } catch(e) { tsError = e.message || 'Request failed'; }
       populateTsRepFilter();
       return tsList;
@@ -3474,13 +3674,14 @@
     function tsChip(s, field) {
       var list = field === 'registration' ? TS_REG : TS_TRAVEL, val = s[field] || '', item = list.find(function(x) { return x.val === val; }) || list[0];
       var label = item.label; if (!val) label = field === 'registration' ? 'Register' : (field === 'hotel' ? 'Hotel?' : 'Flight?');
-      return '<span class="pp-chip click ' + (val || 'unset') + '" title="Click to change" onclick="event.stopPropagation();tsCycle(\'' + ppEsc(s.id) + '\',\'' + field + '\')">' + ppEsc(label) + '</span>';
+      return '<span class="pp-chip click ' + (val || 'unset') + '" data-chip="' + ppEsc(s.id) + ':' + field + '" title="Click to change" onclick="event.stopPropagation();tsCycle(\'' + ppEsc(s.id) + '\',\'' + field + '\')">' + ppEsc(label) + '</span>';
     }
     async function tsCycle(id, field) {
       var s = tsList.find(function(x) { return x.id === id; }); if (!s) return;
       var list = field === 'registration' ? TS_REG : TS_TRAVEL, vals = list.map(function(x) { return x.val; });
       var next = vals[(vals.indexOf(s[field] || '') + 1) % vals.length];
       var prev = s[field]; s[field] = next; tsDerive(s); renderTradeShows();
+      document.querySelectorAll('[data-chip="' + id + ':' + field + '"]').forEach(function(el) { el.classList.add('pop'); });
       try { await tsSave(s, false); var lbl = (list.find(function(x) { return x.val === next; }) || {}).label; showToast(s.name + ': ' + field + ' set to ' + lbl, 'success'); logActivityToServer('set ' + field + ' for', s.name, lbl, 'status'); }
       catch(e) { s[field] = prev; tsDerive(s); renderTradeShows(); showToast('Could not save: ' + e.message, 'error'); }
     }
@@ -3510,7 +3711,7 @@
       var when = s._isLive ? 'Happening now' : s._isPast ? 'Done' : s._daysUntil === null ? 'Date TBD' : s._daysUntil === 0 ? 'Today' : 'in ' + s._daysUntil + ' day' + (s._daysUntil === 1 ? '' : 's');
       var out = '<span class="ts-outcome" onclick="event.stopPropagation();openTsModal(\'' + ppEsc(s.id) + '\',true)" title="Click to record outcomes"><span><b>Leads</b>' + ppEsc(s.leads || '-') + '</span><span><b>Demos</b>' + ppEsc(s.demos || '-') + '</span><span><b>Deals</b>' + ppEsc(s.deals || '-') + '</span></span>';
       return '<tr class="clickable' + (s._isPast ? ' past' : '') + '" onclick="openTsModal(\'' + ppEsc(s.id) + '\')">'
-        + '<td><div class="pp-org-cell"><div><div class="pp-org-name" style="max-width:280px">' + ppEsc(s.name) + (s.podcast ? ' <span title="Includes podcast" style="color:var(--pp-blue);display:inline-flex;vertical-align:middle;width:12px;height:12px">' + ppSvg('mic') + '</span>' : '') + '</div><div class="pp-org-sub" style="max-width:280px">' + (s.location ? ppEsc(s.location) : '<span style="opacity:0.7">Location TBD</span>') + '</div></div></div></td>'
+        + '<td><div class="pp-org-cell"><div><div class="pp-org-name" style="max-width:280px">' + ppEsc(s.name) + (s.podcast ? ' <span title="Includes podcast" style="color:var(--pp-blue);display:inline-flex;vertical-align:middle;width:12px;height:12px">' + ppSvg('mic') + '</span>' : '') + (s.link ? ' <a class="ts-link" href="' + ppEsc(s.link) + '" target="_blank" rel="noopener" title="Open event site" onclick="event.stopPropagation()" style="vertical-align:middle">' + ppSvg('link') + '</a>' : '') + '</div><div class="pp-org-sub" style="max-width:280px">' + (s.location ? ppEsc(s.location) : '<span style="opacity:0.7">Location TBD</span>') + '</div></div></div></td>'
         + '<td><div class="ts-date' + (soon ? ' soon' : '') + '">' + ppFmtRange(s._start, s._end) + '<span class="sub">' + when + '</span></div></td>'
         + '<td><span class="pp-chip aud-' + (s.audience || 'other') + '">' + ppEsc(tsAudLabel(s.audience)) + '</span></td>'
         + '<td>' + ppRepAvatars(s.reps, 26) + '</td>'
@@ -3520,7 +3721,7 @@
         + '<td>' + tsChip(s, 'hotel') + '</td>'
         + '<td>' + tsChip(s, 'flight') + '</td>'
         + '<td>' + out + '</td>'
-        + '<td style="text-align:right;white-space:nowrap">' + (s.link ? '<a class="pp-mini-btn ts-link" href="' + ppEsc(s.link) + '" target="_blank" rel="noopener" title="Open event site" onclick="event.stopPropagation()">' + ppSvg('link') + '</a> ' : '') + '<button class="pp-mini-btn" title="Edit" onclick="event.stopPropagation();openTsModal(\'' + ppEsc(s.id) + '\')">' + ppSvg('edit') + '</button></td>'
+        + '<td style="text-align:right"><button class="pp-mini-btn" title="Edit" onclick="event.stopPropagation();openTsModal(\'' + ppEsc(s.id) + '\')">' + ppSvg('edit') + '</button></td>'
         + '</tr>';
     }
     function tsCard(s) {
@@ -3536,7 +3737,7 @@
       renderTsStats();
       if (tsView === 'calendar') { renderTsCalendar(); return; }
       var nextEl = document.getElementById('tsNext'), groupsEl = document.getElementById('tsGroups'); if (!groupsEl) return;
-      if (!tsLoaded) { nextEl.innerHTML = ''; groupsEl.innerHTML = tsError ? ppSetupEmpty('Trade Shows') + '<div class="pp-toolbar-note" style="text-align:center;padding-bottom:20px">Error: ' + ppEsc(tsError) + '</div>' : '<div class="pp-empty">Loading shows...</div>'; return; }
+      if (!tsLoaded) { nextEl.innerHTML = ''; groupsEl.innerHTML = tsError ? ppSetupEmpty('Trade Shows', tsError) : '<div class="pp-empty">Loading shows...</div>'; return; }
       var rows = tsFiltered();
       // Up next strip: next 4 upcoming shows from the full (unfiltered by scope) active list
       var upcoming = tsList.filter(function(s) { return !s.archived && !s._isPast && s._start; }).sort(function(a, b) { return a._start < b._start ? -1 : 1; }).slice(0, 4);
@@ -3692,6 +3893,85 @@
       logActivityToServer('imported trade shows', ok + ' rows', '', 'other');
       await loadTradeShows(true); renderTradeShows();
     }
+    // =====================================================================
+    // PREMIUM UI BEHAVIOR (Sept 2026): tab ink, splash, cache, shortcuts
+    // =====================================================================
+    var PP_CACHE_KEY = 'pp_admin_cache_v1', PP_CACHE_TTL = 24 * 3600 * 1000;
+    function ppTabInk() {
+      var bar = document.querySelector('.view-tabs'); if (!bar) return;
+      var ink = document.getElementById('ppTabInk');
+      if (!ink) { ink = document.createElement('div'); ink.id = 'ppTabInk'; bar.insertBefore(ink, bar.firstChild); }
+      var a = bar.querySelector('.view-tab.active'); if (!a || !a.offsetWidth) return;
+      ink.style.transform = 'translateX(' + a.offsetLeft + 'px)'; ink.style.width = a.offsetWidth + 'px'; ink.style.height = a.offsetHeight + 'px'; ink.style.top = a.offsetTop + 'px';
+      if (!ink.classList.contains('ready')) requestAnimationFrame(function() { ink.classList.add('ready'); });
+      if (window.innerWidth <= 768 && a.scrollIntoView) { try { a.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' }); } catch(e) {} }
+    }
+    window.addEventListener('resize', function() { clearTimeout(window._ppInkT); window._ppInkT = setTimeout(ppTabInk, 80); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function() { setTimeout(ppTabInk, 30); });
+    window.addEventListener('scroll', function() { var h = document.querySelector('.header'); if (h) h.classList.toggle('scrolled', window.scrollY > 6); }, { passive: true });
+
+    // Splash progress: one place updates the bar, the ring and the status line
+    function ppSplashProgress(pct, text) {
+      var fill = document.getElementById('loadingProgressFill'), status = document.getElementById('loadingStatus'), ring = document.getElementById('splashRing');
+      if (fill) fill.style.width = pct + '%';
+      if (ring) { ring.classList.remove('indeterminate'); ring.style.strokeDashoffset = String(339.3 * (1 - pct / 100)); }
+      if (status && text) { status.style.opacity = '0'; setTimeout(function() { status.textContent = text; status.style.opacity = '1'; }, 140); }
+    }
+    function ppSyncPill(on, text) {
+      var el = document.getElementById('ppSyncPill'); if (!el) return;
+      if (text) el.querySelector('span').textContent = text;
+      el.classList.toggle('on', !!on);
+    }
+
+    // Stale-while-revalidate cache of the submissions payload (per signed-in user, 24h, cleared on sign out)
+    function ppCacheRead() {
+      try {
+        var raw = localStorage.getItem(PP_CACHE_KEY); if (!raw) return null;
+        var c = JSON.parse(raw);
+        if (!c || c.email !== (currentUser && currentUser.email) || (Date.now() - c.savedAt) > PP_CACHE_TTL || !Array.isArray(c.data)) return null;
+        return c;
+      } catch(e) { return null; }
+    }
+    function ppCacheWrite(data) {
+      try {
+        var s = JSON.stringify({ email: currentUser && currentUser.email, savedAt: Date.now(), data: data });
+        if (s.length > 3500000) { localStorage.removeItem(PP_CACHE_KEY); return; }
+        localStorage.setItem(PP_CACHE_KEY, s);
+      } catch(e) { try { localStorage.removeItem(PP_CACHE_KEY); } catch(e2) {} }
+    }
+    function ppCacheClear() { try { localStorage.removeItem(PP_CACHE_KEY); } catch(e) {} }
+
+    // Shared processing for the submissions payload (initial load, cached load, and auto-refresh)
+    function ppProcessAdminData(raw) {
+      var now = new Date();
+      var processed = (raw || []).map(function(d) {
+        var updated = new Date(d.lastUpdated), daysDiff = (now - updated) / 86400000, pct = d.completion || 0;
+        var ps = d.pipelineStatus;
+        if (!ps) { if (d.status === 'Submitted') ps = 'complete'; else if (pct >= 75) ps = 'review'; else if (pct > 0) ps = 'in-progress'; else ps = 'new'; }
+        if (ps === 'live') ps = 'published';
+        return Object.assign({}, d, { isStale: d.status === 'In Progress' && daysDiff > STALE_DAYS, daysSinceUpdate: Math.floor(daysDiff), updatedDate: updated, pipelineStatus: ps, goLiveDate: getGoLiveDate(d), locationStr: getLocationString(d), accountRep: d.accountRep || '', organization: toTitleCase(d.organization), contact: toTitleCase(d.contact) });
+      });
+      var submittedEmails = {}, submittedOrgs = {};
+      processed.forEach(function(d) { if (d.sheetType === 'main') { if (d.email) submittedEmails[d.email.toLowerCase()] = true; if (d.organization) submittedOrgs[d.organization.toLowerCase().trim()] = true; } });
+      var deduped = processed.filter(function(d) { if (d.sheetType === 'drafts') { if (d.email && submittedEmails[d.email.toLowerCase()]) return false; if (d.organization && submittedOrgs[d.organization.toLowerCase().trim()]) return false; } return true; });
+      allData = deduped.filter(function(d) { return d.status !== 'Archived'; });
+      archivedData = deduped.filter(function(d) { return d.status === 'Archived'; });
+      return allData;
+    }
+
+    // Keyboard shortcuts (desktop): 1-7 switch tabs, / focuses search, N adds on the Credentials / Trade Shows tabs, Esc closes overlays
+    document.addEventListener('keydown', function(e) {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      var t = e.target, typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable);
+      if (e.key === 'Escape') { var io = document.getElementById('importOverlay'); if (io && io.classList.contains('active')) { closeImport(); return; } }
+      if (typing) return;
+      if (!document.getElementById('dashboard').classList.contains('active')) return;
+      if (document.getElementById('modalOverlay').classList.contains('active')) return;
+      var tabs = ['dashboard', 'pipeline', 'customers', 'credentials', 'tradeshows', 'calendar', 'activity'];
+      if (/^[1-7]$/.test(e.key)) { switchView(tabs[parseInt(e.key) - 1]); e.preventDefault(); return; }
+      if (e.key === '/') { var s = document.querySelector('.view-content.active .search-input'); if (s) { s.focus(); s.select(); e.preventDefault(); } return; }
+      if (e.key.toLowerCase() === 'n') { var v = document.querySelector('.view-content.active'); if (v && v.id === 'credentialsView') { openCredModal(null); e.preventDefault(); } else if (v && v.id === 'tradeshowsView') { openTsModal(null); e.preventDefault(); } }
+    });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
     document.addEventListener('touchmove', function(e) {
