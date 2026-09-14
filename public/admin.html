@@ -1088,6 +1088,29 @@
       .splash-mark,.splash-ring{width:112px;height:112px}
       .stats-row>*,.pp-stat-strip>*{animation-delay:0ms!important}
     }
+    /* ---- dashboard: coming up panel ---- */
+    .pp-upcoming{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+    .pp-up-list{display:flex;flex-direction:column;gap:4px}
+    .pp-up-item{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:12px;cursor:pointer;transition:background var(--t-fast),transform var(--t-fast) var(--ease)}
+    .pp-up-item:hover{background:rgba(0,118,187,0.05);transform:translateX(2px)}
+    [data-theme="dark"] .pp-up-item:hover{background:rgba(63,177,245,0.08)}
+    .pp-up-date{width:42px;flex-shrink:0;text-align:center;border-radius:10px;background:var(--bg);border:1px solid var(--border);padding:5px 0;line-height:1.05}
+    .pp-up-date b{display:block;font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--text)}
+    .pp-up-date span{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3)}
+    .pp-up-date.soon{background:rgba(217,119,6,0.10);border-color:rgba(217,119,6,0.25)}.pp-up-date.soon b{color:#b45309}
+    .pp-up-main{flex:1;min-width:0}
+    .pp-up-title{font-size:12.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pp-up-sub{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+    .pp-up-right{flex-shrink:0;display:flex;gap:4px;align-items:center;font-size:16px}
+    .pp-up-empty{padding:16px 6px;font-size:12px;color:var(--text3);line-height:1.5}
+    .pp-up-foot{margin-top:6px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--pp-blue);cursor:pointer;display:inline-flex;align-items:center;gap:4px;border-radius:8px;transition:background var(--t-fast)}
+    .pp-up-foot:hover{background:rgba(0,118,187,0.06)}
+    .pp-att-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .pp-att-icon svg{width:16px;height:16px}
+    .pp-att-icon.amber{background:#fef3c7;color:#b45309}.pp-att-icon.red{background:#fee2e2;color:#b91c1c}.pp-att-icon.blue{background:#e0f2fe;color:#0369a1}
+    [data-theme="dark"] .pp-att-icon.amber{background:rgba(251,191,36,0.15);color:#fbbf24}[data-theme="dark"] .pp-att-icon.red{background:rgba(248,113,113,0.15);color:#f87171}[data-theme="dark"] .pp-att-icon.blue{background:rgba(56,189,248,0.15);color:#38bdf8}
+    .pp-upcoming .stat-card{animation-delay:0ms}
+    @media(max-width:768px){.pp-upcoming{grid-template-columns:1fr;gap:12px}}
   </style>
 </head>
 <body>
@@ -1149,14 +1172,19 @@
       <div class="view-tabs">
         <button class="view-tab active" onclick="switchView('dashboard')" data-short="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Dashboard</button>
         <button class="view-tab" onclick="switchView('pipeline')" data-short="Pipeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Onboarding</button>
-        <button class="view-tab" onclick="switchView('customers')" data-short="Clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Customers</button>
-        <button class="view-tab" onclick="switchView('credentials')" data-short="Logins"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Credentials</button>
+        <button class="view-tab" onclick="switchView('customers')" data-short="Success"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Customer Success</button>
+        <button class="view-tab" onclick="switchView('credentials')" data-short="Logins"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Client Credentials</button>
         <button class="view-tab" onclick="switchView('tradeshows')" data-short="Shows"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M3 21V10l9-7 9 7v11"/><path d="M9 21v-6h6v6"/></svg> Trade Shows</button>
         <button class="view-tab" onclick="switchView('calendar')" data-short="Go-Live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Go-Live</button>
         <button class="view-tab" onclick="switchView('activity')" data-short="Activity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Activity</button>
       </div>
 
       <div class="view-content active" id="dashboardView">
+        <div class="pp-upcoming" id="ppUpcoming">
+          <div class="stat-card"><h3>Upcoming Trade Shows</h3><div class="pp-up-list" id="upShows"><div class="pp-up-empty">Loading...</div></div></div>
+          <div class="stat-card"><h3>Upcoming Go-Lives</h3><div class="pp-up-list" id="upGoLives"><div class="pp-up-empty">Loading...</div></div></div>
+          <div class="stat-card"><h3>Needs Attention</h3><div class="pp-up-list" id="upAttention"><div class="pp-up-empty">Loading...</div></div></div>
+        </div>
         <div class="stats-row">
           <div class="stat-card"><h3>Form Conversions</h3><div class="conversions-card" id="conversionsCard"></div></div>
           <div class="stat-card"><h3>Form Completion Metrics</h3><div class="time-stats-container"><div class="time-hero"><div class="time-hero-ring"><svg width="100" height="100" viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="42"/><circle class="progress" id="timeRingProgress" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="264"/></svg><div class="time-hero-value"><span class="num" id="avgTime">-</span><span class="unit" id="avgTimeUnit">days</span></div></div><div class="time-hero-info"><div class="label">Average Time to Complete</div><div class="desc">From first save to final submission</div></div></div><div class="time-range"><div class="time-range-item"><div class="val" id="fastestTime">-</div><div class="lbl">Fastest</div></div><div class="time-range-item"><div class="val" id="slowestTime">-</div><div class="lbl">Slowest</div></div></div></div></div>
@@ -1172,7 +1200,7 @@
             <div class="controls-right">
               <div class="controls-group filters-group">
                 <div class="styled-select" id="repFilterContainer"><select id="repFilter" onchange="setRepFilter(this.value)"><option value="all">All Reps</option></select></div>
-                <div class="styled-select"><select id="timePeriodSelect" onchange="setTimePeriod(this.value)"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="60">Last 60 days</option><option value="90">Last 90 days</option><option value="0">All time</option></select></div>
+                <div class="styled-select"><select id="timePeriodSelect" onchange="setTimePeriod(this.value)"><option value="0" selected>All time</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="60">Last 60 days</option><option value="90">Last 90 days</option></select></div>
                 <div class="styled-select"><select id="statusFilter" onchange="setFilter(this.value)"><option value="all">All statuses</option><option value="complete">Form Complete</option><option value="onboarding">Onboarding</option><option value="published">Published</option><option value="launched">Launched</option><option value="active">Active</option><option value="on-hold">On Hold</option><option value="stale">Stale</option><option value="archived">Archived</option></select></div>
               </div>
               <div class="controls-group search-group">
@@ -1293,7 +1321,7 @@
               <div class="controls-group actions-group">
                 <button class="text-action-btn" onclick="openCredModal(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add</button>
                 <button class="text-action-btn" onclick="startCredImport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button>
-                <input type="file" id="credImportFile" accept=".csv,text/csv" style="display:none" onchange="handleCredImportFile(this.files[0]);this.value=''">
+                <input type="file" id="credImportFile" accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" style="display:none" onchange="handleCredImportFile(this.files[0]);this.value=''">
                 <button class="text-action-btn" onclick="exportCredCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
                 <button class="text-action-btn pp-icon-only" title="Refresh" onclick="loadCredList(true).then(renderCredentials)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
               </div>
@@ -1338,7 +1366,7 @@
             <div class="controls-group actions-group">
               <button class="text-action-btn" onclick="openTsModal(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Show</button>
               <button class="text-action-btn" onclick="startTsImport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button>
-              <input type="file" id="tsImportFile" accept=".csv,text/csv" style="display:none" onchange="handleTsImportFile(this.files[0]);this.value=''">
+              <input type="file" id="tsImportFile" accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" style="display:none" onchange="handleTsImportFile(this.files[0]);this.value=''">
               <button class="text-action-btn" onclick="exportTsCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
               <button class="text-action-btn pp-icon-only" title="Refresh" onclick="loadTradeShows(true).then(renderTradeShows)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
             </div>
@@ -1444,7 +1472,7 @@
     ];
     
     let allData = [], archivedData = [], currentFilter = 'all', searchQuery = '', currentUser = null;
-    let sortField = 'lastUpdated', sortDir = 'desc', timePeriodDays = 30, repFilter = 'all', myAccountsOnly = false;
+    let sortField = 'lastUpdated', sortDir = 'desc', timePeriodDays = 0, repFilter = 'all', myAccountsOnly = false;
     let darkMode = localStorage.getItem('darkMode') === 'true';
     let calendarDate = new Date();
     let checklistData = {};
@@ -1680,7 +1708,7 @@
           // Load shared data before rendering
           await sideLoads;
           updateStats(); renderTable(); renderPipeline(); renderCalendar(); finishLoading(allData); ppSyncPill(false); window._ppCachedRender = false;
-          setTimeout(function() { loadCredList(false).then(function() { if (document.getElementById('credentialsView').classList.contains('active')) renderCredentials(); }); loadTradeShows(false).then(function() { if (document.getElementById('tradeshowsView').classList.contains('active')) renderTradeShows(); }); }, 1500);
+          setTimeout(function() { loadCredList(false).then(function() { if (document.getElementById('credentialsView').classList.contains('active')) renderCredentials(); renderUpcoming(); }); loadTradeShows(false).then(function() { if (document.getElementById('tradeshowsView').classList.contains('active')) renderTradeShows(); renderUpcoming(); }); }, 1500);
           // Start auto-refresh every 60 seconds
           if (!window._refreshInterval) {
             window._refreshInterval = setInterval(async function() {
@@ -1704,6 +1732,7 @@
     function getFilteredByTime(data) { if (timePeriodDays === 0) return data; const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - timePeriodDays); return data.filter(d => d.updatedDate >= cutoff); }
     
     function updateStats() {
+      try { renderUpcoming(); } catch(e) { console.log("upcoming:", e.message); }
       const tf = getFilteredByTime(allData);
       // Form-funnel stats exclude bulk-imported customers (they never went through the form)
       const tfForm = tf.filter(d => d.status !== 'Imported');
@@ -3401,6 +3430,20 @@
       var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; document.body.appendChild(a); a.click(); document.body.removeChild(a);
     }
     function ppReadFileText(file) { return new Promise(function(res, rej) { var r = new FileReader(); r.onload = function() { res(r.result); }; r.onerror = rej; r.readAsText(file); }); }
+    function ppLoadScript(src) { return new Promise(function(res, rej) { if (window.XLSX) return res(); var s = document.createElement('script'); s.src = src; s.onload = function() { res(); }; s.onerror = function() { rej(new Error('Could not load the Excel reader. Check your connection and try again, or save the file as CSV.')); }; document.head.appendChild(s); }); }
+    // Reads .xlsx/.xls (via SheetJS, loaded on first use) or .csv into an array of string rows. Dates come through as Excel serials, which ppNormalizeDate understands.
+    async function ppParseSpreadsheet(file) {
+      var name = String(file.name || '').toLowerCase();
+      if (/\.(xlsx|xlsm|xls)$/.test(name)) {
+        await ppLoadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+        var buf = await new Promise(function(res, rej) { var r = new FileReader(); r.onload = function() { res(r.result); }; r.onerror = rej; r.readAsArrayBuffer(file); });
+        var wb = XLSX.read(new Uint8Array(buf), { type: 'array', cellDates: false });
+        var ws = wb.Sheets[wb.SheetNames[0]];
+        var rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
+        return rows.map(function(r) { return r.map(function(v) { return (v === null || v === undefined) ? '' : String(v); }); }).filter(function(r) { return r.some(function(v) { return v.trim(); }); });
+      }
+      return parseCSV(await ppReadFileText(file));
+    }
     function ppNewId(prefix) { return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
     function ppSetupEmpty(what, err) {
       err = String(err || '');
@@ -3567,13 +3610,14 @@
     // Import: accepts this admin's own export OR a Monday.com "Client Credentials" export (group rows set the status)
     var credImportRows = [];
     function startCredImport() {
-      document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2);margin-bottom:14px">Upload a CSV. Two formats work: the Export from this tab, or a Monday.com export of the Client Credentials board (group headers like "Client Active Credentials" set each row\'s status). Existing organizations are updated by name; new ones are added.</p><button class="import-btn" onclick="document.getElementById(\'credImportFile\').click()">Choose CSV</button>';
+      document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2);margin-bottom:14px">Upload an Excel (.xlsx) or CSV file. Two layouts work: the Export from this tab, or the Monday.com export of the Client Credentials board exactly as downloaded (group headers like "Client Active Credentials" set each row\'s status). Existing organizations are updated by name; new ones are added.</p><button class="import-btn" onclick="document.getElementById(\'credImportFile\').click()">Choose File</button>';
       document.querySelector('.import-title').textContent = 'Import Credentials';
       document.getElementById('importOverlay').classList.add('active');
     }
     async function handleCredImportFile(file) {
       if (!file) return;
-      var rows = parseCSV(await ppReadFileText(file)); if (!rows.length) { showToast('That file looks empty', 'error'); return; }
+      var rows; try { rows = await ppParseSpreadsheet(file); } catch(e) { showToast(e.message, 'error'); return; }
+      if (!rows.length) { showToast('That file looks empty', 'error'); return; }
       var byName = {}; credList.forEach(function(c) { byName[c.organization.toLowerCase().trim()] = c; });
       credImportRows = []; var groupStatus = 'active';
       var hIdx = rows.findIndex(function(r) { return r.map(function(v) { return v.trim().toLowerCase(); }).indexOf('organization') >= 0 || r.map(function(v) { return v.trim().toLowerCase(); }).indexOf('login email') >= 0; });
@@ -3735,6 +3779,7 @@
     }
     function renderTradeShows() {
       renderTsStats();
+      if (typeof renderUpcoming === 'function') { try { renderUpcoming(); } catch(e) {} }
       if (tsView === 'calendar') { renderTsCalendar(); return; }
       var nextEl = document.getElementById('tsNext'), groupsEl = document.getElementById('tsGroups'); if (!groupsEl) return;
       if (!tsLoaded) { nextEl.innerHTML = ''; groupsEl.innerHTML = tsError ? ppSetupEmpty('Trade Shows', tsError) : '<div class="pp-empty">Loading shows...</div>'; return; }
@@ -3845,13 +3890,14 @@
     // Import: accepts this admin's export OR a Monday.com "Trade Show / Event Calendar" export saved as CSV (quarter group rows set plannedQuarter)
     var tsImportRows = [];
     function startTsImport() {
-      document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2);margin-bottom:14px">Upload a CSV. Two formats work: the Export from this tab, or a Monday.com export of the Trade Show board (open the .xlsx in Excel or Sheets and save as CSV first). Shows are matched by Monday Item ID or by name + date; matches are updated, everything else is added.</p><button class="import-btn" onclick="document.getElementById(\'tsImportFile\').click()">Choose CSV</button>';
+      document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2);margin-bottom:14px">Upload an Excel (.xlsx) or CSV file. Two layouts work: the Export from this tab, or the Monday.com export of the Trade Show board exactly as downloaded. Shows are matched by Monday Item ID or by name + date; matches are updated, everything else is added.</p><button class="import-btn" onclick="document.getElementById(\'tsImportFile\').click()">Choose File</button>';
       document.querySelector('.import-title').textContent = 'Import Trade Shows';
       document.getElementById('importOverlay').classList.add('active');
     }
     async function handleTsImportFile(file) {
       if (!file) return;
-      var rows = parseCSV(await ppReadFileText(file)); if (!rows.length) { showToast('That file looks empty', 'error'); return; }
+      var rows; try { rows = await ppParseSpreadsheet(file); } catch(e) { showToast(e.message, 'error'); return; }
+      if (!rows.length) { showToast('That file looks empty', 'error'); return; }
       var norm = function(v) { return String(v || '').trim().toLowerCase(); };
       var hIdx = rows.findIndex(function(r) { var h = r.map(norm); return h.indexOf('name') >= 0 && h.indexOf('audience') >= 0; });
       if (hIdx < 0) { showToast('Could not find a header row with Name and Audience', 'error'); return; }
@@ -3972,6 +4018,54 @@
       if (e.key === '/') { var s = document.querySelector('.view-content.active .search-input'); if (s) { s.focus(); s.select(); e.preventDefault(); } return; }
       if (e.key.toLowerCase() === 'n') { var v = document.querySelector('.view-content.active'); if (v && v.id === 'credentialsView') { openCredModal(null); e.preventDefault(); } else if (v && v.id === 'tradeshowsView') { openTsModal(null); e.preventDefault(); } }
     });
+    // =====================================================================
+    // DASHBOARD: COMING UP (trade shows, go-lives, attention)  (Sept 2026)
+    // Renders from data already in the page; a Close CRM meetings card slots in here later.
+    // =====================================================================
+    var PP_STATUS_LABELS = { 'new': 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', 'review': 'Review', 'complete': 'Form Complete', 'onboarding': 'Onboarding', 'published': 'Published', 'launched': 'Launched' };
+    function ppDateBox(iso, soon) {
+      var d = ppParseISO(iso); if (!d) return '<div class="pp-up-date"><b>?</b><span>TBD</span></div>';
+      return '<div class="pp-up-date' + (soon ? ' soon' : '') + '"><b>' + d.getDate() + '</b><span>' + d.toLocaleDateString('en-US', { month: 'short' }) + '</span></div>';
+    }
+    function ppInDays(n) { if (n === null || n === undefined) return 'Date TBD'; if (n === 0) return 'Today'; if (n === 1) return 'Tomorrow'; if (n < 0) return Math.abs(n) + ' day' + (n === -1 ? '' : 's') + ' ago'; return 'In ' + n + ' days'; }
+    function ppUpFoot(view, label) { return '<div class="pp-up-foot" onclick="switchView(\'' + view + '\')">' + label + ' <span>&rsaquo;</span></div>'; }
+    function renderUpcoming() {
+      var showsEl = document.getElementById('upShows'), glEl = document.getElementById('upGoLives'), attEl = document.getElementById('upAttention');
+      if (!showsEl || !glEl || !attEl) return;
+      var today = ppTodayISO();
+      // --- upcoming trade shows
+      if (!tsLoaded) showsEl.innerHTML = '<div class="pp-up-empty">Loading shows...</div>';
+      else {
+        var shows = tsList.filter(function(s) { return !s.archived && !s._isPast && s._start && s.registration !== 'skip'; }).sort(function(a, b) { return a._start < b._start ? -1 : 1; }).slice(0, 4);
+        showsEl.innerHTML = shows.length ? shows.map(function(s) {
+          return '<div class="pp-up-item" onclick="openTsModal(\'' + ppEsc(s.id) + '\')">' + ppDateBox(s._start, s._daysUntil <= 21)
+            + '<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(s.name) + '</div><div class="pp-up-sub">' + ppInDays(s._daysUntil) + (s.location ? ' &middot; ' + ppEsc(s.location.replace(/, USA$/, '')) : '') + '</div></div>'
+            + '<div class="pp-up-right">' + (s._todo.length ? '<span class="pp-chip need-to-book" title="' + ppEsc(s._todo.join(', ')) + '">' + s._todo.length + ' to do</span>' : ppRepAvatars(s.reps, 22)) + '</div></div>';
+        }).join('') + ppUpFoot('tradeshows', 'All shows') : '<div class="pp-up-empty">No upcoming shows on the calendar.</div>' + ppUpFoot('tradeshows', 'Add a show');
+      }
+      // --- upcoming go-lives
+      var gl = allData.filter(function(d) { return d.goLiveDate && d.goLiveDate >= today; }).sort(function(a, b) { return a.goLiveDate < b.goLiveDate ? -1 : 1; }).slice(0, 4);
+      glEl.innerHTML = gl.length ? gl.map(function(d) {
+        var days = ppDaysBetween(d.goLiveDate, today);
+        return '<div class="pp-up-item" onclick="viewDetails(allData.find(function(x){return x.email===\'' + ppEsc(d.email) + '\'}))">' + ppDateBox(d.goLiveDate, days <= 14)
+          + '<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(d.organization || 'Unnamed') + '</div><div class="pp-up-sub">' + ppInDays(days) + (d.locationStr ? ' &middot; ' + ppEsc(d.locationStr) : '') + '</div></div>'
+          + '<div class="pp-up-right"><span class="status-badge ' + ppEsc(d.pipelineStatus) + '">' + (PP_STATUS_LABELS[d.pipelineStatus] || ppEsc(d.pipelineStatus)) + '</span></div></div>';
+      }).join('') + ppUpFoot('calendar', 'Go-live calendar') : '<div class="pp-up-empty">No go-live dates scheduled.</div>' + ppUpFoot('calendar', 'Go-live calendar');
+      // --- needs attention
+      var items = [];
+      var overdue = allData.filter(function(d) { return d.goLiveDate && d.goLiveDate < today && ['published', 'launched', 'on-hold'].indexOf(d.pipelineStatus) < 0; });
+      if (overdue.length) items.push({ cls: 'red', title: overdue.length + ' go-live date' + (overdue.length === 1 ? ' has' : 's have') + ' passed', sub: overdue.slice(0, 3).map(function(d) { return d.organization; }).join(', ') + (overdue.length > 3 ? ' +' + (overdue.length - 3) : ''), go: "switchView('calendar')" });
+      var stale = allData.filter(function(d) { return d.isStale; });
+      if (stale.length) items.push({ cls: 'amber', title: stale.length + ' onboarding' + (stale.length === 1 ? '' : 's') + ' gone quiet', sub: 'No district activity in ' + STALE_DAYS + '+ days', go: "switchView('pipeline')" });
+      if (tsLoaded) tsList.filter(function(s) { return !s.archived && !s._isPast && s._daysUntil !== null && s._daysUntil <= 60 && s._todo.length; }).sort(function(a, b) { return a._daysUntil - b._daysUntil; }).slice(0, 3).forEach(function(s) {
+        items.push({ cls: 'amber', title: s.name, sub: s._todo.join(' &middot; ') + ' &middot; ' + ppInDays(s._daysUntil).toLowerCase(), go: "openTsModal('" + ppEsc(s.id) + "')" });
+      });
+      if (credLoaded) { var missing = credList.filter(function(c) { return c.status !== 'inactive' && (!c.loginEmail || !c.loginPassword); }).length; if (missing) items.push({ cls: 'blue', title: missing + ' client' + (missing === 1 ? '' : 's') + ' missing a login', sub: 'Active or onboarding without email or password', go: "switchView('credentials')" }); }
+      var icons = { red: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>', amber: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>', blue: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>' };
+      attEl.innerHTML = items.length ? items.slice(0, 5).map(function(it) {
+        return '<div class="pp-up-item" onclick="' + it.go + '"><div class="pp-att-icon ' + it.cls + '">' + icons[it.cls] + '</div><div class="pp-up-main"><div class="pp-up-title">' + it.title + '</div><div class="pp-up-sub">' + it.sub + '</div></div><div class="pp-up-right" style="color:var(--text3)">&rsaquo;</div></div>';
+      }).join('') : '<div class="pp-up-empty"><span style="color:var(--pp-green);font-weight:600">All clear.</span> Nothing needs attention right now.</div>';
+    }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
     document.addEventListener('touchmove', function(e) {
