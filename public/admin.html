@@ -1043,7 +1043,7 @@
 
     /* ---- fixed column grids so every group table lines up and nothing spills ---- */
     #credTable{table-layout:fixed;min-width:1040px}
-    #credTable th:nth-child(1){width:20%}#credTable th:nth-child(2){width:8%}#credTable th:nth-child(3){width:12%}#credTable th:nth-child(4){width:13%}#credTable th:nth-child(5){width:9%}#credTable th:nth-child(6){width:17%}#credTable th:nth-child(7){width:11%}#credTable th:nth-child(8){width:6%}#credTable th:nth-child(9){width:4%}
+    #credTable th:nth-child(1){width:19%}#credTable th:nth-child(2){width:9%}#credTable th:nth-child(3){width:11%}#credTable th:nth-child(4){width:12%}#credTable th:nth-child(5){width:9%}#credTable th:nth-child(6){width:17%}#credTable th:nth-child(7){width:13%}#credTable th:nth-child(8){width:6%}#credTable th:nth-child(9){width:4%}
     #credTable td{overflow:hidden;text-overflow:ellipsis}
     .ts-group table{table-layout:fixed;min-width:1080px}
     .ts-group th:nth-child(1){width:17%}.ts-group th:nth-child(2){width:11%}.ts-group th:nth-child(3){width:12%}.ts-group th:nth-child(4){width:8%}.ts-group th:nth-child(5){width:9%}.ts-group th:nth-child(6){width:6%}.ts-group th:nth-child(7){width:6%}.ts-group th:nth-child(8){width:9%}.ts-group th:nth-child(9){width:9%}.ts-group th:nth-child(10){width:9%}.ts-group th:nth-child(11){width:4%}
@@ -1111,6 +1111,50 @@
     [data-theme="dark"] .pp-att-icon.amber{background:rgba(251,191,36,0.15);color:#fbbf24}[data-theme="dark"] .pp-att-icon.red{background:rgba(248,113,113,0.15);color:#f87171}[data-theme="dark"] .pp-att-icon.blue{background:rgba(56,189,248,0.15);color:#38bdf8}
     .pp-upcoming .stat-card{animation-delay:0ms}
     @media(max-width:768px){.pp-upcoming{grid-template-columns:1fr;gap:12px}}
+    /* ---- frozen first column on wide tables ---- */
+    .ts-group table th:first-child,.ts-group table td:first-child,#credTable th:first-child,#credTable td:first-child{position:sticky;left:0;z-index:2;background:var(--card);box-shadow:inset -1px 0 0 var(--border)}
+    .ts-group table th:first-child,#credTable th:first-child{background:var(--card-2);z-index:3}
+    .ts-group table tbody tr:hover td:first-child,#credTable tbody tr:hover td:first-child{background:#f3f8fc}
+    [data-theme="dark"] .ts-group table tbody tr:hover td:first-child,[data-theme="dark"] #credTable tbody tr:hover td:first-child{background:#152036}
+    /* ---- insights ---- */
+    .ts-ins-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:4px 0 14px;flex-wrap:wrap}
+    .ts-ins-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:14px}
+    .ts-ins{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .ts-ins .full{grid-column:1/-1}
+    .ts-ins-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 20px;box-shadow:var(--sh-sm);min-width:0;animation:ppCardIn .5s var(--ease) both}
+    .ts-ins-card h3{font-family:var(--font-ui);font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin:0 0 12px}
+    .ts-ins-split{display:grid;grid-template-columns:1fr;gap:18px}
+    .ts-ins-split>div{min-width:0}
+    .ts-ins-chart{max-width:560px}
+    .ts-ins-scroll{overflow-x:auto;min-width:0}
+    .ts-ins-subtitle{font-size:11px;font-weight:600;color:var(--text3);margin-bottom:8px}
+    .ts-ins-table{width:100%;min-width:0;border-collapse:collapse;font-size:12px}
+    .ts-ins-table th{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);background:transparent}
+    .ts-ins-table td{padding:9px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+    .ts-ins-table tbody tr:last-child td{border-bottom:none}
+    .ts-ins-table tfoot td{font-weight:700;border-top:2px solid var(--border);border-bottom:none;background:var(--card-2)}
+    .ts-ins-table td.warn{color:#b45309;font-weight:700}
+    .ts-ins-table tbody tr:hover td{background:transparent}
+    .ts-bar{display:grid;grid-template-columns:120px 1fr 78px;gap:10px;align-items:center;font-size:12px;margin:7px 0}
+    .ts-bar .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text2);font-weight:500}
+    .ts-bar .track{height:10px;border-radius:6px;background:var(--bg);overflow:hidden}
+    .ts-bar .fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--pp-blue),var(--pp-green));transition:width .7s var(--ease)}
+    .ts-bar .fill.aud-supers{background:#7c3aed}.ts-bar .fill.aud-ads{background:#0076bb}.ts-bar .fill.aud-sbo{background:#059669}.ts-bar .fill.aud-munis{background:#ea580c}.ts-bar .fill.aud-heads{background:#db2777}.ts-bar .fill.aud-other{background:#64748b}
+    .ts-bar .val{text-align:right;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
+    .ts-cov{overflow-x:auto}
+    .ts-cov table{border-collapse:collapse;min-width:1100px;width:100%;table-layout:fixed}
+    .ts-cov th{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);padding:6px 4px;border-bottom:1px solid var(--border);background:transparent}
+    .ts-cov th.rep,.ts-cov td.rep{width:150px;position:sticky;left:0;background:var(--card);z-index:2;text-align:left;padding-left:8px}
+    .ts-cov th.month{text-align:center}
+    .ts-cov td{vertical-align:top;padding:5px 3px;border-top:1px solid var(--border);border-left:1px dashed var(--border)}
+    .ts-cov td.rep{border-left:none;font-size:12px;font-weight:600;color:var(--text)}
+    .ts-cov tbody tr:hover td{background:transparent}
+    .ts-cov .pill{display:block;font-size:10px;font-weight:600;padding:3px 6px;border-radius:6px;margin:2px 0;background:rgba(0,118,187,0.10);color:var(--pp-blue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:transform var(--t-fast)}
+    .ts-cov .pill:hover{transform:translateX(2px)}
+    .ts-cov .pill.past{opacity:0.55}
+    .ts-cov .pill.conflict{background:#fee2e2;color:#b91c1c}
+    [data-theme="dark"] .ts-cov .pill.conflict{background:rgba(248,113,113,0.18);color:#f87171}
+    @media(max-width:768px){.ts-ins{grid-template-columns:1fr}.ts-ins-split{grid-template-columns:1fr}.ts-bar{grid-template-columns:90px 1fr 70px}.ts-ins-table{font-size:11px}.ts-ins-table td,.ts-ins-table th{padding:7px 6px}}
   </style>
 </head>
 <body>
@@ -1353,7 +1397,7 @@
         <div class="controls-row">
           <div class="section-title">Trade Shows &amp; Events</div>
           <div class="controls-right">
-            <div class="pp-view-toggle"><button class="on" id="tsViewList" onclick="setTsView('list')">List</button><button id="tsViewCal" onclick="setTsView('calendar')">Calendar</button></div>
+            <div class="pp-view-toggle"><button class="on" id="tsViewList" onclick="setTsView('list')">List</button><button id="tsViewCal" onclick="setTsView('calendar')">Calendar</button><button id="tsViewIns" onclick="setTsView('insights')">Insights</button></div>
             <div class="controls-group filters-group">
               <div class="styled-select"><select id="tsAudFilter" onchange="tsAudFilter=this.value;renderTradeShows()"><option value="all">All audiences</option><option value="supers">Superintendents</option><option value="ads">Athletic Directors</option><option value="sbo">Business Officials</option><option value="munis">Parks &amp; Rec</option><option value="heads">Heads of School</option><option value="other">Other</option></select></div>
               <div class="styled-select"><select id="tsRepFilter" onchange="tsRepFilter=this.value;renderTradeShows()"><option value="all">All reps</option><option value="none">Unassigned</option></select></div>
@@ -1376,6 +1420,7 @@
           <div class="ts-next" id="tsNext"></div>
           <div id="tsGroups"></div>
         </div>
+        <div id="tsInsView" style="display:none"></div>
         <div id="tsCalView" style="display:none">
           <div class="calendar-container">
             <div class="calendar-header">
@@ -3341,6 +3386,7 @@
     var CRED_STATUSES = [{val:'active',label:'Active'},{val:'onboarding',label:'Onboarding'},{val:'on-hold',label:'On Hold'},{val:'inactive',label:'Inactive'}];
     var TS_AUDIENCES = [{val:'supers',label:'Superintendents'},{val:'ads',label:'Athletic Directors'},{val:'sbo',label:'Business Officials'},{val:'munis',label:'Parks & Rec'},{val:'heads',label:'Heads of School'},{val:'other',label:'Other'}];
     var TS_REG = [{val:'',label:'Not registered'},{val:'need-to-pay',label:'Need to Pay'},{val:'paid',label:'Paid'},{val:'sold-out',label:'Sold Out'},{val:'skip',label:'Not Attending'}];
+    var TS_BOOTHS = ['10 x 10', '8 x 8', '8 x 10', 'No Booth Needed'];
     var TS_TRAVEL = [{val:'',label:'Not set'},{val:'need-to-book',label:'Need to Book'},{val:'booked',label:'Booked'},{val:'driving',label:'Driving'},{val:'na',label:'N/A'}];
     var CRED_COLS = ['id','organization','status','rep','adminName','adminPhone','loginEmail','loginPassword','notes','updatedAt','updatedBy'];
     var TS_COLS = ['id','name','audience','reps','eventDate','exhibitStart','exhibitEnd','location','link','registration','cost','boothSize','podcast','hotel','flight','leads','demos','deals','plannedQuarter','notes','archived','updatedAt','updatedBy'];
@@ -3432,18 +3478,21 @@
     function ppReadFileText(file) { return new Promise(function(res, rej) { var r = new FileReader(); r.onload = function() { res(r.result); }; r.onerror = rej; r.readAsText(file); }); }
     function ppLoadScript(src) { return new Promise(function(res, rej) { if (window.XLSX) return res(); var s = document.createElement('script'); s.src = src; s.onload = function() { res(); }; s.onerror = function() { rej(new Error('Could not load the Excel reader. Check your connection and try again, or save the file as CSV.')); }; document.head.appendChild(s); }); }
     // Reads .xlsx/.xls (via SheetJS, loaded on first use) or .csv into an array of string rows. Dates come through as Excel serials, which ppNormalizeDate understands.
-    async function ppParseSpreadsheet(file) {
+    async function ppParseWorkbook(file) {
+      // Returns [{ name, rows }] for every sheet of an .xlsx, or one unnamed sheet for a .csv
       var name = String(file.name || '').toLowerCase();
       if (/\.(xlsx|xlsm|xls)$/.test(name)) {
         await ppLoadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
         var buf = await new Promise(function(res, rej) { var r = new FileReader(); r.onload = function() { res(r.result); }; r.onerror = rej; r.readAsArrayBuffer(file); });
         var wb = XLSX.read(new Uint8Array(buf), { type: 'array', cellDates: false });
-        var ws = wb.Sheets[wb.SheetNames[0]];
-        var rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
-        return rows.map(function(r) { return r.map(function(v) { return (v === null || v === undefined) ? '' : String(v); }); }).filter(function(r) { return r.some(function(v) { return v.trim(); }); });
+        return wb.SheetNames.map(function(sn) {
+          var rows = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, raw: true, defval: '' });
+          return { name: sn, rows: rows.map(function(r) { return r.map(function(v) { return (v === null || v === undefined) ? '' : String(v); }); }).filter(function(r) { return r.some(function(v) { return v.trim(); }); }) };
+        });
       }
-      return parseCSV(await ppReadFileText(file));
+      return [{ name: '', rows: parseCSV(await ppReadFileText(file)) }];
     }
+    async function ppParseSpreadsheet(file) { var sheets = await ppParseWorkbook(file); return sheets.length ? sheets[0].rows : []; }
     function ppNewId(prefix) { return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
     function ppSetupEmpty(what, err) {
       err = String(err || '');
@@ -3689,6 +3738,7 @@
         if (!s.registration || s.registration === 'need-to-pay') s._todo.push('Register');
         if (s.hotel === 'need-to-book') s._todo.push('Hotel');
         if (s.flight === 'need-to-book') s._todo.push('Flight');
+        if (!s.boothSize && s._daysUntil !== null && s._daysUntil <= 60) s._todo.push('Booth size');
         if (!s._reps.length) s._todo.push('Assign rep');
       }
       return s;
@@ -3701,7 +3751,11 @@
       sel.value = cur;
     }
     function toggleTsMyShows() { tsMyShows = !tsMyShows; var b = document.getElementById('tsMyShowsBtn'); if (b) b.classList.toggle('active', tsMyShows); renderTradeShows(); }
-    function setTsView(v) { tsView = v; document.getElementById('tsViewList').classList.toggle('on', v === 'list'); document.getElementById('tsViewCal').classList.toggle('on', v === 'calendar'); document.getElementById('tsListView').style.display = v === 'list' ? '' : 'none'; document.getElementById('tsCalView').style.display = v === 'calendar' ? '' : 'none'; renderTradeShows(); }
+    function setTsView(v) {
+      tsView = v;
+      [['list', 'tsViewList', 'tsListView'], ['calendar', 'tsViewCal', 'tsCalView'], ['insights', 'tsViewIns', 'tsInsView']].forEach(function(x) { var b = document.getElementById(x[1]), p = document.getElementById(x[2]); if (b) b.classList.toggle('on', v === x[0]); if (p) p.style.display = v === x[0] ? '' : 'none'; });
+      renderTradeShows();
+    }
     function tsFiltered() {
       var q = tsSearch.trim(), me = currentUser?.email || '';
       return tsList.filter(function(s) {
@@ -3781,6 +3835,7 @@
       renderTsStats();
       if (typeof renderUpcoming === 'function') { try { renderUpcoming(); } catch(e) {} }
       if (tsView === 'calendar') { renderTsCalendar(); return; }
+      if (tsView === 'insights') { renderTsInsights(); return; }
       var nextEl = document.getElementById('tsNext'), groupsEl = document.getElementById('tsGroups'); if (!groupsEl) return;
       if (!tsLoaded) { nextEl.innerHTML = ''; groupsEl.innerHTML = tsError ? ppSetupEmpty('Trade Shows', tsError) : '<div class="pp-empty">Loading shows...</div>'; return; }
       var rows = tsFiltered();
@@ -3843,7 +3898,7 @@
         + '<div class="detail-section"><h3>Booth &amp; Logistics</h3><div class="pp-form">'
         + '<div><label>Registration</label><select id="tf_reg">' + opt(TS_REG, s.registration) + '</select></div>'
         + '<div><label>Event Cost ($)</label><input id="tf_cost" value="' + ppEsc(s.cost) + '" placeholder="2200" inputmode="numeric"></div>'
-        + '<div><label>Booth Size</label><input id="tf_booth" value="' + ppEsc(s.boothSize) + '" placeholder="10 x 10, 8 x 8, No Booth Needed"></div>'
+        + '<div><label>Booth Size</label><input id="tf_booth" list="tfBoothList" value="' + ppEsc(s.boothSize) + '" placeholder="Pick or type" autocomplete="off"><datalist id="tfBoothList">' + TS_BOOTHS.map(function(b) { return '<option value="' + b + '">'; }).join('') + '</datalist></div>'
         + '<div><label>Includes Podcast</label><select id="tf_pod"><option value=""' + (!s.podcast ? ' selected' : '') + '>No</option><option value="TRUE"' + (s.podcast ? ' selected' : '') + '>Yes</option></select></div>'
         + '<div><label>Hotel</label><select id="tf_hotel">' + opt(TS_TRAVEL, s.hotel) + '</select></div>'
         + '<div><label>Flight</label><select id="tf_flight">' + opt(TS_TRAVEL, s.flight) + '</select></div>'
@@ -3887,43 +3942,63 @@
       catch(e) { showToast('Could not delete: ' + e.message, 'error'); }
     }
     function exportTsCSV() { ppDownloadCSV('practiceplan-tradeshows-' + ppTodayISO() + '.csv', TS_COLS, tsFiltered()); }
-    // Import: accepts this admin's export OR a Monday.com "Trade Show / Event Calendar" export saved as CSV (quarter group rows set plannedQuarter)
+    // Import: accepts this tab's export, a Monday.com board export (CSV or .xlsx), or the interactive
+    // Google Sheets workbook (one tab per quarter, header on row 4, per-rep "Attending" columns).
     var tsImportRows = [];
     function startTsImport() {
-      document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2);margin-bottom:14px">Upload an Excel (.xlsx) or CSV file. Two layouts work: the Export from this tab, or the Monday.com export of the Trade Show board exactly as downloaded. Shows are matched by Monday Item ID or by name + date; matches are updated, everything else is added.</p><button class="import-btn" onclick="document.getElementById(\'tsImportFile\').click()">Choose File</button>';
+      document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2);margin-bottom:14px">Upload an Excel (.xlsx) or CSV file. Three layouts work: the Export from this tab, the Monday.com board export exactly as downloaded, or the interactive quarter-tab workbook (every tab is read). Shows are matched by Monday Item ID, then by name and date; matches are updated (blank cells never erase what is already here), everything else is added.</p><button class="import-btn" onclick="document.getElementById(\'tsImportFile\').click()">Choose File</button>';
       document.querySelector('.import-title').textContent = 'Import Trade Shows';
       document.getElementById('importOverlay').classList.add('active');
     }
     async function handleTsImportFile(file) {
       if (!file) return;
-      var rows; try { rows = await ppParseSpreadsheet(file); } catch(e) { showToast(e.message, 'error'); return; }
-      if (!rows.length) { showToast('That file looks empty', 'error'); return; }
+      var sheets; try { sheets = await ppParseWorkbook(file); } catch(e) { showToast(e.message, 'error'); return; }
       var norm = function(v) { return String(v || '').trim().toLowerCase(); };
-      var hIdx = rows.findIndex(function(r) { var h = r.map(norm); return h.indexOf('name') >= 0 && h.indexOf('audience') >= 0; });
-      if (hIdx < 0) { showToast('Could not find a header row with Name and Audience', 'error'); return; }
-      var header = rows[hIdx].map(norm), isOurs = header.indexOf('exhibitstart') >= 0;
-      var col = function(names) { for (var i = 0; i < names.length; i++) { var k = header.indexOf(names[i]); if (k >= 0) return k; } return -1; };
-      var C = { id: col(['id', 'item id (auto generated)', 'item id']), name: col(['name']), audience: col(['audience']), reps: col(['reps', 'pp rep attending']), eventDate: col(['eventdate', 'date(s)', 'date']), exhibitStart: col(['exhibitstart', 'exhibitor days - start']), exhibitEnd: col(['exhibitend', 'exhibitor days - end']), location: col(['location', 'location 1']), link: col(['link']), registration: col(['registration', 'registration paid']), cost: col(['cost', 'event cost']), boothSize: col(['boothsize', 'booth size']), podcast: col(['podcast', 'includes podcast']), hotel: col(['hotel', 'hotel booked?']), flight: col(['flight', 'flight booked?']), leads: col(['leads', 'outcome leads']), demos: col(['demos', 'outcome demos']), deals: col(['deals', 'outcome deals']), plannedQuarter: col(['plannedquarter']), notes: col(['notes']), archived: col(['archived']) };
-      var AUD = { supers: 'supers', "ad's only": 'ads', ads: 'ads', sbo: 'sbo', "muni's": 'munis', munis: 'munis', 'head of schools': 'heads', heads: 'heads' };
-      var REG = { paid: 'paid', 'need to pay': 'need-to-pay', 'need-to-pay': 'need-to-pay', 'sold out': 'sold-out', 'sold-out': 'sold-out', skip: 'skip', 'not attending': 'skip' };
-      var TRV = { booked: 'booked', 'need to book': 'need-to-book', 'need-to-book': 'need-to-book', driving: 'driving', na: 'na', 'n/a': 'na' };
+      var isHeader = function(r) { var h = r.map(norm); return (h.indexOf('name') >= 0 || h.indexOf('event name') >= 0) && h.indexOf('audience') >= 0; };
+      if (!sheets.some(function(sh) { return sh.rows.some(isHeader); })) { showToast('Could not find a header row with Name and Audience on any tab', 'error'); return; }
+      var AUD = { supers: 'supers', "ad's only": 'ads', ads: 'ads', sbo: 'sbo', "muni's": 'munis', munis: 'munis', 'head of schools': 'heads', heads: 'heads', tbd: '' };
+      var REG = { paid: 'paid', 'need to pay': 'need-to-pay', 'need-to-pay': 'need-to-pay', 'sold out': 'sold-out', 'sold-out': 'sold-out', skip: 'skip', 'not attending': 'skip', tbd: '' };
+      var TRV = { booked: 'booked', 'need to book': 'need-to-book', 'need-to-book': 'need-to-book', driving: 'driving', na: 'na', 'n/a': 'na', tbd: '' };
       var repMap = function(x) { var l = x.toLowerCase(); var m = TEAM_MEMBERS.find(function(t) { return t.email === l || (l.indexOf(t.name.split(' ')[0].toLowerCase()) === 0 && l.indexOf(' ') > 0 && l.split(' ')[1].charAt(0) === t.name.split(' ')[1].charAt(0).toLowerCase()); }); return m ? m.email : x; };
-      var byId = {}, byKey = {}; tsList.forEach(function(s) { byId[s.id] = s; byKey[(s.name + '|' + s._start).toLowerCase()] = s; });
-      tsImportRows = []; var group = '';
-      rows.forEach(function(r, ri) {
-        var first = (r[0] || '').trim(); var h = r.map(norm);
-        if (h.indexOf('name') >= 0 && h.indexOf('audience') >= 0) return;
-        if (ri < hIdx) { group = first; return; }
-        var others = [C.audience, C.reps, C.eventDate, C.location].every(function(k) { return k < 0 || !(r[k] || '').trim(); });
-        if (first && others && !isOurs) { group = first.replace(/^"/, ''); return; }
-        if (!first) return;
-        var g = function(k) { return k >= 0 ? String(r[k] || '').trim() : ''; };
-        var m = group.match(/(?:(\d{4})\s*-\s*)?Q(\d)/i);
-        var rec = { id: g(C.id).replace(/\.0$/, ''), name: g(C.name) || first, audience: AUD[norm(g(C.audience))] || (g(C.audience) ? 'other' : ''), reps: ppSplitReps(g(C.reps)).map(repMap).join(', '), eventDate: ppNormalizeDate(g(C.eventDate)), exhibitStart: ppNormalizeDate(g(C.exhibitStart)), exhibitEnd: ppNormalizeDate(g(C.exhibitEnd)), location: g(C.location), link: g(C.link).replace(/^link\s*-\s*/i, ''), registration: REG[norm(g(C.registration))] || '', cost: g(C.cost).replace(/[^0-9.]/g, ''), boothSize: g(C.boothSize), podcast: /^(true|yes|1|x)$/i.test(g(C.podcast)) ? 'TRUE' : '', hotel: TRV[norm(g(C.hotel))] || '', flight: TRV[norm(g(C.flight))] || '', leads: g(C.leads), demos: g(C.demos), deals: g(C.deals), plannedQuarter: g(C.plannedQuarter) || (m ? (m[1] || '2026') + '-Q' + m[2] : ''), notes: g(C.notes), archived: (/^(true|yes|1)$/i.test(g(C.archived)) || /^archived/i.test(group)) ? 'TRUE' : '', updatedAt: ppTodayISO(), updatedBy: currentUser?.email || '' };
-        tsDerive(rec);
-        var existing = (rec.id && byId[rec.id]) || byKey[(rec.name + '|' + rec._start).toLowerCase()];
-        if (existing) { rec.id = existing.id; rec._update = true; } else if (!rec.id) rec.id = ppNewId('ts');
-        tsImportRows.push(rec);
+      var repByFirst = function(first) { var f = first.trim().toLowerCase(); var m = TEAM_MEMBERS.find(function(t) { return t.name.toLowerCase().indexOf(f) === 0; }); return m ? m.email : first.trim(); };
+      var byId = {}, byKey = {}, byQKey = {};
+      tsList.forEach(function(s) { byId[s.id] = s; byKey[(s.name + '|' + s._start).toLowerCase()] = s; byQKey[(s.name + '|' + s._quarter).toLowerCase()] = s; });
+      var thisYear = String(new Date().getFullYear());
+      tsImportRows = [];
+      sheets.forEach(function(sh) {
+        var rows = sh.rows; if (!rows.some(isHeader)) return;   // skips Dashboard / How To Use tabs
+        var sheetYear = ''; rows.slice(0, 4).forEach(function(r) { r.forEach(function(v) { var m = String(v).match(/\b(20\d\d)\b/); if (m && !sheetYear) sheetYear = m[1]; }); });
+        var group = sh.name || '', header = null, C = null, isOurs = false, interactive = false, repCols = [];
+        rows.forEach(function(r) {
+          var first = String(r[0] || '').trim();
+          if (isHeader(r)) {
+            header = r.map(norm); isOurs = header.indexOf('exhibitstart') >= 0; interactive = header.indexOf('event name') >= 0;
+            var col = function(names) { for (var i = 0; i < names.length; i++) { var k = header.indexOf(names[i]); if (k >= 0) return k; } return -1; };
+            C = { id: col(['id', 'item id (auto generated)', 'item id']), name: col(['name', 'event name']), audience: col(['audience']), reps: col(['reps', 'pp rep attending']), eventDate: col(['eventdate', 'date(s)', 'event date', 'date']), exhibitStart: col(['exhibitstart', 'exhibitor days - start', 'exhibitor start']), exhibitEnd: col(['exhibitend', 'exhibitor days - end', 'exhibitor end']), location: col(['location', 'location 1']), link: col(['link']), registration: col(['registration', 'registration paid', 'registration status']), cost: col(['cost', 'event cost']), boothSize: col(['boothsize', 'booth size']), podcast: col(['podcast', 'includes podcast']), hotel: col(['hotel', 'hotel booked?']), flight: col(['flight', 'flight booked?']), leads: col(['leads', 'outcome leads', 'outcome - leads']), demos: col(['demos', 'outcome demos', 'outcome - demos']), deals: col(['deals', 'outcome deals', 'outcome - deals']), plannedQuarter: col(['plannedquarter']), notes: col(['notes']), archived: col(['archived']) };
+            repCols = []; header.forEach(function(h, k) { var m = h.match(/^(.+?)\s+attending$/); if (m) repCols.push({ k: k, email: repByFirst(m[1]) }); });
+            return;
+          }
+          if (!C) { if (first && !interactive) group = first.replace(/^"/, ''); return; }
+          var others = [C.audience, C.reps, C.eventDate, C.location, C.registration].every(function(k) { return k < 0 || !String(r[k] || '').trim(); });
+          if (first && others && !isOurs) { if (!interactive) group = first.replace(/^"/, ''); return; }
+          if (!first || /^total$/i.test(first)) return;
+          var g = function(k) { return k >= 0 ? String(r[k] || '').trim() : ''; };
+          var m = group.match(/(?:(\d{4})\s*-\s*)?Q(\d)/i);
+          var reps = ppSplitReps(g(C.reps)).map(repMap);
+          repCols.forEach(function(rc) { if (/^(yes|true|1|x)$/i.test(String(r[rc.k] || '').trim())) reps.push(rc.email); });
+          reps = reps.filter(function(x, i, a) { return x && a.indexOf(x) === i; });
+          var booth = g(C.boothSize); if (/^tbd$/i.test(booth)) booth = '';
+          var link = g(C.link).replace(/^link\s*-\s*/i, ''); if (!/^https?:\/\//i.test(link)) link = '';
+          var rec = { id: g(C.id).replace(/\.0$/, ''), name: g(C.name) || first, audience: (function(a) { return a in AUD ? AUD[a] : (a ? 'other' : ''); })(norm(g(C.audience))), reps: reps.join(', '), eventDate: ppNormalizeDate(g(C.eventDate)), exhibitStart: ppNormalizeDate(g(C.exhibitStart)), exhibitEnd: ppNormalizeDate(g(C.exhibitEnd)), location: g(C.location), link: link, registration: REG[norm(g(C.registration))] || '', cost: g(C.cost).replace(/[^0-9.]/g, ''), boothSize: booth, podcast: /^(true|yes|1|x)$/i.test(g(C.podcast)) ? 'TRUE' : '', hotel: TRV[norm(g(C.hotel))] || '', flight: TRV[norm(g(C.flight))] || '', leads: g(C.leads), demos: g(C.demos), deals: g(C.deals), plannedQuarter: g(C.plannedQuarter) || (m ? (m[1] || sheetYear || thisYear) + '-Q' + m[2] : ''), notes: g(C.notes), archived: (/^(true|yes|1)$/i.test(g(C.archived)) || /^"?archived/i.test(group)) ? 'TRUE' : '', updatedAt: ppTodayISO(), updatedBy: currentUser?.email || '' };
+          tsDerive(rec);
+          var existing = (rec.id && byId[rec.id]) || byKey[(rec.name + '|' + rec._start).toLowerCase()] || (!rec._start ? byQKey[(rec.name + '|' + rec._quarter).toLowerCase()] : null);
+          if (existing) {
+            rec.id = existing.id; rec._update = true;
+            TS_COLS.forEach(function(c) { if (rec[c] === '' && existing[c] && c !== 'updatedAt' && c !== 'updatedBy') rec[c] = existing[c]; });
+            tsDerive(rec);
+          } else if (!rec.id) rec.id = ppNewId('ts');
+          tsImportRows.push(rec);
+        });
       });
       var upd = tsImportRows.filter(function(x) { return x._update; }).length;
       document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2)">' + tsImportRows.length + ' shows found: <b>' + (tsImportRows.length - upd) + ' new</b>, <b>' + upd + ' updates</b>.</p><table class="import-preview-table"><thead><tr><th>Show</th><th>Dates</th><th>Audience</th><th>Reps</th></tr></thead><tbody>' + tsImportRows.slice(0, 12).map(function(x) { return '<tr><td>' + ppEsc(x.name) + (x._update ? ' <span class="tag amber" style="font-size:9px">update</span>' : '') + (x.archived ? ' <span class="tag" style="font-size:9px">archived</span>' : '') + '</td><td>' + ppFmtRange(x._start, x._end) + '</td><td>' + ppEsc(tsAudLabel(x.audience)) + '</td><td>' + ppEsc(x._reps.map(ppRepName).join(', ')) + '</td></tr>'; }).join('') + (tsImportRows.length > 12 ? '<tr><td colspan="4" style="color:var(--text3)">...and ' + (tsImportRows.length - 12) + ' more</td></tr>' : '') + '</tbody></table><div style="display:flex;gap:10px;justify-content:flex-end"><button class="import-btn secondary" onclick="closeImport()">Cancel</button><button class="import-btn" id="tsImportRunBtn" onclick="runTsImport()"' + (tsImportRows.length ? '' : ' disabled') + '>Import ' + tsImportRows.length + ' shows</button></div>';
@@ -4065,6 +4140,84 @@
       attEl.innerHTML = items.length ? items.slice(0, 5).map(function(it) {
         return '<div class="pp-up-item" onclick="' + it.go + '"><div class="pp-att-icon ' + it.cls + '">' + icons[it.cls] + '</div><div class="pp-up-main"><div class="pp-up-title">' + it.title + '</div><div class="pp-up-sub">' + it.sub + '</div></div><div class="pp-up-right" style="color:var(--text3)">&rsaquo;</div></div>';
       }).join('') : '<div class="pp-up-empty"><span style="color:var(--pp-green);font-weight:600">All clear.</span> Nothing needs attention right now.</div>';
+    }
+    // =====================================================================
+    // TRADE SHOWS: INSIGHTS (breakdowns, charts, rep coverage)  (Sept 2026)
+    // =====================================================================
+    var tsInsYear = String(new Date().getFullYear());
+    function tsYearOf(s) { return (s._quarter && s._quarter !== 'TBD') ? s._quarter.slice(0, 4) : ''; }
+    function tsCostOf(s) { return parseFloat(String(s.cost).replace(/[^0-9.]/g, '')) || 0; }
+    function tsDaysOf(s) { if (!s._start || !s._end) return s._start ? 1 : 0; return (ppDaysBetween(s._end, s._start) || 0) + 1; }
+    function tsBar(label, value, max, display, cls) {
+      var pct = max > 0 ? Math.round(value / max * 100) : 0;
+      return '<div class="ts-bar"><div class="lbl" title="' + ppEsc(label) + '">' + ppEsc(label) + '</div><div class="track"><div class="fill ' + (cls || '') + '" style="width:' + pct + '%"></div></div><div class="val">' + display + '</div></div>';
+    }
+    function renderTsInsights() {
+      var el = document.getElementById('tsInsView'); if (!el) return;
+      if (!tsLoaded) { el.innerHTML = '<div class="ts-group"><div class="pp-empty">Loading shows...</div></div>'; return; }
+      var years = {}; tsList.forEach(function(s) { if (!s.archived) { var y = tsYearOf(s); if (y) years[y] = true; } });
+      var yearList = Object.keys(years).sort(); if (!yearList.length) yearList = [tsInsYear]; if (yearList.indexOf(tsInsYear) < 0) tsInsYear = yearList.indexOf(String(new Date().getFullYear())) >= 0 ? String(new Date().getFullYear()) : yearList[0];
+      var shows = tsList.filter(function(s) { return !s.archived && tsYearOf(s) === tsInsYear && s.registration !== 'skip'; });
+      var sum = function(list, fn) { return list.reduce(function(t, s) { return t + fn(s); }, 0); };
+      var num = function(v) { return parseInt(v) || 0; };
+      var totalCost = sum(shows, tsCostOf), done = shows.filter(function(s) { return s._isPast; });
+      var tl = sum(done, function(s) { return num(s.leads); }), td = sum(done, function(s) { return num(s.demos); }), tw = sum(done, function(s) { return num(s.deals); }), doneCost = sum(done, tsCostOf);
+      var perOutcome = function(n) { return n ? ppFmtMoney(doneCost / n) : '<span style="color:var(--text3)">-</span>'; };
+      // --- by quarter
+      var qs = ['Q1', 'Q2', 'Q3', 'Q4'].map(function(q) {
+        var list = shows.filter(function(s) { return s._quarter === tsInsYear + '-' + q; });
+        return { label: q, n: list.length, paid: list.filter(function(s) { return s.registration === 'paid'; }).length, need: list.filter(function(s) { return !s.registration || s.registration === 'need-to-pay'; }).length, sold: list.filter(function(s) { return s.registration === 'sold-out'; }).length, cost: sum(list, tsCostOf), paidCost: sum(list.filter(function(s) { return s.registration === 'paid'; }), tsCostOf), unpaidCost: sum(list.filter(function(s) { return !s.registration || s.registration === 'need-to-pay'; }), tsCostOf) };
+      });
+      var maxQ = Math.max.apply(null, qs.map(function(q) { return q.cost; }).concat([1]));
+      var qTable = '<table class="ts-ins-table"><thead><tr><th>Quarter</th><th>Shows</th><th>Paid</th><th>Need to pay</th><th>Sold out</th><th>Committed</th><th>Paid $</th><th>Unpaid $</th></tr></thead><tbody>'
+        + qs.map(function(q) { return '<tr><td><b>' + q.label + ' ' + tsInsYear + '</b></td><td>' + q.n + '</td><td>' + q.paid + '</td><td' + (q.need ? ' class="warn"' : '') + '>' + q.need + '</td><td>' + q.sold + '</td><td><b>' + ppFmtMoney(q.cost) + '</b></td><td>' + ppFmtMoney(q.paidCost) + '</td><td' + (q.unpaidCost ? ' class="warn"' : '') + '>' + ppFmtMoney(q.unpaidCost) + '</td></tr>'; }).join('')
+        + '</tbody><tfoot><tr><td>Total</td><td>' + shows.length + '</td><td>' + sum(qs, function(q) { return q.paid; }) + '</td><td>' + sum(qs, function(q) { return q.need; }) + '</td><td>' + sum(qs, function(q) { return q.sold; }) + '</td><td>' + ppFmtMoney(totalCost) + '</td><td>' + ppFmtMoney(sum(qs, function(q) { return q.paidCost; })) + '</td><td>' + ppFmtMoney(sum(qs, function(q) { return q.unpaidCost; })) + '</td></tr></tfoot></table>';
+      var qChart = qs.map(function(q) { return tsBar(q.label, q.cost, maxQ, ppFmtMoney(q.cost) || '$0'); }).join('');
+      // --- by audience
+      var auds = TS_AUDIENCES.map(function(a) {
+        var list = shows.filter(function(s) { return (s.audience || 'other') === a.val; }), dl = list.filter(function(s) { return s._isPast; });
+        var leads = sum(dl, function(s) { return num(s.leads); }), spendDone = sum(dl, tsCostOf);
+        return { label: a.label, val: a.val, n: list.length, cost: sum(list, tsCostOf), leads: leads, demos: sum(dl, function(s) { return num(s.demos); }), deals: sum(dl, function(s) { return num(s.deals); }), cpl: leads ? spendDone / leads : null };
+      }).filter(function(a) { return a.n; }).sort(function(a, b) { return b.n - a.n; });
+      var maxA = Math.max.apply(null, auds.map(function(a) { return a.cost; }).concat([1]));
+      var aTable = '<table class="ts-ins-table"><thead><tr><th>Audience</th><th>Shows</th><th>Spend</th><th>Leads</th><th>Demos</th><th>Deals</th><th>Cost / lead</th></tr></thead><tbody>'
+        + auds.map(function(a) { return '<tr><td><span class="pp-chip aud-' + a.val + '">' + ppEsc(a.label) + '</span></td><td>' + a.n + '</td><td><b>' + ppFmtMoney(a.cost) + '</b></td><td>' + a.leads + '</td><td>' + a.demos + '</td><td>' + a.deals + '</td><td>' + (a.cpl !== null ? ppFmtMoney(a.cpl) : '<span style="color:var(--text3)">-</span>') + '</td></tr>'; }).join('') + '</tbody></table>';
+      var aChart = auds.map(function(a) { return tsBar(a.label, a.cost, maxA, ppFmtMoney(a.cost), 'aud-' + a.val); }).join('');
+      // --- by rep
+      var extras = {}; shows.forEach(function(s) { s._reps.forEach(function(r) { if (!TEAM_MEMBERS.some(function(m) { return m.email === r; })) extras[r] = true; }); });
+      var repKeys = TEAM_MEMBERS.map(function(m) { return m.email; }).concat(Object.keys(extras).sort());
+      var reps = repKeys.map(function(email) {
+        var list = shows.filter(function(s) { return s._reps.indexOf(email) >= 0; });
+        return { email: email, name: ppRepFull(email), n: list.length, days: sum(list, tsDaysOf), upcoming: list.filter(function(s) { return !s._isPast; }).length, cost: sum(list, function(s) { return tsCostOf(s) / Math.max(1, s._reps.length); }) };
+      });
+      var unassigned = shows.filter(function(s) { return !s._reps.length; });
+      var maxR = Math.max.apply(null, reps.map(function(r) { return r.n; }).concat([1]));
+      var rTable = '<table class="ts-ins-table"><thead><tr><th>Rep</th><th>Shows</th><th>Upcoming</th><th>Days out</th><th>Spend share</th></tr></thead><tbody>'
+        + reps.map(function(r) { return '<tr><td><div style="display:flex;align-items:center;gap:8px">' + ppRepAvatars(r.email, 22) + '<b>' + ppEsc(r.name) + '</b></div></td><td>' + r.n + '</td><td>' + r.upcoming + '</td><td>' + r.days + '</td><td>' + ppFmtMoney(r.cost) + '</td></tr>'; }).join('')
+        + (unassigned.length ? '<tr><td><span class="pp-avatar-text" style="color:#b45309">Unassigned</span></td><td class="warn">' + unassigned.length + '</td><td class="warn">' + unassigned.filter(function(s) { return !s._isPast; }).length + '</td><td>-</td><td>' + ppFmtMoney(sum(unassigned, tsCostOf)) + '</td></tr>' : '') + '</tbody></table>';
+      var rChart = reps.map(function(r) { return tsBar(r.name, r.n, maxR, r.n + ' show' + (r.n === 1 ? '' : 's')); }).join('');
+      // --- coverage grid with conflicts
+      var conflicts = {};
+      repKeys.forEach(function(email) {
+        var list = shows.filter(function(s) { return s._reps.indexOf(email) >= 0 && s._start; }).sort(function(a, b) { return a._start < b._start ? -1 : 1; });
+        for (var i = 0; i < list.length; i++) for (var k = i + 1; k < list.length; k++) { if (list[k]._start <= list[i]._end) { conflicts[list[i].id] = true; conflicts[list[k].id] = true; } }
+      });
+      var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      var pill = function(s) { return '<span class="pill' + (conflicts[s.id] ? ' conflict' : '') + (s._isPast ? ' past' : '') + '" title="' + ppEsc(s.name + ' (' + ppFmtRange(s._start, s._end) + ')' + (conflicts[s.id] ? ' - overlaps another show for this rep' : '')) + '" onclick="openTsModal(\'' + ppEsc(s.id) + '\')">' + ppEsc(s.name) + '</span>'; };
+      var covRows = repKeys.map(function(email) {
+        return '<tr><td class="rep"><div style="display:flex;align-items:center;gap:8px">' + ppRepAvatars(email, 22) + '<span>' + ppEsc(ppRepName(email)) + '</span></div></td>' + months.map(function(mn, mi) { var list = shows.filter(function(s) { return s._reps.indexOf(email) >= 0 && s._start && parseInt(s._start.slice(5, 7)) === mi + 1; }); return '<td>' + list.map(pill).join('') + '</td>'; }).join('') + '</tr>';
+      }).join('') + '<tr><td class="rep"><span class="pp-avatar-text">Unassigned</span></td>' + months.map(function(mn, mi) { var list = shows.filter(function(s) { return !s._reps.length && s._start && parseInt(s._start.slice(5, 7)) === mi + 1; }); return '<td>' + list.map(pill).join('') + '</td>'; }).join('') + '</tr>';
+      var undated = shows.filter(function(s) { return !s._start; });
+      var nConf = Object.keys(conflicts).length;
+      var yearSel = '<div class="styled-select" style="display:inline-block"><select onchange="tsInsYear=this.value;renderTsInsights()">' + yearList.map(function(y) { return '<option value="' + y + '"' + (y === tsInsYear ? ' selected' : '') + '>' + y + '</option>'; }).join('') + '</select></div>';
+      el.innerHTML = '<div class="ts-ins-head"><div><div class="section-title" style="margin:0">Insights</div><div class="pp-toolbar-note">All non-archived shows in ' + tsInsYear + '. Outcome figures count completed shows only.</div></div>' + yearSel + '</div>'
+        + '<div class="ts-ins-kpis"><div class="pp-stat"><div class="v">' + shows.length + '</div><div class="l">Shows</div><div class="s">' + done.length + ' completed</div></div><div class="pp-stat"><div class="v">' + ppFmtMoney(totalCost) + '</div><div class="l">Committed spend</div><div class="s">' + ppFmtMoney(doneCost) + ' on completed shows</div></div><div class="pp-stat"><div class="v">' + tl + ' <span style="font-size:12px;color:var(--text3)">/ ' + td + ' / ' + tw + '</span></div><div class="l">Leads / demos / deals</div><div class="s">from completed shows</div></div><div class="pp-stat"><div class="v">' + perOutcome(tl) + '</div><div class="l">Cost per lead</div><div class="s">' + perOutcome(td) + ' per demo &middot; ' + perOutcome(tw) + ' per deal</div></div><div class="pp-stat ' + (nConf ? 'danger' : 'good') + '"><div class="v">' + nConf + '</div><div class="l">Rep conflicts</div><div class="s">' + (nConf ? 'shows overlapping for one rep' : 'no overlapping assignments') + '</div></div></div>'
+        + '<div class="ts-ins">'
+        + '<div class="ts-ins-card full"><h3>By Quarter</h3><div class="ts-ins-split"><div class="ts-ins-scroll">' + qTable + '</div><div class="ts-ins-chart"><div class="ts-ins-subtitle">Committed cost by quarter</div>' + qChart + '</div></div></div>'
+        + '<div class="ts-ins-card"><h3>By Audience</h3><div class="ts-ins-scroll">' + aTable + '</div><div class="ts-ins-subtitle" style="margin-top:14px">Spend by audience</div>' + aChart + '</div>'
+        + '<div class="ts-ins-card"><h3>By Rep</h3><div class="ts-ins-scroll">' + rTable + '</div><div class="ts-ins-subtitle" style="margin-top:14px">Shows per rep</div>' + rChart + '</div>'
+        + '<div class="ts-ins-card full"><h3>Rep Coverage &middot; ' + tsInsYear + '</h3><div class="ts-cov"><table><thead><tr><th class="rep">Rep</th>' + months.map(function(mn) { return '<th class="month">' + mn + '</th>'; }).join('') + '</tr></thead><tbody>' + covRows + '</tbody></table></div>' + (undated.length ? '<div class="pp-toolbar-note" style="margin-top:10px">' + undated.length + ' show' + (undated.length === 1 ? '' : 's') + ' without dates not shown: ' + ppEsc(undated.map(function(s) { return s.name; }).join(', ')) + '</div>' : '') + '</div>'
+        + '</div>';
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
