@@ -1089,7 +1089,8 @@
       .stats-row>*,.pp-stat-strip>*{animation-delay:0ms!important}
     }
     /* ---- dashboard: coming up panel ---- */
-    .pp-upcoming{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+    .pp-upcoming{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
+    @media(max-width:1400px){.pp-upcoming{grid-template-columns:1fr 1fr}}
     .pp-up-list{display:flex;flex-direction:column;gap:4px}
     .pp-up-item{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:12px;cursor:pointer;transition:background var(--t-fast),transform var(--t-fast) var(--ease)}
     .pp-up-item:hover{background:rgba(0,118,187,0.05);transform:translateX(2px)}
@@ -1280,6 +1281,63 @@
     body.pp-sidebar .pp-side-nav{display:flex;flex-direction:column}
     body.pp-sidebar .view-tabs{flex:1}
     body.pp-sidebar .nav-group.bottom{margin-top:auto;padding-top:18px;border-top:1px solid var(--border)}
+    /* ---- inbound leads ---- */
+    .pp-chip.lead-new{background:#e0f2fe;color:#0369a1}
+    [data-theme="dark"] .pp-chip.lead-new{background:rgba(56,189,248,0.15);color:#38bdf8}
+    .lead-contact{display:flex;flex-direction:column;gap:2px;font-size:12px}
+    .lead-contact .sub{font-size:11px;color:var(--text3)}
+    .lead-origin{font-size:10px;color:#f59e0b}
+    .lead-note{display:block;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px;color:var(--text2)}
+    .lead-fast{color:var(--pp-green);font-weight:700}.lead-slow{color:#b91c1c;font-weight:700}
+    #leadTable{table-layout:fixed;min-width:1040px}
+    #leadTable th:nth-child(1){width:18%}#leadTable th:nth-child(2){width:16%}#leadTable th:nth-child(3){width:10%}#leadTable th:nth-child(4){width:8%}#leadTable th:nth-child(5){width:12%}#leadTable th:nth-child(6){width:11%}#leadTable th:nth-child(7){width:7%}#leadTable th:nth-child(8){width:13%}#leadTable th:nth-child(9){width:5%}
+    #leadTable td{overflow:hidden;text-overflow:ellipsis}
+    #leadTable th:first-child,#leadTable td:first-child{position:sticky;left:0;z-index:2;background:var(--card);box-shadow:inset -1px 0 0 var(--border)}
+    #leadTable th:first-child{background:var(--card-2);z-index:3}
+    .rot-strip{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px 18px;margin-bottom:16px;box-shadow:var(--sh-sm)}
+    .rot-title{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3)}
+    .rot-order{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .rot-arrow{color:var(--text3);font-size:18px}
+    .rot-rep{display:inline-flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border-radius:50px;border:1px solid var(--border);background:var(--bg);font-size:12px;font-weight:600;color:var(--text2);position:relative}
+    .rot-rep img,.rot-rep>span:first-child{border-radius:50%}
+    .rot-rep em{font-style:normal;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:50px;background:var(--pp-green);color:#fff}
+    .rot-rep em.p{background:var(--text3)}
+    .rot-rep.up{border-color:var(--pp-green);background:rgba(0,168,79,0.08);color:var(--text);box-shadow:0 0 0 3px rgba(0,168,79,0.12)}
+    .rot-rep.paused{opacity:0.55}
+    .rot-actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+    .rot-edit{padding:8px 12px 4px;display:flex;flex-direction:column;gap:6px;min-width:340px}
+    .rot-edit-row{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:10px;background:var(--bg)}
+    .rot-edit-row.paused{opacity:0.6}
+    .rot-edit-row .lbl{flex:1;font-size:13px;font-weight:600;color:var(--text)}
+    .rot-next{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:4px;margin-right:4px}
+    .rot-edit-add select{width:100%;padding:8px 10px;border-radius:9px;border:1px dashed var(--border);background:transparent;font:inherit;font-size:12px;color:var(--text2)}
+    .rot-notify{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);padding:8px 2px 2px}
+    .pp-form-ro{padding:10px 12px;border-radius:10px;background:var(--bg);font-size:13px;color:var(--text2);white-space:pre-wrap}
+    /* ---- resources ---- */
+    .res-cat{margin-bottom:22px}
+    .res-cat h3{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);margin:0 0 10px}
+    .res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+    .res-card{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:14px;text-decoration:none;color:inherit;box-shadow:var(--sh-xs);transition:transform var(--t-fast),box-shadow var(--t-base)}
+    .res-card:hover{transform:translateY(-1px);box-shadow:var(--sh-md);border-color:var(--pp-blue)}
+    .res-ic{width:36px;height:36px;border-radius:9px;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;letter-spacing:.04em;flex-shrink:0}
+    .res-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+    .res-t{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .res-d{font-size:11.5px;color:var(--text2);line-height:1.4}
+    .res-o{font-size:10px;color:var(--text3)}
+    .res-drive{margin-top:26px}
+    .drive-connect{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:var(--card);border:1px dashed var(--border);border-radius:16px;padding:18px 20px}
+    .drive-connect-form{display:flex;gap:8px;flex:1;min-width:280px;max-width:520px}
+    .drive-connect-form input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);font:inherit;font-size:13px;color:var(--text)}
+    .drive-crumbs{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px;font-size:13px;color:var(--text2)}
+    .drive-crumb{border:none;background:transparent;font:inherit;font-size:13px;color:var(--pp-blue);cursor:pointer;padding:2px 4px;border-radius:6px}
+    .drive-crumb:hover{background:rgba(0,118,187,0.08)}
+    .drive-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
+    .drive-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:12px;border:1px solid var(--border);background:var(--card);text-decoration:none;color:inherit;font:inherit;cursor:pointer;text-align:left;transition:transform var(--t-fast),box-shadow var(--t-base)}
+    .drive-item:hover{transform:translateY(-1px);box-shadow:var(--sh-sm);border-color:var(--pp-blue)}
+    .drive-item .res-ic{width:30px;height:30px;font-size:8px}
+    .drive-name{flex:1;min-width:0;font-size:12.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .drive-meta{font-size:10px;color:var(--text3);white-space:nowrap}
+    @media(max-width:768px){.rot-strip{padding:12px}.rot-actions{margin-left:0}.view-tab{flex:0 0 auto;min-width:58px}}
   </style>
 </head>
 <body>
@@ -1339,20 +1397,23 @@
     
     <div class="main-content">
       <div class="view-tabs">
-        <div class="nav-group">Onboarding</div>
+        <div class="nav-group">HQ</div>
         <button class="view-tab active" onclick="switchView('dashboard')" data-short="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Dashboard</button>
+        <button class="view-tab" onclick="switchView('calendar')" data-short="Calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Calendar</button>
+        <div class="nav-group">Onboarding</div>
+        <button class="view-tab" onclick="switchView('submissions')" data-short="Forms"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Submissions</button>
         <button class="view-tab" onclick="switchView('pipeline')" data-short="Pipeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Pipeline</button>
         <div class="nav-group">Client Success</div>
         <button class="view-tab" onclick="switchView('customers')" data-short="Overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Client Overview</button>
         <button class="view-tab" onclick="switchView('credentials')" data-short="Logins"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Client Credentials</button>
         <div class="nav-group">Sales</div>
         <button class="view-tab" onclick="switchView('tradeshows')" data-short="Shows"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M3 21V10l9-7 9 7v11"/><path d="M9 21v-6h6v6"/></svg> Trade Shows</button>
-        <button class="view-tab soon" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> Inbound Leads<span class="soon-tag">Soon</span></button>
+        <button class="view-tab" onclick="switchView('leads')" data-short="Leads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> Inbound Leads</button>
         <button class="view-tab soon" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Meetings<span class="soon-tag">Soon</span></button>
         <div class="nav-group">Marketing</div>
         <button class="view-tab soon" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg> Campaigns<span class="soon-tag">Soon</span></button>
         <div class="nav-group bottom">Workspace</div>
-        <button class="view-tab" onclick="switchView('calendar')" data-short="Calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Calendar</button>
+        <button class="view-tab" onclick="switchView('resources')" data-short="Docs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Resources</button>
         <button class="view-tab" onclick="switchView('activity')" data-short="Activity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Activity</button>
         <button class="view-tab soon" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Settings<span class="soon-tag">Soon</span></button>
       </div>
@@ -1361,6 +1422,7 @@
         <div class="pp-upcoming" id="ppUpcoming">
           <div class="stat-card"><h3>Upcoming Trade Shows</h3><div class="pp-up-list" id="upShows"><div class="pp-up-empty">Loading...</div></div></div>
           <div class="stat-card"><h3>Upcoming Go-Lives</h3><div class="pp-up-list" id="upGoLives"><div class="pp-up-empty">Loading...</div></div></div>
+          <div class="stat-card"><h3>New Inbound Leads</h3><div class="pp-up-list" id="upLeads"><div class="pp-up-empty">Loading...</div></div></div>
           <div class="stat-card"><h3>Needs Attention</h3><div class="pp-up-list" id="upAttention"><div class="pp-up-empty">Loading...</div></div></div>
         </div>
         <div class="stats-row">
@@ -1372,6 +1434,9 @@
           <div class="stat-card"><h3>Checklist Completion</h3><div id="checklistChart"></div></div>
         </div>
 
+      </div>
+
+      <div class="view-content" id="submissionsView">
         <div class="table-section">
           <div class="controls-row">
             <div class="section-title">Submissions</div>
@@ -1571,6 +1636,45 @@
             <div class="calendar-list-mobile" id="tsCalMobile"></div>
           </div>
         </div>
+      </div>
+
+      <!-- ===== Inbound Leads view (Sept 2026) ===== -->
+      <div class="view-content" id="leadsView">
+        <div class="pp-stat-strip" id="leadStats"></div>
+        <div id="leadRotation"></div>
+        <div class="table-section">
+          <div class="controls-row">
+            <div class="section-title">Inbound Leads</div>
+            <div class="controls-right">
+              <div class="controls-group filters-group">
+                <div class="styled-select"><select id="leadStatusFilter" onchange="leadStatusFilter=this.value;renderLeads()"><option value="open">Open leads</option><option value="all">All leads</option><option value="unassigned">Unassigned</option><option value="new">New</option><option value="contacted">Contacted</option><option value="meeting">Meeting set</option><option value="qualified">Qualified</option><option value="won">Won</option><option value="lost">Lost</option></select></div>
+                <div class="styled-select"><select id="leadRepFilter" onchange="leadRepFilter=this.value;renderLeads()"><option value="all">All reps</option><option value="none">Unassigned</option></select></div>
+                <div class="styled-select"><select id="leadSourceFilter" onchange="leadSourceFilter=this.value;renderLeads()"><option value="all">All sources</option></select></div>
+              </div>
+              <div class="controls-group search-group"><input type="text" class="search-input" id="leadSearchInput" placeholder="Search leads..." oninput="leadSearch=this.value.toLowerCase();renderLeads()" style="width:200px"></div>
+              <div class="controls-group actions-group">
+                <button class="text-action-btn" onclick="openLeadModal(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Lead</button>
+                <button class="text-action-btn" onclick="startLeadImport('file')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Spreadsheet</button>
+                <button class="text-action-btn" onclick="startLeadImport('image')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Screenshot</button>
+                <input type="file" id="leadImportFile" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleLeadImportFile(this.files[0]);this.value=''">
+                <input type="file" id="leadImageFile" accept="image/*" style="display:none" onchange="handleLeadImageFile(this.files[0]);this.value=''">
+                <button class="text-action-btn" id="leadSyncBtn" onclick="syncLeadsNow()" title="Pull any new landing page submissions right now"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Check for new</button>
+                <button class="text-action-btn pp-icon-only" title="Export CSV" onclick="exportLeadsCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+              </div>
+            </div>
+          </div>
+          <div class="table-wrapper pp-desktop-only">
+            <table class="pp-table" id="leadTable"><thead><tr><th>Lead</th><th>Contact</th><th>Source</th><th>Received</th><th>Assigned</th><th>Status</th><th title="Received to first contact">Touch</th><th>Notes</th><th></th></tr></thead><tbody id="leadTableBody"><tr><td colspan="9" class="pp-empty">Loading leads...</td></tr></tbody></table>
+          </div>
+          <div class="pp-mobile-cards" id="leadMobileCards"></div>
+        </div>
+      </div>
+
+      <!-- ===== Resources view (Sept 2026) ===== -->
+      <div class="view-content" id="resourcesView">
+        <div class="controls-row"><div class="section-title">Sales Tools &amp; Documents</div><div class="controls-right"><div class="controls-group actions-group"><button class="text-action-btn" onclick="openResourceModal(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Link</button><button class="text-action-btn pp-icon-only" title="Refresh" onclick="loadResources(true).then(renderResources)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button></div></div></div>
+        <div id="resList"></div>
+        <div class="res-drive"><div id="driveBrowser"></div></div>
       </div>
 
       <div class="view-content" id="calendarView">
@@ -1840,6 +1944,8 @@
       if (view === 'activity') { loadActivity().then(function() { renderActivity(); }); }
       if (view === 'credentials') { renderCredentials(); loadCredList(false).then(function() { renderCredentials(); }); }
       if (view === 'tradeshows') { renderTradeShows(); loadTradeShows(false).then(function() { renderTradeShows(); }); }
+      if (view === 'leads') { renderLeads(); loadLeads(false).then(function() { renderLeads(); }); }
+      if (view === 'resources') { renderResources(); loadResources(false).then(function() { renderResources(); }); }
       ppSetHeaderTitle(view);
       if (typeof ppPopoverClose === 'function') ppPopoverClose();
       ppTabInk();
@@ -1890,7 +1996,7 @@
           // Load shared data before rendering
           await sideLoads;
           updateStats(); renderTable(); renderPipeline(); renderCalendar(); finishLoading(allData); ppSyncPill(false); window._ppCachedRender = false;
-          setTimeout(function() { loadCredList(false).then(function() { if (document.getElementById('credentialsView').classList.contains('active')) renderCredentials(); renderUpcoming(); }); loadTradeShows(false).then(function() { if (document.getElementById('tradeshowsView').classList.contains('active')) renderTradeShows(); renderUpcoming(); }); }, 1500);
+          setTimeout(function() { loadCredList(false).then(function() { if (document.getElementById('credentialsView').classList.contains('active')) renderCredentials(); renderUpcoming(); }); loadTradeShows(false).then(function() { if (document.getElementById('tradeshowsView').classList.contains('active')) renderTradeShows(); renderUpcoming(); }); loadLeads(false).then(function() { if (document.getElementById('leadsView').classList.contains('active')) renderLeads(); renderUpcoming(); }); }, 1500);
           // Start auto-refresh every 60 seconds
           if (!window._refreshInterval) {
             window._refreshInterval = setInterval(async function() {
@@ -3641,7 +3747,7 @@
       else if (/Timeout|Script load failed|unreachable/i.test(err)) hint = 'No reply came back from the script. Usually the one-line hook is missing from doGet (<code>var pp = ppHandleExtra_(e); if (pp) return pp;</code>) or the deployment has not been updated to a new version.';
       else if (/Unauthorized/i.test(err)) hint = 'Your signed-in email (' + ppEsc(currentUser?.email || '') + ') is not in <code>PP_ADMIN_EMAILS</code> at the top of Extras.gs.';
       else hint = 'The Apps Script behind this admin needs the new actions for this tab. Paste <code>AppsScript_additions.gs</code> in as Extras.gs, add the one-line hook to doGet, and deploy a new version.';
-      var retry = what === 'Credentials' ? 'loadCredList(true).then(renderCredentials)' : 'loadTradeShows(true).then(renderTradeShows)';
+      var retry = what === 'Credentials' ? 'loadCredList(true).then(renderCredentials)' : what === 'Inbound Leads' ? 'loadLeads(true).then(renderLeads)' : what === 'Resources' ? 'loadResources(true).then(renderResources)' : 'loadTradeShows(true).then(renderTradeShows)';
       return '<div class="pp-empty"><strong>' + what + ': backend not connected yet</strong><div style="max-width:520px;margin:0 auto;line-height:1.6">' + hint + '</div>'
         + (err ? '<div class="pp-toolbar-note" style="margin-top:10px">Reply from server: ' + ppEsc(err) + '</div>' : '')
         + '<div style="margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><a class="pp-btn" target="_blank" rel="noopener" href="' + ppEsc(API_URL + '?action=ppPing&email=' + encodeURIComponent(currentUser?.email || '')) + '">Test backend</a><button class="pp-btn primary" onclick="' + retry + '">Retry</button></div></div>';
@@ -4231,10 +4337,10 @@
       if (typing) return;
       if (!document.getElementById('dashboard').classList.contains('active')) return;
       if (document.getElementById('modalOverlay').classList.contains('active')) return;
-      var tabs = ['dashboard', 'pipeline', 'customers', 'credentials', 'tradeshows', 'calendar', 'activity'];
-      if (/^[1-7]$/.test(e.key)) { switchView(tabs[parseInt(e.key) - 1]); e.preventDefault(); return; }
+      var tabs = ['dashboard', 'calendar', 'submissions', 'pipeline', 'customers', 'credentials', 'tradeshows', 'leads', 'resources'];
+      if (/^[1-9]$/.test(e.key)) { switchView(tabs[parseInt(e.key) - 1]); e.preventDefault(); return; }
       if (e.key === '/') { var s = document.querySelector('.view-content.active .search-input'); if (s) { s.focus(); s.select(); e.preventDefault(); } return; }
-      if (e.key.toLowerCase() === 'n') { var v = document.querySelector('.view-content.active'); if (v && v.id === 'credentialsView') { openCredModal(null); e.preventDefault(); } else if (v && v.id === 'tradeshowsView') { openTsModal(null); e.preventDefault(); } }
+      if (e.key.toLowerCase() === 'n') { var v = document.querySelector('.view-content.active'); if (v && v.id === 'credentialsView') { openCredModal(null); e.preventDefault(); } else if (v && v.id === 'tradeshowsView') { openTsModal(null); e.preventDefault(); } else if (v && v.id === 'leadsView') { openLeadModal(null); e.preventDefault(); } else if (v && v.id === 'resourcesView') { openResourceModal(null); e.preventDefault(); } }
     });
     // =====================================================================
     // DASHBOARD: COMING UP (trade shows, go-lives, attention)  (Sept 2026)
@@ -4269,6 +4375,15 @@
           + '<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(d.organization || 'Unnamed') + '</div><div class="pp-up-sub">' + ppInDays(days) + (d.locationStr ? ' &middot; ' + ppEsc(d.locationStr) : '') + '</div></div>'
           + '<div class="pp-up-right"><span class="status-badge ' + ppEsc(d.pipelineStatus) + '">' + (PP_STATUS_LABELS[d.pipelineStatus] || ppEsc(d.pipelineStatus)) + '</span></div></div>';
       }).join('') + ppUpFoot('calendar', 'Open calendar') : '<div class="pp-up-empty">No go-live dates scheduled.</div>' + ppUpFoot('calendar', 'Open calendar');
+      // --- new inbound leads
+      var ldEl = document.getElementById('upLeads');
+      if (ldEl) {
+        if (!leadsLoaded) ldEl.innerHTML = '<div class="pp-up-empty">' + (leadsError ? 'Inbound Leads needs the v5 backend.' : 'Loading leads...') + '</div>';
+        else {
+          var fresh = leadList.filter(function(l) { return ['won', 'lost'].indexOf(l.status) < 0; }).sort(function(a, b) { return a.receivedAt < b.receivedAt ? 1 : -1; }).slice(0, 4);
+          ldEl.innerHTML = fresh.length ? fresh.map(function(l) { var st = LEAD_STATUSES.find(function(s) { return s.val === l.status; }) || LEAD_STATUSES[0]; return '<div class="pp-up-item" onclick="openLeadModal(\'' + ppEsc(l.id) + '\')"><div class="pp-org-avatar" style="background:' + getOrgColor(l.org || l.name || '?') + ';width:34px;height:34px;border-radius:10px">' + ppEsc(getOrgInitials(l.name || l.org || '?')) + '</div><div class="pp-up-main"><div class="pp-up-title">' + ppEsc(l.name || l.org || 'Lead') + '</div><div class="pp-up-sub">' + ppEsc(l.org || l.source || '') + ' &middot; ' + leadAge(l) + '</div></div><div class="pp-up-right">' + (l.assignedTo ? ppRepAvatars(l.assignedTo, 22) : '<span class="pp-chip need-to-book">Assign</span>') + '</div></div>'; }).join('') + ppUpFoot('leads', 'All leads') : '<div class="pp-up-empty">No open leads right now.</div>' + ppUpFoot('leads', 'Inbound leads');
+        }
+      }
       // --- needs attention
       var items = [];
       var overdue = allData.filter(function(d) { return d.goLiveDate && d.goLiveDate < today && ['published', 'launched', 'on-hold'].indexOf(d.pipelineStatus) < 0; });
@@ -4278,6 +4393,7 @@
       if (tsLoaded) tsList.filter(function(s) { return !s.archived && !s._isPast && s._daysUntil !== null && s._daysUntil <= 60 && s._todo.length; }).sort(function(a, b) { return a._daysUntil - b._daysUntil; }).slice(0, 3).forEach(function(s) {
         items.push({ cls: 'amber', title: s.name, sub: s._todo.join(' &middot; ') + ' &middot; ' + ppInDays(s._daysUntil).toLowerCase(), go: "openTsModal('" + ppEsc(s.id) + "')" });
       });
+      if (leadsLoaded) { var unl = leadList.filter(function(l) { return !l.assignedTo && ['won', 'lost'].indexOf(l.status) < 0; }).length; if (unl) items.push({ cls: 'red', title: unl + ' inbound lead' + (unl === 1 ? '' : 's') + ' unassigned', sub: 'Waiting for a rep', go: "switchView('leads')" }); var idle = leadList.filter(function(l) { return l.assignedTo && l.status === 'new' && (Date.now() - new Date(l.receivedAt)) > 48 * 3600000; }).length; if (idle) items.push({ cls: 'amber', title: idle + ' lead' + (idle === 1 ? '' : 's') + ' not contacted in 48h', sub: 'Assigned but still marked New', go: "switchView('leads')" }); }
       if (credLoaded) { var missing = credList.filter(function(c) { return c.status !== 'inactive' && (!c.loginEmail || !c.loginPassword); }).length; if (missing) items.push({ cls: 'blue', title: missing + ' client' + (missing === 1 ? '' : 's') + ' missing a login', sub: 'Active or onboarding without email or password', go: "switchView('credentials')" }); }
       var icons = { red: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>', amber: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>', blue: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>' };
       attEl.innerHTML = items.length ? items.slice(0, 5).map(function(it) {
@@ -4438,6 +4554,7 @@
       var id = cell.getAttribute('data-id'), field = cell.getAttribute('data-edit'); if (!id || !field) return;
       if (cell.closest('#tsGroups')) { e.stopPropagation(); tsCellEdit(id, field, cell); }
       else if (cell.closest('#credTableBody')) { e.stopPropagation(); credCellEdit(id, field, cell); }
+      else if (cell.closest('#leadTableBody')) { e.stopPropagation(); leadCellEdit(id, field, cell); }
     });
     document.addEventListener('keydown', function(e) { if (e.key === 'Enter' && e.target && e.target.classList && e.target.classList.contains('ts-add-input')) { e.preventDefault(); tsQuickAdd(e.target); } });
 
@@ -4552,7 +4669,7 @@
     function openDataHealth() { dhOpen = true; dhFilter = 'all'; switchView('pipeline'); setTimeout(renderDataHealth, 50); }
 
     // ---- sidebar layout + header title ----
-    var PP_VIEW_TITLES = { dashboard: ['Onboarding', 'Dashboard'], pipeline: ['Onboarding', 'Pipeline'], calendar: ['Workspace', 'Calendar'], activity: ['Workspace', 'Activity'], customers: ['Client Success', 'Client Overview'], credentials: ['Client Success', 'Client Credentials'], tradeshows: ['Sales', 'Trade Shows'] };
+    var PP_VIEW_TITLES = { dashboard: ['HQ', 'Dashboard'], calendar: ['HQ', 'Calendar'], submissions: ['Onboarding', 'Submissions'], pipeline: ['Onboarding', 'Pipeline'], customers: ['Client Success', 'Client Overview'], credentials: ['Client Success', 'Client Credentials'], tradeshows: ['Sales', 'Trade Shows'], leads: ['Sales', 'Inbound Leads'], resources: ['Workspace', 'Resources'], activity: ['Workspace', 'Activity'] };
     function ppSetHeaderTitle(view) { var t = document.getElementById('hdrTitle'); if (!t || !PP_VIEW_TITLES[view]) return; t.innerHTML = '<span class="crumb">' + PP_VIEW_TITLES[view][0] + '</span><b>' + PP_VIEW_TITLES[view][1] + '</b>'; }
     function ppLayoutInit() {
       var tabs = document.querySelector('.view-tabs'), dash = document.getElementById('dashboard'), main = document.querySelector('.main-content'); if (!tabs || !dash || !main) return;
@@ -4561,7 +4678,7 @@
         if (!side) {
           side = document.createElement('aside'); side.id = 'ppSide'; side.className = 'pp-side';
           var logo = document.querySelector('.header-logo');
-          side.innerHTML = '<div class="pp-side-logo">' + (logo ? '<img src="' + logo.getAttribute('src') + '" alt="PracticePlan">' : '') + '</div><div class="pp-side-nav"></div><div class="pp-side-foot"><kbd>1</kbd>-<kbd>7</kbd> switch &middot; <kbd>/</kbd> search &middot; <kbd>N</kbd> new</div>';
+          side.innerHTML = '<div class="pp-side-logo">' + (logo ? '<img src="' + logo.getAttribute('src') + '" alt="PracticePlan">' : '') + '</div><div class="pp-side-nav"></div><div class="pp-side-foot"><kbd>1</kbd>-<kbd>9</kbd> switch &middot; <kbd>/</kbd> search &middot; <kbd>N</kbd> new</div>';
           dash.insertBefore(side, dash.firstChild);
         }
         var nav = side.querySelector('.pp-side-nav'); if (tabs.parentNode !== nav) nav.appendChild(tabs);
@@ -4638,6 +4755,252 @@
       mobile.innerHTML = keys.length ? keys.map(function(iso) { var d = ppParseISO(iso); return '<div class="cal-list-day"><div class="cal-list-date' + (iso < todayISO ? ' is-past' : '') + (iso === todayISO ? ' is-today' : '') + '"><div class="cal-date-dow">' + d.toLocaleDateString('en-US', { weekday: 'short' }) + '</div><div class="cal-date-num">' + d.getDate() + '</div></div><div class="cal-list-events">' + days[iso].map(function(e) { return '<div class="cal-list-event" onclick="calOpen(\'' + e.type + '\',\'' + ppEsc(e.key) + '\')"><span class="cal-list-event-dot ' + e.type + '"></span><div class="cal-list-event-info"><div class="cal-list-event-org">' + ppEsc(e.title) + '</div><div class="cal-list-event-meta">' + (e.type === 'golive' ? 'Go-live' : e.type === 'show' ? ppFmtRange(e.start, e.end) : 'Meeting') + (e.sub ? ' &middot; ' + ppEsc(e.sub) : '') + '</div></div></div>'; }).join('') + '</div></div>'; }).join('') : '<div class="cal-list-no-events" style="padding:20px 16px">Nothing on the calendar this month</div>';
     }
     renderCalendar = function() { try { renderUnifiedCalendar(); } catch(e) { console.log('calendar:', e.message); } };
+    // =====================================================================
+    // INBOUND LEADS + ROUND ROBIN  (Sept 2026)
+    // =====================================================================
+    var LEAD_STATUSES = [{ val: 'new', label: 'New', cls: 'lead-new' }, { val: 'contacted', label: 'Contacted', cls: 'need-to-book' }, { val: 'meeting', label: 'Meeting', cls: 'aud-supers' }, { val: 'qualified', label: 'Qualified', cls: 'booked' }, { val: 'won', label: 'Won', cls: 'active' }, { val: 'lost', label: 'Lost', cls: 'inactive' }];
+    var LEAD_COLS = ['id', 'receivedAt', 'name', 'org', 'email', 'phone', 'source', 'notes', 'status', 'assignedTo', 'assignedAt', 'assignedBy', 'firstTouchAt', 'internalNotes', 'origin', 'sourceKey', 'updatedAt', 'updatedBy'];
+    var leadList = [], leadsLoaded = false, leadsError = '', leadRotation = { order: [], next: '', paused: [] }, leadNotify = true, leadSearch = '', leadStatusFilter = 'open', leadRepFilter = 'all', leadSourceFilter = 'all';
+    function leadNormalize(r) { var o = {}; LEAD_COLS.forEach(function(c) { o[c] = (r[c] === undefined || r[c] === null) ? '' : String(r[c]); }); if (LEAD_STATUSES.every(function(s) { return s.val !== o.status; })) o.status = 'new'; o.assignedTo = o.assignedTo.toLowerCase(); return o; }
+    async function loadLeads(force) {
+      if (leadsLoaded && !force) return leadList;
+      try { var r = await ppApi('getLeads'); if (r.success) { leadList = (r.rows || []).map(leadNormalize); leadRotation = r.rotation || leadRotation; leadNotify = r.notify !== false; leadsLoaded = true; leadsError = ''; } else leadsError = r.error || 'Unknown error'; }
+      catch(e) { leadsError = e.message || 'Request failed'; }
+      return leadList;
+    }
+    function leadAge(l) { var ms = Date.now() - new Date(l.receivedAt).getTime(); if (isNaN(ms)) return ''; var h = Math.floor(ms / 3600000); if (h < 1) return 'just now'; if (h < 24) return h + 'h ago'; var d = Math.floor(h / 24); return d + 'd ago'; }
+    function leadTouch(l) { if (!l.firstTouchAt) return null; return Math.round((new Date(l.firstTouchAt) - new Date(l.receivedAt)) / 3600000); }
+    function leadFiltered() {
+      var q = leadSearch.trim();
+      return leadList.filter(function(l) {
+        if (leadStatusFilter === 'open') { if (['won', 'lost'].indexOf(l.status) >= 0) return false; }
+        else if (leadStatusFilter === 'unassigned') { if (l.assignedTo) return false; }
+        else if (leadStatusFilter !== 'all' && l.status !== leadStatusFilter) return false;
+        if (leadRepFilter === 'none') { if (l.assignedTo) return false; } else if (leadRepFilter !== 'all' && l.assignedTo !== leadRepFilter) return false;
+        if (leadSourceFilter !== 'all' && (l.source || '') !== leadSourceFilter) return false;
+        if (q) { var hay = [l.name, l.org, l.email, l.phone, l.source, l.notes, l.internalNotes, ppRepFull(l.assignedTo)].join(' ').toLowerCase(); if (hay.indexOf(q) < 0) return false; }
+        return true;
+      }).sort(function(a, b) { return a.receivedAt < b.receivedAt ? 1 : -1; });
+    }
+    function renderLeadStats() {
+      var el = document.getElementById('leadStats'); if (!el) return;
+      var now = Date.now(), week = now - 7 * 86400000, month = new Date(); month.setDate(1); month.setHours(0, 0, 0, 0);
+      var open = leadList.filter(function(l) { return ['won', 'lost'].indexOf(l.status) < 0; }), unassigned = open.filter(function(l) { return !l.assignedTo; }), untouched = open.filter(function(l) { return l.status === 'new' && l.assignedTo; });
+      var thisWeek = leadList.filter(function(l) { return new Date(l.receivedAt).getTime() >= week; }).length;
+      var touched = leadList.filter(function(l) { return leadTouch(l) !== null; }).map(leadTouch).sort(function(a, b) { return a - b; }); var median = touched.length ? touched[Math.floor(touched.length / 2)] : null;
+      var perRep = leadRotation.order.map(function(e) { return { email: e, n: leadList.filter(function(l) { return l.assignedTo === e && new Date(l.receivedAt) >= month; }).length }; });
+      el.innerHTML = '<div class="pp-stat" onclick="leadStatusFilter=\'all\';document.getElementById(\'leadStatusFilter\').value=\'all\';renderLeads()"><div class="v">' + thisWeek + '</div><div class="l">New this week</div><div class="s">' + leadList.length + ' all time</div></div>'
+        + '<div class="pp-stat ' + (unassigned.length ? 'warn' : 'good') + '" onclick="leadStatusFilter=\'unassigned\';document.getElementById(\'leadStatusFilter\').value=\'unassigned\';renderLeads()"><div class="v">' + unassigned.length + '</div><div class="l">Unassigned</div><div class="s">waiting for a rep</div></div>'
+        + '<div class="pp-stat ' + (untouched.length ? 'warn' : 'good') + '" onclick="leadStatusFilter=\'new\';document.getElementById(\'leadStatusFilter\').value=\'new\';renderLeads()"><div class="v">' + untouched.length + '</div><div class="l">Not yet contacted</div><div class="s">assigned, still marked New</div></div>'
+        + '<div class="pp-stat" style="cursor:default"><div class="v">' + (median === null ? '-' : median < 48 ? median + 'h' : Math.round(median / 24) + 'd') + '</div><div class="l">Median first touch</div><div class="s">received to contacted</div></div>'
+        + '<div class="pp-stat" style="cursor:default"><div class="v" style="font-size:14px;line-height:1.6">' + perRep.map(function(r) { return ppEsc(ppRepName(r.email)) + ' <b>' + r.n + '</b>'; }).join('<br>') + '</div><div class="l">This month by rep</div></div>';
+    }
+    function renderRotation() {
+      var el = document.getElementById('leadRotation'); if (!el) return;
+      var r = leadRotation;
+      el.innerHTML = '<div class="rot-strip"><div class="rot-title">Round robin</div><div class="rot-order">' + r.order.map(function(e, i) { var paused = r.paused.indexOf(e) >= 0, up = e === r.next; return (i ? '<span class="rot-arrow">&rsaquo;</span>' : '') + '<span class="rot-rep' + (up ? ' up' : '') + (paused ? ' paused' : '') + '" title="' + ppEsc(ppRepFull(e)) + (paused ? ' (paused)' : up ? ' (up next)' : '') + '">' + getTeamPhoto(e, 26) + '<span>' + ppEsc(ppRepName(e)) + '</span>' + (up ? '<em>Up next</em>' : paused ? '<em class="p">Paused</em>' : '') + '</span>'; }).join('') + '</div>'
+        + '<div class="rot-actions"><button class="text-action-btn" onclick="skipRotation()" title="Move the pointer past the rep who is up next">Skip ' + ppEsc(ppRepName(r.next)) + '</button><button class="text-action-btn" onclick="openRotationSettings(this)">' + ppSvg('edit') + ' Rotation settings</button></div></div>';
+    }
+    async function skipRotation() { try { var r = await ppApi('skipRotation'); if (!r.success) throw new Error(r.error); leadRotation = r.rotation; renderRotation(); showToast('Up next: ' + ppRepName(leadRotation.next), 'success'); } catch(e) { showToast('Could not skip: ' + e.message, 'error'); } }
+    function openRotationSettings(anchor) {
+      var r = leadRotation, order = r.order.slice(), paused = r.paused.slice(), next = r.next;
+      var render = function() {
+        return '<div class="pp-pop-title">Rotation order</div><div class="rot-edit">' + order.map(function(e, i) { return '<div class="rot-edit-row' + (paused.indexOf(e) >= 0 ? ' paused' : '') + '">' + getTeamPhoto(e, 24) + '<span class="lbl">' + ppEsc(ppRepFull(e)) + '</span><label class="rot-next"><input type="radio" name="rotNext"' + (next === e ? ' checked' : '') + ' data-next="' + ppEsc(e) + '"> up next</label><button type="button" class="pp-mini-btn" data-move="' + i + ':-1" title="Move up">&#9650;</button><button type="button" class="pp-mini-btn" data-move="' + i + ':1" title="Move down">&#9660;</button><button type="button" class="pp-mini-btn' + (paused.indexOf(e) >= 0 ? ' danger' : '') + '" data-pause="' + ppEsc(e) + '" title="' + (paused.indexOf(e) >= 0 ? 'Resume' : 'Pause (out of office)') + '">' + (paused.indexOf(e) >= 0 ? '&#9654;' : '&#10074;&#10074;') + '</button><button type="button" class="pp-mini-btn danger" data-remove="' + ppEsc(e) + '" title="Remove from rotation">&#10005;</button></div>'; }).join('')
+          + '<div class="rot-edit-add"><select id="rotAdd"><option value="">Add a rep...</option>' + TEAM_MEMBERS.filter(function(m) { return order.indexOf(m.email) < 0; }).map(function(m) { return '<option value="' + ppEsc(m.email) + '">' + ppEsc(m.name) + '</option>'; }).join('') + '</select></div>'
+          + '<label class="rot-notify"><input type="checkbox" id="rotNotify"' + (leadNotify ? ' checked' : '') + '> Email the rep when a lead is assigned</label></div><div class="pp-pop-foot"><span style="flex:1"></span><button type="button" class="pp-btn" onclick="ppPopoverClose()">Cancel</button><button type="button" class="pp-btn primary" id="rotSave">Save</button></div>';
+      };
+      var p = ppPopoverOpen(anchor, render(), { cls: 'pp-pop-form-wrap', focus: false });
+      var wire = function() {
+        p.querySelectorAll('[data-move]').forEach(function(b) { b.addEventListener('click', function() { var s = b.getAttribute('data-move').split(':'), i = parseInt(s[0]), d = parseInt(s[1]), j = i + d; if (j < 0 || j >= order.length) return; var t = order[i]; order[i] = order[j]; order[j] = t; p.innerHTML = render(); wire(); }); });
+        p.querySelectorAll('[data-pause]').forEach(function(b) { b.addEventListener('click', function() { var e = b.getAttribute('data-pause'), k = paused.indexOf(e); if (k >= 0) paused.splice(k, 1); else paused.push(e); p.innerHTML = render(); wire(); }); });
+        p.querySelectorAll('[data-remove]').forEach(function(b) { b.addEventListener('click', function() { var e = b.getAttribute('data-remove'); order = order.filter(function(x) { return x !== e; }); if (next === e) next = order[0] || ''; p.innerHTML = render(); wire(); }); });
+        p.querySelectorAll('[data-next]').forEach(function(rd) { rd.addEventListener('change', function() { next = rd.getAttribute('data-next'); }); });
+        var add = p.querySelector('#rotAdd'); if (add) add.addEventListener('change', function() { if (add.value) { order.push(add.value); if (!next) next = add.value; p.innerHTML = render(); wire(); } });
+        p.querySelector('#rotSave').addEventListener('click', async function() { var notify = p.querySelector('#rotNotify').checked; ppPopoverClose(); try { var r = await ppApi('setRotation', { order: order.join(','), next: next, paused: paused.join(','), notify: notify ? 'true' : 'false' }); if (!r.success) throw new Error(r.error); leadRotation = r.rotation; leadNotify = notify; renderRotation(); renderLeadStats(); showToast('Rotation saved', 'success'); logActivityToServer('updated lead rotation', order.map(ppRepName).join(' > '), 'next: ' + ppRepName(next), 'other'); } catch(e) { showToast('Could not save rotation: ' + e.message, 'error'); } });
+      };
+      wire();
+    }
+    function leadRow(l) {
+      var cell = function(field, inner, cls) { return '<td class="pp-cell' + (cls ? ' ' + cls : '') + '" data-edit="' + field + '" data-id="' + ppEsc(l.id) + '" title="Click to edit">' + inner + '</td>'; };
+      var st = LEAD_STATUSES.find(function(s) { return s.val === l.status; }) || LEAD_STATUSES[0], touch = leadTouch(l);
+      return '<tr data-id="' + ppEsc(l.id) + '"' + (['won', 'lost'].indexOf(l.status) >= 0 ? ' class="past"' : '') + '>'
+        + cell('details', '<div class="pp-org-cell"><div class="pp-org-avatar" style="background:' + getOrgColor(l.org || l.name || '?') + '">' + ppEsc(getOrgInitials(l.name || l.org || '?')) + '</div><div><div class="pp-org-name">' + ppEsc(l.name || '(no name)') + (l.origin === 'form' ? ' <span class="lead-origin" title="Came in from a landing page">&#9889;</span>' : '') + '</div><div class="pp-org-sub">' + (l.org ? ppEsc(l.org) : '<span class="pp-placeholder">Organization?</span>') + '</div></div></div>')
+        + cell('contact', '<div class="lead-contact">' + (l.email ? '<span class="pp-copyable" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(l.email) + '\',\'Email\')">' + ppEsc(l.email) + '</span>' : '<span class="pp-placeholder">Email?</span>') + (l.phone ? '<span class="pp-copyable sub" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(l.phone) + '\',\'Phone\')">' + ppEsc(formatPhone(l.phone)) + '</span>' : '') + '</div>')
+        + cell('source', l.source ? '<span class="pp-chip aud-other">' + ppEsc(l.source) + '</span>' : '<span class="pp-placeholder">Source?</span>')
+        + '<td><div class="ts-date">' + leadAge(l) + '<span class="sub">' + ppFmtDate(l.receivedAt.slice(0, 10), { month: 'short', day: 'numeric' }) + '</span></div></td>'
+        + cell('assignedTo', l.assignedTo ? '<div style="display:flex;align-items:center;gap:8px">' + ppRepAvatars(l.assignedTo, 24) + '<span style="font-size:11px;color:var(--text2)">' + ppEsc(ppRepName(l.assignedTo)) + '</span></div>' : '<span class="pp-chip need-to-book">Assign<i class="caret"></i></span>')
+        + cell('status', '<span class="pp-chip pick ' + st.cls + '">' + st.label + '<i class="caret"></i></span>')
+        + '<td>' + (touch === null ? '<span class="pp-placeholder">' + (l.status === 'new' ? 'not yet' : '-') + '</span>' : '<span class="' + (touch <= 24 ? 'lead-fast' : touch <= 72 ? '' : 'lead-slow') + '">' + (touch < 48 ? touch + 'h' : Math.round(touch / 24) + 'd') + '</span>') + '</td>'
+        + cell('internalNotes', l.internalNotes ? '<span class="lead-note" title="' + ppEsc(l.internalNotes) + '">' + ppEsc(l.internalNotes) + '</span>' : (l.notes ? '<span class="lead-note pp-placeholder" title="From the form: ' + ppEsc(l.notes) + '">' + ppEsc(l.notes) + '</span>' : '<span class="pp-placeholder">Add a note</span>'))
+        + '<td style="text-align:right"><button class="pp-mini-btn" title="Open" onclick="openLeadModal(\'' + ppEsc(l.id) + '\')">' + ppSvg('expand') + '</button></td>'
+        + '</tr>';
+    }
+    function renderLeads() {
+      var body = document.getElementById('leadTableBody'), mobile = document.getElementById('leadMobileCards'); if (!body) return;
+      renderLeadStats(); renderRotation();
+      var repSel = document.getElementById('leadRepFilter'); if (repSel && repSel.options.length <= 2) { repSel.innerHTML = '<option value="all">All reps</option>' + TEAM_MEMBERS.map(function(m) { return '<option value="' + ppEsc(m.email) + '">' + ppEsc(m.name) + '</option>'; }).join('') + '<option value="none">Unassigned</option>'; repSel.value = leadRepFilter; }
+      var srcSel = document.getElementById('leadSourceFilter'); if (srcSel) { var sources = {}; leadList.forEach(function(l) { if (l.source) sources[l.source] = true; }); var cur = srcSel.value || 'all'; srcSel.innerHTML = '<option value="all">All sources</option>' + Object.keys(sources).sort().map(function(s) { return '<option value="' + ppEsc(s) + '">' + ppEsc(s) + '</option>'; }).join(''); srcSel.value = cur; }
+      if (!leadsLoaded) { var msg = leadsError ? ppSetupEmpty('Inbound Leads', leadsError) : '<div class="pp-empty">Loading leads...</div>'; body.innerHTML = '<tr><td colspan="9">' + msg + '</td></tr>'; mobile.innerHTML = msg; return; }
+      var rows = leadFiltered();
+      if (!rows.length) { var e2 = '<div class="pp-empty"><strong>No leads here</strong>' + (leadList.length ? 'Try another filter.' : 'Leads from the landing pages appear automatically. Add one, import a spreadsheet or screenshot, or run Check for new.') + '</div>'; body.innerHTML = '<tr><td colspan="9">' + e2 + '</td></tr>'; mobile.innerHTML = e2; return; }
+      body.innerHTML = rows.map(leadRow).join('');
+      mobile.innerHTML = rows.map(function(l) { var st = LEAD_STATUSES.find(function(s) { return s.val === l.status; }) || LEAD_STATUSES[0]; return '<div class="pp-mcard" onclick="openLeadModal(\'' + ppEsc(l.id) + '\')"><div class="pp-mcard-head"><div class="pp-org-avatar" style="background:' + getOrgColor(l.org || l.name || '?') + '">' + ppEsc(getOrgInitials(l.name || l.org || '?')) + '</div><div class="pp-mcard-title">' + ppEsc(l.name || '(no name)') + '</div><span class="pp-chip ' + st.cls + '">' + st.label + '</span></div><div class="pp-mcard-row"><span class="k">Org</span><span class="v">' + ppEsc(l.org || '-') + '</span></div><div class="pp-mcard-row"><span class="k">Contact</span><span class="v">' + ppEsc(l.email || '') + (l.phone ? ' &middot; ' + ppEsc(formatPhone(l.phone)) : '') + '</span></div><div class="pp-mcard-row"><span class="k">Assigned</span><span class="v">' + (l.assignedTo ? ppEsc(ppRepName(l.assignedTo)) : 'Unassigned') + ' &middot; ' + leadAge(l) + '</span></div></div>'; }).join('');
+    }
+    function leadCellEdit(id, field, cell) {
+      var l = leadList.find(function(x) { return x.id === id; }); if (!l) return;
+      var save = function(patch) {
+        var prev = {}; Object.keys(patch).forEach(function(k) { prev[k] = l[k]; l[k] = patch[k]; });
+        if (patch.status && prev.status === 'new' && patch.status !== 'new' && !l.firstTouchAt) l.firstTouchAt = new Date().toISOString();
+        renderLeads();
+        var rec = {}; LEAD_COLS.forEach(function(c) { rec[c] = l[c]; });
+        ppApi('saveLead', { row: rec }).then(function(r) { if (!r.success) throw new Error(r.error || 'Save failed'); showToast('Saved', 'success'); if (patch.status) logActivityToServer('set lead status for', l.name || l.org, patch.status, 'status'); renderUpcoming(); }).catch(function(err) { Object.keys(prev).forEach(function(k) { l[k] = prev[k]; }); renderLeads(); showToast('Could not save: ' + err.message, 'error'); });
+      };
+      switch (field) {
+        case 'status': ppStatusPicker(cell, LEAD_STATUSES.map(function(s) { return { val: s.val, label: s.label, cls: s.cls }; }), l.status, function(v) { save({ status: v }); }); break;
+        case 'assignedTo': ppStatusPicker(cell, [{ val: 'next', label: 'Next in rotation (' + ppRepName(leadRotation.next) + ')', cls: 'booked' }].concat(TEAM_MEMBERS.map(function(m) { return { val: m.email, label: m.name, cls: l.assignedTo === m.email ? 'active' : 'unset' }; }), [{ val: '', label: 'Unassign', cls: 'inactive' }]), l.assignedTo, function(v) { assignLead(id, v); }); break;
+        case 'source': ppInlineEdit(cell, { value: l.source, placeholder: 'Where it came from', onSave: function(v) { save({ source: v }); } }); break;
+        case 'internalNotes': ppInlineEdit(cell, { value: l.internalNotes, placeholder: 'Internal note', onSave: function(v) { save({ internalNotes: v }); } }); break;
+        case 'contact': ppFormPopover(cell, [{ key: 'email', label: 'Email', type: 'email', value: l.email }, { key: 'phone', label: 'Phone', value: l.phone }], function(v) { save(v); }, { title: 'Contact' }); break;
+        case 'details': ppFormPopover(cell, [{ key: 'name', label: 'Name', value: l.name }, { key: 'org', label: 'Organization', value: l.org }], function(v) { save(v); }, { title: 'Lead', footer: '<button type="button" class="pp-btn" onclick="ppPopoverClose();openLeadModal(\'' + ppEsc(id) + '\')">Full record</button>' }); break;
+      }
+    }
+    async function assignLead(id, rep) {
+      var l = leadList.find(function(x) { return x.id === id; }); if (!l) return;
+      try { var r = await ppApi('assignLead', { id: id, rep: rep }); if (!r.success) throw new Error(r.error || 'Assign failed'); Object.assign(l, leadNormalize(r.lead)); leadRotation = r.rotation || leadRotation; renderLeads(); renderUpcoming(); showToast(l.assignedTo ? 'Assigned to ' + ppRepName(l.assignedTo) : 'Unassigned', 'success'); logActivityToServer(l.assignedTo ? 'assigned lead' : 'unassigned lead', l.name || l.org, l.assignedTo ? ppRepFull(l.assignedTo) : '', 'rep'); }
+      catch(e) { showToast('Could not assign: ' + e.message, 'error'); }
+    }
+    function openLeadModal(id) {
+      var l = id ? leadList.find(function(x) { return x.id === id; }) : null; var isNew = !l;
+      l = l || { id: '', name: '', org: '', email: '', phone: '', source: '', notes: '', status: 'new', assignedTo: '', internalNotes: '' };
+      var html = '<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + (isNew ? 'Add Lead' : ppEsc(l.name || l.org || 'Lead')) + '</h2><div class="modal-subtitle">' + (isNew ? 'Goes to the next rep in the rotation unless you pick someone' : (l.org ? ppEsc(l.org) + ' &middot; ' : '') + 'received ' + leadAge(l) + (l.origin === 'form' ? ' from a landing page' : '')) + '</div></div>'
+        + '<div class="modal-body"><div class="detail-section" style="margin-top:20px"><div class="pp-form">'
+        + '<div><label>Name</label><input id="lf_name" value="' + ppEsc(l.name) + '" autofocus></div><div><label>Organization</label><input id="lf_org" value="' + ppEsc(l.org) + '" placeholder="District or school"></div>'
+        + '<div><label>Email</label><input id="lf_email" type="email" value="' + ppEsc(l.email) + '"></div><div><label>Phone</label><input id="lf_phone" value="' + ppEsc(l.phone) + '"></div>'
+        + '<div><label>Source</label><input id="lf_source" value="' + ppEsc(l.source) + '" placeholder="Conference, referral, website..."></div>'
+        + '<div><label>Status</label><select id="lf_status">' + LEAD_STATUSES.map(function(s) { return '<option value="' + s.val + '"' + (l.status === s.val ? ' selected' : '') + '>' + s.label + '</option>'; }).join('') + '</select></div>'
+        + '<div class="full"><label>Assigned to</label><select id="lf_rep"><option value="next">Next in rotation (' + ppEsc(ppRepName(leadRotation.next)) + ')</option>' + TEAM_MEMBERS.map(function(m) { return '<option value="' + ppEsc(m.email) + '"' + (l.assignedTo === m.email ? ' selected' : '') + '>' + ppEsc(m.name) + '</option>'; }).join('') + '<option value=""' + (!isNew && !l.assignedTo ? ' selected' : '') + '>Unassigned</option></select></div>'
+        + (l.notes ? '<div class="full"><label>Notes from the form</label><div class="pp-form-ro">' + ppEsc(l.notes) + '</div></div>' : '')
+        + '<div class="full"><label>Internal notes</label><textarea id="lf_notes" placeholder="Calls, context, next step">' + ppEsc(l.internalNotes) + '</textarea></div>'
+        + '</div></div><div class="pp-modal-actions">' + (isNew ? '<span></span>' : '<button class="pp-btn danger" onclick="deleteLead(\'' + ppEsc(l.id) + '\')">Delete</button>') + '<div class="right"><button class="pp-btn" onclick="closeModal()">Cancel</button><button class="pp-btn primary" id="leadSaveBtn" onclick="saveLeadModal(\'' + ppEsc(l.id) + '\')">' + (isNew ? 'Add Lead' : 'Save Changes') + '</button></div></div></div>';
+      ppOpenModal(html);
+    }
+    async function saveLeadModal(id) {
+      var v = { name: document.getElementById('lf_name').value.trim(), org: document.getElementById('lf_org').value.trim(), email: document.getElementById('lf_email').value.trim(), phone: document.getElementById('lf_phone').value.trim(), source: document.getElementById('lf_source').value.trim(), status: document.getElementById('lf_status').value, internalNotes: document.getElementById('lf_notes').value.trim() };
+      var rep = document.getElementById('lf_rep').value;
+      if (!v.name && !v.org && !v.email) { showToast('Give the lead at least a name, organization, or email', 'error'); return; }
+      var btn = document.getElementById('leadSaveBtn'); btn.disabled = true; btn.textContent = 'Saving...';
+      try {
+        if (!id) { var r = await ppApi('createLead', { row: Object.assign({}, v, { assignedTo: rep === 'next' ? '' : rep }), assign: rep === 'next' ? 'true' : 'false' }); if (!r.success) throw new Error(r.error || 'Save failed'); leadList.push(leadNormalize(r.lead)); leadRotation = r.rotation || leadRotation; logActivityToServer('added lead', v.name || v.org, r.lead.assignedTo ? 'assigned to ' + ppRepFull(r.lead.assignedTo) : '', 'other'); }
+        else { var l = leadList.find(function(x) { return x.id === id; }); var prevRep = l.assignedTo; Object.assign(l, v); if (v.status !== 'new' && !l.firstTouchAt) l.firstTouchAt = new Date().toISOString(); var rec = {}; LEAD_COLS.forEach(function(c) { rec[c] = l[c]; }); var r2 = await ppApi('saveLead', { row: rec }); if (!r2.success) throw new Error(r2.error || 'Save failed'); if (rep !== prevRep) { await assignLead(id, rep); } logActivityToServer('updated lead', v.name || v.org, v.status, 'other'); }
+        closeModal(); renderLeads(); renderUpcoming(); showToast(id ? 'Lead updated' : 'Lead added', 'success');
+      } catch(e) { btn.disabled = false; btn.textContent = 'Save'; showToast('Could not save: ' + e.message, 'error'); }
+    }
+    async function deleteLead(id) {
+      var l = leadList.find(function(x) { return x.id === id; }); if (!l || !confirm('Delete this lead? Mark it Lost instead if you want to keep the history.')) return;
+      try { var r = await ppApi('deleteLead', { id: id }); if (!r.success) throw new Error(r.error || 'Delete failed'); leadList = leadList.filter(function(x) { return x.id !== id; }); closeModal(); renderLeads(); showToast('Deleted', 'success'); } catch(e) { showToast('Could not delete: ' + e.message, 'error'); }
+    }
+    async function syncLeadsNow() { var b = document.getElementById('leadSyncBtn'); if (b) b.disabled = true; try { var r = await ppApi('syncLeads'); if (!r.success) throw new Error(r.error || 'Sync failed'); leadRotation = r.rotation || leadRotation; await loadLeads(true); renderLeads(); renderUpcoming(); showToast(r.created ? r.created + ' new lead' + (r.created === 1 ? '' : 's') + ' pulled in and assigned' : 'No new form submissions', 'success'); } catch(e) { showToast('Could not check: ' + e.message, 'error'); } if (b) b.disabled = false; }
+    // ---- imports: spreadsheet (Name/District/Email/Phone/Source/Notes) and screenshot (Claude via Apps Script) ----
+    var leadImportRows = [];
+    function startLeadImport(kind) {
+      document.querySelector('.import-title').textContent = kind === 'image' ? 'Import Leads from a Screenshot' : 'Import Leads from a Spreadsheet';
+      document.getElementById('importBody').innerHTML = kind === 'image'
+        ? '<p style="font-size:13px;color:var(--text2);margin-bottom:14px">Upload a screenshot or photo of a contact list, badge scan, or sign-up sheet. Claude reads it into rows you can check before they enter the rotation.</p><button class="import-btn" onclick="document.getElementById(\'leadImageFile\').click()">Choose Image</button>'
+        : '<p style="font-size:13px;color:var(--text2);margin-bottom:14px">Upload an Excel or CSV file. Columns are matched by header: Name, District or Organization, Email, Phone, Source, Notes (Title is kept in notes). Rows with an email already in the list are skipped.</p><button class="import-btn" onclick="document.getElementById(\'leadImportFile\').click()">Choose File</button>';
+      document.getElementById('importOverlay').classList.add('active');
+    }
+    function leadImportPreview(rows, label) {
+      leadImportRows = rows;
+      var existing = {}; leadList.forEach(function(l) { if (l.email) existing[l.email.toLowerCase()] = true; });
+      leadImportRows.forEach(function(r) { r._dup = r.email && existing[r.email.toLowerCase()]; });
+      var fresh = leadImportRows.filter(function(r) { return !r._dup; });
+      document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2)">' + leadImportRows.length + ' contact' + (leadImportRows.length === 1 ? '' : 's') + ' found in ' + ppEsc(label) + (leadImportRows.length - fresh.length ? ', <b>' + (leadImportRows.length - fresh.length) + ' already in the list</b> (skipped)' : '') + '.</p><table class="import-preview-table"><thead><tr><th>Name</th><th>Organization</th><th>Email</th><th>Phone</th></tr></thead><tbody>' + leadImportRows.slice(0, 15).map(function(r) { return '<tr' + (r._dup ? ' style="opacity:0.45"' : '') + '><td>' + ppEsc(r.name) + '</td><td>' + ppEsc(r.org) + '</td><td>' + ppEsc(r.email) + '</td><td>' + ppEsc(r.phone) + '</td></tr>'; }).join('') + (leadImportRows.length > 15 ? '<tr><td colspan="4" style="color:var(--text3)">...and ' + (leadImportRows.length - 15) + ' more</td></tr>' : '') + '</tbody></table>'
+        + '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" id="leadImportAssign" checked> Assign through the rotation</label><span style="flex:1"></span><button class="import-btn secondary" onclick="closeImport()">Cancel</button><button class="import-btn" id="leadImportRunBtn" onclick="runLeadImport()"' + (fresh.length ? '' : ' disabled') + '>Import ' + fresh.length + '</button></div>';
+    }
+    async function handleLeadImportFile(file) {
+      if (!file) return;
+      var rows; try { rows = await ppParseSpreadsheet(file); } catch(e) { showToast(e.message, 'error'); return; }
+      var norm = function(v) { return String(v || '').trim().toLowerCase(); };
+      var hIdx = rows.findIndex(function(r) { var h = r.map(norm); return h.some(function(x) { return /email/.test(x); }) || h.some(function(x) { return /^(name|full name|contact)$/.test(x); }); });
+      if (hIdx < 0) { showToast('Could not find a header row with Name or Email', 'error'); return; }
+      var h = rows[hIdx].map(norm), find = function(re) { for (var i = 0; i < h.length; i++) if (re.test(h[i])) return i; return -1; };
+      var C = { name: find(/^(name|full name|contact|contact name)$/), first: find(/^first/), last: find(/^last/), org: find(/district|organization|organisation|school|company|org$/), email: find(/e-?mail/), phone: find(/phone|cell|mobile/), source: find(/^source|lead source|event|conference/), notes: find(/note|comment/), title: find(/^title|job title|position|role/) };
+      var out = [];
+      rows.slice(hIdx + 1).forEach(function(r) { var g = function(k) { return C[k] >= 0 ? String(r[C[k]] || '').trim() : ''; }; var name = g('name') || [g('first'), g('last')].filter(Boolean).join(' '); var email = g('email'); if (!name && !email) return; out.push({ name: name, org: g('org'), email: email, phone: g('phone'), source: g('source') || file.name.replace(/\.[^.]+$/, ''), notes: [g('title'), g('notes')].filter(Boolean).join(' - ') }); });
+      leadImportPreview(out, file.name);
+    }
+    async function handleLeadImageFile(file) {
+      if (!file) return;
+      document.getElementById('importBody').innerHTML = '<div class="pp-empty"><strong>Reading the image...</strong>This takes a few seconds.</div>';
+      try {
+        var dataUrl = await new Promise(function(res, rej) { var r = new FileReader(); r.onload = function() { res(r.result); }; r.onerror = rej; r.readAsDataURL(file); });
+        var m = /^data:([^;]+);base64,(.*)$/.exec(dataUrl); if (!m) throw new Error('Unsupported image');
+        var res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ pp: true, action: 'parseContactsImage', email: currentUser?.email || '', image: m[2], mediaType: m[1] }) });
+        var r = await res.json(); if (!r.success) throw new Error(r.error || 'Could not read the image');
+        var rows = (r.contacts || []).map(function(c) { return { name: c.name || '', org: c.org || '', email: c.email || '', phone: c.phone || '', source: file.name.replace(/\.[^.]+$/, ''), notes: [c.title, c.notes].filter(Boolean).join(' - ') }; });
+        if (!rows.length) throw new Error('No contacts were found in that image');
+        leadImportPreview(rows, 'the screenshot');
+      } catch(e) { document.getElementById('importBody').innerHTML = '<div class="pp-empty"><strong>Could not read the screenshot</strong>' + ppEsc(e.message) + (/ANTHROPIC_API_KEY/.test(e.message) ? '<div style="margin-top:8px">Add an Anthropic API key to the Apps Script project (Project Settings > Script Properties > ANTHROPIC_API_KEY) to enable screenshot import. Until then, paste the screenshot to Claude in chat and import the resulting spreadsheet.</div>' : '') + '</div><div style="display:flex;justify-content:flex-end"><button class="import-btn secondary" onclick="closeImport()">Close</button></div>'; }
+    }
+    async function runLeadImport() {
+      var btn = document.getElementById('leadImportRunBtn'); btn.disabled = true; var assign = document.getElementById('leadImportAssign').checked;
+      var rows = leadImportRows.filter(function(r) { return !r._dup; }).map(function(r) { return { name: r.name, org: r.org, email: r.email, phone: r.phone, source: r.source, notes: r.notes, status: 'new' }; });
+      var ok = 0, failed = 0, batch = 6;
+      for (var i = 0; i < rows.length; i += batch) { btn.textContent = 'Importing ' + Math.min(i + batch, rows.length) + ' of ' + rows.length + '...'; try { var r = await ppApi('bulkCreateLeads', { rows: rows.slice(i, i + batch), assign: assign ? 'true' : 'false' }); if (r.success) { ok += r.saved || 0; leadRotation = r.rotation || leadRotation; } else failed += batch; } catch(e) { failed += batch; } }
+      closeImport(); showToast('Imported ' + ok + ' lead' + (ok === 1 ? '' : 's') + (assign ? ' through the rotation' : '') + (failed ? ' (' + failed + ' failed)' : ''), failed ? 'error' : 'success');
+      logActivityToServer('imported leads', ok + ' contacts', assign ? 'round robin' : 'unassigned', 'other');
+      await loadLeads(true); renderLeads(); renderUpcoming();
+    }
+    function exportLeadsCSV() { ppDownloadCSV('practiceplan-leads-' + ppTodayISO() + '.csv', LEAD_COLS, leadFiltered()); }
+
+    // =====================================================================
+    // RESOURCES: curated sales tools + shared Drive browser  (Sept 2026)
+    // =====================================================================
+    var RES_COLS = ['id', 'title', 'category', 'url', 'description', 'owner', 'updatedAt', 'updatedBy'];
+    var RES_CATEGORIES = ['Sales decks', 'One-pagers', 'Proposals & MOUs', 'Pricing & ROI', 'Training guides', 'Brand assets', 'Trade show kit', 'Other'];
+    var resList = [], resLoaded = false, resError = '', driveRoot = '', driveStack = [], driveData = null;
+    async function loadResources(force) {
+      if (resLoaded && !force) return;
+      try { var r = await ppApi('getResources'); if (r.success) { resList = (r.rows || []).map(function(x) { var o = {}; RES_COLS.forEach(function(c) { o[c] = x[c] === undefined ? '' : String(x[c]); }); return o; }); driveRoot = r.driveRoot || ''; resLoaded = true; resError = ''; } else resError = r.error || 'Unknown error'; } catch(e) { resError = e.message; }
+    }
+    function resIcon(mime, name) { var n = String(name || '').toLowerCase(); if (/spreadsheet|xlsx|csv/.test(mime + n)) return { c: '#15803d', t: 'XLS' }; if (/presentation|pptx/.test(mime + n)) return { c: '#c2410c', t: 'PPT' }; if (/pdf/.test(mime + n)) return { c: '#b91c1c', t: 'PDF' }; if (/document|docx/.test(mime + n)) return { c: '#0369a1', t: 'DOC' }; if (/image|png|jpg|jpeg|svg/.test(mime + n)) return { c: '#7c3aed', t: 'IMG' }; if (/video|mp4/.test(mime + n)) return { c: '#be185d', t: 'VID' }; return { c: '#64748b', t: 'FILE' }; }
+    function renderResources() {
+      var el = document.getElementById('resList'), dr = document.getElementById('driveBrowser'); if (!el) return;
+      if (!resLoaded) { el.innerHTML = resError ? ppSetupEmpty('Resources', resError) : '<div class="pp-empty">Loading...</div>'; return; }
+      var byCat = {}; resList.forEach(function(r) { (byCat[r.category || 'Other'] = byCat[r.category || 'Other'] || []).push(r); });
+      var cats = RES_CATEGORIES.filter(function(c) { return byCat[c]; }).concat(Object.keys(byCat).filter(function(c) { return RES_CATEGORIES.indexOf(c) < 0; }));
+      el.innerHTML = cats.length ? cats.map(function(c) { return '<div class="res-cat"><h3>' + ppEsc(c) + '</h3><div class="res-grid">' + byCat[c].map(function(r) { var ic = resIcon('', r.url); return '<a class="res-card" href="' + ppEsc(r.url) + '" target="_blank" rel="noopener"><span class="res-ic" style="background:' + ic.c + '">' + ic.t + '</span><span class="res-body"><span class="res-t">' + ppEsc(r.title) + '</span>' + (r.description ? '<span class="res-d">' + ppEsc(r.description) + '</span>' : '') + (r.owner ? '<span class="res-o">' + ppEsc(r.owner) + '</span>' : '') + '</span><button class="pp-mini-btn" title="Edit" onclick="event.preventDefault();event.stopPropagation();openResourceModal(\'' + ppEsc(r.id) + '\')">' + ppSvg('edit') + '</button></a>'; }).join('') + '</div></div>'; }).join('')
+        : '<div class="pp-empty"><strong>No sales tools yet</strong>Add links to the decks, one-pagers, MOU templates, and guides the team reaches for, or connect a Drive folder below and browse it live.</div>';
+      renderDrive();
+    }
+    async function renderDrive(folderId) {
+      var dr = document.getElementById('driveBrowser'); if (!dr) return;
+      if (!driveRoot && !folderId) { dr.innerHTML = '<div class="drive-connect"><div><b>Shared Drive</b><div class="pp-toolbar-note">Paste a Google Drive folder link and the team can browse it here. The Apps Script account needs access to the folder.</div></div><div class="drive-connect-form"><input id="driveRootInput" placeholder="https://drive.google.com/drive/folders/..."><button class="pp-btn primary" onclick="setDriveRoot()">Connect</button></div></div>'; return; }
+      dr.innerHTML = '<div class="pp-empty">Loading folder...</div>';
+      try {
+        var r = await ppApi('listDrive', { folder: folderId || '' }); if (!r.success) throw new Error(r.error || 'Could not list the folder');
+        driveData = r; if (!folderId) driveStack = [];
+        var crumbs = '<div class="drive-crumbs">' + (driveStack.length ? '<button type="button" class="drive-crumb" onclick="driveStack=[];renderDrive()">' + ppEsc((driveStack[0] || {}).rootName || 'Shared Drive') + '</button>' : '<b>' + ppEsc(r.name) + '</b>') + driveStack.map(function(s, i) { return ' <span>&rsaquo;</span> ' + (i === driveStack.length - 1 ? '<b>' + ppEsc(s.name) + '</b>' : '<button type="button" class="drive-crumb" onclick="driveStack=driveStack.slice(0,' + (i + 1) + ');renderDrive(\'' + ppEsc(s.id) + '\')">' + ppEsc(s.name) + '</button>'); }).join('') + '<span style="flex:1"></span><a class="text-action-btn" href="https://drive.google.com/drive/folders/' + ppEsc(r.folderId) + '" target="_blank" rel="noopener">Open in Drive</a>' + (driveStack.length ? '' : '<button class="text-action-btn" onclick="driveRoot=\'\';renderDrive()" title="Connect a different folder">Change</button>') + '</div>';
+        var items = r.folders.map(function(f) { return '<button type="button" class="drive-item folder" onclick="driveStack.push({id:\'' + ppEsc(f.id) + '\',name:\'' + ppEsc(f.name) + '\',rootName:\'' + ppEsc(driveStack.length ? driveStack[0].rootName : r.name) + '\'});renderDrive(\'' + ppEsc(f.id) + '\')"><span class="res-ic" style="background:#f59e0b">&#128193;</span><span class="drive-name">' + ppEsc(f.name) + '</span><span class="drive-meta">' + ppFmtDate(f.updated.slice(0, 10), { month: 'short', day: 'numeric', year: 'numeric' }) + '</span></button>'; }).join('')
+          + r.files.map(function(f) { var ic = resIcon(f.mime, f.name); return '<a class="drive-item" href="' + ppEsc(f.url) + '" target="_blank" rel="noopener"><span class="res-ic" style="background:' + ic.c + '">' + ic.t + '</span><span class="drive-name">' + ppEsc(f.name) + '</span><span class="drive-meta">' + ppFmtDate(f.updated.slice(0, 10), { month: 'short', day: 'numeric', year: 'numeric' }) + '</span></a>'; }).join('');
+        dr.innerHTML = crumbs + '<div class="drive-list">' + (items || '<div class="pp-empty">This folder is empty.</div>') + '</div>';
+      } catch(e) { dr.innerHTML = '<div class="pp-empty"><strong>Could not open the folder</strong>' + ppEsc(e.message) + '<div style="margin-top:12px"><button class="pp-btn" onclick="driveRoot=\'\';renderDrive()">Connect a different folder</button></div></div>'; }
+    }
+    async function setDriveRoot() { var v = document.getElementById('driveRootInput').value.trim(); if (!v) return; try { var r = await ppApi('setDriveRoot', { folder: v }); if (!r.success) throw new Error(r.error || 'Could not open that folder'); driveRoot = r.folderId; driveStack = []; renderDrive(); showToast('Connected ' + r.name, 'success'); } catch(e) { showToast(e.message, 'error'); } }
+    function openResourceModal(id) {
+      var r = id ? resList.find(function(x) { return x.id === id; }) : null; var isNew = !r; r = r || { id: '', title: '', category: 'Sales decks', url: '', description: '', owner: '' };
+      ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + (isNew ? 'Add a Sales Tool' : ppEsc(r.title)) + '</h2><div class="modal-subtitle">A link the team should be able to grab in two clicks</div></div><div class="modal-body"><div class="detail-section" style="margin-top:20px"><div class="pp-form">'
+        + '<div class="full"><label>Title</label><input id="rf_title" value="' + ppEsc(r.title) + '" autofocus></div><div class="full"><label>Link</label><input id="rf_url" type="url" value="' + ppEsc(r.url) + '" placeholder="https://drive.google.com/..."></div>'
+        + '<div><label>Category</label><select id="rf_cat">' + RES_CATEGORIES.map(function(c) { return '<option' + (r.category === c ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select></div><div><label>Owner</label><input id="rf_owner" value="' + ppEsc(r.owner) + '" placeholder="Who keeps it current"></div>'
+        + '<div class="full"><label>Description</label><textarea id="rf_desc" placeholder="When to use it, what it covers">' + ppEsc(r.description) + '</textarea></div></div></div>'
+        + '<div class="pp-modal-actions">' + (isNew ? '<span></span>' : '<button class="pp-btn danger" onclick="deleteResource(\'' + ppEsc(r.id) + '\')">Delete</button>') + '<div class="right"><button class="pp-btn" onclick="closeModal()">Cancel</button><button class="pp-btn primary" onclick="saveResourceModal(\'' + ppEsc(r.id) + '\')">' + (isNew ? 'Add' : 'Save') + '</button></div></div></div>');
+    }
+    async function saveResourceModal(id) {
+      var row = { id: id, title: document.getElementById('rf_title').value.trim(), url: document.getElementById('rf_url').value.trim(), category: document.getElementById('rf_cat').value, owner: document.getElementById('rf_owner').value.trim(), description: document.getElementById('rf_desc').value.trim() };
+      if (!row.title || !row.url) { showToast('Title and link are required', 'error'); return; }
+      try { var r = await ppApi('saveResource', { row: row }); if (!r.success) throw new Error(r.error || 'Save failed'); row.id = r.id; var i = resList.findIndex(function(x) { return x.id === row.id; }); if (i >= 0) resList[i] = Object.assign(resList[i], row); else resList.push(row); closeModal(); renderResources(); showToast('Saved', 'success'); } catch(e) { showToast('Could not save: ' + e.message, 'error'); }
+    }
+    async function deleteResource(id) { if (!confirm('Remove this link?')) return; try { var r = await ppApi('deleteResource', { id: id }); if (!r.success) throw new Error(r.error || 'Delete failed'); resList = resList.filter(function(x) { return x.id !== id; }); closeModal(); renderResources(); } catch(e) { showToast('Could not delete: ' + e.message, 'error'); } }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
     document.addEventListener('touchmove', function(e) {
