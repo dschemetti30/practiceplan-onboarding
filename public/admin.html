@@ -1155,6 +1155,97 @@
     .ts-cov .pill.conflict{background:#fee2e2;color:#b91c1c}
     [data-theme="dark"] .ts-cov .pill.conflict{background:rgba(248,113,113,0.18);color:#f87171}
     @media(max-width:768px){.ts-ins{grid-template-columns:1fr}.ts-ins-split{grid-template-columns:1fr}.ts-bar{grid-template-columns:90px 1fr 70px}.ts-ins-table{font-size:11px}.ts-ins-table td,.ts-ins-table th{padding:7px 6px}}
+    /* ---- board cells ---- */
+    td.pp-cell{cursor:pointer;position:relative;transition:box-shadow var(--t-fast)}
+    td.pp-cell:hover{box-shadow:inset 0 0 0 2px rgba(0,118,187,0.28);border-radius:8px}
+    td.pp-cell.editing{box-shadow:inset 0 0 0 2px var(--pp-blue);border-radius:8px;padding:6px 8px}
+    .pp-cell-input{width:100%;min-width:60px;padding:6px 8px;border:none;background:transparent;font:inherit;font-size:12.5px;color:var(--text);outline:none}
+    .pp-placeholder{color:var(--text3);font-size:11px;font-style:italic}
+    .pp-chip.pick{padding-right:6px}
+    .pp-chip .caret{display:inline-block;width:0;height:0;border-left:3.5px solid transparent;border-right:3.5px solid transparent;border-top:4px solid currentColor;margin-left:6px;opacity:0.55;vertical-align:middle}
+    .ts-add-row td{padding:4px 10px 8px;background:transparent}
+    .ts-add-input{width:100%;padding:8px 10px;border:1px dashed var(--border);border-radius:9px;background:transparent;font:inherit;font-size:12px;color:var(--text);transition:all var(--t-base)}
+    .ts-add-input::placeholder{color:var(--text3)}
+    .ts-add-input:hover{border-color:var(--pp-blue);background:rgba(0,118,187,0.03)}
+    .ts-add-input:focus{outline:none;border-style:solid;border-color:var(--pp-blue);background:var(--card);box-shadow:0 0 0 4px var(--ring)}
+    .ts-add-row{animation:none}
+    /* ---- popovers ---- */
+    .pp-pop{position:fixed;z-index:1200;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh-lg);min-width:200px;max-width:min(360px,92vw);animation:ppModalIn .18s var(--ease) both;overflow:hidden}
+    .pp-pop.closing{opacity:0;transform:translateY(4px) scale(0.98);transition:opacity .12s,transform .12s}
+    .pp-pop-title{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:12px 14px 4px}
+    .pp-pop-list{display:flex;flex-direction:column;padding:6px;max-height:320px;overflow-y:auto}
+    .pp-pop-opt{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:none;background:transparent;border-radius:9px;cursor:pointer;font:inherit;text-align:left;color:var(--text);transition:background var(--t-fast)}
+    .pp-pop-opt:hover{background:rgba(0,118,187,0.06)}
+    .pp-pop-opt .tick{margin-left:auto;color:var(--pp-blue);font-weight:700;opacity:0}
+    .pp-pop-opt.on .tick{opacity:1}
+    .pp-pop-opt.rep .lbl{font-size:13px;font-weight:500}
+    .pp-pop-opt.rep.on{background:rgba(0,118,187,0.06)}
+    .pp-pop-form{display:flex;flex-direction:column;gap:10px;padding:10px 14px 4px}
+    .pp-pop-form.inline{flex-direction:row}
+    .pp-pop-form label{display:flex;flex-direction:column;gap:4px;font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;min-width:0}
+    .pp-pop-form.inline label{flex:1}
+    .pp-pop-form input,.pp-pop-form select{padding:9px 11px;border:1px solid var(--border);border-radius:9px;background:var(--bg);font:inherit;font-size:13px;color:var(--text);text-transform:none;letter-spacing:0;min-width:0}
+    .pp-pop-form input:focus,.pp-pop-form select:focus{outline:none;border-color:var(--pp-blue);box-shadow:0 0 0 3px var(--ring);background:var(--card)}
+    .pp-pop-form .ro{padding:9px 11px;border-radius:9px;background:var(--bg);font-size:12px;color:var(--text3);text-transform:none;letter-spacing:0}
+    .pp-pop-form-wrap{min-width:300px}
+    .pp-pop-foot{display:flex;gap:8px;align-items:center;padding:10px 12px 12px}
+    .pp-pop-foot .pp-btn{padding:8px 14px;font-size:12px}
+    /* ---- data health ---- */
+    #dataHealth{margin-bottom:16px}
+    .dh-bar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-radius:14px;background:var(--card);border:1px solid var(--border);box-shadow:var(--sh-sm);font-size:12.5px;color:var(--text2);cursor:pointer;transition:box-shadow var(--t-base)}
+    .dh-bar:hover{box-shadow:var(--sh-md)}
+    .dh-bar.clean{cursor:default}
+    .dh-bar b{color:var(--text)}
+    .dh-dot{width:9px;height:9px;border-radius:50%;background:var(--pp-green);flex-shrink:0}
+    .dh-dot.warn{background:#f59e0b;animation:ppPulseDot 1.8s infinite}
+    .dh-caret{margin-left:auto;font-size:10px;color:var(--text3)}
+    .dh-body{margin-top:10px;animation:ppViewIn .3s var(--ease) both}
+    .dh-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+    .dh-chip{padding:6px 11px;border-radius:50px;border:1px solid var(--border);background:var(--card);font:inherit;font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;transition:all var(--t-fast)}
+    .dh-chip b{color:var(--text)}
+    .dh-chip.on{border-color:var(--pp-blue);background:rgba(0,118,187,0.08);color:var(--pp-blue)}
+    .dh-chip.on b{color:var(--pp-blue)}
+    .dh-issues{display:flex;gap:4px;flex-wrap:wrap;max-width:360px}
+    .dh-table td{white-space:normal}
+    /* ---- sidebar (desktop) ---- */
+    .hdr-title{display:none;flex-direction:column;line-height:1.15;margin-right:auto}
+    .hdr-title .crumb{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+    .hdr-title b{font-family:var(--font-display);font-size:17px;color:var(--text)}
+    .nav-group{display:none}
+    .view-tab .soon-tag{display:none}
+    .view-tab.soon{display:none}
+    @media(min-width:1024px){
+      body.pp-sidebar .pp-side{position:fixed;left:0;top:0;bottom:0;width:236px;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:18px 12px 14px;z-index:150}
+      body.pp-sidebar .pp-side-logo{padding:2px 8px 18px}
+      body.pp-sidebar .pp-side-logo img{height:32px}
+      body.pp-sidebar .pp-side-nav{flex:1;overflow-y:auto;margin:0 -4px;padding:0 4px}
+      body.pp-sidebar .pp-side-foot{font-size:10.5px;color:var(--text3);padding:12px 8px 0;border-top:1px solid var(--border)}
+      body.pp-sidebar .pp-side-foot kbd{font:inherit;font-size:10px;padding:1px 5px;border-radius:5px;border:1px solid var(--border);background:var(--bg);color:var(--text2)}
+      body.pp-sidebar .view-tabs{flex-direction:column;align-items:stretch;width:auto;background:transparent;border:none;box-shadow:none;padding:0;gap:2px;margin:0}
+      body.pp-sidebar .view-tab{width:100%;justify-content:flex-start;padding:9px 12px;font-size:13px;border-radius:10px}
+      body.pp-sidebar .view-tab svg{width:17px;height:17px}
+      body.pp-sidebar .view-tab.soon{display:flex;opacity:0.5;cursor:default;pointer-events:none}
+      body.pp-sidebar .view-tab .soon-tag{display:inline-block;margin-left:auto;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:50px;background:var(--bg);color:var(--text3)}
+      body.pp-sidebar .nav-group{display:block;font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);padding:16px 12px 6px}
+      body.pp-sidebar .nav-group:first-child{padding-top:4px}
+      body.pp-sidebar #ppTabInk{border-radius:10px}
+      body.pp-sidebar .header{margin-left:236px;padding:12px 28px}
+      body.pp-sidebar .header-logo{display:none}
+      body.pp-sidebar .hdr-title{display:flex}
+      body.pp-sidebar .main-content{margin-left:236px;max-width:none;padding:24px 28px 48px}
+      body.pp-sidebar .data-loading-overlay,body.pp-sidebar .login-screen{z-index:2000}
+    }
+    [data-theme="dark"] body.pp-sidebar .pp-side{background:#0e1626}
+    /* ---- fit the board inside the sidebar layout ---- */
+    .ts-group td{padding:10px 8px}
+    .ts-group .pp-chip{letter-spacing:0.01em;padding:4px 7px}
+    .ts-outcome{gap:3px}
+    .ts-outcome span{min-width:22px;padding:3px 2px;font-size:9.5px}
+    .ts-outcome span b{font-size:7.5px}
+    body.pp-sidebar .ts-group table{min-width:1000px}
+    body.pp-sidebar #tradeshowsView>.controls-row>.section-title{display:none}
+    body.pp-sidebar #tradeshowsView>.controls-row{justify-content:flex-start}
+    body.pp-sidebar #tradeshowsView>.controls-row .controls-right{justify-content:flex-start}
   </style>
 </head>
 <body>
@@ -1204,7 +1295,7 @@
 
   <div class="dashboard" id="dashboard">
     <div class="header">
-      <img class="header-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMiIgZGF0YS1uYW1lPSJMYXllciAyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzOTYuMzcgNjYuNyI+CiAgPGRlZnM+CiAgICA8c3R5bGU+CiAgICAgIC5jbHMtMSwgLmNscy0yIHsKICAgICAgICBzdHJva2U6ICNmZmY7CiAgICAgICAgc3Ryb2tlLW1pdGVybGltaXQ6IDEwOwogICAgICAgIHN0cm9rZS13aWR0aDogMS40cHg7CiAgICAgIH0KCiAgICAgIC5jbHMtMSwgLmNscy0zIHsKICAgICAgICBmaWxsOiAjMDA3NmJiOwogICAgICB9CgogICAgICAuY2xzLTQgewogICAgICAgIGZpbGw6ICNmMTVhMjk7CiAgICAgIH0KCiAgICAgIC5jbHMtMiB7CiAgICAgICAgZmlsbDogIzAwYTg0ZjsKICAgICAgfQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPGcgaWQ9IkxheWVyXzEtMiIgZGF0YS1uYW1lPSJMYXllciAxIj4KICAgIDxnPgogICAgICA8cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik0uNzIsNDkuN2MtLjI0LS4wNC0uNDgtLjA5LS43Mi0uMTQuMjQuMDUuNDguMDkuNzIuMTRaIi8+CiAgICAgIDxnPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTM4LjUyLDMxLjk3bC0xOC43Mi03Ljg4Yy0xLjAzLS40My0xLjg2LTEuNjgtMS44Ni0yLjh2LTguNTNjMC0xLjExLjgzLTEuNjcsMS44Ni0xLjIzbDIwLjk1LDguODJjMy41LDEuNDcsNS4yNSwzLjQxLDUuMjUsNS4zNCwwLDEuOTMtMS43NSwzLjg3LTUuMjUsNS4zNGwtMi4yMy45NFoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0yOS43NCw0OC4yMnYxMS40M2MwLDEuMTEtLjgzLDIuMzctMS44NiwyLjhsLTguMDgsMy40Yy0xLjAzLjQzLTEuODYtLjEyLTEuODYtMS4yM3YtMjEuOTdjMC0xLjExLjgzLTIuMzcsMS44Ni0yLjhsMjAuOTUtOC44MmMzLjUtMS40Nyw1LjI1LTMuNDEsNS4yNS01LjM0djEwLjgxYzAsMy4wMy0xLjc1LDUuNjEtNS4yNSw3LjA5bC0xMS4wMSw0LjY0WiIvPgogICAgICA8L2c+CiAgICAgIDxnPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTI0LjQzLDIxLjI5TDUuNzEsMTMuNDFjLTEuMDMtLjQzLTEuODYtMS42OC0xLjg2LTIuOFYyLjA4YzAtMS4xMS44My0xLjY3LDEuODYtMS4yM2wyMC45NSw4LjgyYzMuNSwxLjQ3LDUuMjUsMy40MSw1LjI1LDUuMzQsMCwxLjkzLTEuNzUsMy44Ny01LjI1LDUuMzRsLTIuMjMuOTRaIi8+CiAgICAgICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMTUuNjUsMzcuNTR2MTEuNDNjMCwxLjExLS44MywyLjM3LTEuODYsMi44bC04LjA4LDMuNGMtMS4wMy40My0xLjg2LS4xMi0xLjg2LTEuMjN2LTIxLjk3YzAtMS4xMS44My0yLjM3LDEuODYtMi44bDIwLjk1LTguODJjMy41LTEuNDcsNS4yNS0zLjQxLDUuMjUtNS4zNHYxMC44MWMwLDMuMDMtMS43NSw1LjYxLTUuMjUsNy4wOWwtMTEuMDEsNC42NFoiLz4KICAgICAgPC9nPgogICAgICA8Zz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik04Ny44LDM4LjA4aC0xMS42NGwtMSw1LjY5aC02Ljg1bDItMTEuMzhoMTkuMTZjMi4zOSwwLDMuODYtMS4yMywzLjg2LTIuOTYsMC0xLjMtMS4wMy0yLjEzLTIuOTYtMi4xM2gtMTkuMTZsMS4zMi01Ljc5aDE4LjI0YzYuMTksMCw5LjU4LDIuODksOS41OCw3LjE1LDAsNS41Mi00LjgyLDkuNDEtMTIuNTQsOS40MVoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0xMzAuMjksNDMuNzdoLTkuMjFsLTMuOTItNS44OWgtMTAuNThsLTEuMDMsNS44OWgtNi44OGwyLTExLjM4aDE5LjM2YzIuMjksMCw0LjI5LTEuMSw0LjI5LTIuODksMC0xLjQ2LTEuMjYtMi4yLTMuMzktMi4yaC0xOS4zNmwxLjMzLTUuNzloMTguNWM0LjY2LDAsMTAuMTgsMS40MywxMC4xOCw2Ljc1LDAsNC4wMi0yLjg5LDcuNDItNy4xOCw4LjI1LjYzLjU3LDEuMzMsMS4zNiwyLjU2LDIuOTNsMy4zNiw0LjMyWiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTEzOCw0My43N2w1LjE5LTUuNzJoNS41NWMxLjM2LDAsMi44OSwwLDMuOTYuMDctLjQ3LS44LTEuMTYtMi4xNi0xLjctMy4yM2wtMi45Ni01Ljg5LTEzLjA0LDE0Ljc3aC04LjE1bDE3LjgzLTIwLjEyYzEuMTYtMS4zLDIuNzMtMi40OSw0Ljg5LTIuNDlzMy4yMywxLjEsMy45NiwyLjQ5bDEwLjM0LDIwLjEyaC0yNS44OFoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0xOTAuMTgsMzguMDVsLTUuNDIsNS43MmgtMTEuMThjLTYuOTUsMC0xMS41Ny00LjE5LTExLjU3LTkuODEsMC03LjMyLDYuOTgtMTIuNDQsMTUuNS0xMi40NGgxNS42bC01LjQ1LDUuNzloLTExLjE4Yy00LjA5LDAtNy41NSwyLjYzLTcuNTUsNi4xNSwwLDIuNzYsMi4yOSw0LjU5LDUuNjUsNC41OWgxNS42WiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTIxNi42NSwyMS41MmwtMS4wOCw1Ljc5aC04bC0yLjkzLDE2LjQ2aC02Ljg4bDIuODktMTYuNDZoLTEwLjQ0bDUuNTItNS43OWgyMC45M1oiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yMjEuMTgsNDMuNzdoLTYuODhsMy45Ni0yMi4yNWg2Ljg1bC0zLjkzLDIyLjI1WiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTI1MS40NywzOC4wNWwtMS42NCw1LjcyaC0xNC4wNWMtNi45NSwwLTExLjU3LTQuMTktMTEuNTctOS44MSwwLTcuMzIsNi45OC0xMi40NCwxNS41LTEyLjQ0aDE0LjkzbC0xLjgzLDUuNzloLTE0LjE0Yy00LjA5LDAtNy41NSwyLjYzLTcuNTUsNi4xNSwwLDIuNzYsMi4yOSw0LjU5LDUuNjUsNC41OWgxNC42OVoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yNzguMzUsMzguMDVsLTQuNTksNS43MmgtMjEuNDJsMy45Ni0yMi4yNWgyNC44OGwtNC42Miw1Ljc5aC0xNC40bC0uNDcsMi42NmgxNi43M2wtMy45Miw1LjA2aC0xMy43bC0uNTMsMy4wM2gxOC4wOVoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yOTguMDUsMzguMDhoLTExLjY0bC0xLDUuNjloLTYuODVsMi0xMS4zOGgxOS4xNmMyLjM5LDAsMy44Ni0xLjIzLDMuODYtMi45NiwwLTEuMy0xLjAzLTIuMTMtMi45Ni0yLjEzaC0xOS4xNmw0LjE0LTUuNzloMTUuNDJjNi4xOSwwLDkuNTgsMi44OSw5LjU4LDcuMTUsMCw1LjUyLTQuODIsOS40MS0xMi41NCw5LjQxWiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTMzNC42MSwzOC4wNWwtNS40OSw1LjcyaC0xOS42NmwzLjk2LTIyLjI1aDYuODVsLTIuOTMsMTYuNTNoMTcuMjZaIi8+CiAgICAgICAgPHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMzQyLjMsNDMuNzdsNS4xOS01LjcyaDUuNTVjMS4zNiwwLDIuODksMCwzLjk2LjA3LS40Ny0uOC0xLjE2LTIuMTYtMS43LTMuMjNsLTIuOTYtNS44OS0xMy4wNCwxNC43N2gtOC4xNWwxNy44My0yMC4xMmMxLjE2LTEuMywyLjczLTIuNDksNC44OS0yLjQ5czMuMjMsMS4xLDMuOTYsMi40OWwxMC4zNCwyMC4xMmgtMjUuODhaIi8+CiAgICAgICAgPHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMzg2LjAyLDQyLjk0bC0xMS40Ny0xMi4yNC0yLjMsMTMuMDdoLTYuMjVsMy4yMy0xOC40NmMuNS0yLjk2LDIuNDYtNC4xNiw0LjUyLTQuMTYuODMsMCwxLjY2LjIsMi41NiwxLjJsMTEuNDcsMTIuMjQsMi4zMy0xMy4wN2g2LjI1bC0zLjI5LDE4LjQzYy0uNTMsMi45Ni0yLjQ5LDQuMTktNC40OSw0LjE5LS45MywwLTEuNjMtLjItMi41Ni0xLjJaIi8+CiAgICAgIDwvZz4KICAgIDwvZz4KICA8L2c+Cjwvc3ZnPg==" alt="PracticePlan">
+      <div class="hdr-title" id="hdrTitle"></div><img class="header-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMiIgZGF0YS1uYW1lPSJMYXllciAyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzOTYuMzcgNjYuNyI+CiAgPGRlZnM+CiAgICA8c3R5bGU+CiAgICAgIC5jbHMtMSwgLmNscy0yIHsKICAgICAgICBzdHJva2U6ICNmZmY7CiAgICAgICAgc3Ryb2tlLW1pdGVybGltaXQ6IDEwOwogICAgICAgIHN0cm9rZS13aWR0aDogMS40cHg7CiAgICAgIH0KCiAgICAgIC5jbHMtMSwgLmNscy0zIHsKICAgICAgICBmaWxsOiAjMDA3NmJiOwogICAgICB9CgogICAgICAuY2xzLTQgewogICAgICAgIGZpbGw6ICNmMTVhMjk7CiAgICAgIH0KCiAgICAgIC5jbHMtMiB7CiAgICAgICAgZmlsbDogIzAwYTg0ZjsKICAgICAgfQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPGcgaWQ9IkxheWVyXzEtMiIgZGF0YS1uYW1lPSJMYXllciAxIj4KICAgIDxnPgogICAgICA8cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik0uNzIsNDkuN2MtLjI0LS4wNC0uNDgtLjA5LS43Mi0uMTQuMjQuMDUuNDguMDkuNzIuMTRaIi8+CiAgICAgIDxnPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTM4LjUyLDMxLjk3bC0xOC43Mi03Ljg4Yy0xLjAzLS40My0xLjg2LTEuNjgtMS44Ni0yLjh2LTguNTNjMC0xLjExLjgzLTEuNjcsMS44Ni0xLjIzbDIwLjk1LDguODJjMy41LDEuNDcsNS4yNSwzLjQxLDUuMjUsNS4zNCwwLDEuOTMtMS43NSwzLjg3LTUuMjUsNS4zNGwtMi4yMy45NFoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0yOS43NCw0OC4yMnYxMS40M2MwLDEuMTEtLjgzLDIuMzctMS44NiwyLjhsLTguMDgsMy40Yy0xLjAzLjQzLTEuODYtLjEyLTEuODYtMS4yM3YtMjEuOTdjMC0xLjExLjgzLTIuMzcsMS44Ni0yLjhsMjAuOTUtOC44MmMzLjUtMS40Nyw1LjI1LTMuNDEsNS4yNS01LjM0djEwLjgxYzAsMy4wMy0xLjc1LDUuNjEtNS4yNSw3LjA5bC0xMS4wMSw0LjY0WiIvPgogICAgICA8L2c+CiAgICAgIDxnPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTI0LjQzLDIxLjI5TDUuNzEsMTMuNDFjLTEuMDMtLjQzLTEuODYtMS42OC0xLjg2LTIuOFYyLjA4YzAtMS4xMS44My0xLjY3LDEuODYtMS4yM2wyMC45NSw4LjgyYzMuNSwxLjQ3LDUuMjUsMy40MSw1LjI1LDUuMzQsMCwxLjkzLTEuNzUsMy44Ny01LjI1LDUuMzRsLTIuMjMuOTRaIi8+CiAgICAgICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMTUuNjUsMzcuNTR2MTEuNDNjMCwxLjExLS44MywyLjM3LTEuODYsMi44bC04LjA4LDMuNGMtMS4wMy40My0xLjg2LS4xMi0xLjg2LTEuMjN2LTIxLjk3YzAtMS4xMS44My0yLjM3LDEuODYtMi44bDIwLjk1LTguODJjMy41LTEuNDcsNS4yNS0zLjQxLDUuMjUtNS4zNHYxMC44MWMwLDMuMDMtMS43NSw1LjYxLTUuMjUsNy4wOWwtMTEuMDEsNC42NFoiLz4KICAgICAgPC9nPgogICAgICA8Zz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik04Ny44LDM4LjA4aC0xMS42NGwtMSw1LjY5aC02Ljg1bDItMTEuMzhoMTkuMTZjMi4zOSwwLDMuODYtMS4yMywzLjg2LTIuOTYsMC0xLjMtMS4wMy0yLjEzLTIuOTYtMi4xM2gtMTkuMTZsMS4zMi01Ljc5aDE4LjI0YzYuMTksMCw5LjU4LDIuODksOS41OCw3LjE1LDAsNS41Mi00LjgyLDkuNDEtMTIuNTQsOS40MVoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0xMzAuMjksNDMuNzdoLTkuMjFsLTMuOTItNS44OWgtMTAuNThsLTEuMDMsNS44OWgtNi44OGwyLTExLjM4aDE5LjM2YzIuMjksMCw0LjI5LTEuMSw0LjI5LTIuODksMC0xLjQ2LTEuMjYtMi4yLTMuMzktMi4yaC0xOS4zNmwxLjMzLTUuNzloMTguNWM0LjY2LDAsMTAuMTgsMS40MywxMC4xOCw2Ljc1LDAsNC4wMi0yLjg5LDcuNDItNy4xOCw4LjI1LjYzLjU3LDEuMzMsMS4zNiwyLjU2LDIuOTNsMy4zNiw0LjMyWiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTEzOCw0My43N2w1LjE5LTUuNzJoNS41NWMxLjM2LDAsMi44OSwwLDMuOTYuMDctLjQ3LS44LTEuMTYtMi4xNi0xLjctMy4yM2wtMi45Ni01Ljg5LTEzLjA0LDE0Ljc3aC04LjE1bDE3LjgzLTIwLjEyYzEuMTYtMS4zLDIuNzMtMi40OSw0Ljg5LTIuNDlzMy4yMywxLjEsMy45NiwyLjQ5bDEwLjM0LDIwLjEyaC0yNS44OFoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0xOTAuMTgsMzguMDVsLTUuNDIsNS43MmgtMTEuMThjLTYuOTUsMC0xMS41Ny00LjE5LTExLjU3LTkuODEsMC03LjMyLDYuOTgtMTIuNDQsMTUuNS0xMi40NGgxNS42bC01LjQ1LDUuNzloLTExLjE4Yy00LjA5LDAtNy41NSwyLjYzLTcuNTUsNi4xNSwwLDIuNzYsMi4yOSw0LjU5LDUuNjUsNC41OWgxNS42WiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTIxNi42NSwyMS41MmwtMS4wOCw1Ljc5aC04bC0yLjkzLDE2LjQ2aC02Ljg4bDIuODktMTYuNDZoLTEwLjQ0bDUuNTItNS43OWgyMC45M1oiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yMjEuMTgsNDMuNzdoLTYuODhsMy45Ni0yMi4yNWg2Ljg1bC0zLjkzLDIyLjI1WiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTI1MS40NywzOC4wNWwtMS42NCw1LjcyaC0xNC4wNWMtNi45NSwwLTExLjU3LTQuMTktMTEuNTctOS44MSwwLTcuMzIsNi45OC0xMi40NCwxNS41LTEyLjQ0aDE0LjkzbC0xLjgzLDUuNzloLTE0LjE0Yy00LjA5LDAtNy41NSwyLjYzLTcuNTUsNi4xNSwwLDIuNzYsMi4yOSw0LjU5LDUuNjUsNC41OWgxNC42OVoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yNzguMzUsMzguMDVsLTQuNTksNS43MmgtMjEuNDJsMy45Ni0yMi4yNWgyNC44OGwtNC42Miw1Ljc5aC0xNC40bC0uNDcsMi42NmgxNi43M2wtMy45Miw1LjA2aC0xMy43bC0uNTMsMy4wM2gxOC4wOVoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yOTguMDUsMzguMDhoLTExLjY0bC0xLDUuNjloLTYuODVsMi0xMS4zOGgxOS4xNmMyLjM5LDAsMy44Ni0xLjIzLDMuODYtMi45NiwwLTEuMy0xLjAzLTIuMTMtMi45Ni0yLjEzaC0xOS4xNmw0LjE0LTUuNzloMTUuNDJjNi4xOSwwLDkuNTgsMi44OSw5LjU4LDcuMTUsMCw1LjUyLTQuODIsOS40MS0xMi41NCw5LjQxWiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTMzNC42MSwzOC4wNWwtNS40OSw1LjcyaC0xOS42NmwzLjk2LTIyLjI1aDYuODVsLTIuOTMsMTYuNTNoMTcuMjZaIi8+CiAgICAgICAgPHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMzQyLjMsNDMuNzdsNS4xOS01LjcyaDUuNTVjMS4zNiwwLDIuODksMCwzLjk2LjA3LS40Ny0uOC0xLjE2LTIuMTYtMS43LTMuMjNsLTIuOTYtNS44OS0xMy4wNCwxNC43N2gtOC4xNWwxNy44My0yMC4xMmMxLjE2LTEuMywyLjczLTIuNDksNC44OS0yLjQ5czMuMjMsMS4xLDMuOTYsMi40OWwxMC4zNCwyMC4xMmgtMjUuODhaIi8+CiAgICAgICAgPHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMzg2LjAyLDQyLjk0bC0xMS40Ny0xMi4yNC0yLjMsMTMuMDdoLTYuMjVsMy4yMy0xOC40NmMuNS0yLjk2LDIuNDYtNC4xNiw0LjUyLTQuMTYuODMsMCwxLjY2LjIsMi41NiwxLjJsMTEuNDcsMTIuMjQsMi4zMy0xMy4wN2g2LjI1bC0zLjI5LDE4LjQzYy0uNTMsMi45Ni0yLjQ5LDQuMTktNC40OSw0LjE5LS45MywwLTEuNjMtLjItMi41Ni0xLjJaIi8+CiAgICAgIDwvZz4KICAgIDwvZz4KICA8L2c+Cjwvc3ZnPg==" alt="PracticePlan">
       <div class="header-right">
         <button class="header-btn" onclick="toggleDarkMode()" id="darkModeBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
         <div class="pp-sync" id="ppSyncPill"><i></i><span>Syncing latest</span></div><div class="user-pill"><div class="user-avatar" id="userAvatar">?</div><span class="user-name" id="userName"></span></div>
@@ -1214,13 +1305,20 @@
     
     <div class="main-content">
       <div class="view-tabs">
+        <div class="nav-group">Onboarding</div>
         <button class="view-tab active" onclick="switchView('dashboard')" data-short="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Dashboard</button>
-        <button class="view-tab" onclick="switchView('pipeline')" data-short="Pipeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Onboarding</button>
-        <button class="view-tab" onclick="switchView('customers')" data-short="Success"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Customer Success</button>
-        <button class="view-tab" onclick="switchView('credentials')" data-short="Logins"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Client Credentials</button>
-        <button class="view-tab" onclick="switchView('tradeshows')" data-short="Shows"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M3 21V10l9-7 9 7v11"/><path d="M9 21v-6h6v6"/></svg> Trade Shows</button>
+        <button class="view-tab" onclick="switchView('pipeline')" data-short="Pipeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Pipeline</button>
         <button class="view-tab" onclick="switchView('calendar')" data-short="Go-Live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Go-Live</button>
         <button class="view-tab" onclick="switchView('activity')" data-short="Activity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Activity</button>
+        <div class="nav-group">Client Success</div>
+        <button class="view-tab" onclick="switchView('customers')" data-short="Success"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Customer Success</button>
+        <button class="view-tab" onclick="switchView('credentials')" data-short="Logins"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Client Credentials</button>
+        <div class="nav-group">Sales</div>
+        <button class="view-tab" onclick="switchView('tradeshows')" data-short="Shows"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M3 21V10l9-7 9 7v11"/><path d="M9 21v-6h6v6"/></svg> Trade Shows</button>
+        <button class="view-tab soon" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> Inbound Leads<span class="soon-tag">Soon</span></button>
+        <button class="view-tab soon" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Meetings<span class="soon-tag">Soon</span></button>
+        <div class="nav-group">Marketing</div>
+        <button class="view-tab soon" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg> Campaigns<span class="soon-tag">Soon</span></button>
       </div>
 
       <div class="view-content active" id="dashboardView">
@@ -1265,6 +1363,7 @@
       </div>
 
       <div class="view-content" id="pipelineView">
+        <div id="dataHealth"></div>
         <div class="pipeline-section">
           <div class="controls-row"><div class="section-title">Onboarding Pipeline</div></div>
           <div class="pipeline-board">
@@ -1674,7 +1773,7 @@
         var ov = document.getElementById('dataLoadingOverlay');
         if (ov) ov.classList.add('leaving');
         document.getElementById('dashboard').classList.add('active');
-        requestAnimationFrame(function() { ppTabInk(); });
+        requestAnimationFrame(function() { ppLayoutInit(); ppTabInk(); });
         setTimeout(function() { if (ov) { ov.classList.add('hidden'); ov.classList.remove('leaving'); } }, 560);
       }, hold);
     }
@@ -1705,6 +1804,7 @@
       if (view === 'activity') { loadActivity().then(function() { renderActivity(); }); }
       if (view === 'credentials') { renderCredentials(); loadCredList(false).then(function() { renderCredentials(); }); }
       if (view === 'tradeshows') { renderTradeShows(); loadTradeShows(false).then(function() { renderTradeShows(); }); }
+      ppSetHeaderTitle(view);
       ppTabInk();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -1778,6 +1878,7 @@
     
     function updateStats() {
       try { renderUpcoming(); } catch(e) { console.log("upcoming:", e.message); }
+      try { renderDataHealth(); } catch(e) { console.log("data health:", e.message); }
       const tf = getFilteredByTime(allData);
       // Form-funnel stats exclude bulk-imported customers (they never went through the form)
       const tfForm = tf.filter(d => d.status !== 'Imported');
@@ -1981,7 +2082,7 @@
       const labels = { new: 'New', 'in-progress': 'In Progress', 'on-hold': 'On Hold', review: 'Review', complete: 'Form Complete', onboarding: 'Onboarding', published: 'Published', launched: 'Launched' };
       document.getElementById('tableBody').innerHTML = filtered.map(item => {
         const goLive = formatGoLive(item.goLiveDate), isArch = currentFilter === 'archived', clCount = getChecklistCount(item.email);
-        return '<tr><td><div class="org-cell"><div class="org-avatar" style="background:' + getOrgColor(item.organization) + '">' + getOrgInitials(item.organization) + '</div><div><div class="org-name">' + esc(item.organization || 'Unknown') + '</div>' + (item.locationStr ? '<div class="org-location">' + esc(item.locationStr) + '</div>' : '') + '</div></div></td><td><div class="contact-name">' + esc(item.contact || '-') + '</div><div class="contact-email">' + esc(item.email) + '</div></td><td>' + (isArch ? '<span class="status-badge archived">Archived</span>' : '<select class="pipeline-status-select s-' + item.pipelineStatus + '" onchange="changePipelineStatus(\'' + item.sheetType + '\',' + item.rowIndex + ',this.value,\'' + esc(item.email) + '\');this.className=\'pipeline-status-select s-\'+this.value">' + getPipelineStatusOptions(item.pipelineStatus) + '</select>') + '</td><td><div class="checklist-mini"><div class="checklist-dots">' + CHECKLIST_ITEMS.map(c => '<span class="checklist-dot' + (getChecklist(item.email)[c.id] ? ' done' : '') + '"></span>').join('') + '</div><span class="checklist-text">' + clCount + '/' + CHECKLIST_ITEMS.length + '</span></div></td><td><div class="checklist-mini"><div class="checklist-dots">' + SUCCESS_CHECKLIST_ITEMS.map(function(c) { return '<span class="checklist-dot' + (getChecklist(item.email)['cs_' + c.id] ? ' done' : '') + '"></span>'; }).join('') + '</div><span class="checklist-text">' + SUCCESS_CHECKLIST_ITEMS.filter(function(c) { return getChecklist(item.email)['cs_' + c.id]; }).length + '/' + SUCCESS_CHECKLIST_ITEMS.length + '</span></div></td><td>' + (goLive ? '<span class="go-live-date">' + goLive + '</span>' : '<span class="go-live-date none">-</span>') + '</td><td><span class="time-ago">' + timeAgo(item.lastUpdated) + '</span></td><td><select class="rep-select" onchange="assignRep(\'' + item.sheetType + '\',' + item.rowIndex + ',this.value)">' + getRepOptions(item.accountRep) + '</select></td><td><div class="action-cell"><button class="action-btn primary" onclick=\'viewDetails(' + JSON.stringify(item).replace(/'/g,"&#39;") + ')\'>View</button><button class="action-btn" onclick="emailContact(\'' + esc(item.email) + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email</button><button class="action-btn danger" onclick="archiveRow(\'' + item.sheetType + '\',' + item.rowIndex + ',\'' + esc(item.email) + '\')">' + (isArch ? 'Restore' : 'Archive') + '</button></div></td></tr>';
+        return '<tr><td><div class="org-cell"><div class="org-avatar" style="background:' + getOrgColor(item.organization) + '">' + getOrgInitials(item.organization) + '</div><div><div class="org-name">' + esc(item.organization || 'Unknown') + '</div>' + (item.locationStr ? '<div class="org-location">' + esc(item.locationStr) + '</div>' : '') + '</div></div></td><td><div class="contact-name">' + esc(item.contact || '-') + '</div><div class="contact-email">' + esc(item.email) + '</div></td><td>' + (isArch ? '<span class="status-badge archived">Archived</span>' : '<select class="pipeline-status-select s-' + item.pipelineStatus + '" onchange="changePipelineStatus(\'' + item.sheetType + '\',' + item.rowIndex + ',this.value,\'' + esc(item.email) + '\');this.className=\'pipeline-status-select s-\'+this.value">' + getPipelineStatusOptions(item.pipelineStatus) + '</select>') + '</td><td><div class="checklist-mini"><div class="checklist-dots">' + CHECKLIST_ITEMS.map(c => '<span class="checklist-dot' + (getChecklist(item.email)[c.id] ? ' done' : '') + '"></span>').join('') + '</div><span class="checklist-text">' + clCount + '/' + CHECKLIST_ITEMS.length + '</span></div></td><td><div class="checklist-mini"><div class="checklist-dots">' + SUCCESS_CHECKLIST_ITEMS.map(function(c) { return '<span class="checklist-dot' + (getChecklist(item.email)['cs_' + c.id] ? ' done' : '') + '"></span>'; }).join('') + '</div><span class="checklist-text">' + SUCCESS_CHECKLIST_ITEMS.filter(function(c) { return getChecklist(item.email)['cs_' + c.id]; }).length + '/' + SUCCESS_CHECKLIST_ITEMS.length + '</span></div></td><td>' + (goLive ? '<span class="go-live-date">' + goLive + '</span>' : '<span class="go-live-date none">-</span>') + '</td><td><span class="time-ago">' + timeAgo(item.lastUpdated) + '</span></td><td><select class="rep-select" onchange="assignRep(\'' + item.sheetType + '\',' + item.rowIndex + ',this.value)">' + getRepOptions(item.accountRep) + '</select></td><td><div class="action-cell"><button class="action-btn primary" onclick=\'viewDetails(' + JSON.stringify(item).replace(/'/g,"&#39;") + ')\'>View</button><button class="action-btn" onclick="quickEditSubmission(\'' + esc(item.email) + '\',this)">Edit</button><button class="action-btn" onclick="emailContact(\'' + esc(item.email) + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email</button><button class="action-btn danger" onclick="archiveRow(\'' + item.sheetType + '\',' + item.rowIndex + ',\'' + esc(item.email) + '\')">' + (isArch ? 'Restore' : 'Archive') + '</button></div></td></tr>';
       }).join('');
       // Animate rows
       setTimeout(function() {
@@ -2022,6 +2123,7 @@
             '<div class="mobile-card-footer">' +
               '<div class="mobile-card-actions">' +
                 '<button class="primary" onclick=\'viewDetails(' + JSON.stringify(item).replace(/'/g,"&#39;") + ')\'>View</button>' +
+                '<button onclick="quickEditSubmission(\'' + esc(item.email) + '\',this)">Edit</button>' +
                 '<button onclick="window.open(\'mailto:' + esc(item.email || '') + '\')">Email</button>' +
                 '<button onclick="archiveRow(\'' + item.sheetType + '\',' + item.rowIndex + ',\'' + esc(item.email) + '\')">' + (isArch ? 'Restore' : 'Archive') + '</button>' +
               '</div>' +
@@ -3384,10 +3486,10 @@
     // the tabs show a setup message instead of breaking the rest of the admin.
     // =====================================================================
     var CRED_STATUSES = [{val:'active',label:'Active'},{val:'onboarding',label:'Onboarding'},{val:'on-hold',label:'On Hold'},{val:'inactive',label:'Inactive'}];
-    var TS_AUDIENCES = [{val:'supers',label:'Superintendents'},{val:'ads',label:'Athletic Directors'},{val:'sbo',label:'Business Officials'},{val:'munis',label:'Parks & Rec'},{val:'heads',label:'Heads of School'},{val:'other',label:'Other'}];
-    var TS_REG = [{val:'',label:'Not registered'},{val:'need-to-pay',label:'Need to Pay'},{val:'paid',label:'Paid'},{val:'sold-out',label:'Sold Out'},{val:'skip',label:'Not Attending'}];
+    var TS_AUDIENCES = [{val:'supers',label:'Superintendents',short:'Supts'},{val:'ads',label:'Athletic Directors',short:'ADs'},{val:'sbo',label:'Business Officials',short:'SBOs'},{val:'munis',label:'Parks & Rec',short:'Parks & Rec'},{val:'heads',label:'Heads of School',short:'Heads'},{val:'other',label:'Other',short:'Other'}];
+    var TS_REG = [{val:'',label:'Not registered',short:'Register'},{val:'need-to-pay',label:'Need to Pay',short:'To pay'},{val:'paid',label:'Paid',short:'Paid'},{val:'sold-out',label:'Sold Out',short:'Sold out'},{val:'skip',label:'Not Attending',short:'Skipping'}];
     var TS_BOOTHS = ['10 x 10', '8 x 8', '8 x 10', 'No Booth Needed'];
-    var TS_TRAVEL = [{val:'',label:'Not set'},{val:'need-to-book',label:'Need to Book'},{val:'booked',label:'Booked'},{val:'driving',label:'Driving'},{val:'na',label:'N/A'}];
+    var TS_TRAVEL = [{val:'',label:'Not set',short:''},{val:'need-to-book',label:'Need to Book',short:'To book'},{val:'booked',label:'Booked',short:'Booked'},{val:'driving',label:'Driving',short:'Driving'},{val:'na',label:'N/A',short:'N/A'}];
     var CRED_COLS = ['id','organization','status','rep','adminName','adminPhone','loginEmail','loginPassword','notes','updatedAt','updatedBy'];
     var TS_COLS = ['id','name','audience','reps','eventDate','exhibitStart','exhibitEnd','location','link','registration','cost','boothSize','podcast','hotel','flight','leads','demos','deals','plannedQuarter','notes','archived','updatedAt','updatedBy'];
 
@@ -3515,7 +3617,8 @@
         edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
         link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
         pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
-        mic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>'
+        mic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>',
+        expand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>'
       };
       return icons[name] || '';
     }
@@ -3593,16 +3696,17 @@
       if (!rows.length) { var e2 = '<div class="pp-empty"><strong>No credentials match</strong>' + (credList.length ? 'Try clearing the search or filters.' : 'Add a client with the Add button, or import your Monday.com export.') + '</div>'; body.innerHTML = '<tr><td colspan="9">' + e2 + '</td></tr>'; mobile.innerHTML = e2; return; }
       var statusLabel = {}; CRED_STATUSES.forEach(function(s) { statusLabel[s.val] = s.label; });
       body.innerHTML = rows.map(function(c) {
-        return '<tr class="clickable" onclick="openCredModal(\'' + ppEsc(c.id) + '\')">'
-          + '<td><div class="pp-org-cell"><div class="pp-org-avatar" style="background:' + getOrgColor(c.organization) + '">' + ppEsc(getOrgInitials(c.organization)) + '</div><div><div class="pp-org-name">' + ppEsc(c.organization) + '</div>' + (c.notes ? '<div class="pp-org-sub" title="' + ppEsc(c.notes) + '">' + ppEsc(c.notes) + '</div>' : '') + '</div></div></td>'
-          + '<td><span class="pp-chip ' + c.status + '">' + statusLabel[c.status] + '</span></td>'
-          + '<td><div style="display:flex;align-items:center;gap:8px">' + ppRepAvatars(c.rep, 24) + '<span style="font-size:11px;color:var(--text2)">' + ppEsc(ppSplitReps(c.rep).map(ppRepName).join(', ')) + '</span></div></td>'
-          + '<td class="contact-name">' + ppEsc(c.adminName || '-') + '</td>'
-          + '<td>' + (c.adminPhone ? '<span class="pp-copyable" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(c.adminPhone) + '\',\'Phone\')">' + ppEsc(formatPhone(c.adminPhone)) + '</span>' : '<span style="color:var(--text3)">-</span>') + '</td>'
-          + '<td>' + (c.loginEmail ? '<span class="pp-copyable" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(c.loginEmail) + '\',\'Email\')">' + ppEsc(c.loginEmail) + '</span>' : '<span style="color:var(--text3)">-</span>') + '</td>'
-          + '<td>' + credPwCell(c) + '</td>'
+        var cell = function(field, inner, cls) { return '<td class="pp-cell' + (cls ? ' ' + cls : '') + '" data-edit="' + field + '" data-id="' + ppEsc(c.id) + '" title="Click to edit">' + inner + '</td>'; };
+        return '<tr data-id="' + ppEsc(c.id) + '">'
+          + cell('organization', '<div class="pp-org-cell"><div class="pp-org-avatar" style="background:' + getOrgColor(c.organization) + '">' + ppEsc(getOrgInitials(c.organization)) + '</div><div><div class="pp-org-name">' + ppEsc(c.organization) + '</div>' + (c.notes ? '<div class="pp-org-sub" title="' + ppEsc(c.notes) + '">' + ppEsc(c.notes) + '</div>' : '') + '</div></div>')
+          + cell('status', '<span class="pp-chip pick ' + c.status + '">' + statusLabel[c.status] + '<i class="caret"></i></span>')
+          + cell('rep', '<div style="display:flex;align-items:center;gap:8px">' + ppRepAvatars(c.rep, 24) + '<span style="font-size:11px;color:var(--text2)">' + ppEsc(ppSplitReps(c.rep).map(ppRepName).join(', ')) + '</span></div>')
+          + cell('adminName', c.adminName ? '<span class="contact-name">' + ppEsc(c.adminName) + '</span>' : '<span class="pp-placeholder">Name?</span>')
+          + cell('adminPhone', c.adminPhone ? '<span class="pp-copyable" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(c.adminPhone) + '\',\'Phone\')">' + ppEsc(formatPhone(c.adminPhone)) + '</span>' : '<span class="pp-placeholder">Phone?</span>')
+          + cell('loginEmail', c.loginEmail ? '<span class="pp-copyable" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(c.loginEmail) + '\',\'Email\')">' + ppEsc(c.loginEmail) + '</span>' : '<span class="pp-placeholder">Email?</span>')
+          + cell('loginPassword', credPwCell(c))
           + '<td class="time-ago">' + (c.updatedAt ? ppFmtDate(c.updatedAt, { month: 'short', day: 'numeric', year: '2-digit' }) : '-') + (c.updatedBy && c.updatedBy !== 'import' ? '<br><span style="font-size:9px">' + ppEsc(ppRepName(c.updatedBy)) + '</span>' : '') + '</td>'
-          + '<td><button class="pp-mini-btn" title="Edit" onclick="event.stopPropagation();openCredModal(\'' + ppEsc(c.id) + '\')">' + ppSvg('edit') + '</button></td>'
+          + '<td><button class="pp-mini-btn" title="Open full editor" onclick="openCredModal(\'' + ppEsc(c.id) + '\')">' + ppSvg('expand') + '</button></td>'
           + '</tr>';
       }).join('');
       mobile.innerHTML = rows.map(function(c) {
@@ -3807,19 +3911,21 @@
     function tsRow(s) {
       var soon = s._daysUntil !== null && s._daysUntil >= 0 && s._daysUntil <= 21;
       var when = s._isLive ? 'Happening now' : s._isPast ? 'Done' : s._daysUntil === null ? 'Date TBD' : s._daysUntil === 0 ? 'Today' : 'in ' + s._daysUntil + ' day' + (s._daysUntil === 1 ? '' : 's');
-      var out = '<span class="ts-outcome" onclick="event.stopPropagation();openTsModal(\'' + ppEsc(s.id) + '\',true)" title="Click to record outcomes"><span><b>Leads</b>' + ppEsc(s.leads || '-') + '</span><span><b>Demos</b>' + ppEsc(s.demos || '-') + '</span><span><b>Deals</b>' + ppEsc(s.deals || '-') + '</span></span>';
-      return '<tr class="clickable' + (s._isPast ? ' past' : '') + '" onclick="openTsModal(\'' + ppEsc(s.id) + '\')">'
-        + '<td><div class="pp-org-cell"><div><div class="pp-org-name" style="max-width:280px">' + ppEsc(s.name) + (s.podcast ? ' <span title="Includes podcast" style="color:var(--pp-blue);display:inline-flex;vertical-align:middle;width:12px;height:12px">' + ppSvg('mic') + '</span>' : '') + (s.link ? ' <a class="ts-link" href="' + ppEsc(s.link) + '" target="_blank" rel="noopener" title="Open event site" onclick="event.stopPropagation()" style="vertical-align:middle">' + ppSvg('link') + '</a>' : '') + '</div><div class="pp-org-sub" style="max-width:280px">' + (s.location ? ppEsc(s.location) : '<span style="opacity:0.7">Location TBD</span>') + '</div></div></div></td>'
-        + '<td><div class="ts-date' + (soon ? ' soon' : '') + '">' + ppFmtRange(s._start, s._end) + '<span class="sub">' + when + '</span></div></td>'
-        + '<td><span class="pp-chip aud-' + (s.audience || 'other') + '">' + ppEsc(tsAudLabel(s.audience)) + '</span></td>'
-        + '<td>' + ppRepAvatars(s.reps, 26) + '</td>'
-        + '<td>' + tsChip(s, 'registration') + '</td>'
-        + '<td style="font-weight:600">' + (s.cost ? ppFmtMoney(s.cost) : '<span style="color:var(--text3);font-weight:400">-</span>') + '</td>'
-        + '<td style="color:var(--text2)">' + ppEsc(s.boothSize || '-') + '</td>'
-        + '<td>' + tsChip(s, 'hotel') + '</td>'
-        + '<td>' + tsChip(s, 'flight') + '</td>'
-        + '<td>' + out + '</td>'
-        + '<td style="text-align:right"><button class="pp-mini-btn" title="Edit" onclick="event.stopPropagation();openTsModal(\'' + ppEsc(s.id) + '\')">' + ppSvg('edit') + '</button></td>'
+      var cell = function(field, inner, cls) { return '<td class="pp-cell' + (cls ? ' ' + cls : '') + '" data-edit="' + field + '" data-id="' + ppEsc(s.id) + '" title="Click to edit">' + inner + '</td>'; };
+      var chip = function(field, list) { var val = s[field] || ''; var item = list.find(function(x) { return x.val === val; }) || list[0]; var label = val ? (item.short || item.label) : (field === 'registration' ? 'Register' : field === 'hotel' ? 'Hotel?' : 'Flight?'); return '<span class="pp-chip pick ' + (val || 'unset') + '" title="' + ppEsc(item.label) + '">' + ppEsc(label) + '<i class="caret"></i></span>'; };
+      var out = '<span class="ts-outcome"><span><b>Leads</b>' + ppEsc(s.leads || '-') + '</span><span><b>Demos</b>' + ppEsc(s.demos || '-') + '</span><span><b>Deals</b>' + ppEsc(s.deals || '-') + '</span></span>';
+      return '<tr data-id="' + ppEsc(s.id) + '"' + (s._isPast ? ' class="past"' : '') + '>'
+        + cell('details', '<div class="pp-org-cell"><div><div class="pp-org-name">' + ppEsc(s.name) + (s.podcast ? ' <span title="Includes podcast" style="color:var(--pp-blue);display:inline-flex;vertical-align:middle;width:12px;height:12px">' + ppSvg('mic') + '</span>' : '') + (s.link ? ' <a class="ts-link" href="' + ppEsc(s.link) + '" target="_blank" rel="noopener" title="Open event site" style="vertical-align:middle">' + ppSvg('link') + '</a>' : '') + '</div><div class="pp-org-sub">' + (s.location ? ppEsc(s.location) : '<span class="pp-placeholder">Location?</span>') + '</div></div></div>')
+        + cell('dates', '<div class="ts-date' + (soon ? ' soon' : '') + '">' + ppFmtRange(s._start, s._end) + '<span class="sub">' + when + '</span></div>')
+        + cell('audience', '<span class="pp-chip pick aud-' + (s.audience || 'other') + (s.audience ? '' : ' unset') + '" title="' + ppEsc(tsAudLabel(s.audience)) + '">' + ppEsc(s.audience ? ((TS_AUDIENCES.find(function(a) { return a.val === s.audience; }) || {}).short || tsAudLabel(s.audience)) : 'Audience?') + '<i class="caret"></i></span>')
+        + cell('reps', ppRepAvatars(s.reps, 26))
+        + cell('registration', chip('registration', TS_REG))
+        + cell('cost', s.cost ? '<b>' + ppFmtMoney(s.cost) + '</b>' : '<span class="pp-placeholder">$</span>', 'num')
+        + cell('boothSize', s.boothSize ? '<span style="color:var(--text2)">' + ppEsc(s.boothSize) + '</span>' : '<span class="pp-placeholder">Booth?</span>')
+        + cell('hotel', chip('hotel', TS_TRAVEL))
+        + cell('flight', chip('flight', TS_TRAVEL))
+        + cell('outcomes', out)
+        + '<td style="text-align:right"><button class="pp-mini-btn" title="Open full editor" onclick="openTsModal(\'' + ppEsc(s.id) + '\')">' + ppSvg('expand') + '</button></td>'
         + '</tr>';
     }
     function tsCard(s) {
@@ -3855,7 +3961,7 @@
         var repSet = {}; list.forEach(function(s) { s._reps.forEach(function(r) { repSet[r] = true; }); });
         var collapsed = tsCollapsed[k] === true || (tsCollapsed[k] === undefined && list.every(function(s) { return s._isPast; }) && tsScope !== 'past');
         return '<div class="ts-group' + (collapsed ? ' collapsed' : '') + '" id="tsg_' + ppEsc(k) + '"><div class="ts-group-head" onclick="tsCollapsed[\'' + ppEsc(k) + '\']=!this.parentNode.classList.contains(\'collapsed\');this.parentNode.classList.toggle(\'collapsed\')"><div class="ts-group-title"><span class="ts-caret">&#x25BC;</span>' + title + '<span class="n">' + list.length + ' show' + (list.length === 1 ? '' : 's') + '</span></div><div class="ts-group-meta"><span><b>' + ppFmtMoney(spend) + '</b> committed</span><span>' + ppRepAvatars(Object.keys(repSet).join(','), 20) + '</span>' + (todo ? '<span style="color:#d97706"><b>' + todo + '</b> need attention</span>' : '<span style="color:var(--pp-green)">All set</span>') + '</div></div>'
-          + '<div class="ts-group-body"><div class="table-wrapper" style="border:none;border-radius:0"><table class="pp-table" style="min-width:1100px">' + hdr + '<tbody>' + list.map(tsRow).join('') + '</tbody></table></div><div class="pp-mobile-cards" style="padding:10px">' + list.map(tsCard).join('') + '</div></div></div>';
+          + '<div class="ts-group-body"><div class="table-wrapper" style="border:none;border-radius:0"><table class="pp-table" style="min-width:1100px">' + hdr + '<tbody>' + list.map(tsRow).join('') + '<tr class="ts-add-row"><td colspan="11"><input class="ts-add-input" placeholder="+ Add a show to ' + ppEsc(title) + '" data-quarter="' + ppEsc(k) + '" autocomplete="off"></td></tr></tbody></table></div><div class="pp-mobile-cards" style="padding:10px">' + list.map(tsCard).join('') + '</div></div></div>';
       }).join('');
     }
     // ---- calendar ----
@@ -4088,7 +4194,7 @@
       if (typing) return;
       if (!document.getElementById('dashboard').classList.contains('active')) return;
       if (document.getElementById('modalOverlay').classList.contains('active')) return;
-      var tabs = ['dashboard', 'pipeline', 'customers', 'credentials', 'tradeshows', 'calendar', 'activity'];
+      var tabs = ['dashboard', 'pipeline', 'calendar', 'activity', 'customers', 'credentials', 'tradeshows'];
       if (/^[1-7]$/.test(e.key)) { switchView(tabs[parseInt(e.key) - 1]); e.preventDefault(); return; }
       if (e.key === '/') { var s = document.querySelector('.view-content.active .search-input'); if (s) { s.focus(); s.select(); e.preventDefault(); } return; }
       if (e.key.toLowerCase() === 'n') { var v = document.querySelector('.view-content.active'); if (v && v.id === 'credentialsView') { openCredModal(null); e.preventDefault(); } else if (v && v.id === 'tradeshowsView') { openTsModal(null); e.preventDefault(); } }
@@ -4219,6 +4325,219 @@
         + '<div class="ts-ins-card full"><h3>Rep Coverage &middot; ' + tsInsYear + '</h3><div class="ts-cov"><table><thead><tr><th class="rep">Rep</th>' + months.map(function(mn) { return '<th class="month">' + mn + '</th>'; }).join('') + '</tr></thead><tbody>' + covRows + '</tbody></table></div>' + (undated.length ? '<div class="pp-toolbar-note" style="margin-top:10px">' + undated.length + ' show' + (undated.length === 1 ? '' : 's') + ' without dates not shown: ' + ppEsc(undated.map(function(s) { return s.name; }).join(', ')) + '</div>' : '') + '</div>'
         + '</div>';
     }
+    // =====================================================================
+    // BOARD EDITING (Monday-style cells), QUICK EDIT, DATA HEALTH, SIDEBAR  (Sept 2026)
+    // =====================================================================
+    // ---- popover core ----
+    var ppPop = null, ppPopClose = null;
+    function ppPopoverOpen(anchor, html, opts) {
+      opts = opts || {}; ppPopoverClose();
+      var p = document.createElement('div'); p.className = 'pp-pop' + (opts.cls ? ' ' + opts.cls : ''); p.innerHTML = html; document.body.appendChild(p);
+      var r = anchor.getBoundingClientRect(), pw = p.offsetWidth, ph = p.offsetHeight, vw = window.innerWidth, vh = window.innerHeight;
+      var left = Math.max(8, Math.min(r.left, vw - pw - 8)), top = r.bottom + 6;
+      if (top + ph > vh - 8) top = Math.max(8, r.top - ph - 6);
+      p.style.left = left + 'px'; p.style.top = top + 'px';
+      ppPop = p; ppPopClose = opts.onClose || null;
+      setTimeout(function() { document.addEventListener('mousedown', ppPopOutside, true); document.addEventListener('keydown', ppPopKey, true); var f = p.querySelector('input,select,textarea,button.pp-pop-opt'); if (f && opts.focus !== false) { f.focus(); if (f.select && f.type !== 'date') f.select(); } }, 0);
+      return p;
+    }
+    function ppPopoverClose(reason) {
+      if (!ppPop) return;
+      document.removeEventListener('mousedown', ppPopOutside, true); document.removeEventListener('keydown', ppPopKey, true);
+      var p = ppPop, cb = ppPopClose; ppPop = null; ppPopClose = null;
+      p.classList.add('closing'); setTimeout(function() { if (p.parentNode) p.parentNode.removeChild(p); }, 120);
+      if (cb) cb(reason || 'close');
+    }
+    function ppPopOutside(e) { if (ppPop && !ppPop.contains(e.target)) ppPopoverClose('outside'); }
+    function ppPopKey(e) { if (e.key === 'Escape') { e.stopPropagation(); ppPopoverClose('escape'); } }
+
+    // ---- editors ----
+    function ppStatusPicker(anchor, options, current, onPick) {
+      var html = '<div class="pp-pop-list">' + options.map(function(o) { return '<button type="button" class="pp-pop-opt' + (o.val === current ? ' on' : '') + '" data-val="' + ppEsc(o.val) + '"><span class="pp-chip ' + ppEsc(o.cls || o.val || 'unset') + '">' + ppEsc(o.label) + '</span>' + (o.val === current ? '<span class="tick">&#10003;</span>' : '') + '</button>'; }).join('') + '</div>';
+      var p = ppPopoverOpen(anchor, html, { cls: 'pp-pop-status' });
+      p.querySelectorAll('.pp-pop-opt').forEach(function(b) { b.addEventListener('click', function() { var v = b.getAttribute('data-val'); ppPopoverClose('pick'); if (v !== current) onPick(v); }); });
+    }
+    function ppRepPicker(anchor, current, onSave) {
+      var sel = current.slice(); var changed = false;
+      var extras = sel.filter(function(r) { return !TEAM_MEMBERS.some(function(m) { return m.email === r; }); });
+      var rows = TEAM_MEMBERS.map(function(m) { return { key: m.email, label: m.name, avatar: getTeamPhoto(m.email, 24) }; }).concat(extras.map(function(r) { return { key: r, label: r, avatar: '<span class="pp-avatar-text">' + ppEsc(r.charAt(0)) + '</span>' }; }));
+      var html = '<div class="pp-pop-title">Reps attending</div><div class="pp-pop-list">' + rows.map(function(r) { return '<button type="button" class="pp-pop-opt rep' + (sel.indexOf(r.key) >= 0 ? ' on' : '') + '" data-val="' + ppEsc(r.key) + '">' + r.avatar + '<span class="lbl">' + ppEsc(r.label) + '</span><span class="tick">&#10003;</span></button>'; }).join('') + '</div><div class="pp-pop-foot"><button type="button" class="pp-btn primary" id="ppRepDone">Done</button></div>';
+      var p = ppPopoverOpen(anchor, html, { cls: 'pp-pop-status', focus: false, onClose: function() { if (changed) onSave(sel); } });
+      p.querySelectorAll('.pp-pop-opt').forEach(function(b) { b.addEventListener('click', function() { var v = b.getAttribute('data-val'), i = sel.indexOf(v); if (i >= 0) sel.splice(i, 1); else sel.push(v); b.classList.toggle('on', i < 0); changed = true; }); });
+      p.querySelector('#ppRepDone').addEventListener('click', function() { ppPopoverClose('done'); });
+    }
+    function ppFormPopover(anchor, fields, onSave, opts) {
+      opts = opts || {};
+      var html = (opts.title ? '<div class="pp-pop-title">' + opts.title + '</div>' : '') + '<div class="pp-pop-form' + (opts.inline ? ' inline' : '') + '">' + fields.map(function(f) {
+        var val = ppEsc(f.value === undefined || f.value === null ? '' : f.value);
+        return '<label><span>' + ppEsc(f.label) + '</span>' + (f.readonly ? '<div class="ro">' + (val || '-') + '</div>' : f.type === 'select' ? '<select data-key="' + ppEsc(f.key) + '">' + (f.options || []).map(function(o) { return '<option value="' + ppEsc(o.val) + '"' + (o.val === f.value ? ' selected' : '') + '>' + ppEsc(o.label) + '</option>'; }).join('') + '</select>' : '<input type="' + (f.type || 'text') + '" data-key="' + ppEsc(f.key) + '" value="' + val + '" placeholder="' + ppEsc(f.placeholder || '') + '"' + (f.type === 'number' ? ' inputmode="numeric" min="0"' : '') + (f.list ? ' list="' + ppEsc(f.list) + '"' : '') + '>') + '</label>';
+      }).join('') + '</div><div class="pp-pop-foot">' + (opts.footer || '') + '<span style="flex:1"></span><button type="button" class="pp-btn" id="ppFormCancel">Cancel</button><button type="button" class="pp-btn primary" id="ppFormSave">Save</button></div>';
+      var saved = false;
+      var read = function() { var o = {}; fields.forEach(function(f) { if (f.readonly) return; var el = p.querySelector('[data-key="' + f.key + '"]'); o[f.key] = el ? el.value.trim() : ''; }); return o; };
+      var dirty = function() { var o = read(); return fields.some(function(f) { return !f.readonly && String(f.value === undefined || f.value === null ? '' : f.value) !== o[f.key]; }); };
+      var p = ppPopoverOpen(anchor, html, { cls: 'pp-pop-form-wrap', onClose: function(reason) { if (!saved && reason === 'outside' && dirty()) onSave(read()); } });
+      p.querySelector('#ppFormSave').addEventListener('click', function() { saved = true; var vals = read(); ppPopoverClose('save'); onSave(vals); });
+      p.querySelector('#ppFormCancel').addEventListener('click', function() { saved = true; ppPopoverClose('cancel'); });
+      p.querySelectorAll('input').forEach(function(inp) { inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); saved = true; var vals = read(); ppPopoverClose('save'); onSave(vals); } }); });
+    }
+    function ppInlineEdit(cell, opts) {
+      if (cell.querySelector('input')) return;
+      var orig = cell.innerHTML, inp = document.createElement('input');
+      inp.type = opts.type || 'text'; inp.value = opts.value || ''; inp.className = 'pp-cell-input'; inp.placeholder = opts.placeholder || ''; if (opts.inputmode) inp.setAttribute('inputmode', opts.inputmode);
+      cell.innerHTML = ''; cell.appendChild(inp);
+      if (opts.list) { var dl = document.createElement('datalist'); dl.id = 'ppInlineList'; dl.innerHTML = opts.list.map(function(v) { return '<option value="' + ppEsc(v) + '">'; }).join(''); inp.setAttribute('list', dl.id); cell.appendChild(dl); }
+      cell.classList.add('editing'); inp.focus(); inp.select();
+      var done = false;
+      var finish = function(save) { if (done) return; done = true; cell.classList.remove('editing'); var v = inp.value.trim(); if (save && v !== (opts.value || '')) opts.onSave(v); else cell.innerHTML = orig; };
+      inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); finish(true); } else if (e.key === 'Escape') { e.preventDefault(); finish(false); } else if (e.key === 'Tab') { finish(true); } });
+      inp.addEventListener('blur', function() { finish(true); });
+    }
+
+    // ---- delegated cell clicks ----
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest) return;
+      var cell = e.target.closest('td.pp-cell'); if (!cell) return;
+      if (e.target.closest('a,button,input,select,textarea,datalist')) return;
+      var id = cell.getAttribute('data-id'), field = cell.getAttribute('data-edit'); if (!id || !field) return;
+      if (cell.closest('#tsGroups')) { e.stopPropagation(); tsCellEdit(id, field, cell); }
+      else if (cell.closest('#credTableBody')) { e.stopPropagation(); credCellEdit(id, field, cell); }
+    });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Enter' && e.target && e.target.classList && e.target.classList.contains('ts-add-input')) { e.preventDefault(); tsQuickAdd(e.target); } });
+
+    // ---- trade show cells ----
+    function tsCellEdit(id, field, cell) {
+      var s = tsList.find(function(x) { return x.id === id; }); if (!s) return;
+      var save = function(patch) {
+        var prev = {}; Object.keys(patch).forEach(function(k) { prev[k] = s[k]; s[k] = patch[k]; });
+        tsDerive(s); renderTradeShows();
+        tsSave(s, false).then(function() { showToast('Saved ' + s.name, 'success'); }).catch(function(err) { Object.keys(prev).forEach(function(k) { s[k] = prev[k]; }); tsDerive(s); renderTradeShows(); showToast('Could not save: ' + err.message, 'error'); });
+      };
+      var chipOpts = function(list) { return list.map(function(o) { return { val: o.val, label: o.label, cls: o.val || 'unset' }; }); };
+      switch (field) {
+        case 'registration': ppStatusPicker(cell, chipOpts(TS_REG), s.registration || '', function(v) { save({ registration: v }); }); break;
+        case 'hotel': case 'flight': ppStatusPicker(cell, chipOpts(TS_TRAVEL), s[field] || '', function(v) { var o = {}; o[field] = v; save(o); }); break;
+        case 'audience': ppStatusPicker(cell, [{ val: '', label: 'Audience TBD', cls: 'unset' }].concat(TS_AUDIENCES.map(function(a) { return { val: a.val, label: a.label, cls: 'aud-' + a.val }; })), s.audience || '', function(v) { save({ audience: v }); }); break;
+        case 'boothSize': ppStatusPicker(cell, [{ val: '', label: 'TBD', cls: 'unset' }].concat(TS_BOOTHS.map(function(b) { return { val: b, label: b, cls: b === 'No Booth Needed' ? 'na' : 'booked' }; }), [{ val: '__custom', label: 'Type a size...', cls: 'driving' }]), s.boothSize || '', function(v) { if (v === '__custom') ppInlineEdit(cell, { value: s.boothSize, placeholder: 'e.g. 6 x 6', onSave: function(nv) { save({ boothSize: nv }); } }); else save({ boothSize: v }); }); break;
+        case 'cost': ppInlineEdit(cell, { value: s.cost, placeholder: '2200', inputmode: 'numeric', onSave: function(v) { save({ cost: v.replace(/[^0-9.]/g, '') }); } }); break;
+        case 'reps': ppRepPicker(cell, s._reps, function(list) { save({ reps: list.join(', ') }); }); break;
+        case 'dates': ppFormPopover(cell, [{ key: 'eventDate', label: 'Event date', type: 'date', value: s.eventDate }, { key: 'exhibitStart', label: 'Exhibitor start', type: 'date', value: s.exhibitStart }, { key: 'exhibitEnd', label: 'Exhibitor end', type: 'date', value: s.exhibitEnd }], function(v) { save(v); }, { title: 'Dates' }); break;
+        case 'outcomes': ppFormPopover(cell, [{ key: 'leads', label: 'Leads', type: 'number', value: s.leads }, { key: 'demos', label: 'Demos', type: 'number', value: s.demos }, { key: 'deals', label: 'Deals', type: 'number', value: s.deals }], function(v) { save(v); }, { title: 'Outcomes', inline: true }); break;
+        case 'details': ppFormPopover(cell, [{ key: 'name', label: 'Show name', value: s.name }, { key: 'location', label: 'Location', value: s.location, placeholder: 'City, ST' }, { key: 'link', label: 'Event link', type: 'url', value: s.link, placeholder: 'https://' }], function(v) { if (!v.name) { showToast('Show name is required', 'error'); return; } save(v); }, { footer: '<button type="button" class="pp-btn" onclick="ppPopoverClose();openTsModal(\'' + ppEsc(id) + '\')">Full editor</button>' }); break;
+      }
+    }
+    async function tsQuickAdd(input) {
+      var name = input.value.trim(); if (!name) return;
+      var key = input.getAttribute('data-quarter') || '';
+      var s = tsNormalize({ id: ppNewId('ts'), name: name, plannedQuarter: key === 'TBD' ? '' : key });
+      input.value = ''; input.disabled = true;
+      try { await tsSave(s, false); tsList.push(s); renderTradeShows(); showToast('Added ' + name, 'success'); logActivityToServer('added trade show', name, key, 'other'); setTimeout(function() { var row = document.querySelector('#tsGroups tr[data-id="' + s.id + '"] td[data-edit="dates"]'); if (row) tsCellEdit(s.id, 'dates', row); }, 150); }
+      catch(e) { input.disabled = false; input.value = name; showToast('Could not add: ' + e.message, 'error'); }
+    }
+
+    // ---- credential cells ----
+    function credCellEdit(id, field, cell) {
+      var c = credList.find(function(x) { return x.id === id; }); if (!c) return;
+      var save = function(patch) {
+        var prev = {}; Object.keys(patch).forEach(function(k) { prev[k] = c[k]; c[k] = patch[k]; });
+        c.updatedAt = ppTodayISO(); c.updatedBy = currentUser?.email || ''; populateCredRepFilter(); renderCredentials();
+        var rec = {}; CRED_COLS.forEach(function(k) { rec[k] = c[k] === undefined ? '' : c[k]; });
+        ppApi('saveCredential', { row: rec }).then(function(r) { if (!r.success) throw new Error(r.error || 'Save failed'); showToast('Saved ' + c.organization, 'success'); }).catch(function(err) { Object.keys(prev).forEach(function(k) { c[k] = prev[k]; }); renderCredentials(); showToast('Could not save: ' + err.message, 'error'); });
+      };
+      switch (field) {
+        case 'status': ppStatusPicker(cell, CRED_STATUSES.map(function(s) { return { val: s.val, label: s.label, cls: s.val }; }), c.status, function(v) { save({ status: v }); }); break;
+        case 'rep': ppRepPicker(cell, ppSplitReps(c.rep), function(list) { save({ rep: list.join(', ') }); }); break;
+        case 'organization': ppInlineEdit(cell, { value: c.organization, placeholder: 'Organization', onSave: function(v) { if (v) save({ organization: v }); else renderCredentials(); } }); break;
+        case 'adminName': ppInlineEdit(cell, { value: c.adminName, placeholder: 'Name', onSave: function(v) { save({ adminName: v }); } }); break;
+        case 'adminPhone': ppInlineEdit(cell, { value: c.adminPhone, placeholder: '214-555-0100', inputmode: 'tel', onSave: function(v) { save({ adminPhone: v }); } }); break;
+        case 'loginEmail': ppInlineEdit(cell, { value: c.loginEmail, placeholder: 'admin@district.org', type: 'email', onSave: function(v) { save({ loginEmail: v }); } }); break;
+        case 'loginPassword': ppInlineEdit(cell, { value: c.loginPassword, placeholder: 'Password', onSave: function(v) { save({ loginPassword: v }); } }); break;
+        case 'notes': ppInlineEdit(cell, { value: c.notes, placeholder: 'Notes', onSave: function(v) { save({ notes: v }); } }); break;
+      }
+    }
+
+    // ---- onboarding quick edit ----
+    function quickEditSubmission(email, anchor) {
+      var item = allData.find(function(d) { return d.email === email; }) || archivedData.find(function(d) { return d.email === email; }); if (!item) return;
+      var ci = (item.formData && item.formData.contactInfo) || {};
+      ppFormPopover(anchor, [
+        { key: 'organization', label: 'Organization', value: item.organization },
+        { key: 'contact', label: 'Contact name', value: item.contact },
+        { key: 'jobTitle', label: 'Job title', value: ci.jobTitle || '' },
+        { key: 'phone', label: 'Phone', value: item.phone, placeholder: '214-555-0100' },
+        { key: 'goLiveDate', label: 'Go-live date', type: 'date', value: item.goLiveDate || '' },
+        { key: 'email', label: 'Email (record key)', value: item.email, readonly: true }
+      ], function(v) { saveQuickEdit(item, v); }, { title: 'Edit ' + ppEsc(item.organization || 'record') });
+    }
+    async function saveQuickEdit(item, v) {
+      var fields = { 'Organization': v.organization, 'Contact Name': v.contact, 'Job Title': v.jobTitle, 'Phone': v.phone, 'Go Live Date': v.goLiveDate };
+      try {
+        var r = await ppApi('updateSubmission', { sheetType: item.sheetType, rowIndex: item.rowIndex, fields: fields });
+        if (!r.success) throw new Error(r.error || 'Save failed');
+        item.organization = toTitleCase(v.organization); item.contact = toTitleCase(v.contact); item.phone = v.phone;
+        item.formData = item.formData || {}; item.formData.contactInfo = Object.assign({}, item.formData.contactInfo || {}, { fullName: v.contact, organization: v.organization, phone: v.phone, jobTitle: v.jobTitle });
+        item.formData.policies = Object.assign({}, item.formData.policies || {}, { goLiveDate: v.goLiveDate }); item.goLiveDate = getGoLiveDate(item);
+        updateStats(); renderTable(); renderPipeline(); renderCalendar(); renderDataHealth(); showToast('Updated ' + item.organization, 'success');
+        logActivityToServer('edited details for', item.organization, [v.contact, v.phone, v.goLiveDate].filter(Boolean).join(' / '), 'other');
+      } catch(e) { showToast('Could not save: ' + e.message + (/Unknown action/i.test(e.message) ? ' (Extras.gs needs the updateSubmission action)' : ''), 'error'); }
+    }
+
+    // ---- data health ----
+    var dhOpen = false, dhFilter = 'all';
+    function computeDataHealth() {
+      var issues = [], orgCount = {};
+      allData.forEach(function(d) { var k = (d.organization || '').toLowerCase().trim(); if (k) orgCount[k] = (orgCount[k] || 0) + 1; });
+      allData.forEach(function(d) {
+        var list = [], org = (d.organization || '').trim();
+        if (!org || /^(test|testing|demo|sample|asdf|qwerty|xyz|fake)\b/i.test(org) || /(^test|@example\.|@test\.|asdf)/i.test(d.email || '')) list.push({ k: 'junk', l: 'Looks like a test record' });
+        if (org && orgCount[org.toLowerCase()] > 1) list.push({ k: 'dup', l: 'Duplicate organization' });
+        if (!d.contact) list.push({ k: 'contact', l: 'No contact name' });
+        if (!d.phone) list.push({ k: 'phone', l: 'No phone' });
+        if (!d.accountRep) list.push({ k: 'rep', l: 'No rep assigned' });
+        if (['onboarding', 'published', 'launched'].indexOf(d.pipelineStatus) >= 0 && !d.goLiveDate) list.push({ k: 'golive', l: 'No go-live date' });
+        if (d.sheetType === 'drafts' && d.daysSinceUpdate > 30) list.push({ k: 'stale', l: 'Draft idle ' + d.daysSinceUpdate + ' days' });
+        if (list.length) issues.push({ item: d, issues: list });
+      });
+      return issues;
+    }
+    var DH_LABELS = { all: 'All issues', junk: 'Test records', dup: 'Duplicates', contact: 'No contact', phone: 'No phone', rep: 'No rep', golive: 'No go-live', stale: 'Stale drafts' };
+    function renderDataHealth() {
+      var el = document.getElementById('dataHealth'); if (!el) return;
+      var issues = computeDataHealth();
+      if (!issues.length) { el.innerHTML = '<div class="dh-bar clean"><span class="dh-dot"></span><b>Data health:</b> every onboarding record has a contact, phone, rep, and go-live date where needed.</div>'; return; }
+      var counts = {}; issues.forEach(function(x) { x.issues.forEach(function(i) { counts[i.k] = (counts[i.k] || 0) + 1; }); });
+      var shown = dhFilter === 'all' ? issues : issues.filter(function(x) { return x.issues.some(function(i) { return i.k === dhFilter; }); });
+      var chips = Object.keys(DH_LABELS).filter(function(k) { return k === 'all' || counts[k]; }).map(function(k) { return '<button type="button" class="dh-chip' + (dhFilter === k ? ' on' : '') + '" onclick="dhFilter=\'' + k + '\';renderDataHealth()">' + DH_LABELS[k] + ' <b>' + (k === 'all' ? issues.length : counts[k]) + '</b></button>'; }).join('');
+      el.innerHTML = '<div class="dh-bar" onclick="dhOpen=!dhOpen;renderDataHealth()"><span class="dh-dot warn"></span><b>Data health:</b>&nbsp;' + issues.length + ' record' + (issues.length === 1 ? '' : 's') + ' missing data or worth a look<span class="dh-caret">' + (dhOpen ? '&#x25B2;' : '&#x25BC;') + '</span></div>'
+        + (dhOpen ? '<div class="dh-body"><div class="dh-chips">' + chips + '</div><div class="table-wrapper" style="border-radius:12px"><table class="pp-table dh-table" style="min-width:820px"><thead><tr><th>Organization</th><th>Status</th><th>Issues</th><th>Rep</th><th>Updated</th><th></th></tr></thead><tbody>'
+          + shown.slice(0, 60).map(function(x) { var d = x.item; return '<tr><td><div class="pp-org-cell"><div class="pp-org-avatar" style="background:' + getOrgColor(d.organization || '?') + '">' + ppEsc(getOrgInitials(d.organization || '?')) + '</div><div><div class="pp-org-name">' + ppEsc(d.organization || '(no organization)') + '</div><div class="pp-org-sub">' + ppEsc(d.contact || 'no contact') + ' &middot; ' + ppEsc(d.email) + '</div></div></div></td><td><span class="status-badge ' + ppEsc(d.pipelineStatus) + '">' + (PP_STATUS_LABELS[d.pipelineStatus] || ppEsc(d.pipelineStatus)) + '</span></td><td><div class="dh-issues">' + x.issues.map(function(i) { return '<span class="pp-chip ' + (i.k === 'junk' || i.k === 'dup' ? 'on-hold' : 'need-to-book') + '">' + ppEsc(i.l) + '</span>'; }).join('') + '</div></td><td><select class="rep-select" onchange="assignRep(\'' + d.sheetType + '\',' + d.rowIndex + ',this.value)">' + getRepOptions(d.accountRep) + '</select></td><td class="time-ago">' + ppEsc(timeAgo(d.lastUpdated)) + '</td><td style="white-space:nowrap;text-align:right"><button class="pp-btn" style="padding:6px 10px;font-size:11px" onclick="quickEditSubmission(\'' + ppEsc(d.email) + '\',this)">Fix</button> <button class="pp-btn danger" style="padding:6px 10px;font-size:11px" onclick="archiveRow(\'' + d.sheetType + '\',' + d.rowIndex + ',\'' + ppEsc(d.email) + '\')">Archive</button></td></tr>'; }).join('')
+          + '</tbody></table></div>' + (shown.length > 60 ? '<div class="pp-toolbar-note" style="padding:8px 4px">Showing 60 of ' + shown.length + '. Narrow with a filter chip.</div>' : '') + '</div>' : '');
+    }
+    function openDataHealth() { dhOpen = true; dhFilter = 'all'; switchView('pipeline'); setTimeout(renderDataHealth, 50); }
+
+    // ---- sidebar layout + header title ----
+    var PP_VIEW_TITLES = { dashboard: ['Onboarding', 'Dashboard'], pipeline: ['Onboarding', 'Pipeline'], calendar: ['Onboarding', 'Go-Live Calendar'], activity: ['Onboarding', 'Activity'], customers: ['Client Success', 'Customer Success'], credentials: ['Client Success', 'Client Credentials'], tradeshows: ['Sales', 'Trade Shows'] };
+    function ppSetHeaderTitle(view) { var t = document.getElementById('hdrTitle'); if (!t || !PP_VIEW_TITLES[view]) return; t.innerHTML = '<span class="crumb">' + PP_VIEW_TITLES[view][0] + '</span><b>' + PP_VIEW_TITLES[view][1] + '</b>'; }
+    function ppLayoutInit() {
+      var tabs = document.querySelector('.view-tabs'), dash = document.getElementById('dashboard'), main = document.querySelector('.main-content'); if (!tabs || !dash || !main) return;
+      var wide = window.innerWidth >= 1024, side = document.getElementById('ppSide');
+      if (wide) {
+        if (!side) {
+          side = document.createElement('aside'); side.id = 'ppSide'; side.className = 'pp-side';
+          var logo = document.querySelector('.header-logo');
+          side.innerHTML = '<div class="pp-side-logo">' + (logo ? '<img src="' + logo.getAttribute('src') + '" alt="PracticePlan">' : '') + '</div><div class="pp-side-nav"></div><div class="pp-side-foot"><kbd>1</kbd>-<kbd>7</kbd> switch &middot; <kbd>/</kbd> search &middot; <kbd>N</kbd> new</div>';
+          dash.insertBefore(side, dash.firstChild);
+        }
+        var nav = side.querySelector('.pp-side-nav'); if (tabs.parentNode !== nav) nav.appendChild(tabs);
+        document.body.classList.add('pp-sidebar');
+      } else {
+        if (tabs.parentNode !== main) main.insertBefore(tabs, main.firstChild);
+        document.body.classList.remove('pp-sidebar');
+      }
+      var active = document.querySelector('.view-content.active'); if (active) ppSetHeaderTitle(active.id.replace('View', ''));
+      setTimeout(ppTabInk, 40);
+    }
+    window.addEventListener('resize', function() { clearTimeout(window._ppLayoutT); window._ppLayoutT = setTimeout(ppLayoutInit, 120); });
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ppLayoutInit); else ppLayoutInit();
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
     document.addEventListener('touchmove', function(e) {
