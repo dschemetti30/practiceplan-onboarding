@@ -1498,6 +1498,84 @@
     .mt-repbar b{text-align:right}
     @media(max-width:1200px){.mt-days{grid-template-columns:repeat(4,1fr)}.mt-day{min-height:120px}.mt-lower{grid-template-columns:1fr}}
     @media(max-width:768px){.mt-days{grid-template-columns:1fr}.mt-day.empty{display:none}.mt-day{min-height:0}}
+    /* ---- to-do highlighting + attention flash + tracked links + logos ---- */
+    .ts-todo-banner{margin:18px 0 -6px;padding:12px 14px;border-radius:12px;background:#fef3c7;border:1px solid rgba(217,119,6,0.3);font-size:12.5px;color:#92400e;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+    .ts-todo-banner span{background:#fff;border:1px solid rgba(217,119,6,0.35);padding:2px 9px;border-radius:50px;font-weight:700;font-size:11px}
+    [data-theme="dark"] .ts-todo-banner{background:rgba(251,191,36,0.12);color:#fbbf24}
+    [data-theme="dark"] .ts-todo-banner span{background:transparent}
+    .pp-form input.pp-todo,.pp-form select.pp-todo,.pp-reps-pick.pp-todo{border-color:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,0.25);background:#fffbeb}
+    .pp-form label.pp-todo-label{color:#b45309}
+    .pp-form label.pp-todo-label::after{content:' \\2022 to do';font-weight:700}
+    @keyframes ppFlash{0%,100%{box-shadow:var(--sh-xs)}50%{box-shadow:0 0 0 4px rgba(245,158,11,0.55),var(--sh-md)}}
+    .pipeline-card.pp-flash{animation:ppFlash 1.2s ease-in-out 4;border-color:#f59e0b}
+    .lp-utm{margin:0 0 12px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+    .lp-utm-t{width:100%;font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:2px}
+    .lp-utm-b{font:inherit;font-size:10.5px;font-weight:600;padding:4px 9px;border-radius:50px;border:1px solid var(--border);background:var(--bg);color:var(--text2);cursor:pointer;transition:all var(--t-fast)}
+    .lp-utm-b:hover{border-color:var(--pp-blue);color:var(--pp-blue)}
+    .lp-utm-b.mine{border-color:var(--pp-green);color:var(--pp-green);background:rgba(0,168,79,0.08)}
+    .pp-logo{width:32px;height:32px;border-radius:9px;object-fit:contain;background:#fff;border:1px solid var(--border);flex-shrink:0;padding:3px;box-sizing:border-box}
+    .pp-logo.lg{width:44px;height:44px;border-radius:12px}
+    /* ---- client overview v2 ---- */
+    .pp-org-avatar.pp-av{position:relative;overflow:hidden}
+    .pp-org-avatar.pp-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;padding:3px;box-sizing:border-box}
+    .ca-th{cursor:pointer;user-select:none;white-space:nowrap}
+    .ca-th .sort-arrow{opacity:0.3;margin-left:4px;font-size:8px}
+    .ca-th.on{color:var(--pp-blue)}.ca-th.on .sort-arrow{opacity:1;color:var(--pp-blue)}
+    .ca-row{cursor:pointer}
+    .ca-row.open td{background:rgba(0,118,187,0.04)}
+    .ca-caret{font-size:9px;color:var(--text3);width:12px;flex-shrink:0}
+    .ca-row.open .ca-caret{color:var(--pp-blue)}
+    .ca-detail td{background:var(--card-2);padding:0;white-space:normal}
+    .ca-detail-wrap{padding:14px 18px 18px 46px;border-left:3px solid var(--pp-blue);animation:ppViewIn .25s var(--ease) both}
+    .ca-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:14px}
+    .ca-fact{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0;font-size:12px;color:var(--text2)}
+    .ca-fact>span:first-child{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+    .ca-fact b{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ca-fact a{color:var(--pp-blue);text-decoration:none;cursor:pointer}
+    .ca-groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+    .ca-group h4{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin:0 0 8px;display:flex;justify-content:space-between}
+    .ca-checks{display:flex;flex-wrap:wrap;gap:6px}
+    .ca-check{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:11.5px;font-weight:600;padding:5px 10px 5px 6px;border-radius:50px;border:1px solid var(--border);background:var(--card);color:var(--text2);cursor:pointer;transition:all var(--t-fast)}
+    .ca-check i{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-style:normal;color:#fff;background:transparent}
+    .ca-check:hover{border-color:var(--pp-blue)}
+    .ca-check.on{border-color:var(--pp-green);background:rgba(0,168,79,0.08);color:var(--text)}
+    .ca-check.on i{background:var(--pp-green);border-color:var(--pp-green)}
+    .ca-check-box{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:#fff;flex-shrink:0}
+    .ca-check-box.on{background:var(--pp-green);border-color:var(--pp-green)}
+    .ca-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .ca-field{display:flex;flex-direction:column;gap:3px;font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em}
+    .ca-field input{padding:8px 10px;border-radius:9px;border:1px solid var(--border);background:var(--card);font:inherit;font-size:12.5px;color:var(--text);text-transform:none;letter-spacing:0}
+    .ca-score{display:flex;align-items:center;gap:8px;min-width:110px}
+    .ca-score-bar{flex:1;height:8px;border-radius:5px;background:var(--bg);overflow:hidden}
+    .ca-score-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pp-blue),var(--pp-green));border-radius:5px}
+    .ca-score span{font-size:11px;font-weight:700;color:var(--text2);font-variant-numeric:tabular-nums}
+    #customersView>*:not(#closeAccounts){display:none}
+    /* ---- submissions board ---- */
+    .sub-group{--stage:#94a3b8}
+    .sub-dot{width:10px;height:10px;border-radius:50%;background:var(--stage);display:inline-block}
+    .sub-table{table-layout:fixed;min-width:1080px}
+    .sub-table th:nth-child(1){width:20%}.sub-table th:nth-child(2){width:16%}.sub-table th:nth-child(3){width:11%}.sub-table th:nth-child(4){width:10%}.sub-table th:nth-child(5){width:11%}.sub-table th:nth-child(6){width:9%}.sub-table th:nth-child(7){width:10%}.sub-table th:nth-child(8){width:7%}.sub-table th:nth-child(9){width:6%}
+    .sub-table td{overflow:hidden;text-overflow:ellipsis}
+    .sub-bar{display:flex;align-items:center;gap:8px}
+    .sub-bar-track{flex:1;height:8px;border-radius:5px;background:var(--bg);overflow:hidden;min-width:50px}
+    .sub-bar-track i{display:block;height:100%;border-radius:5px;transition:width .5s var(--ease)}
+    .sub-bar span{font-size:11px;font-weight:700;color:var(--text2);font-variant-numeric:tabular-nums}
+    .sub-docs{display:flex;gap:6px;margin-top:4px}
+    .sub-docs a{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;color:var(--pp-green);text-decoration:none}
+    .sub-docs a svg{width:11px;height:11px}
+    #submissionsView .table-section>.table-wrapper,#submissionsView #mobileCards{display:none}
+    .sub-analytics{margin-bottom:14px}
+    .sub-analytics-body{margin-top:12px;animation:ppViewIn .3s var(--ease) both}
+    @media(max-width:768px){#submissionsView .table-section>.table-wrapper{display:none}#submissionsView #mobileCards{display:block}.ca-detail-wrap{padding:12px}}
+    /* ---- signed docs ---- */
+    .docs-status{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-top:10px}
+    .docs-status div{background:var(--bg);border-radius:10px;padding:8px 10px;font-size:12px;color:var(--text2)}
+    .docs-status b{display:block;color:var(--text);font-size:13px}
+    .ca-table{table-layout:fixed;min-width:1040px}
+    .ca-table th:nth-child(1){width:23%}.ca-table th:nth-child(2){width:11%}.ca-table th:nth-child(3){width:11%}.ca-table th:nth-child(4){width:11%}.ca-table th:nth-child(5){width:6%}.ca-table th:nth-child(6){width:13%}.ca-table th:nth-child(7){width:11%}.ca-table th:nth-child(8){width:5%}.ca-table th:nth-child(9){width:8%}.ca-table th:nth-child(10){width:5%}
+    .ca-table td{overflow:hidden;text-overflow:ellipsis}
+    .ca-table td.ca-detail-cell,.ca-detail td{overflow:visible}
+    .sub-table th:nth-child(1){width:19%}.sub-table th:nth-child(2){width:14%}.sub-table th:nth-child(3){width:12%}.sub-table th:nth-child(4){width:10%}.sub-table th:nth-child(5){width:11%}.sub-table th:nth-child(6){width:9%}.sub-table th:nth-child(7){width:10%}.sub-table th:nth-child(8){width:7%}.sub-table th:nth-child(9){width:8%}
   </style>
 </head>
 <body>
@@ -1596,6 +1674,7 @@
       </div>
 
       <div class="view-content" id="submissionsView">
+        <div class="sub-analytics" id="subAnalytics"><div class="dh-bar" onclick="var b=document.getElementById('subAnalyticsBody');b.style.display=b.style.display==='none'?'':'none';this.querySelector('.dh-caret').innerHTML=b.style.display==='none'?'&#x25BC;':'&#x25B2;'"><span class="dh-dot"></span><b>Form analytics</b>&nbsp;conversion, completion time, form overview, pipeline, team, checklists<span class="dh-caret">&#x25BC;</span></div><div class="sub-analytics-body" id="subAnalyticsBody" style="display:none">
         <div class="stats-row">
           <div class="stat-card"><h3>Form Conversions</h3><div class="conversions-card" id="conversionsCard"></div></div>
           <div class="stat-card"><h3>Form Completion Metrics</h3><div class="time-stats-container"><div class="time-hero"><div class="time-hero-ring"><svg width="100" height="100" viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="42"/><circle class="progress" id="timeRingProgress" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="264"/></svg><div class="time-hero-value"><span class="num" id="avgTime">-</span><span class="unit" id="avgTimeUnit">days</span></div></div><div class="time-hero-info"><div class="label">Average Time to Complete</div><div class="desc">From first save to final submission</div></div></div><div class="time-range"><div class="time-range-item"><div class="val" id="fastestTime">-</div><div class="lbl">Fastest</div></div><div class="time-range-item"><div class="val" id="slowestTime">-</div><div class="lbl">Slowest</div></div></div></div></div>
@@ -1604,6 +1683,7 @@
           <div class="stat-card"><h3>Team Assignments</h3><div class="rep-chart" id="repChart"></div></div>
           <div class="stat-card"><h3>Checklist Completion</h3><div id="checklistChart"></div></div>
         </div>
+        </div></div>
         <div class="table-section">
           <div class="controls-row">
             <div class="section-title">Submissions</div>
@@ -1625,6 +1705,7 @@
               </div>
             </div>
           </div>
+          <div id="subBoard"></div>
           <div class="table-wrapper"><table><thead><tr><th onclick="sortBy('organization')">Organization <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('contact')">Contact <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('pipelineStatus')">Status <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('checklistCount')">Onboarding <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('launchCount')">Launch <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('goLiveDate')">Go Live <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('lastUpdated')" class="sorted">Updated <span class="sort-arrow">&#x25BC;</span></th><th onclick="sortBy('accountRep')">Rep <span class="sort-arrow">&#x25B2;</span></th><th>Actions</th></tr></thead><tbody id="tableBody"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table></div>
           <div class="mobile-cards" id="mobileCards"></div>
         </div>
@@ -1843,6 +1924,7 @@
         <div class="controls-row"><div class="section-title">Sales Tools &amp; Documents</div><div class="controls-right"><div class="controls-group actions-group"><button class="text-action-btn" onclick="openResourceModal(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Link</button><button class="text-action-btn pp-icon-only" title="Refresh" onclick="loadResources(true).then(renderResources)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button></div></div></div>
         <div id="resList"></div>
         <div class="res-drive"><div id="driveBrowser"></div></div>
+        <div class="res-drive" id="signedDocs"></div>
       </div>
 
       <!-- ===== Meetings view (Close) ===== -->
@@ -2399,6 +2481,7 @@
     }
 
     function renderTable() {
+      try { renderSubBoard(); } catch(e) { console.log('board:', e.message); }
       let filtered = getFilteredData();
       filtered.sort((a, b) => { let av, bv;
         if (sortField === 'checklistCount') { av = getChecklistCount(a.email); bv = getChecklistCount(b.email); }
@@ -4030,7 +4113,7 @@
       body.innerHTML = rows.map(function(c) {
         var cell = function(field, inner, cls) { return '<td class="pp-cell' + (cls ? ' ' + cls : '') + '" data-edit="' + field + '" data-id="' + ppEsc(c.id) + '" title="Click to edit">' + inner + '</td>'; };
         return '<tr data-id="' + ppEsc(c.id) + '">'
-          + cell('organization', '<div class="pp-org-cell"><div class="pp-org-avatar" style="background:' + getOrgColor(c.organization) + '">' + ppEsc(getOrgInitials(c.organization)) + '</div><div><div class="pp-org-name">' + ppEsc(c.organization) + '</div>' + (c.notes ? '<div class="pp-org-sub" title="' + ppEsc(c.notes) + '">' + ppEsc(c.notes) + '</div>' : '') + '</div></div>')
+          + cell('organization', '<div class="pp-org-cell">' + ppAvatar(c.organization, c.loginEmail, 32) + '<div><div class="pp-org-name">' + ppEsc(c.organization) + '</div>' + (c.notes ? '<div class="pp-org-sub" title="' + ppEsc(c.notes) + '">' + ppEsc(c.notes) + '</div>' : '') + '</div></div>')
           + cell('status', '<span class="pp-chip pick ' + c.status + '">' + statusLabel[c.status] + '<i class="caret"></i></span>')
           + cell('rep', '<div style="display:flex;align-items:center;gap:8px">' + ppRepAvatars(c.rep, 24) + '<span style="font-size:11px;color:var(--text2)">' + ppEsc(ppSplitReps(c.rep).map(ppRepName).join(', ')) + '</span></div>')
           + cell('adminName', c.adminName ? '<span class="contact-name">' + ppEsc(c.adminName) + '</span>' : '<span class="pp-placeholder">Name?</span>')
@@ -4251,7 +4334,7 @@
       var chip = function(field, list) { var val = s[field] || ''; var item = list.find(function(x) { return x.val === val; }) || list[0]; var label = val ? (item.short || item.label) : (field === 'registration' ? 'Register' : field === 'hotel' ? 'Hotel?' : 'Flight?'); return '<span class="pp-chip pick ' + (val || 'unset') + '" title="' + ppEsc(item.label) + '">' + ppEsc(label) + '<i class="caret"></i></span>'; };
       var out = '<span class="ts-outcome"><span><b>Leads</b>' + ppEsc(s.leads || '-') + '</span><span><b>Demos</b>' + ppEsc(s.demos || '-') + '</span><span><b>Deals</b>' + ppEsc(s.deals || '-') + '</span></span>';
       return '<tr data-id="' + ppEsc(s.id) + '"' + (s._isPast ? ' class="past"' : '') + '>'
-        + cell('details', '<div class="pp-org-cell"><div><div class="pp-org-name">' + ppEsc(s.name) + (s.podcast ? ' <span title="Includes podcast" style="color:var(--pp-blue);display:inline-flex;vertical-align:middle;width:12px;height:12px">' + ppSvg('mic') + '</span>' : '') + (s.link ? ' <a class="ts-link" href="' + ppEsc(s.link) + '" target="_blank" rel="noopener" title="Open event site" style="vertical-align:middle">' + ppSvg('link') + '</a>' : '') + (typeof lpChipForShow === 'function' ? lpChipForShow(s) : '') + '</div><div class="pp-org-sub">' + (s.location ? ppEsc(s.location) : '<span class="pp-placeholder">Location?</span>') + '</div></div></div>')
+        + cell('details', '<div class="pp-org-cell"><div><div class="pp-org-name">' + ppEsc(s.name) + (s.link ? ' <a class="ts-link" href="' + ppEsc(s.link) + '" target="_blank" rel="noopener" title="Open event site" style="vertical-align:middle">' + ppSvg('link') + '</a>' : '') + (typeof lpChipForShow === 'function' ? lpChipForShow(s) : '') + '</div><div class="pp-org-sub">' + (s.location ? ppEsc(s.location) : '<span class="pp-placeholder">Location?</span>') + '</div></div></div>')
         + cell('dates', '<div class="ts-date' + (soon ? ' soon' : '') + '">' + ppFmtRange(s._start, s._end) + '<span class="sub">' + when + '</span></div>')
         + cell('audience', '<span class="pp-chip pick aud-' + (s.audience || 'other') + (s.audience ? '' : ' unset') + '" title="' + ppEsc(tsAudLabel(s.audience)) + '">' + ppEsc(s.audience ? ((TS_AUDIENCES.find(function(a) { return a.val === s.audience; }) || {}).short || tsAudLabel(s.audience)) : 'Audience?') + '<i class="caret"></i></span>')
         + cell('reps', ppRepAvatars(s.reps, 26))
@@ -4285,7 +4368,7 @@
       var upcoming = tsList.filter(function(s) { return !s.archived && !s._isPast && s._start; }).sort(function(a, b) { return a._start < b._start ? -1 : 1; }).slice(0, 4);
       nextEl.innerHTML = (tsScope === 'upcoming' && !tsSearch && tsAudFilter === 'all' && tsRepFilter === 'all' && !tsMyShows) ? upcoming.map(function(s) {
         var soon = s._daysUntil <= 21;
-        return '<div class="ts-next-card' + (soon ? ' soon' : '') + '" onclick="openTsModal(\'' + ppEsc(s.id) + '\')"><div class="ts-next-days">' + (s._isLive ? 'Happening now' : s._daysUntil === 0 ? 'Today' : 'In ' + s._daysUntil + ' day' + (s._daysUntil === 1 ? '' : 's')) + '</div><div class="ts-next-name">' + ppEsc(s.name) + '</div><div class="ts-next-meta">' + ppFmtRange(s._start, s._end) + (s.location ? ' &middot; ' + ppEsc(s.location.replace(/, USA$/, '')) : '') + '</div><div class="ts-next-foot">' + ppRepAvatars(s.reps, 22) + '<div class="ts-next-todo">' + (s._todo.length ? s._todo.map(function(t) { return '<span class="pp-chip need-to-book">' + ppEsc(t) + '</span>'; }).join('') : '<span class="pp-chip booked">Ready</span>') + '</div></div></div>';
+        return '<div class="ts-next-card' + (soon ? ' soon' : '') + '" onclick="openTsModal(\'' + ppEsc(s.id) + '\',{todo:true})"><div class="ts-next-days">' + (s._isLive ? 'Happening now' : s._daysUntil === 0 ? 'Today' : 'In ' + s._daysUntil + ' day' + (s._daysUntil === 1 ? '' : 's')) + '</div><div class="ts-next-name">' + ppEsc(s.name) + '</div><div class="ts-next-meta">' + ppFmtRange(s._start, s._end) + (s.location ? ' &middot; ' + ppEsc(s.location.replace(/, USA$/, '')) : '') + '</div><div class="ts-next-foot">' + ppRepAvatars(s.reps, 22) + '<div class="ts-next-todo">' + (s._todo.length ? s._todo.map(function(t) { return '<span class="pp-chip need-to-book">' + ppEsc(t) + '</span>'; }).join('') : '<span class="pp-chip booked">Ready</span>') + '</div></div></div>';
       }).join('') : '';
       var pastRows = tsScope === 'upcoming' ? tsList.filter(function(s) { return !s.archived && s._isPast && tsMatches(s); }).sort(tsSortByStart) : [];
       if (!rows.length && !pastRows.length) { groupsEl.innerHTML = '<div class="ts-group"><div class="pp-empty"><strong>No shows match</strong>' + (tsList.length ? 'Try a different scope, audience, or rep.' : 'Add your first show, or import the Monday.com export.') + '</div></div>'; return; }
@@ -4336,11 +4419,12 @@
     }
     // ---- add / edit modal ----
     function openTsModal(id, focusOutcomes) {
+      var opts = (focusOutcomes && typeof focusOutcomes === 'object') ? focusOutcomes : { outcomes: !!focusOutcomes };
       var s = id ? tsList.find(function(x) { return x.id === id; }) : null; var isNew = !s;
       s = s || { id: '', name: '', audience: '', reps: '', eventDate: '', exhibitStart: '', exhibitEnd: '', location: '', link: '', registration: '', cost: '', boothSize: '', podcast: '', hotel: '', flight: '', leads: '', demos: '', deals: '', plannedQuarter: '', notes: '', archived: '' };
       var opt = function(list, val) { return list.map(function(x) { return '<option value="' + x.val + '"' + (val === x.val ? ' selected' : '') + '>' + x.label + '</option>'; }).join(''); };
       var html = '<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + (isNew ? 'Add Trade Show' : ppEsc(s.name)) + '</h2><div class="modal-subtitle">' + (isNew ? 'A conference, workshop, or regional meeting' : ppFmtRange(s._start, s._end) + (s.location ? ' &middot; ' + ppEsc(s.location) : '')) + '</div></div>'
-        + '<div class="modal-body"><div class="detail-section" style="margin-top:20px"><h3>Event</h3><div class="pp-form">'
+        + '<div class="modal-body">' + (opts.todo && !isNew && s._todo.length ? '<div class="ts-todo-banner"><b>' + s._todo.length + ' to do before this show:</b> ' + s._todo.map(function(t) { return '<span>' + ppEsc(t) + '</span>'; }).join('') + '</div>' : '') + '<div class="detail-section" style="margin-top:20px"><h3>Event</h3><div class="pp-form">'
         + '<div class="full"><label>Show / Event Name</label><input id="tf_name" value="' + ppEsc(s.name) + '" placeholder="e.g. THSADA Fall Forum" autofocus></div>'
         + '<div><label>Audience</label><select id="tf_aud"><option value="">Select...</option>' + opt(TS_AUDIENCES, s.audience) + '</select></div>'
         + '<div><label>Location</label><input id="tf_loc" value="' + ppEsc(s.location) + '" placeholder="City, ST"></div>'
@@ -4354,7 +4438,7 @@
         + '<div><label>Registration</label><select id="tf_reg">' + opt(TS_REG, s.registration) + '</select></div>'
         + '<div><label>Event Cost ($)</label><input id="tf_cost" value="' + ppEsc(s.cost) + '" placeholder="2200" inputmode="numeric"></div>'
         + '<div><label>Booth Size</label><input id="tf_booth" list="tfBoothList" value="' + ppEsc(s.boothSize) + '" placeholder="Pick or type" autocomplete="off"><datalist id="tfBoothList">' + TS_BOOTHS.map(function(b) { return '<option value="' + b + '">'; }).join('') + '</datalist></div>'
-        + '<div><label>Includes Podcast</label><select id="tf_pod"><option value=""' + (!s.podcast ? ' selected' : '') + '>No</option><option value="TRUE"' + (s.podcast ? ' selected' : '') + '>Yes</option></select></div>'
+
         + '<div><label>Hotel</label><select id="tf_hotel">' + opt(TS_TRAVEL, s.hotel) + '</select></div>'
         + '<div><label>Flight</label><select id="tf_flight">' + opt(TS_TRAVEL, s.flight) + '</select></div>'
         + '<div class="full"><label>PP Reps Attending</label><div class="pp-reps-pick" id="tf_reps">' + credRepOptions(s.reps) + '</div></div>'
@@ -4368,13 +4452,14 @@
         + '<div class="pp-modal-actions">' + (isNew ? '<span></span>' : '<div style="display:flex;gap:8px"><button class="pp-btn danger" onclick="deleteTs(\'' + ppEsc(s.id) + '\')">Delete</button><button class="pp-btn" onclick="archiveTs(\'' + ppEsc(s.id) + '\')">' + (s.archived ? 'Unarchive' : 'Archive') + '</button></div>') + '<div class="right"><button class="pp-btn" onclick="closeModal()">Cancel</button><button class="pp-btn primary" id="tsSaveBtn" onclick="saveTsModal(\'' + ppEsc(s.id) + '\')">' + (isNew ? 'Add Show' : 'Save Changes') + '</button></div></div>'
         + '</div>';
       ppOpenModal(html);
-      if (focusOutcomes) setTimeout(function() { var sec = document.getElementById('tf_outcomes_section'); if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' }); var l = document.getElementById('tf_leads'); if (l) l.focus(); }, 60);
+      if (opts.todo && !isNew) setTimeout(function() { var map = { 'Register': 'tf_reg', 'Hotel': 'tf_hotel', 'Flight': 'tf_flight', 'Booth size': 'tf_booth', 'Assign rep': 'tf_reps' }; s._todo.forEach(function(t) { var el = document.getElementById(map[t]); if (el) { el.classList.add('pp-todo'); var lab = el.closest('div'); if (lab && lab.querySelector('label')) lab.querySelector('label').classList.add('pp-todo-label'); } }); var first = document.querySelector('.pp-todo'); if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
+      if (opts.outcomes) setTimeout(function() { var sec = document.getElementById('tf_outcomes_section'); if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' }); var l = document.getElementById('tf_leads'); if (l) l.focus(); }, 60);
     }
     async function saveTsModal(id) {
       var name = document.getElementById('tf_name').value.trim();
       if (!name) { showToast('Show name is required', 'error'); document.getElementById('tf_name').focus(); return; }
       var existing = id ? tsList.find(function(x) { return x.id === id; }) : null;
-      var s = Object.assign({}, existing || {}, { id: id || ppNewId('ts'), name: name, audience: document.getElementById('tf_aud').value, location: document.getElementById('tf_loc').value.trim(), eventDate: document.getElementById('tf_date').value, exhibitStart: document.getElementById('tf_es').value, exhibitEnd: document.getElementById('tf_ee').value, plannedQuarter: document.getElementById('tf_pq').value.trim(), link: document.getElementById('tf_link').value.trim(), registration: document.getElementById('tf_reg').value, cost: document.getElementById('tf_cost').value.replace(/[^0-9.]/g, ''), boothSize: document.getElementById('tf_booth').value.trim(), podcast: document.getElementById('tf_pod').value, hotel: document.getElementById('tf_hotel').value, flight: document.getElementById('tf_flight').value, reps: Array.from(document.querySelectorAll('#tf_reps .pp-rep-opt.on')).map(function(el) { return el.getAttribute('data-rep'); }).join(', '), leads: document.getElementById('tf_leads').value.trim(), demos: document.getElementById('tf_demos').value.trim(), deals: document.getElementById('tf_deals').value.trim(), notes: document.getElementById('tf_notes').value.trim(), archived: existing ? existing.archived : '' });
+      var s = Object.assign({}, existing || {}, { id: id || ppNewId('ts'), name: name, audience: document.getElementById('tf_aud').value, location: document.getElementById('tf_loc').value.trim(), eventDate: document.getElementById('tf_date').value, exhibitStart: document.getElementById('tf_es').value, exhibitEnd: document.getElementById('tf_ee').value, plannedQuarter: document.getElementById('tf_pq').value.trim(), link: document.getElementById('tf_link').value.trim(), registration: document.getElementById('tf_reg').value, cost: document.getElementById('tf_cost').value.replace(/[^0-9.]/g, ''), boothSize: document.getElementById('tf_booth').value.trim(), podcast: existing ? existing.podcast : '', hotel: document.getElementById('tf_hotel').value, flight: document.getElementById('tf_flight').value, reps: Array.from(document.querySelectorAll('#tf_reps .pp-rep-opt.on')).map(function(el) { return el.getAttribute('data-rep'); }).join(', '), leads: document.getElementById('tf_leads').value.trim(), demos: document.getElementById('tf_demos').value.trim(), deals: document.getElementById('tf_deals').value.trim(), notes: document.getElementById('tf_notes').value.trim(), archived: existing ? existing.archived : '' });
       tsDerive(s);
       var btn = document.getElementById('tsSaveBtn'); btn.disabled = true; btn.textContent = 'Saving...';
       try {
@@ -4568,7 +4653,7 @@
       else {
         var shows = tsList.filter(function(s) { return !s.archived && !s._isPast && s._start && s.registration !== 'skip'; }).sort(function(a, b) { return a._start < b._start ? -1 : 1; }).slice(0, 4);
         showsEl.innerHTML = shows.length ? shows.map(function(s) {
-          return '<div class="pp-up-item" onclick="openTsModal(\'' + ppEsc(s.id) + '\')">' + ppDateBox(s._start, s._daysUntil <= 21)
+          return '<div class="pp-up-item" onclick="openTsModal(\'' + ppEsc(s.id) + '\',{todo:true})">' + ppDateBox(s._start, s._daysUntil <= 21)
             + '<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(s.name) + '</div><div class="pp-up-sub">' + ppInDays(s._daysUntil) + (s.location ? ' &middot; ' + ppEsc(s.location.replace(/, USA$/, '')) : '') + '</div></div>'
             + '<div class="pp-up-right">' + (s._todo.length ? '<span class="pp-chip need-to-book" title="' + ppEsc(s._todo.join(', ')) + '">' + s._todo.length + ' to do</span>' : ppRepAvatars(s.reps, 22)) + '</div></div>';
         }).join('') + ppUpFoot('tradeshows', 'All shows') : '<div class="pp-up-empty">No upcoming shows on the calendar.</div>' + ppUpFoot('tradeshows', 'Add a show');
@@ -4603,20 +4688,28 @@
       // --- needs attention
       var items = [];
       var overdue = allData.filter(function(d) { return d.goLiveDate && d.goLiveDate < today && ['published', 'launched', 'on-hold'].indexOf(d.pipelineStatus) < 0; });
-      if (overdue.length) items.push({ cls: 'red', title: overdue.length + ' go-live date' + (overdue.length === 1 ? ' has' : 's have') + ' passed', sub: overdue.slice(0, 3).map(function(d) { return d.organization; }).join(', ') + (overdue.length > 3 ? ' +' + (overdue.length - 3) : ''), go: "switchView('calendar')" });
+      if (overdue.length) items.push({ cls: 'red', title: overdue.length + ' go-live date' + (overdue.length === 1 ? ' has' : 's have') + ' passed', sub: overdue.slice(0, 3).map(function(d) { return d.organization + ' (' + ppFmtDate(d.goLiveDate, { month: 'short', day: 'numeric' }) + ')'; }).join(', ') + (overdue.length > 3 ? ' +' + (overdue.length - 3) : '') + ' &middot; still not launched', go: "ppGoPipeline('overdue')" });
       var stale = allData.filter(function(d) { return d.isStale; });
-      if (stale.length) items.push({ cls: 'amber', title: stale.length + ' onboarding' + (stale.length === 1 ? '' : 's') + ' gone quiet', sub: 'No district activity in ' + STALE_DAYS + '+ days', go: "switchView('pipeline')" });
+      if (stale.length) items.push({ cls: 'amber', title: stale.length + ' onboarding' + (stale.length === 1 ? '' : 's') + ' gone quiet', sub: stale.slice(0, 3).map(function(d) { return d.organization + ' (' + d.daysSinceUpdate + 'd)'; }).join(', ') + (stale.length > 3 ? ' +' + (stale.length - 3) + ' more' : '') + ' &middot; no district activity in ' + STALE_DAYS + '+ days', go: "ppGoPipeline('stale')" });
       if (tsLoaded) tsList.filter(function(s) { return !s.archived && !s._isPast && s._daysUntil !== null && s._daysUntil <= 60 && s._todo.length; }).sort(function(a, b) { return a._daysUntil - b._daysUntil; }).slice(0, 3).forEach(function(s) {
-        items.push({ cls: 'amber', title: s.name, sub: s._todo.join(' &middot; ') + ' &middot; ' + ppInDays(s._daysUntil).toLowerCase(), go: "openTsModal('" + ppEsc(s.id) + "')" });
+        items.push({ cls: 'amber', title: s.name, sub: s._todo.join(' &middot; ') + ' &middot; ' + ppInDays(s._daysUntil).toLowerCase(), go: "openTsModal('" + ppEsc(s.id) + "',{todo:true})" });
       });
-      if (closeAcctLoaded && closeKeyPresent) { var staleAcc = closeAccounts.filter(function(a) { return a.closeLeadId && (a._days === null || a._days > 60); }).length; if (staleAcc) items.push({ cls: 'amber', title: staleAcc + ' client account' + (staleAcc === 1 ? '' : 's') + ' with no Close touch in 60 days', sub: 'No call, email, or meeting logged', go: "closeAcctFilter='stale';switchView('customers')" }); }
-      if (leadsLoaded) { var unl = leadList.filter(function(l) { return !l.assignedTo && ['won', 'lost'].indexOf(l.status) < 0; }).length; if (unl) items.push({ cls: 'red', title: unl + ' inbound lead' + (unl === 1 ? '' : 's') + ' unassigned', sub: 'Waiting for a rep', go: "switchView('leads')" }); var idle = leadList.filter(function(l) { return l.assignedTo && l.status === 'new' && (Date.now() - new Date(l.receivedAt)) > 48 * 3600000; }).length; if (idle) items.push({ cls: 'amber', title: idle + ' lead' + (idle === 1 ? '' : 's') + ' not contacted in 48h', sub: 'Assigned but still marked New', go: "switchView('leads')" }); }
-      if (credLoaded) { var missing = credList.filter(function(c) { return c.status !== 'inactive' && (!c.loginEmail || !c.loginPassword); }).length; if (missing) items.push({ cls: 'blue', title: missing + ' client' + (missing === 1 ? '' : 's') + ' missing a login', sub: 'Active or onboarding without email or password', go: "switchView('credentials')" }); }
+      if (closeAcctLoaded && closeKeyPresent) { var staleL = closeAccounts.filter(function(a) { return a.closeLeadId && (a._days === null || a._days > 60); }); if (staleL.length) items.push({ cls: 'amber', title: staleL.length + ' client account' + (staleL.length === 1 ? '' : 's') + ' with no Close touch in 60 days', sub: staleL.slice(0, 3).map(function(a) { return a.organization + (a._days !== null ? ' (' + a._days + 'd)' : ''); }).join(', ') + (staleL.length > 3 ? ' +' + (staleL.length - 3) + ' more' : ''), go: "closeAcctFilter='stale';switchView('customers')" }); }
+      if (leadsLoaded) { var unlL = leadList.filter(function(l) { return !l.assignedTo && ['won', 'lost'].indexOf(l.status) < 0; }); if (unlL.length) items.push({ cls: 'red', title: unlL.length + ' inbound lead' + (unlL.length === 1 ? '' : 's') + ' unassigned', sub: unlL.slice(0, 3).map(function(l) { return l.name || l.org; }).join(', ') + (unlL.length > 3 ? ' +' + (unlL.length - 3) : '') + ' &middot; waiting for a rep', go: "leadStatusFilter='unassigned';switchView('leads')" }); var idleL = leadList.filter(function(l) { return l.assignedTo && l.status === 'new' && (Date.now() - new Date(l.receivedAt)) > 48 * 3600000; }); if (idleL.length) items.push({ cls: 'amber', title: idleL.length + ' lead' + (idleL.length === 1 ? '' : 's') + ' not contacted in 48h', sub: idleL.slice(0, 3).map(function(l) { return (l.name || l.org) + ' (' + ppRepName(l.assignedTo) + ')'; }).join(', ') + (idleL.length > 3 ? ' +' + (idleL.length - 3) : ''), go: "leadStatusFilter='new';switchView('leads')" }); }
+      if (credLoaded) { var missL = credList.filter(function(c) { return c.status !== 'inactive' && (!c.loginEmail || !c.loginPassword); }); if (missL.length) items.push({ cls: 'blue', title: missL.length + ' client' + (missL.length === 1 ? '' : 's') + ' missing a login', sub: missL.slice(0, 3).map(function(c) { return c.organization; }).join(', ') + (missL.length > 3 ? ' +' + (missL.length - 3) : '') + ' &middot; no email or password on file', go: "switchView('credentials')" }); }
       var icons = { red: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>', amber: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>', blue: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>' };
       attEl.innerHTML = items.length ? items.slice(0, 5).map(function(it) {
         return '<div class="pp-up-item" onclick="' + it.go + '"><div class="pp-att-icon ' + it.cls + '">' + icons[it.cls] + '</div><div class="pp-up-main"><div class="pp-up-title">' + it.title + '</div><div class="pp-up-sub">' + it.sub + '</div></div><div class="pp-up-right" style="color:var(--text3)">&rsaquo;</div></div>';
       }).join('') : '<div class="pp-up-empty"><span style="color:var(--pp-green);font-weight:600">All clear.</span> Nothing needs attention right now.</div>';
       try { renderHQ(); } catch(e) { console.log('hq:', e.message); }
+    }
+
+    // Jump to the pipeline and flash the cards that triggered an attention item
+    function ppGoPipeline(kind) {
+      switchView('pipeline');
+      var today = ppTodayISO();
+      var names = allData.filter(function(x) { return kind === 'stale' ? x.isStale : (x.goLiveDate && x.goLiveDate < today && ['published', 'launched', 'on-hold'].indexOf(x.pipelineStatus) < 0); }).map(function(x) { return (x.organization || '').toLowerCase(); });
+      setTimeout(function() { var first = null; document.querySelectorAll('.pipeline-card').forEach(function(c) { var t = c.textContent.toLowerCase(); if (names.some(function(n) { return n && t.indexOf(n) >= 0; })) { c.classList.add('pp-flash'); if (!first) first = c; } }); if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(function() { document.querySelectorAll('.pp-flash').forEach(function(c) { c.classList.remove('pp-flash'); }); }, 6000); }, 350);
     }
     // =====================================================================
     // TRADE SHOWS: INSIGHTS (breakdowns, charts, rep coverage)  (Sept 2026)
@@ -4774,6 +4867,7 @@
       else if (cell.closest('#credTableBody')) { e.stopPropagation(); credCellEdit(id, field, cell); }
       else if (cell.closest('#leadTableBody')) { e.stopPropagation(); leadCellEdit(id, field, cell); }
       else if (cell.closest('#lpTableBody')) { e.stopPropagation(); lpCellEdit(id, field, cell); }
+      else if (cell.closest('#subBoard')) { e.stopPropagation(); subCellEdit(id, field, cell); }
     });
     document.addEventListener('keydown', function(e) { if (e.key === 'Enter' && e.target && e.target.classList && e.target.classList.contains('ts-add-input') && !e.target.classList.contains('lp-add-input')) { e.preventDefault(); tsQuickAdd(e.target); } });
 
@@ -5043,7 +5137,7 @@
       var cell = function(field, inner, cls) { return '<td class="pp-cell' + (cls ? ' ' + cls : '') + '" data-edit="' + field + '" data-id="' + ppEsc(l.id) + '" title="Click to edit">' + inner + '</td>'; };
       var st = LEAD_STATUSES.find(function(s) { return s.val === l.status; }) || LEAD_STATUSES[0], touch = leadTouch(l);
       return '<tr data-id="' + ppEsc(l.id) + '"' + (['won', 'lost'].indexOf(l.status) >= 0 ? ' class="past"' : '') + '>'
-        + cell('details', '<div class="pp-org-cell"><div class="pp-org-avatar" style="background:' + getOrgColor(l.org || l.name || '?') + '">' + ppEsc(getOrgInitials(l.name || l.org || '?')) + '</div><div><div class="pp-org-name">' + ppEsc(l.name || '(no name)') + (l.origin === 'form' ? ' <span class="lead-origin" title="Came in from a landing page">&#9889;</span>' : '') + '</div><div class="pp-org-sub">' + (l.org ? ppEsc(l.org) : '<span class="pp-placeholder">Organization?</span>') + '</div></div></div>')
+        + cell('details', '<div class="pp-org-cell">' + ppAvatar(l.org || l.name || '?', l.email, 32) + '<div><div class="pp-org-name">' + ppEsc(l.name || '(no name)') + (l.origin === 'form' ? ' <span class="lead-origin" title="Came in from a landing page">&#9889;</span>' : '') + '</div><div class="pp-org-sub">' + (l.org ? ppEsc(l.org) : '<span class="pp-placeholder">Organization?</span>') + '</div></div></div>')
         + cell('contact', '<div class="lead-contact">' + (l.email ? '<span class="pp-copyable" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(l.email) + '\',\'Email\')">' + ppEsc(l.email) + '</span>' : '<span class="pp-placeholder">Email?</span>') + (l.phone ? '<span class="pp-copyable sub" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(l.phone) + '\',\'Phone\')">' + ppEsc(formatPhone(l.phone)) + '</span>' : '') + '</div>')
         + cell('source', l.source ? '<span class="pp-chip aud-other">' + ppEsc(l.source) + '</span>' : '<span class="pp-placeholder">Source?</span>')
         + '<td><div class="ts-date">' + leadAge(l) + '<span class="sub">' + ppFmtDate(l.receivedAt.slice(0, 10), { month: 'short', day: 'numeric' }) + '</span></div></td>'
@@ -5195,8 +5289,19 @@
       var cats = RES_CATEGORIES.filter(function(c) { return byCat[c]; }).concat(Object.keys(byCat).filter(function(c) { return RES_CATEGORIES.indexOf(c) < 0; }));
       el.innerHTML = cats.length ? cats.map(function(c) { return '<div class="res-cat"><h3>' + ppEsc(c) + '</h3><div class="res-grid">' + byCat[c].map(function(r) { var ic = resIcon('', r.url); return '<a class="res-card" href="' + ppEsc(r.url) + '" target="_blank" rel="noopener"><span class="res-ic" style="background:' + ic.c + '">' + ic.t + '</span><span class="res-body"><span class="res-t">' + ppEsc(r.title) + '</span>' + (r.description ? '<span class="res-d">' + ppEsc(r.description) + '</span>' : '') + (r.owner ? '<span class="res-o">' + ppEsc(r.owner) + '</span>' : '') + '</span><button class="pp-mini-btn" title="Edit" onclick="event.preventDefault();event.stopPropagation();openResourceModal(\'' + ppEsc(r.id) + '\')">' + ppSvg('edit') + '</button></a>'; }).join('') + '</div></div>'; }).join('')
         : '<div class="pp-empty"><strong>No sales tools yet</strong>Add links to the decks, one-pagers, MOU templates, and guides the team reaches for, or connect a Drive folder below and browse it live.</div>';
-      renderDrive();
+      renderDrive(); renderSignedDocs();
     }
+    async function renderSignedDocs() {
+      var el = document.getElementById('signedDocs'); if (!el) return;
+      try {
+        var r = await ppApi('getSignedDocsStatus'); if (!r.success) throw new Error(r.error || 'unavailable');
+        if (!r.folder) { el.innerHTML = '<div class="drive-connect"><div><b>Signed documents (SignNow)</b><div class="pp-toolbar-note">Paste the Drive folder where SignNow drops completed MOUs and direct deposit forms. Every 30 minutes the tool matches new PDFs to a district by name and ticks MOU Signed or Direct Deposit Received on that onboarding, with a link to the file.</div></div><div class="drive-connect-form"><input id="docsFolderInput" placeholder="https://drive.google.com/drive/folders/..."><button class="pp-btn primary" onclick="setSignedDocsFolder()">Watch folder</button></div></div>'; return; }
+        var fid = String(r.folder).replace(/.*\/folders\//, '').replace(/[?#].*$/, '');
+        el.innerHTML = '<div class="drive-connect" style="border-style:solid"><div style="flex:1"><b>Signed documents (SignNow)</b><div class="pp-toolbar-note">Watching <a href="https://drive.google.com/drive/folders/' + ppEsc(fid) + '" target="_blank" rel="noopener">this folder</a>' + (r.triggerOn ? ' every 30 minutes' : '') + '.</div><div class="docs-status"><div><b>' + (r.lastScan ? ppAgo(r.lastScan) : 'never') + '</b>last scan</div><div><b>' + (r.unmatched ? r.unmatched.split(' | ').length : 0) + '</b>files not matched to a district</div></div>' + (r.unmatched ? '<div class="pp-toolbar-note" style="margin-top:6px">Unmatched: ' + ppEsc(r.unmatched.slice(0, 300)) + '</div>' : '') + '</div><div style="display:flex;gap:8px"><button class="text-action-btn" onclick="scanSignedDocsNow(this)">Scan now</button><button class="text-action-btn" onclick="ppApi(\'setSignedDocsFolder\',{folder:\'\'}).then(renderSignedDocs)">Stop</button></div></div>';
+      } catch(e) { el.innerHTML = '<div class="pp-toolbar-note">Signed documents: ' + ppEsc(e.message) + ' (needs Extras v9)</div>'; }
+    }
+    async function setSignedDocsFolder() { var v = document.getElementById('docsFolderInput').value.trim(); if (!v) return; try { var r = await ppApi('setSignedDocsFolder', { folder: v }, 90000); if (!r.success) throw new Error(r.error); showToast('Watching the folder. First scan done.', 'success'); renderSignedDocs(); } catch(e) { showToast(e.message, 'error'); } }
+    async function scanSignedDocsNow(btn) { var o = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<svg class="pp-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></svg> Scanning...'; try { var r = await ppApi('scanSignedDocs', {}, 90000); if (!r.success) throw new Error(r.error); showToast(r.matched + ' document' + (r.matched === 1 ? '' : 's') + ' matched' + (r.unmatched && r.unmatched.length ? ', ' + r.unmatched.length + ' unmatched' : ''), 'success'); await loadChecklists(); renderSignedDocs(); renderTable(); updateStats(); } catch(e) { showToast(e.message, 'error'); } btn.disabled = false; btn.innerHTML = o; }
     async function renderDrive(folderId) {
       var dr = document.getElementById('driveBrowser'); if (!dr) return;
       if (!driveRoot && !folderId) { dr.innerHTML = '<div class="drive-connect"><div><b>Shared Drive</b><div class="pp-toolbar-note">Paste a Google Drive folder link and the team can browse it here. The Apps Script account needs access to the folder.</div></div><div class="drive-connect-form"><input id="driveRootInput" placeholder="https://drive.google.com/drive/folders/..."><button class="pp-btn primary" onclick="setDriveRoot()">Connect</button></div></div>'; return; }
@@ -5275,7 +5380,7 @@
     // ---- account health (Client Overview) ----
     async function loadCloseAccounts(force) {
       if (closeAcctLoaded && !force) return;
-      try { var r = await ppApi('getCloseAccounts'); if (r.success) { closeKeyPresent = r.keyPresent !== false; closeAccounts = (r.rows || []).map(function(a) { var o = {}; ['orgEmail', 'organization', 'closeLeadId', 'closeName', 'closeUrl', 'statusLabel', 'owner', 'ownerName', 'lastTouchAt', 'lastTouchType', 'lastTouchBy', 'openTasks', 'nextTaskDate', 'nextTaskText', 'matchedBy', 'syncedAt', 'sources', 'credStatus', 'credRep'].forEach(function(c) { o[c] = a[c] === undefined ? '' : String(a[c]); }); o.orgEmail = o.orgEmail.toLowerCase(); o.owner = o.owner.toLowerCase(); o._days = ppDaysSince(o.lastTouchAt); return o; }); closeAcctSyncedAt = r.syncedAt || ''; closeAcctLoaded = true; closeAcctError = ''; } else closeAcctError = r.error || 'Unknown error'; }
+      try { var r = await ppApi('getCloseAccounts'); if (r.success) { closeKeyPresent = r.keyPresent !== false; closeAccounts = (r.rows || []).map(function(a) { var o = {}; ['orgEmail', 'organization', 'closeLeadId', 'closeName', 'closeUrl', 'statusLabel', 'owner', 'ownerName', 'lastTouchAt', 'lastTouchType', 'lastTouchBy', 'openTasks', 'nextTaskDate', 'nextTaskText', 'matchedBy', 'syncedAt', 'sources', 'credStatus', 'credRep', 'domain', 'website'].forEach(function(c) { o[c] = a[c] === undefined ? '' : String(a[c]); }); o.orgEmail = o.orgEmail.toLowerCase(); o.owner = o.owner.toLowerCase(); o._days = ppDaysSince(o.lastTouchAt); return o; }); closeAcctSyncedAt = r.syncedAt || ''; closeAcctLoaded = true; closeAcctError = ''; } else closeAcctError = r.error || 'Unknown error'; }
       catch(e) { closeAcctError = e.message; }
     }
     async function syncCloseAccountsNow(btn) {
@@ -5284,23 +5389,6 @@
       if (btn) { btn.disabled = false; btn.innerHTML = orig; }
     }
     function closeAcctFor(email) { var e = String(email || '').toLowerCase(); return closeAccounts.find(function(a) { return a.orgEmail === e; }) || null; }
-    function renderCloseAccounts() {
-      var el = document.getElementById('closeAccounts'); if (!el) return;
-      if (!closeAcctLoaded) { el.innerHTML = '<div class="dh-bar" style="cursor:default"><span class="dh-dot"></span>' + (closeAcctError ? '<b>Close account health:</b>&nbsp;' + ppEsc(closeAcctError) : '<b>Close account health:</b>&nbsp;loading...') + '</div>'; return; }
-      if (!closeKeyPresent) { el.innerHTML = '<div class="dh-bar" style="cursor:default"><span class="dh-dot"></span><b>Close account health:</b>&nbsp;add CLOSE_API_KEY to the Apps Script project and run ppSetupCloseTriggers once.</div>'; return; }
-      var matched = closeAccounts.filter(function(a) { return a.closeLeadId; }), unmatched = closeAccounts.filter(function(a) { return !a.closeLeadId; });
-      var stale = matched.filter(function(a) { return a._days === null || a._days > 60; }), warm = matched.filter(function(a) { return a._days !== null && a._days <= 14; }), tasks = matched.reduce(function(n, a) { return n + (parseInt(a.openTasks) || 0); }, 0);
-      var shown = (closeAcctFilter === 'stale' ? stale : closeAcctFilter === 'unmatched' ? unmatched : closeAcctFilter === 'tasks' ? matched.filter(function(a) { return parseInt(a.openTasks) > 0; }) : matched).slice();
-      shown.sort(function(a, b) { if (closeAcctSort === 'stale') { var da = a._days === null ? 9999 : a._days, db = b._days === null ? 9999 : b._days; return db - da; } if (closeAcctSort === 'recent') { return (b.lastTouchAt || '') < (a.lastTouchAt || '') ? -1 : 1; } return a.organization.localeCompare(b.organization); });
-      var chip = function(key, label, n, cls) { return '<button type="button" class="dh-chip' + (closeAcctFilter === key ? ' on' : '') + '" onclick="closeAcctFilter=\'' + key + '\';renderCloseAccounts()">' + label + ' <b>' + n + '</b></button>'; };
-      var touchCell = function(a) { if (a._days === null) return '<span class="pp-chip on-hold">No touch on record</span>'; var cls = a._days > 60 ? 'on-hold' : a._days > 30 ? 'need-to-book' : 'booked'; return '<span class="pp-chip ' + cls + '" title="' + ppEsc(a.lastTouchType + (a.lastTouchBy ? ' by ' + a.lastTouchBy : '')) + '">' + (a._days === 0 ? 'Today' : a._days + 'd ago') + '</span><span class="ca-sub">' + ppEsc(a.lastTouchType) + (a.lastTouchBy ? ' &middot; ' + ppEsc(a.lastTouchBy.split(' ')[0]) : '') + '</span>'; };
-      el.innerHTML = '<div class="ca-panel"><div class="ca-head"><div><div class="ca-title">Account health from Close</div><div class="pp-toolbar-note">' + matched.length + ' of ' + closeAccounts.length + ' customer accounts matched to a Close lead (Close customer statuses + Client Credentials + onboarding records)' + (closeAcctSyncedAt ? ' &middot; synced ' + ppAgo(closeAcctSyncedAt) + ', hourly' : '') + '</div></div><div class="ca-actions"><div class="styled-select"><select onchange="closeAcctSort=this.value;renderCloseAccounts()"><option value="stale"' + (closeAcctSort === 'stale' ? ' selected' : '') + '>Stalest first</option><option value="recent"' + (closeAcctSort === 'recent' ? ' selected' : '') + '>Most recent touch</option><option value="name"' + (closeAcctSort === 'name' ? ' selected' : '') + '>A to Z</option></select></div><button class="text-action-btn" onclick="syncCloseAccountsNow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Sync now</button></div></div>'
-        + '<div class="dh-chips">' + chip('all', 'Matched', matched.length) + chip('stale', 'No touch in 60 days', stale.length) + chip('tasks', 'Open tasks', matched.filter(function(a) { return parseInt(a.openTasks) > 0; }).length) + chip('unmatched', 'Not found in Close', unmatched.length) + '<span class="pp-toolbar-note" style="align-self:center;margin-left:auto">' + warm.length + ' touched in the last 14 days</span></div>'
-        + (shown.length ? '<div class="table-wrapper" style="border-radius:12px"><table class="pp-table ca-table" style="min-width:900px"><thead><tr><th>Account</th><th>Close status</th><th>Owner</th><th>Last touch</th><th>Open tasks</th><th>Next task</th><th></th></tr></thead><tbody>'
-          + shown.slice(0, 80).map(function(a) { return '<tr' + (a._days !== null && a._days > 60 ? ' class="ca-stale"' : '') + '><td><div class="pp-org-cell"><div class="pp-org-avatar" style="background:' + getOrgColor(a.organization || a.orgEmail) + '">' + ppEsc(getOrgInitials(a.organization || a.orgEmail)) + '</div><div><div class="pp-org-name">' + ppEsc(a.organization || a.orgEmail) + '</div><div class="pp-org-sub">' + (a.sources || '').split(',').filter(Boolean).map(function(s) { return '<span class="ca-src ' + s + '">' + (s === 'close' ? 'Close customer' : s === 'credentials' ? 'Credentials' : 'Onboarding') + '</span>'; }).join('') + (a.closeName && a.closeName !== a.organization ? ' Close: ' + ppEsc(a.closeName) : '') + '</div></div></div></td><td>' + (a.statusLabel ? '<span class="pp-chip aud-other">' + ppEsc(a.statusLabel) + '</span>' : '-') + '</td><td>' + (a.owner && TEAM_MEMBERS.some(function(m) { return m.email === a.owner; }) ? '<div style="display:flex;align-items:center;gap:8px">' + ppRepAvatars(a.owner, 22) + ppEsc(ppRepName(a.owner)) + '</div>' : ppEsc(a.ownerName || '-')) + '</td><td>' + touchCell(a) + '</td><td>' + (parseInt(a.openTasks) ? '<b>' + a.openTasks + '</b>' : '<span class="pp-placeholder">none</span>') + '</td><td>' + (a.nextTaskDate ? '<div class="ts-date">' + ppFmtDate(a.nextTaskDate, { month: 'short', day: 'numeric' }) + '<span class="sub" title="' + ppEsc(a.nextTaskText) + '">' + ppEsc(a.nextTaskText.slice(0, 40)) + '</span></div>' : '<span class="pp-placeholder">-</span>') + '</td><td style="text-align:right">' + (a.closeUrl ? '<a class="pp-mini-btn ts-link" href="' + ppEsc(a.closeUrl) + '" target="_blank" rel="noopener" title="Open in Close">' + ppSvg('link') + '</a>' : '') + '</td></tr>'; }).join('')
-          + '</tbody></table></div>' : '<div class="pp-empty">' + (closeAcctFilter === 'unmatched' ? 'Every onboarding account was found in Close.' : 'Nothing in this view.') + '</div>')
-        + (closeAcctFilter === 'unmatched' && unmatched.length ? '<div class="pp-toolbar-note" style="padding:8px 4px">These were not found by contact email or organization name. Fix the name in Close or the onboarding record and the next sync will pick them up.</div>' : '') + '</div>';
-    }
     // =====================================================================
     // HQ DASHBOARD: greeting, KPIs, team pulse, onboarding snapshot, activity  (Sept 2026)
     // =====================================================================
@@ -5354,19 +5442,19 @@
     // =====================================================================
     // LANDING PAGES (conference pages -> leads source -> conference rep)
     // =====================================================================
-    var LP_COLS = ['id', 'title', 'url', 'showId', 'sourceKey', 'audience', 'notes', 'updatedAt', 'updatedBy'];
+    var LP_COLS = ['id', 'title', 'url', 'showId', 'sourceKey', 'audience', 'notes', 'reps', 'dates', 'utmLinks', 'updatedAt', 'updatedBy'];
     var lpList = [], lpLoaded = false, lpError = '', lpSearch = '';
     async function loadLandingPages(force) {
       if (lpLoaded && !force) return lpList;
       try { var r = await ppApi('getLandingPages'); if (r.success) { lpList = (r.rows || []).map(function(x) { var o = {}; LP_COLS.forEach(function(c) { o[c] = x[c] === undefined ? '' : String(x[c]); }); return o; }); lpLoaded = true; lpError = ''; } else lpError = r.error || 'Unknown error'; } catch(e) { lpError = e.message; }
       return lpList;
     }
-    function lpNormKey(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ''); }
+    function lpNormKey(s) { return String(s || '').toLowerCase().replace(/superintendents?/g, 'supt').replace(/association/g, 'assoc').replace(/administrators?|administration/g, 'admin').replace(/conference/g, 'conf').replace(/business officials?/g, 'sbo').replace(/[^a-z0-9]+/g, ''); }
     function lpSlug(url) { return String(url || '').replace(/^https?:\/\/[^/]+\//, '').replace(/[?#].*$/, '').replace(/\/$/, ''); }
     function lpShow(p) { return p.showId ? tsList.find(function(s) { return s.id === p.showId; }) || null : null; }
     function lpForShow(showId) { return lpList.filter(function(p) { return p.showId === showId; }); }
     function lpLeads(p) { var keys = [lpNormKey(p.sourceKey), lpNormKey(p.title), lpNormKey(lpSlug(p.url))].filter(Boolean); var show = lpShow(p); if (show) keys.push(lpNormKey(show.name)); return leadsLoaded ? leadList.filter(function(l) { var k = lpNormKey(l.source); return k && keys.some(function(x) { return x === k || k.indexOf(x) >= 0 || (x.length > 5 && x.indexOf(k) >= 0); }); }) : []; }
-    function lpRepFor(p) { var show = lpShow(p); return show ? show._reps : []; }
+    function lpRepFor(p) { var show = lpShow(p); var reps = show ? show._reps : []; if (!reps.length && p.reps) reps = ppSplitReps(p.reps); return reps; }
     async function lpQr(url, title) {
       try { await ppLoadScript('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'); } catch(e) { showToast('Could not load the QR generator', 'error'); return; }
       ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + ppEsc(title || 'Landing page') + '</h2><div class="modal-subtitle">Scan to open the landing page. Print it for the booth or drop it on a slide.</div></div><div class="modal-body"><div class="qr-wrap"><div id="qrTarget"></div><div class="qr-url">' + ppEsc(url) + '</div><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="pp-btn" onclick="ppCopy(\'' + ppEsc(url) + '\',\'Link\')">Copy link</button><button class="pp-btn primary" onclick="lpQrDownload(\'' + ppEsc(title || 'landing-page') + '\')">Download PNG</button></div></div></div>');
@@ -5380,6 +5468,8 @@
       var p = pages[0];
       return ' <span class="lp-chip" title="Landing page" onclick="event.stopPropagation();lpQuick(\'' + ppEsc(p.id) + '\',this)"><i></i>' + (pages.length > 1 ? pages.length + ' pages' : 'page') + '</span>';
     }
+    function lpUtm(p) { try { return JSON.parse(p.utmLinks || '{}'); } catch(e) { return {}; } }
+    function lpUtmMenu(p) { var u = lpUtm(p), keys = Object.keys(u); if (!keys.length) return ''; var me = (currentUser && currentUser.name || '').split(' ')[0]; return '<div class="lp-utm"><span class="lp-utm-t">Tracked links</span>' + keys.map(function(k) { var mine = me && k.toLowerCase().indexOf(me.toLowerCase()) === 0; return '<button type="button" class="lp-utm-b' + (mine ? ' mine' : '') + '" onclick="ppCopy(\'' + ppEsc(u[k]) + '\',\'' + ppEsc(k) + ' link\')" title="' + ppEsc(u[k]) + '">' + ppEsc(k.replace(/\s*-\s*Linkedin/i, ' · LinkedIn').replace(/^PracticePlan \(Brand\)/, 'Brand')) + '</button>'; }).join('') + '</div>'; }
     function lpQuick(id, anchor) {
       var p = lpList.find(function(x) { return x.id === id; }); if (!p) return;
       var show = lpShow(p), leads = lpLeads(p), reps = lpRepFor(p);
@@ -5393,7 +5483,7 @@
         + cell('title', '<div class="pp-org-cell"><div class="pp-org-avatar" style="background:' + getOrgColor(p.title || p.url) + '">' + ppEsc(getOrgInitials(p.title || lpSlug(p.url))) + '</div><div><div class="pp-org-name">' + ppEsc(p.title || lpSlug(p.url)) + '</div><div class="pp-org-sub">' + (p.audience ? ppEsc(p.audience) : '<span class="pp-placeholder">audience?</span>') + '</div></div></div>')
         + cell('url', p.url ? '<span class="lp-url"><a href="' + ppEsc(p.url) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + ppEsc(lpSlug(p.url) || p.url) + '</a><button class="pp-mini-btn" title="Copy link" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(p.url) + '\',\'Link\')">' + ppSvg('copy') + '</button><button class="pp-mini-btn" title="QR code" onclick="event.stopPropagation();lpQr(\'' + ppEsc(p.url) + '\',\'' + ppEsc(p.title) + '\')">&#9641;</button></span>' : '<span class="pp-placeholder">URL?</span>')
         + cell('showId', show ? '<div class="pp-org-name" style="max-width:220px">' + ppEsc(show.name) + '</div><div class="pp-org-sub">' + ppFmtRange(show._start, show._end) + '</div>' : '<span class="pp-chip need-to-book">Link a show<i class="caret"></i></span>')
-        + '<td>' + (reps.length ? ppRepAvatars(reps.join(','), 24) : (show ? '<span class="pp-placeholder">no rep on show</span>' : '<span class="pp-placeholder">rotation</span>')) + '</td>'
+        + cell('reps', reps.length ? '<div style="display:flex;align-items:center;gap:6px">' + ppRepAvatars(reps.join(','), 24) + (show && show._reps.length ? '' : '<span class="ca-sub">from page</span>') + '</div>' : '<span class="pp-chip need-to-book">Rotation<i class="caret"></i></span>')
         + cell('sourceKey', p.sourceKey ? '<code class="lp-key">' + ppEsc(p.sourceKey) + '</code>' : '<span class="pp-placeholder">auto</span>')
         + '<td><b>' + leads.length + '</b>' + (last ? '<span class="ca-sub">last ' + leadAge(last) + '</span>' : '') + '</td>'
         + cell('notes', p.notes ? '<span class="lead-note">' + ppEsc(p.notes) + '</span>' : '<span class="pp-placeholder">Add a note</span>')
@@ -5423,6 +5513,7 @@
         case 'url': ppInlineEdit(cell, { value: p.url, type: 'url', placeholder: 'https://', onSave: function(v) { save({ url: v }); } }); break;
         case 'sourceKey': ppInlineEdit(cell, { value: p.sourceKey, placeholder: 'What the form sends as Source', onSave: function(v) { save({ sourceKey: v }); } }); break;
         case 'notes': ppInlineEdit(cell, { value: p.notes, placeholder: 'Note', onSave: function(v) { save({ notes: v }); } }); break;
+        case 'reps': ppRepPicker(cell, ppSplitReps(p.reps), function(list) { save({ reps: list.join(', ') }); }); break;
         case 'showId': { var opts = [{ val: '', label: 'Not linked (rotation)', cls: 'unset' }].concat(tsList.filter(function(s) { return !s.archived; }).sort(function(a, b) { return (b._start || '') < (a._start || '') ? -1 : 1; }).map(function(s) { return { val: s.id, label: s.name + (s._start ? ' (' + ppFmtDate(s._start, { month: 'short', year: 'numeric' }) + ')' : ''), cls: s._isPast ? 'inactive' : 'aud-' + (s.audience || 'other') }; })); ppStatusPicker(cell, opts, p.showId, function(v) { save({ showId: v }); }); break; }
       }
     }
@@ -5433,20 +5524,37 @@
       document.getElementById('importOverlay').classList.add('active');
     }
     var lpImportRows = [];
+    function lpRepEmails(names) { return String(names || '').split(/[\/,;&+]| and /i).map(function(n) { n = n.trim().toLowerCase().replace(/[()?]/g, ''); if (!n || n === '--') return ''; var m = TEAM_MEMBERS.find(function(t) { return t.email === n || t.name.toLowerCase().indexOf(n) === 0 || t.email.split('@')[0].split('.').indexOf(n) >= 0; }); return m ? m.email : ''; }).filter(function(x, i, arr) { return x && arr.indexOf(x) === i; }); }
+    function lpMatchShow(title, dateStr, slug) {
+      var key = lpNormKey(title), sk = lpNormKey(slug), iso = ppNormalizeDate(dateStr);
+      var best = null, bestScore = 0;
+      tsList.forEach(function(s) { if (s.archived) return; var n = lpNormKey(s.name), score = 0; if (n && key) { if (n === key) score = 1; else if (key.indexOf(n) >= 0 || n.indexOf(key) >= 0) score = 0.7; else { var a = title.toLowerCase().replace(/superintendents?/g, 'supt').replace(/association/g, 'assoc').replace(/administrators?|administration/g, 'admin').split(/[^a-z0-9]+/).filter(function(t) { return t.length >= 2 && !/^(the|and|of|conference|conf|assoc|state|annual|school|schools)$/.test(t); }), hits = a.filter(function(t) { return n.indexOf(t) >= 0; }).length; score = a.length ? hits / a.length * 0.6 : 0; } } if (sk && n && (n.indexOf(sk.replace(/\d{4}$/, '')) >= 0)) score = Math.max(score, 0.65); if (iso && s._start) { var d = Math.abs(ppDaysBetween(iso, s._start)); if (d <= 3) score += 0.35; else if (d <= 14) score += 0.2; else if (d > 120) score -= 0.3; } if (score > bestScore) { bestScore = score; best = s; } });
+      return bestScore >= 0.6 ? best : null;
+    }
     async function handleLpImportFile(file) {
       if (!file) return;
       var rows; try { rows = await ppParseSpreadsheet(file); } catch(e) { showToast(e.message, 'error'); return; }
       var norm = function(v) { return String(v || '').trim().toLowerCase(); };
-      var hIdx = rows.findIndex(function(r) { return r.some(function(v) { return /url|link/.test(norm(v)); }); }); if (hIdx < 0) { showToast('Could not find a URL column', 'error'); return; }
+      var hIdx = rows.findIndex(function(r) { var h = r.map(norm); return h.some(function(v) { return /main url|^url$|landing page url|^link$|url slug/.test(v); }) || (h.indexOf('conference') >= 0 && h.some(function(v) { return /url|link/.test(v); })); });
+      if (hIdx < 0) { showToast('Could not find a header row with a URL column', 'error'); return; }
       var h = rows[hIdx].map(norm), find = function(re) { for (var i = 0; i < h.length; i++) if (re.test(h[i])) return i; return -1; };
-      var C = { url: find(/url|link/), title: find(/conference|event|show|^name|title|page/), source: find(/source|key|slug|utm/), audience: find(/audience/), notes: find(/note|comment/), date: find(/date/) };
-      var existing = {}; lpList.forEach(function(p) { existing[lpNormKey(p.url)] = p; });
+      var C = { main: find(/^main url$|landing page url|^url$|^page url$/), slug: find(/url slug|^slug$/), title: find(/^conference$|^event$|^show$|^name$|^title$|^page$/), reps: find(/^reps?$|^rep\(s\)$/), audience: find(/audience/), dates: find(/^dates?$/), source: find(/source tag|source key|^source$|^tag$/), notes: find(/note|comment/) };
+      var utmCols = []; h.forEach(function(x, i) { if (i !== C.main && /utm|qr|linkedin|email outreach|text|direct message|flyer/.test(x)) utmCols.push({ i: i, label: rows[hIdx][i] }); });
+      // if there is no explicit main URL column, take the first column whose values start with http
+      if (C.main < 0) { for (var ci = 0; ci < h.length; ci++) { if (rows.slice(hIdx + 1, hIdx + 6).some(function(r) { return /^https?:\/\//i.test(String(r[ci] || '')); }) && !/utm|linkedin|qr|email|text/.test(h[ci])) { C.main = ci; break; } } }
+      var existing = {}; lpList.forEach(function(p) { existing[lpNormKey(p.url.replace(/[?#].*$/, ''))] = p; if (p.sourceKey) existing['src:' + lpNormKey(p.sourceKey)] = p; });
       lpImportRows = [];
-      rows.slice(hIdx + 1).forEach(function(r) { var g = function(k) { return C[k] >= 0 ? String(r[C[k]] || '').trim() : ''; }; var url = g('url'); if (!/^https?:\/\//i.test(url)) { if (/\./.test(url)) url = 'https://' + url; else return; } var slug = lpSlug(url); var title = g('title') || slug.split('/').pop().replace(/[-_]+/g, ' ');
-        var show = tsList.find(function(s) { var k = lpNormKey(title), sk = lpNormKey(s.name); return k && sk && (k === sk || k.indexOf(sk) >= 0 || sk.indexOf(k) >= 0); });
-        var prev = existing[lpNormKey(url)];
-        lpImportRows.push({ id: prev ? prev.id : '', title: title, url: url, showId: show ? show.id : (prev ? prev.showId : ''), sourceKey: g('source') || slug.split('/').pop(), audience: g('audience') || (show ? tsAudLabel(show.audience) : ''), notes: g('notes'), _update: !!prev, _show: show ? show.name : '' }); });
-      document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2)">' + lpImportRows.length + ' pages found, ' + lpImportRows.filter(function(x) { return x._show; }).length + ' matched to a show by name, ' + lpImportRows.filter(function(x) { return x._update; }).length + ' already in the list (updated).</p><table class="import-preview-table"><thead><tr><th>Page</th><th>URL</th><th>Show</th></tr></thead><tbody>' + lpImportRows.slice(0, 15).map(function(x) { return '<tr><td>' + ppEsc(x.title) + '</td><td>' + ppEsc(lpSlug(x.url)) + '</td><td>' + (x._show ? ppEsc(x._show) : '<span class="pp-placeholder">unlinked</span>') + '</td></tr>'; }).join('') + (lpImportRows.length > 15 ? '<tr><td colspan="3" style="color:var(--text3)">...and ' + (lpImportRows.length - 15) + ' more</td></tr>' : '') + '</tbody></table><div style="display:flex;gap:10px;justify-content:flex-end"><button class="import-btn secondary" onclick="closeImport()">Cancel</button><button class="import-btn" id="lpRunBtn" onclick="runLpImport()"' + (lpImportRows.length ? '' : ' disabled') + '>Import ' + lpImportRows.length + '</button></div>';
+      rows.slice(hIdx + 1).forEach(function(r) {
+        var g = function(k) { return C[k] >= 0 ? String(r[C[k]] || '').trim() : ''; };
+        var url = g('main'); if (!/^https?:\/\//i.test(url)) { var firstHttp = ''; utmCols.some(function(u) { var v = String(r[u.i] || '').trim(); if (/^https?:\/\//i.test(v)) { firstHttp = v.replace(/[?#].*$/, ''); return true; } return false; }); url = firstHttp || (g('slug') ? 'https://conferences.practice-plan.com/' + g('slug').replace(/^\//, '') : ''); }
+        if (!url) return;
+        var title = g('title') || lpSlug(url).split('/').pop().replace(/[-_]+/g, ' '); if (!title || /^(conference|--)$/i.test(title)) return;
+        var utm = {}; utmCols.forEach(function(u) { var v = String(r[u.i] || '').trim(); if (/^https?:\/\//i.test(v)) utm[u.label] = v; });
+        var show = lpMatchShow(title, g('dates'), g('slug'));
+        var prev = existing[lpNormKey(url.replace(/[?#].*$/, ''))] || (g('source') ? existing['src:' + lpNormKey(g('source'))] : null);
+        lpImportRows.push({ id: prev ? prev.id : '', title: title, url: url.replace(/[?#].*$/, ''), showId: show ? show.id : (prev ? prev.showId : ''), sourceKey: g('source') || g('slug') || lpSlug(url).split('/').pop(), audience: g('audience').replace(/^--$/, '') || (show ? tsAudLabel(show.audience) : ''), notes: g('notes'), reps: lpRepEmails(g('reps')).join(', '), dates: g('dates').replace(/^--$/, ''), utmLinks: JSON.stringify(utm), _update: !!prev, _show: show ? show.name : '' });
+      });
+      document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2)">' + lpImportRows.length + ' pages found, ' + lpImportRows.filter(function(x) { return x._show; }).length + ' matched to a show by name and date, ' + lpImportRows.filter(function(x) { return x.reps; }).length + ' with reps from the sheet, ' + lpImportRows.filter(function(x) { return x._update; }).length + ' already in the list (updated).' + (utmCols.length ? ' UTM variants (' + utmCols.length + ' per page) are kept for the copy menu.' : '') + '</p><table class="import-preview-table"><thead><tr><th>Page</th><th>Source tag</th><th>Show</th><th>Reps</th></tr></thead><tbody>' + lpImportRows.slice(0, 15).map(function(x) { return '<tr><td>' + ppEsc(x.title) + '</td><td><code>' + ppEsc(x.sourceKey) + '</code></td><td>' + (x._show ? ppEsc(x._show) : '<span class="pp-placeholder">unlinked</span>') + '</td><td>' + ppEsc(x.reps.split(',').map(function(e) { return ppRepName(e.trim()); }).filter(Boolean).join(', ') || '-') + '</td></tr>'; }).join('') + (lpImportRows.length > 15 ? '<tr><td colspan="4" style="color:var(--text3)">...and ' + (lpImportRows.length - 15) + ' more</td></tr>' : '') + '</tbody></table><div style="display:flex;gap:10px;justify-content:flex-end"><button class="import-btn secondary" onclick="closeImport()">Cancel</button><button class="import-btn" id="lpRunBtn" onclick="runLpImport()"' + (lpImportRows.length ? '' : ' disabled') + '>Import ' + lpImportRows.length + '</button></div>';
     }
     async function runLpImport() {
       var btn = document.getElementById('lpRunBtn'); btn.disabled = true; btn.textContent = 'Importing...';
@@ -5565,6 +5673,133 @@
       document.querySelector('.import-title').textContent = 'Import an Onboarding Workbook';
       document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2);margin-bottom:14px">Upload the district\'s completed onboarding workbook (.xlsx): the General Information tab plus one tab per campus. The importer reads policies, every campus, every space with availability, approvers, notification list, pricing and amenities, skips the sample block and blank placeholders, and shows you everything it found before anything is saved. The result behaves exactly like a form submission.</p><button class="import-btn" onclick="document.getElementById(\'obImportFile\').click()">Choose Workbook</button>';
       document.getElementById('importOverlay').classList.add('active');
+    }
+    // =====================================================================
+    // CLIENT OVERVIEW v2: sortable account table, expandable success rows, logos
+    // =====================================================================
+    function ppLogoDomain(s) { s = String(s || '').toLowerCase().trim(); if (!s) return ''; if (/@/.test(s)) s = s.split('@')[1]; s = s.replace(/^https?:\/\//, '').replace(/^www\./, '').split(/[/?#]/)[0]; return /^(gmail|yahoo|hotmail|outlook|icloud|aol)\./.test(s) ? '' : s; }
+    function ppAvatar(name, domainOrEmail, size) {
+      var d = ppLogoDomain(domainOrEmail), sz = size || 32;
+      return '<div class="pp-org-avatar pp-av" style="background:' + getOrgColor(name || '?') + ';width:' + sz + 'px;height:' + sz + 'px">' + ppEsc(getOrgInitials(name || '?')) + (d ? '<img alt="" loading="lazy" src="https://icons.duckduckgo.com/ip3/' + ppEsc(d) + '.ico" onerror="this.remove()">' : '') + '</div>';
+    }
+    var CA_GROUPS = [
+      { title: 'Health & usage', items: [['suc_first_booking', '1st booking'], ['suc_revenue_milestone', 'Revenue milestone'], ['suc_expansion', 'Expansion'], ['suc_checkin_30', '30-day check-in'], ['suc_checkin_60', '60-day check-in'], ['suc_checkin_90', '90-day check-in'], ['suc_photos', 'Photos live'], ['suc_playoffportal', 'Playoff portal']] },
+      { title: 'Launch kit', items: [['website_link', 'Info on their website'], ['short_link', 'Branded short link'], ['qr_flyer', 'QR flyer'], ['social_graphics', 'Social graphics'], ['best_practices', 'Best practices doc'], ['day15_followup', '15-day check-in']] },
+      { title: 'Advocacy', items: [['suc_testimonial', 'Testimonial'], ['suc_review', 'Review'], ['suc_referral', 'Referral'], ['suc_case_study', 'Case study'], ['suc_renewed_y1', 'Renewed year 1']] }
+    ];
+    var CA_ALL = CA_GROUPS.reduce(function(a, g) { return a.concat(g.items.map(function(i) { return i[0]; })); }, []);
+    var caSort = { key: 'touch', dir: 'desc' }, caOpen = {};
+    function caKey(a) { return a.orgEmail; }
+    function caChecks(a) { var cl = getChecklist(caKey(a)); return CA_ALL.filter(function(id) { return cl[id] === true || cl[id] === 'true'; }).length; }
+    function caField(a, id) { var v = getChecklist(caKey(a))[id]; return (v === undefined || v === null || v === false || v === 'false' || v === true || v === 'true') ? '' : String(v); }
+    function caOnboarding(a) { return allData.find(function(d) { return d.email === a.orgEmail; }) || null; }
+    function caSortBy(key) { if (caSort.key === key) caSort.dir = caSort.dir === 'asc' ? 'desc' : 'asc'; else caSort = { key: key, dir: key === 'name' ? 'asc' : 'desc' }; renderCloseAccounts(); }
+    function renderCloseAccounts() {
+      var el = document.getElementById('closeAccounts'); if (!el) return;
+      if (!closeAcctLoaded) { el.innerHTML = '<div class="dh-bar" style="cursor:default"><span class="dh-dot"></span>' + (closeAcctError ? '<b>Accounts:</b>&nbsp;' + ppEsc(closeAcctError) : '<b>Accounts:</b>&nbsp;loading...') + '</div>'; return; }
+      var list = closeAccounts.slice();
+      var matched = list.filter(function(a) { return a.closeLeadId; }), unmatched = list.filter(function(a) { return !a.closeLeadId; });
+      var stale = matched.filter(function(a) { return a._days === null || a._days > 60; }), tasks = matched.filter(function(a) { return parseInt(a.openTasks) > 0; });
+      var shown = closeAcctFilter === 'stale' ? stale : closeAcctFilter === 'unmatched' ? unmatched : closeAcctFilter === 'tasks' ? tasks : list;
+      var q = (document.getElementById('caSearch') || {}).value || ''; q = q.toLowerCase().trim();
+      if (q) shown = shown.filter(function(a) { return [a.organization, a.closeName, a.ownerName, a.statusLabel, a.credStatus].join(' ').toLowerCase().indexOf(q) >= 0; });
+      var val = function(a) { switch (caSort.key) { case 'name': return (a.organization || '').toLowerCase(); case 'status': return (a.statusLabel || a.credStatus || '').toLowerCase(); case 'owner': return (a.ownerName || ppRepName(a.owner) || '').toLowerCase(); case 'touch': return a._days === null ? 99999 : a._days; case 'tasks': return parseInt(a.openTasks) || 0; case 'next': return a.nextTaskDate || '9999'; case 'score': return caChecks(a); case 'nps': return parseFloat(caField(a, 'suc_nps_field')) || -1; case 'renewal': return caField(a, 'suc_renewal_field') || '9999'; } return ''; };
+      shown.sort(function(a, b) { var x = val(a), y = val(b); var r = x < y ? -1 : x > y ? 1 : (a.organization || '').localeCompare(b.organization || ''); return caSort.dir === 'asc' ? r : -r; });
+      var chip = function(key, label, n) { return '<button type="button" class="dh-chip' + (closeAcctFilter === key ? ' on' : '') + '" onclick="closeAcctFilter=\'' + key + '\';renderCloseAccounts()">' + label + ' <b>' + n + '</b></button>'; };
+      var th = function(key, label, extra) { return '<th class="ca-th' + (caSort.key === key ? ' on' : '') + '" onclick="caSortBy(\'' + key + '\')"' + (extra || '') + '>' + label + '<span class="sort-arrow">' + (caSort.key === key ? (caSort.dir === 'asc' ? '&#x25B2;' : '&#x25BC;') : '&#x25B4;') + '</span></th>'; };
+      var touchCell = function(a) { if (!a.closeLeadId) return '<span class="pp-placeholder">not in Close</span>'; if (a._days === null) return '<span class="pp-chip on-hold">No touch on record</span>'; var cls = a._days > 60 ? 'on-hold' : a._days > 30 ? 'need-to-book' : 'booked'; return '<span class="pp-chip ' + cls + '">' + (a._days === 0 ? 'Today' : a._days + 'd ago') + '</span><span class="ca-sub">' + ppEsc(a.lastTouchType) + (a.lastTouchBy ? ' &middot; ' + ppEsc(a.lastTouchBy.split(' ')[0]) : '') + '</span>'; };
+      var rows = shown.slice(0, 150).map(function(a) {
+        var k = caKey(a), open = !!caOpen[k], score = caChecks(a), nps = caField(a, 'suc_nps_field'), renewal = caField(a, 'suc_renewal_field'), ob = caOnboarding(a);
+        var srcs = (a.sources || '').split(',').filter(Boolean).map(function(s) { return '<span class="ca-src ' + s + '">' + (s === 'close' ? 'Close' : s === 'credentials' ? 'Credentials' : 'Onboarding') + '</span>'; }).join('');
+        return '<tr class="ca-row' + (open ? ' open' : '') + (a._days !== null && a._days > 60 ? ' ca-stale' : '') + '" data-key="' + ppEsc(k) + '" onclick="caToggle(\'' + ppEsc(k) + '\')">'
+          + '<td><div class="pp-org-cell"><span class="ca-caret">' + (open ? '&#x25BC;' : '&#x25B6;') + '</span>' + ppAvatar(a.organization, a.domain || a.orgEmail, 34) + '<div><div class="pp-org-name">' + ppEsc(a.organization) + '</div><div class="pp-org-sub">' + srcs + (a.closeName && a.closeName !== a.organization ? ' ' + ppEsc(a.closeName) : '') + '</div></div></div></td>'
+          + '<td>' + (a.statusLabel ? '<span class="pp-chip aud-other">' + ppEsc(a.statusLabel) + '</span>' : a.credStatus ? '<span class="pp-chip ' + ppEsc(a.credStatus) + '">' + ppEsc(a.credStatus) + '</span>' : '<span class="pp-placeholder">-</span>') + (ob ? '<span class="ca-sub">' + (PP_STATUS_LABELS[ob.pipelineStatus] || ob.pipelineStatus) + '</span>' : '') + '</td>'
+          + '<td>' + (a.owner && TEAM_MEMBERS.some(function(m) { return m.email === a.owner; }) ? '<div style="display:flex;align-items:center;gap:8px">' + ppRepAvatars(a.owner, 22) + ppEsc(ppRepName(a.owner)) + '</div>' : (a.ownerName ? ppEsc(a.ownerName) : (a.credRep ? '<div style="display:flex;align-items:center;gap:8px">' + ppRepAvatars(a.credRep, 22) + ppEsc(ppSplitReps(a.credRep).map(ppRepName).join(', ')) + '</div>' : '<span class="pp-placeholder">-</span>'))) + '</td>'
+          + '<td>' + touchCell(a) + '</td>'
+          + '<td>' + (parseInt(a.openTasks) ? '<b>' + a.openTasks + '</b>' : '<span class="pp-placeholder">none</span>') + '</td>'
+          + '<td>' + (a.nextTaskDate ? '<div class="ts-date">' + ppFmtDate(a.nextTaskDate, { month: 'short', day: 'numeric' }) + '<span class="sub" title="' + ppEsc(a.nextTaskText) + '">' + ppEsc(a.nextTaskText.slice(0, 32)) + '</span></div>' : '<span class="pp-placeholder">-</span>') + '</td>'
+          + '<td><div class="ca-score"><div class="ca-score-bar"><i style="width:' + Math.round(score / CA_ALL.length * 100) + '%"></i></div><span>' + score + '/' + CA_ALL.length + '</span></div></td>'
+          + '<td>' + (nps ? '<span class="pp-chip ' + (parseFloat(nps) >= 9 ? 'booked' : parseFloat(nps) >= 7 ? 'need-to-book' : 'on-hold') + '">' + ppEsc(nps) + '</span>' : '<span class="pp-placeholder">-</span>') + '</td>'
+          + '<td>' + (renewal ? '<span class="ts-date">' + ppFmtDate(ppNormalizeDate(renewal), { month: 'short', day: 'numeric', year: 'numeric' }) + '</span>' : '<span class="pp-placeholder">-</span>') + '</td>'
+          + '<td style="text-align:right;white-space:nowrap">' + (a.closeUrl ? '<a class="pp-mini-btn ts-link" href="' + ppEsc(a.closeUrl) + '" target="_blank" rel="noopener" title="Open in Close" onclick="event.stopPropagation()">' + ppSvg('link') + '</a>' : '') + (ob ? ' <button class="pp-mini-btn" title="Onboarding record" onclick="event.stopPropagation();viewDetails(allData.find(function(x){return x.email===\'' + ppEsc(ob.email) + '\'}))">' + ppSvg('expand') + '</button>' : '') + '</td>'
+          + '</tr>' + (open ? '<tr class="ca-detail"><td colspan="10">' + caDetail(a) + '</td></tr>' : '');
+      }).join('');
+      el.innerHTML = '<div class="ca-panel"><div class="ca-head"><div><div class="ca-title">Client Overview</div><div class="pp-toolbar-note">' + list.length + ' customer accounts &middot; ' + matched.length + ' matched to Close' + (closeAcctSyncedAt ? ' &middot; synced ' + ppAgo(closeAcctSyncedAt) + ', hourly' : '') + '</div></div><div class="ca-actions"><input class="search-input" id="caSearch" placeholder="Search accounts..." value="' + ppEsc(q) + '" oninput="renderCloseAccounts();var s=document.getElementById(\'caSearch\');s.focus();s.setSelectionRange(s.value.length,s.value.length)" style="width:200px"><button class="text-action-btn" onclick="syncCloseAccountsNow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Sync with Close</button></div></div>'
+        + '<div class="dh-chips">' + chip('all', 'All accounts', list.length) + chip('stale', 'No touch in 60 days', stale.length) + chip('tasks', 'Open tasks', tasks.length) + chip('unmatched', 'Not linked to Close', unmatched.length) + '<span class="pp-toolbar-note" style="align-self:center;margin-left:auto">Click a column to sort. Click a row for the success checklist.</span></div>'
+        + (shown.length ? '<div class="table-wrapper" style="border-radius:12px"><table class="pp-table ca-table" style="min-width:1100px"><thead><tr>' + th('name', 'Account') + th('status', 'Status') + th('owner', 'Owner') + th('touch', 'Last touch') + th('tasks', 'Tasks') + th('next', 'Next task') + th('score', 'Success') + th('nps', 'NPS') + th('renewal', 'Renewal') + '<th></th></tr></thead><tbody>' + rows + '</tbody></table></div>' + (shown.length > 150 ? '<div class="pp-toolbar-note" style="padding:8px 4px">Showing 150 of ' + shown.length + '. Use search or a chip to narrow.</div>' : '') : '<div class="pp-empty">' + (closeAcctFilter === 'unmatched' ? 'Every account is linked to a Close lead.' : 'Nothing in this view.') + '</div>') + '</div>';
+    }
+    function caToggle(key) { caOpen[key] = !caOpen[key]; renderCloseAccounts(); if (caOpen[key]) setTimeout(function() { var r = document.querySelector('.ca-row[data-key="' + ((window.CSS && CSS.escape) ? CSS.escape(key) : key.replace(/["\\]/g, '\\$&')) + '"]'); if (r) r.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 30); }
+    function caDetail(a) {
+      var k = caKey(a), cl = getChecklist(k), ob = caOnboarding(a);
+      var check = function(id, label) { var on = cl[id] === true || cl[id] === 'true'; return '<button type="button" class="ca-check' + (on ? ' on' : '') + '" onclick="event.stopPropagation();caSetCheck(\'' + ppEsc(k) + '\',\'' + id + '\',' + (!on) + ')"><i>' + (on ? '&#10003;' : '') + '</i>' + label + '</button>'; };
+      var field = function(id, label, ph, type) { var v = caField(a, id); return '<label class="ca-field"><span>' + label + '</span><input type="' + (type || 'text') + '" value="' + ppEsc(v) + '" placeholder="' + ph + '" onclick="event.stopPropagation()" onchange="caSetCheck(\'' + ppEsc(k) + '\',\'' + id + '\',this.value)"></label>'; };
+      var contact = ob ? '<div class="ca-fact"><span>Contact</span><b>' + ppEsc(ob.contact || '-') + '</b>' + (ob.email ? '<a href="mailto:' + ppEsc(ob.email) + '" onclick="event.stopPropagation()">' + ppEsc(ob.email) + '</a>' : '') + (ob.phone ? '<span>' + ppEsc(formatPhone(ob.phone)) + '</span>' : '') + '</div><div class="ca-fact"><span>Go-live</span><b>' + (ob.goLiveDate ? ppFmtDate(ob.goLiveDate) : '-') + '</b><span>' + (PP_STATUS_LABELS[ob.pipelineStatus] || ob.pipelineStatus) + ' &middot; onboarding ' + getChecklistCount(ob.email) + '/' + CHECKLIST_ITEMS.length + '</span></div>' : '<div class="ca-fact"><span>Onboarding</span><b>No onboarding record</b><span>Import the district workbook or form to track go-live and checklists here.</span></div>';
+      var closeFacts = a.closeLeadId ? '<div class="ca-fact"><span>Close</span><b><a href="' + ppEsc(a.closeUrl) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + ppEsc(a.closeName || a.organization) + '</a></b><span>' + ppEsc(a.statusLabel || '') + (a.ownerName ? ' &middot; owner ' + ppEsc(a.ownerName) : '') + (a.website ? ' &middot; <a href="' + ppEsc(/^https?:/.test(a.website) ? a.website : 'https://' + a.website) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + ppEsc(a.domain || a.website) + '</a>' : '') + '</span></div><div class="ca-fact"><span>Last touch</span><b>' + (a.lastTouchAt ? ppFmtDate(a.lastTouchAt.slice(0, 10)) + ' (' + a._days + 'd)' : 'None on record') + '</b><span>' + ppEsc([a.lastTouchType, a.lastTouchBy].filter(Boolean).join(' by ')) + '</span></div>' + (a.nextTaskText ? '<div class="ca-fact"><span>Next task</span><b>' + ppEsc(a.nextTaskText) + '</b><span>' + ppFmtDate(a.nextTaskDate) + '</span></div>' : '')
+        : '<div class="ca-fact ca-link"><span>Close</span><b>Not linked</b><div class="drive-connect-form" style="max-width:420px;margin-top:6px"><input id="caLink_' + ppEsc(k).replace(/[^a-z0-9]/gi, '_') + '" placeholder="Paste the Close lead URL" onclick="event.stopPropagation()"><button class="pp-btn primary" onclick="event.stopPropagation();caLinkClose(\'' + ppEsc(k) + '\',this)">Link</button></div></div>';
+      var cred = credLoaded ? credList.find(function(c) { return ppLogoDomain(c.loginEmail) && a.domain && ppLogoDomain(c.loginEmail) === a.domain || (c.organization || '').toLowerCase().replace(/[^a-z0-9]/g, '') === (a.organization || '').toLowerCase().replace(/[^a-z0-9]/g, ''); }) : null;
+      var credFact = cred ? '<div class="ca-fact"><span>Admin login</span><b>' + ppEsc(cred.adminName || '-') + '</b><span>' + ppEsc(cred.loginEmail || '') + ' &middot; <a onclick="event.stopPropagation();switchView(\'credentials\')">credentials</a></span></div>' : '';
+      return '<div class="ca-detail-wrap"><div class="ca-facts">' + contact + closeFacts + credFact + '</div><div class="ca-groups">' + CA_GROUPS.map(function(g) { var done = g.items.filter(function(i) { return cl[i[0]] === true || cl[i[0]] === 'true'; }).length; return '<div class="ca-group"><h4>' + g.title + '<span>' + done + '/' + g.items.length + '</span></h4><div class="ca-checks">' + g.items.map(function(i) { return check(i[0], i[1]); }).join('') + '</div></div>'; }).join('') + '<div class="ca-group"><h4>Measures</h4><div class="ca-fields">' + field('suc_nps_field', 'NPS (0-10)', '9', 'number') + field('suc_baseline_rev_field', 'Baseline rental revenue', '12000') + field('suc_renewal_field', 'Renewal date', '', 'date') + field('suc_contact_verified_field', 'Contact verified on', '', 'date') + '</div></div></div></div>';
+    }
+    function caSetCheck(key, id, value) { setChecklist(key, id, value); renderCloseAccounts(); }
+    async function caLinkClose(key, btn) {
+      var inp = document.getElementById('caLink_' + key.replace(/[^a-z0-9]/gi, '_')); var url = inp ? inp.value.trim() : ''; if (!url) return;
+      btn.disabled = true; btn.textContent = 'Linking...';
+      try { var r = await ppApi('setCloseLink', { key: key, leadUrl: url }, 60000); if (!r.success) throw new Error(r.error || 'Could not link'); await loadCloseAccounts(true); renderCloseAccounts(); renderUpcoming(); showToast('Linked to ' + (r.account.closeName || 'the Close lead'), 'success'); }
+      catch(e) { btn.disabled = false; btn.textContent = 'Link'; showToast(e.message, 'error'); }
+    }
+    // =====================================================================
+    // SUBMISSIONS BOARD (replaces the flat table)  (Sept 2026)
+    // =====================================================================
+    var SUB_STAGES = ['new', 'in-progress', 'review', 'complete', 'onboarding', 'published', 'launched', 'on-hold'];
+    var subCollapsed = {};
+    function subChecklistCount(email, items) { var cl = getChecklist(email); return items.filter(function(i) { return cl[i.id] === true || cl[i.id] === 'true'; }).length; }
+    function subBar(n, total, color) { return '<div class="sub-bar"><div class="sub-bar-track"><i style="width:' + Math.round(n / total * 100) + '%;background:' + color + '"></i></div><span>' + n + '/' + total + '</span></div>'; }
+    function subRow(d) {
+      var cl = getChecklist(d.email), ob = subChecklistCount(d.email, CHECKLIST_ITEMS), lk = subChecklistCount(d.email, SUCCESS_CHECKLIST_ITEMS);
+      var docs = [['mou_doc_field', 'MOU'], ['deposit_doc_field', 'Direct deposit']].filter(function(x) { return cl[x[0]] && String(cl[x[0]]).indexOf('http') === 0; });
+      var cell = function(field, inner, cls) { return '<td class="pp-cell' + (cls ? ' ' + cls : '') + '" data-edit="' + field + '" data-id="' + ppEsc(d.email) + '" title="Click to edit">' + inner + '</td>'; };
+      var stale = d.isStale ? ' <span class="pp-chip need-to-book" title="No district activity in ' + STALE_DAYS + '+ days">quiet ' + d.daysSinceUpdate + 'd</span>' : '';
+      return '<tr data-id="' + ppEsc(d.email) + '">'
+        + '<td><div class="pp-org-cell">' + ppAvatar(d.organization, d.email, 34) + '<div><div class="pp-org-name">' + ppEsc(d.organization || 'Unknown') + '</div><div class="pp-org-sub">' + (d.locationStr ? ppEsc(d.locationStr) + ' &middot; ' : '') + (d.sheetType === 'drafts' ? 'form ' + (d.completion || 0) + '% complete' : d.status === 'Imported' ? 'from workbook' : 'form submitted') + '</div></div></div></td>'
+        + '<td><div class="lead-contact"><span>' + ppEsc(d.contact || '-') + '</span>' + (d.email ? '<span class="sub pp-copyable" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(d.email) + '\',\'Email\')">' + ppEsc(d.email) + '</span>' : '') + (d.phone ? '<span class="sub">' + ppEsc(formatPhone(d.phone)) + '</span>' : '') + '</div></td>'
+        + cell('stage', '<span class="pp-chip pick" style="background:' + HQ_STATUS_COLORS[d.pipelineStatus] + '22;color:' + HQ_STATUS_COLORS[d.pipelineStatus] + '">' + (PP_STATUS_LABELS[d.pipelineStatus] || d.pipelineStatus) + '<i class="caret"></i></span>' + stale)
+        + cell('rep', d.accountRep ? '<div style="display:flex;align-items:center;gap:8px">' + ppRepAvatars(d.accountRep, 24) + '<span style="font-size:11px;color:var(--text2)">' + ppEsc(ppRepName(d.accountRep)) + '</span></div>' : '<span class="pp-chip need-to-book">Assign<i class="caret"></i></span>')
+        + cell('onboarding', subBar(ob, CHECKLIST_ITEMS.length, 'var(--pp-blue)') + (docs.length ? '<div class="sub-docs">' + docs.map(function(x) { return '<a href="' + ppEsc(cl[x[0]]) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Signed ' + x[1] + '">' + ppSvg('link') + ' ' + x[1] + '</a>'; }).join('') + '</div>' : ''))
+        + cell('launch', subBar(lk, SUCCESS_CHECKLIST_ITEMS.length, 'var(--pp-green)'))
+        + cell('golive', d.goLiveDate ? '<div class="ts-date' + (ppDaysBetween(d.goLiveDate, ppTodayISO()) !== null && ppDaysBetween(d.goLiveDate, ppTodayISO()) >= 0 && ppDaysBetween(d.goLiveDate, ppTodayISO()) <= 14 ? ' soon' : '') + '">' + ppFmtDate(d.goLiveDate, { month: 'short', day: 'numeric', year: 'numeric' }) + '<span class="sub">' + ppInDays(ppDaysBetween(d.goLiveDate, ppTodayISO())) + '</span></div>' : '<span class="pp-placeholder">Set date</span>')
+        + '<td class="time-ago">' + ppEsc(timeAgo(d.lastUpdated)) + '</td>'
+        + '<td style="text-align:right;white-space:nowrap"><button class="pp-mini-btn" title="Open record" onclick="event.stopPropagation();viewDetails(allData.concat(archivedData).find(function(x){return x.email===\'' + ppEsc(d.email) + '\'}))">' + ppSvg('expand') + '</button> <button class="pp-mini-btn" title="Edit details" onclick="event.stopPropagation();quickEditSubmission(\'' + ppEsc(d.email) + '\',this)">' + ppSvg('edit') + '</button> ' + (currentFilter === 'archived' ? '<button class="pp-mini-btn" title="Restore" onclick="event.stopPropagation();restoreRow(\'' + d.sheetType + '\',' + d.rowIndex + ',\'' + ppEsc(d.email) + '\')">&#8634;</button>' : '<button class="pp-mini-btn danger" title="Archive" onclick="event.stopPropagation();archiveRow(\'' + d.sheetType + '\',' + d.rowIndex + ',\'' + ppEsc(d.email) + '\')">&#10005;</button>') + '</td>'
+        + '</tr>';
+    }
+    function renderSubBoard() {
+      var el = document.getElementById('subBoard'); if (!el) return;
+      var data = getFilteredData();
+      if (!data.length) { el.innerHTML = '<div class="ts-group"><div class="pp-empty"><strong>Nothing matches</strong>' + (allData.length ? 'Adjust the filters or time period.' : 'Submissions arrive from the district form, or import a workbook.') + '</div></div>'; return; }
+      var groups = {}; data.forEach(function(d) { var k = SUB_STAGES.indexOf(d.pipelineStatus) >= 0 ? d.pipelineStatus : 'new'; (groups[k] = groups[k] || []).push(d); });
+      var hdr = '<thead><tr><th>Organization</th><th>Contact</th><th>Stage</th><th>Rep</th><th>Onboarding</th><th>Launch kit</th><th>Go-live</th><th>Updated</th><th></th></tr></thead>';
+      el.innerHTML = SUB_STAGES.filter(function(k) { return groups[k]; }).map(function(k) {
+        var list = groups[k].sort(function(a, b) { return (b.updatedDate || 0) - (a.updatedDate || 0); }), col = HQ_STATUS_COLORS[k];
+        var quiet = list.filter(function(d) { return d.isStale; }).length, noRep = list.filter(function(d) { return !d.accountRep; }).length, noDate = list.filter(function(d) { return !d.goLiveDate && ['onboarding', 'published', 'launched'].indexOf(k) >= 0; }).length;
+        var meta = [quiet ? '<span style="color:#d97706"><b>' + quiet + '</b> quiet</span>' : '', noRep ? '<span style="color:#d97706"><b>' + noRep + '</b> no rep</span>' : '', noDate ? '<span style="color:#d97706"><b>' + noDate + '</b> no go-live</span>' : ''].filter(Boolean).join('') || '<span style="color:var(--pp-green)">All set</span>';
+        var collapsed = !!subCollapsed[k];
+        return '<div class="ts-group sub-group' + (collapsed ? ' collapsed' : '') + '" style="--stage:' + col + '"><div class="ts-group-head" onclick="subCollapsed[\'' + k + '\']=!this.parentNode.classList.contains(\'collapsed\');this.parentNode.classList.toggle(\'collapsed\')"><div class="ts-group-title"><span class="ts-caret">&#x25BC;</span><span class="sub-dot"></span>' + (PP_STATUS_LABELS[k] || k) + '<span class="n">' + list.length + '</span></div><div class="ts-group-meta">' + meta + '</div></div><div class="ts-group-body"><div class="table-wrapper" style="border:none;border-radius:0"><table class="pp-table sub-table">' + hdr + '<tbody>' + list.map(subRow).join('') + '</tbody></table></div></div></div>';
+      }).join('');
+    }
+    function subCellEdit(email, field, cell) {
+      var d = allData.concat(archivedData).find(function(x) { return x.email === email; }); if (!d) return;
+      switch (field) {
+        case 'stage': ppStatusPicker(cell, SUB_STAGES.map(function(k) { return { val: k, label: PP_STATUS_LABELS[k] || k, cls: k === d.pipelineStatus ? 'active' : 'unset' }; }), d.pipelineStatus, function(v) { changePipelineStatus(d.sheetType, d.rowIndex, v, d.email); }); break;
+        case 'rep': ppStatusPicker(cell, [{ val: '', label: 'Unassigned', cls: 'inactive' }].concat(TEAM_MEMBERS.map(function(m) { return { val: m.email, label: m.name, cls: d.accountRep === m.email ? 'active' : 'unset' }; })), d.accountRep || '', function(v) { assignRep(d.sheetType, d.rowIndex, v); }); break;
+        case 'onboarding': subChecklistPop(cell, d, CHECKLIST_ITEMS, 'Onboarding checklist'); break;
+        case 'launch': subChecklistPop(cell, d, SUCCESS_CHECKLIST_ITEMS, 'Launch kit'); break;
+        case 'golive': ppFormPopover(cell, [{ key: 'goLiveDate', label: 'Go-live date', type: 'date', value: d.goLiveDate || '' }], function(v) { saveQuickEdit(d, { organization: d.organization, contact: d.contact, jobTitle: (d.formData && d.formData.contactInfo && d.formData.contactInfo.jobTitle) || '', phone: d.phone, goLiveDate: v.goLiveDate }); }, { title: 'Go-live' }); break;
+      }
+    }
+    function subChecklistPop(cell, d, items, title) {
+      var cl = getChecklist(d.email);
+      var html = '<div class="pp-pop-title">' + title + '</div><div class="pp-pop-list">' + items.map(function(i) { var on = cl[i.id] === true || cl[i.id] === 'true', link = cl[i.id + '_doc_field'] || (i.fieldKey ? cl[i.id + '_field'] : ''); return '<button type="button" class="pp-pop-opt rep' + (on ? ' on' : '') + '" data-val="' + i.id + '"><span class="ca-check-box' + (on ? ' on' : '') + '">' + (on ? '&#10003;' : '') + '</span><span class="lbl">' + ppEsc(i.label) + (link && String(link).indexOf('http') === 0 ? ' <a href="' + ppEsc(link) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="font-size:10px">open</a>' : '') + '</span></button>'; }).join('') + '</div>';
+      var p = ppPopoverOpen(cell, html, { cls: 'pp-pop-status', focus: false, onClose: function() { updateStats(); renderTable(); renderPipeline(); } });
+      p.querySelectorAll('.pp-pop-opt').forEach(function(b) { b.addEventListener('click', function() { var id = b.getAttribute('data-val'), on = !b.classList.contains('on'); setChecklist(d.email, id, on); b.classList.toggle('on', on); b.querySelector('.ca-check-box').classList.toggle('on', on); b.querySelector('.ca-check-box').innerHTML = on ? '&#10003;' : ''; logActivityToServer((on ? 'checked ' : 'unchecked ') + ((items.find(function(i) { return i.id === id; }) || {}).label || id) + ' for', d.organization, '', 'checklist'); }); });
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
