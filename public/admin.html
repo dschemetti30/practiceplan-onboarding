@@ -1338,6 +1338,19 @@
     .drive-name{flex:1;min-width:0;font-size:12.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .drive-meta{font-size:10px;color:var(--text3);white-space:nowrap}
     @media(max-width:768px){.rot-strip{padding:12px}.rot-actions{margin-left:0}.view-tab{flex:0 0 auto;min-width:58px}}
+    /* ---- past shows section + busy buttons ---- */
+    .ts-divider{display:flex;align-items:center;gap:10px;margin:26px 0 10px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+    .ts-divider .n{font-size:10px;background:var(--card);border:1px solid var(--border);padding:2px 8px;border-radius:50px;color:var(--text2)}
+    .ts-divider small{font-size:11px;font-weight:500;text-transform:none;letter-spacing:0;color:var(--text3)}
+    .ts-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+    .ts-group.past-group{box-shadow:none;border-style:dashed}
+    .ts-group.past-group .ts-group-head{background:transparent}
+    .ts-group.past-group tr.past td{opacity:1;color:var(--text2)}
+    .ts-group.past-group tr.past .pp-org-name{color:var(--text2)}
+    .ts-group.past-group tr.past .ts-outcome span{background:rgba(0,168,79,0.10);color:var(--pp-green)}
+    .ts-group.past-group tr.past .pp-chip{filter:saturate(0.5)}
+    .pp-spin{width:14px;height:14px;animation:ppSpin 0.9s linear infinite;transform-origin:50% 50%}
+    .text-action-btn.busy{opacity:0.8;cursor:progress}
   </style>
 </head>
 <body>
@@ -4003,17 +4016,21 @@
       [['list', 'tsViewList', 'tsListView'], ['calendar', 'tsViewCal', 'tsCalView'], ['insights', 'tsViewIns', 'tsInsView']].forEach(function(x) { var b = document.getElementById(x[1]), p = document.getElementById(x[2]); if (b) b.classList.toggle('on', v === x[0]); if (p) p.style.display = v === x[0] ? '' : 'none'; });
       renderTradeShows();
     }
-    function tsFiltered() {
+    function tsMatches(s) {
       var q = tsSearch.trim(), me = currentUser?.email || '';
+      if (tsAudFilter !== 'all' && (s.audience || 'other') !== tsAudFilter) return false;
+      if (tsRepFilter === 'none') { if (s._reps.length) return false; } else if (tsRepFilter !== 'all' && s._reps.indexOf(tsRepFilter) < 0) return false;
+      if (tsMyShows && s._reps.indexOf(me) < 0) return false;
+      if (q) { var hay = [s.name, s.location, s.boothSize, s.notes, s._reps.map(ppRepFull).join(' '), tsAudLabel(s.audience)].join(' ').toLowerCase(); if (hay.indexOf(q) < 0) return false; }
+      return true;
+    }
+    function tsSortByStart(a, b) { var ka = a._start || '9999', kb = b._start || '9999'; return ka < kb ? -1 : ka > kb ? 1 : a.name.localeCompare(b.name); }
+    function tsFiltered() {
       return tsList.filter(function(s) {
         if (tsScope === 'archived') { if (!s.archived) return false; }
         else { if (s.archived) return false; if (tsScope === 'upcoming' && s._isPast) return false; if (tsScope === 'past' && !s._isPast) return false; }
-        if (tsAudFilter !== 'all' && (s.audience || 'other') !== tsAudFilter) return false;
-        if (tsRepFilter === 'none') { if (s._reps.length) return false; } else if (tsRepFilter !== 'all' && s._reps.indexOf(tsRepFilter) < 0) return false;
-        if (tsMyShows && s._reps.indexOf(me) < 0) return false;
-        if (q) { var hay = [s.name, s.location, s.boothSize, s.notes, s._reps.map(ppRepFull).join(' '), tsAudLabel(s.audience)].join(' ').toLowerCase(); if (hay.indexOf(q) < 0) return false; }
-        return true;
-      }).sort(function(a, b) { var ka = a._start || '9999', kb = b._start || '9999'; return ka < kb ? -1 : ka > kb ? 1 : a.name.localeCompare(b.name); });
+        return tsMatches(s);
+      }).sort(tsSortByStart);
     }
     function tsAudLabel(v) { var a = TS_AUDIENCES.find(function(x) { return x.val === v; }); return a ? a.label : (v || 'Audience TBD'); }
     function tsChip(s, field) {
@@ -4094,18 +4111,31 @@
         var soon = s._daysUntil <= 21;
         return '<div class="ts-next-card' + (soon ? ' soon' : '') + '" onclick="openTsModal(\'' + ppEsc(s.id) + '\')"><div class="ts-next-days">' + (s._isLive ? 'Happening now' : s._daysUntil === 0 ? 'Today' : 'In ' + s._daysUntil + ' day' + (s._daysUntil === 1 ? '' : 's')) + '</div><div class="ts-next-name">' + ppEsc(s.name) + '</div><div class="ts-next-meta">' + ppFmtRange(s._start, s._end) + (s.location ? ' &middot; ' + ppEsc(s.location.replace(/, USA$/, '')) : '') + '</div><div class="ts-next-foot">' + ppRepAvatars(s.reps, 22) + '<div class="ts-next-todo">' + (s._todo.length ? s._todo.map(function(t) { return '<span class="pp-chip need-to-book">' + ppEsc(t) + '</span>'; }).join('') : '<span class="pp-chip booked">Ready</span>') + '</div></div></div>';
       }).join('') : '';
-      if (!rows.length) { groupsEl.innerHTML = '<div class="ts-group"><div class="pp-empty"><strong>No shows match</strong>' + (tsList.length ? 'Try a different scope, audience, or rep.' : 'Add your first show, or import the Monday.com export.') + '</div></div>'; return; }
-      var groups = {}; rows.forEach(function(s) { (groups[s._quarter] = groups[s._quarter] || []).push(s); });
-      var keys = Object.keys(groups).sort(function(a, b) { if (a === 'TBD') return 1; if (b === 'TBD') return -1; return a < b ? -1 : 1; });
+      var pastRows = tsScope === 'upcoming' ? tsList.filter(function(s) { return !s.archived && s._isPast && tsMatches(s); }).sort(tsSortByStart) : [];
+      if (!rows.length && !pastRows.length) { groupsEl.innerHTML = '<div class="ts-group"><div class="pp-empty"><strong>No shows match</strong>' + (tsList.length ? 'Try a different scope, audience, or rep.' : 'Add your first show, or import the Monday.com export.') + '</div></div>'; return; }
       var hdr = '<thead><tr><th>Show</th><th>Dates</th><th>Audience</th><th>Reps</th><th>Registration</th><th>Cost</th><th>Booth</th><th>Hotel</th><th>Flight</th><th>Outcomes</th><th></th></tr></thead>';
-      groupsEl.innerHTML = keys.map(function(k) {
-        var list = groups[k], spend = list.reduce(function(sum, s) { return sum + (parseFloat(String(s.cost).replace(/[^0-9.]/g, '')) || 0); }, 0), todo = list.filter(function(s) { return s._todo.length; }).length;
+      var groupHtml = function(k, list, isPastSection) {
+        var spend = list.reduce(function(sum, s) { return sum + (parseFloat(String(s.cost).replace(/[^0-9.]/g, '')) || 0); }, 0), todo = list.filter(function(s) { return s._todo.length; }).length;
         var title = k === 'TBD' ? 'Dates to be determined' : 'Q' + k.split('-Q')[1] + ' ' + k.split('-Q')[0];
         var repSet = {}; list.forEach(function(s) { s._reps.forEach(function(r) { repSet[r] = true; }); });
-        var collapsed = tsCollapsed[k] === true || (tsCollapsed[k] === undefined && list.every(function(s) { return s._isPast; }) && tsScope !== 'past');
-        return '<div class="ts-group' + (collapsed ? ' collapsed' : '') + '" id="tsg_' + ppEsc(k) + '"><div class="ts-group-head" onclick="tsCollapsed[\'' + ppEsc(k) + '\']=!this.parentNode.classList.contains(\'collapsed\');this.parentNode.classList.toggle(\'collapsed\')"><div class="ts-group-title"><span class="ts-caret">&#x25BC;</span>' + title + '<span class="n">' + list.length + ' show' + (list.length === 1 ? '' : 's') + '</span></div><div class="ts-group-meta"><span><b>' + ppFmtMoney(spend) + '</b> committed</span><span>' + ppRepAvatars(Object.keys(repSet).join(','), 20) + '</span>' + (todo ? '<span style="color:#d97706"><b>' + todo + '</b> need attention</span>' : '<span style="color:var(--pp-green)">All set</span>') + '</div></div>'
-          + '<div class="ts-group-body"><div class="table-wrapper" style="border:none;border-radius:0"><table class="pp-table" style="min-width:1100px">' + hdr + '<tbody>' + list.map(tsRow).join('') + '<tr class="ts-add-row"><td colspan="11"><input class="ts-add-input" placeholder="+ Add a show to ' + ppEsc(title) + '" data-quarter="' + ppEsc(k) + '" autocomplete="off"></td></tr></tbody></table></div><div class="pp-mobile-cards" style="padding:10px">' + list.map(tsCard).join('') + '</div></div></div>';
-      }).join('');
+        var allPast = list.every(function(s) { return s._isPast; });
+        var collapsed = tsCollapsed[k] === true || (tsCollapsed[k] === undefined && allPast && tsScope !== 'past');
+        var outs = list.reduce(function(o, s) { o.l += parseInt(s.leads) || 0; o.d += parseInt(s.demos) || 0; o.w += parseInt(s.deals) || 0; return o; }, { l: 0, d: 0, w: 0 });
+        var meta = allPast
+          ? '<span><b>' + ppFmtMoney(spend) + '</b> spent</span><span><b>' + outs.l + '</b> leads &middot; <b>' + outs.d + '</b> demos &middot; <b>' + outs.w + '</b> deals</span>' + (list.filter(function(s) { return !s.leads && !s.demos && !s.deals; }).length ? '<span style="color:#d97706">' + list.filter(function(s) { return !s.leads && !s.demos && !s.deals; }).length + ' missing outcomes</span>' : '')
+          : '<span><b>' + ppFmtMoney(spend) + '</b> committed</span><span>' + ppRepAvatars(Object.keys(repSet).join(','), 20) + '</span>' + (todo ? '<span style="color:#d97706"><b>' + todo + '</b> need attention</span>' : '<span style="color:var(--pp-green)">All set</span>');
+        return '<div class="ts-group' + (collapsed ? ' collapsed' : '') + (isPastSection ? ' past-group' : '') + '" id="tsg_' + ppEsc(k) + '"><div class="ts-group-head" onclick="tsCollapsed[\'' + ppEsc(k) + '\']=!this.parentNode.classList.contains(\'collapsed\');this.parentNode.classList.toggle(\'collapsed\')"><div class="ts-group-title"><span class="ts-caret">&#x25BC;</span>' + title + '<span class="n">' + list.length + ' show' + (list.length === 1 ? '' : 's') + '</span>' + (allPast ? '<span class="pp-chip inactive" style="margin-left:4px">Completed</span>' : '') + '</div><div class="ts-group-meta">' + meta + '</div></div>'
+          + '<div class="ts-group-body"><div class="table-wrapper" style="border:none;border-radius:0"><table class="pp-table" style="min-width:1100px">' + hdr + '<tbody>' + list.map(tsRow).join('') + (allPast ? '' : '<tr class="ts-add-row"><td colspan="11"><input class="ts-add-input" placeholder="+ Add a show to ' + ppEsc(title) + '" data-quarter="' + ppEsc(k) + '" autocomplete="off"></td></tr>') + '</tbody></table></div><div class="pp-mobile-cards" style="padding:10px">' + list.map(tsCard).join('') + '</div></div></div>';
+      };
+      var groups = {}; rows.forEach(function(s) { (groups[s._quarter] = groups[s._quarter] || []).push(s); });
+      var keys = Object.keys(groups).sort(function(a, b) { if (a === 'TBD') return 1; if (b === 'TBD') return -1; return a < b ? -1 : 1; });
+      var html = keys.map(function(k) { return groupHtml(k, groups[k], false); }).join('');
+      if (pastRows.length) {
+        var pg = {}; pastRows.forEach(function(s) { (pg[s._quarter] = pg[s._quarter] || []).push(s); });
+        var pkeys = Object.keys(pg).sort(function(a, b) { return a < b ? 1 : -1; });
+        html += '<div class="ts-divider">Past shows<span class="n">' + pastRows.length + '</span><small>Kept for history. Spend and outcomes roll up in Insights.</small></div>' + pkeys.map(function(k) { return groupHtml(k, pg[k], true); }).join('');
+      }
+      groupsEl.innerHTML = html;
     }
     // ---- calendar ----
     function renderTsCalendar() {
@@ -4899,7 +4929,12 @@
       var l = leadList.find(function(x) { return x.id === id; }); if (!l || !confirm('Delete this lead? Mark it Lost instead if you want to keep the history.')) return;
       try { var r = await ppApi('deleteLead', { id: id }); if (!r.success) throw new Error(r.error || 'Delete failed'); leadList = leadList.filter(function(x) { return x.id !== id; }); closeModal(); renderLeads(); showToast('Deleted', 'success'); } catch(e) { showToast('Could not delete: ' + e.message, 'error'); }
     }
-    async function syncLeadsNow() { var b = document.getElementById('leadSyncBtn'); if (b) b.disabled = true; try { var r = await ppApi('syncLeads'); if (!r.success) throw new Error(r.error || 'Sync failed'); leadRotation = r.rotation || leadRotation; await loadLeads(true); renderLeads(); renderUpcoming(); showToast(r.created ? r.created + ' new lead' + (r.created === 1 ? '' : 's') + ' pulled in and assigned' : 'No new form submissions', 'success'); } catch(e) { showToast('Could not check: ' + e.message, 'error'); } if (b) b.disabled = false; }
+    async function syncLeadsNow() {
+      var b = document.getElementById('leadSyncBtn'), orig = b ? b.innerHTML : '';
+      if (b) { b.disabled = true; b.classList.add('busy'); b.innerHTML = '<svg class="pp-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></svg> Checking the form sheet...'; }
+      try { var r = await ppApi('syncLeads'); if (!r.success) throw new Error(r.error || 'Sync failed'); leadRotation = r.rotation || leadRotation; await loadLeads(true); renderLeads(); renderUpcoming(); showToast(r.created ? r.created + ' new lead' + (r.created === 1 ? '' : 's') + ' pulled in and assigned' : 'No new form submissions', 'success'); } catch(e) { showToast('Could not check: ' + e.message, 'error'); }
+      if (b) { b.disabled = false; b.classList.remove('busy'); b.innerHTML = orig; }
+    }
     // ---- imports: spreadsheet (Name/District/Email/Phone/Source/Notes) and screenshot (Claude via Apps Script) ----
     var leadImportRows = [];
     function startLeadImport(kind) {
