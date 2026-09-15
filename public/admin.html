@@ -1369,6 +1369,135 @@
     .ca-sub{display:block;font-size:10px;color:var(--text3);margin-top:3px}
     .ca-table td{white-space:nowrap}
     .ca-table tr.ca-stale td:first-child .pp-org-name{color:#b91c1c}
+    /* ---- HQ dashboard ---- */
+    .hq-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:2px 0 16px}
+    .hq-greet{font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--text);letter-spacing:-0.02em}
+    .hq-date{font-size:12.5px;color:var(--text3);margin-top:2px}
+    .hq-pills{display:flex;gap:8px;flex-wrap:wrap}
+    .hq-pill{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:50px;background:var(--card);border:1px solid var(--border);font-size:11px;font-weight:600;color:var(--text2);box-shadow:var(--sh-xs)}
+    .hq-pill i{width:7px;height:7px;border-radius:50%;background:var(--text3)}
+    .hq-pill i.ok{background:var(--pp-green);animation:ppPulseDot 1.8s infinite}
+    .hq-kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px}
+    .hq-kpi{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;cursor:pointer;transition:all var(--t-base) var(--ease);box-shadow:var(--sh-sm);min-width:0;animation:ppCardIn .5s var(--ease) both}
+    .hq-kpi:hover{transform:translateY(-2px);box-shadow:var(--sh-md);border-color:var(--pp-blue)}
+    .hq-kpi .v{font-family:var(--font-display);font-size:26px;font-weight:800;color:var(--text);line-height:1.1;letter-spacing:-0.02em}
+    .hq-kpi .l{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin-top:5px}
+    .hq-kpi .s{font-size:11px;color:var(--text3);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .hq-kpi.warn .v{color:#d97706}.hq-kpi.good .v{color:var(--pp-green)}
+    .hq-kpis>*:nth-child(2){animation-delay:40ms}.hq-kpis>*:nth-child(3){animation-delay:80ms}.hq-kpis>*:nth-child(4){animation-delay:120ms}.hq-kpis>*:nth-child(5){animation-delay:160ms}.hq-kpis>*:nth-child(6){animation-delay:200ms}
+    .hq-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
+    .hq-grid>.stat-card{min-width:0}
+    .hq-grid>.hq-tall{grid-row:span 2}
+    .hq-team-head,.hq-team-row{display:grid;grid-template-columns:1fr 42px 58px 42px 58px;align-items:center;gap:4px}
+    .hq-team-head{font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);padding:0 6px 6px;text-align:center}
+    .hq-team-head span:first-child{text-align:left}
+    .hq-team-row{padding:7px 6px;border-top:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text);text-align:center;font-variant-numeric:tabular-nums}
+    .hq-team-row .who{display:flex;align-items:center;gap:8px;text-align:left;min-width:0}
+    .hq-team-row .who b{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .hq-bar{display:flex;height:14px;border-radius:8px;overflow:hidden;background:var(--bg);margin:4px 0 12px}
+    .hq-bar span{display:block;height:100%;min-width:3px;transition:width .6s var(--ease)}
+    .hq-legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11.5px;color:var(--text2)}
+    .hq-legend span{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+    .hq-legend i{width:9px;height:9px;border-radius:3px;display:inline-block}
+    .hq-legend b{color:var(--text)}
+    .hq-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0 6px}
+    .hq-mini div{background:var(--bg);border-radius:10px;padding:8px 10px;text-align:center}
+    .hq-mini b{display:block;font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--text)}
+    .hq-mini span{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+    .hq-act{display:flex;align-items:flex-start;gap:10px;padding:7px 4px;border-top:1px solid var(--border);font-size:12px;color:var(--text2);line-height:1.4}
+    .hq-act:first-child{border-top:none}
+    .hq-act .av{flex-shrink:0;margin-top:1px}
+    .hq-act .txt{flex:1;min-width:0}
+    .hq-act .txt b{color:var(--text);font-weight:600}
+    .hq-act .d{color:var(--text3)}
+    .hq-act .t{flex-shrink:0;font-size:10.5px;color:var(--text3);white-space:nowrap}
+    @media(max-width:1400px){.hq-kpis{grid-template-columns:repeat(3,1fr)}.hq-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:768px){.hq-kpis{grid-template-columns:1fr 1fr;gap:8px}.hq-kpi{padding:12px}.hq-kpi .v{font-size:22px}.hq-grid{grid-template-columns:1fr}.hq-grid>.hq-tall{grid-row:auto}.hq-greet{font-size:20px}.hq-team-head,.hq-team-row{grid-template-columns:1fr 40px 50px 40px 50px}}
+    /* ---- landing pages ---- */
+    #lpTable{table-layout:fixed;min-width:1000px}
+    #lpTable th:nth-child(1){width:20%}#lpTable th:nth-child(2){width:20%}#lpTable th:nth-child(3){width:18%}#lpTable th:nth-child(4){width:9%}#lpTable th:nth-child(5){width:11%}#lpTable th:nth-child(6){width:7%}#lpTable th:nth-child(7){width:11%}#lpTable th:nth-child(8){width:4%}
+    #lpTable td{overflow:hidden;text-overflow:ellipsis}
+    .lp-url{display:inline-flex;align-items:center;gap:6px;max-width:100%}
+    .lp-url a{color:var(--pp-blue);text-decoration:none;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .lp-key{font-size:11px;background:var(--bg);padding:2px 6px;border-radius:5px;color:var(--text2)}
+    .lp-chip{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:50px;background:rgba(0,168,79,0.12);color:var(--pp-green);vertical-align:middle;cursor:pointer;margin-left:4px;transition:transform var(--t-fast)}
+    .lp-chip:hover{transform:translateY(-1px)}
+    .lp-chip i{width:5px;height:5px;border-radius:50%;background:var(--pp-green)}
+    .lp-quick{padding:12px 14px;min-width:300px;max-width:360px}
+    .lp-quick-title{font-size:13px;font-weight:700;color:var(--text)}
+    .lp-quick-url{display:block;font-size:11.5px;color:var(--pp-blue);text-decoration:none;word-break:break-all;margin:3px 0 10px}
+    .lp-quick-row{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;color:var(--text2);margin-bottom:12px;flex-wrap:wrap}
+    .lp-quick-actions{display:flex;gap:6px;flex-wrap:wrap}
+    .lp-quick-actions .pp-btn{padding:7px 12px;font-size:12px;text-decoration:none}
+    .qr-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;padding:26px 20px}
+    .qr-wrap #qrTarget{padding:14px;background:#fff;border-radius:16px;box-shadow:var(--sh-md)}
+    .qr-url{font-size:12px;color:var(--text2);word-break:break-all;text-align:center}
+    .ca-src{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:1px 6px;border-radius:50px;margin-right:4px;background:var(--bg);color:var(--text3)}
+    .ca-src.close{background:rgba(0,118,187,0.10);color:var(--pp-blue)}.ca-src.credentials{background:rgba(0,168,79,0.10);color:var(--pp-green)}.ca-src.onboarding{background:rgba(245,158,11,0.14);color:#b45309}
+    /* ---- onboarding workbook import ---- */
+    .ob-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+    .ob-kpi{background:var(--bg);border-radius:12px;padding:10px 12px;text-align:center}
+    .ob-kpi b{display:block;font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--text)}
+    .ob-kpi span{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+    .ob-kpi.warn b{color:#d97706}
+    .ob-cols{display:grid;grid-template-columns:2fr 3fr;gap:14px}
+    .ob-h{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
+    .ob-notes{display:flex;flex-wrap:wrap;gap:4px}
+    .ob-notes span{font-size:11px;background:var(--bg);padding:3px 8px;border-radius:50px;color:var(--text2)}
+    .ob-notes.warn span{background:#fef3c7;color:#b45309}
+    .ob-tree{max-height:340px;overflow-y:auto;border:1px solid var(--border);border-radius:12px;padding:6px}
+    .ob-loc{padding:6px 4px}
+    .ob-loc-h{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;padding:4px 6px}
+    .ob-loc-h span{color:var(--text3);font-size:11px;white-space:nowrap}
+    .ob-asset{display:flex;align-items:center;gap:8px;padding:4px 6px 4px 18px;font-size:12px;border-radius:8px}
+    .ob-asset:hover{background:var(--bg)}
+    .ob-asset .n{font-weight:600;color:var(--text);flex-shrink:0}
+    .ob-asset .m{flex:1;min-width:0;color:var(--text3);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ob-asset i{font-style:normal;color:#b45309}
+    @media(max-width:768px){.ob-cols{grid-template-columns:1fr}.ob-summary{grid-template-columns:1fr 1fr}}
+    /* ---- meetings week board ---- */
+    .mt-week{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--sh-sm);padding:14px 16px 16px;margin-bottom:14px}
+    .mt-week-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+    .mt-week-title{font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--text)}
+    .mt-nav{display:flex;gap:6px;align-items:center}
+    .mt-days{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+    .mt-day{background:var(--bg);border-radius:12px;padding:8px;min-height:180px;display:flex;flex-direction:column;border:1px solid transparent}
+    .mt-day.today{border-color:var(--pp-blue);background:rgba(0,118,187,0.05)}
+    .mt-day.past{opacity:0.7}
+    .mt-day-h{display:flex;align-items:baseline;gap:6px;padding:2px 4px 8px}
+    .mt-day-h .dow{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)}
+    .mt-day.today .dow{color:var(--pp-blue)}
+    .mt-day-h .num{font-family:var(--font-display);font-size:16px;font-weight:800;color:var(--text)}
+    .mt-day-h .cnt{margin-left:auto;font-size:10px;font-weight:700;background:var(--card);border:1px solid var(--border);padding:1px 7px;border-radius:50px;color:var(--text2)}
+    .mt-day-body{display:flex;flex-direction:column;gap:6px;flex:1}
+    .mt-card{background:var(--card);border-radius:10px;padding:8px 9px 8px 11px;border-left:3px solid var(--rep,var(--pp-blue));box-shadow:var(--sh-xs);cursor:pointer;transition:transform var(--t-fast),box-shadow var(--t-base)}
+    .mt-card:hover{transform:translateY(-1px);box-shadow:var(--sh-md)}
+    .mt-card.done{opacity:0.7}
+    .mt-time{font-size:10px;font-weight:700;color:var(--rep,var(--pp-blue))}
+    .mt-time span{color:var(--text3);font-weight:500}
+    .mt-title{font-size:12px;font-weight:600;color:var(--text);line-height:1.3;margin-top:2px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+    .mt-lead{font-size:11px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .mt-att{font-size:10px;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .mt-foot{display:flex;align-items:center;gap:6px;margin-top:7px}
+    .mt-foot img,.mt-foot>span:first-child{border-radius:50%}
+    .mt-rep{font-size:10px;color:var(--text3);flex:1}
+    .mt-join{font-size:10px;font-weight:700;color:#fff;background:var(--rep,var(--pp-blue));padding:3px 8px;border-radius:50px;text-decoration:none}
+    .mt-none{flex:1;border:1px dashed var(--border);border-radius:8px;min-height:40px;opacity:0.6}
+    .mt-lower{display:grid;grid-template-columns:280px 1fr;gap:14px}
+    .mt-strip{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;box-shadow:var(--sh-sm);margin-bottom:14px}
+    .mt-strip h3{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);margin:0 0 10px;display:flex;align-items:center;gap:8px}
+    .mt-strip h3 .n{font-size:10px;background:var(--bg);border:1px solid var(--border);padding:1px 7px;border-radius:50px;color:var(--text2)}
+    .mt-strip-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px}
+    .mt-mini{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:var(--bg);border-left:3px solid var(--rep,var(--pp-blue));cursor:pointer;transition:transform var(--t-fast)}
+    .mt-mini:hover{transform:translateX(2px)}
+    .mt-mini-main{flex:1;min-width:0}
+    .mt-repbar{display:grid;grid-template-columns:110px 1fr 24px;align-items:center;gap:8px;font-size:12px;margin:6px 0}
+    .mt-repbar .who{display:flex;align-items:center;gap:6px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .mt-repbar .bar{height:9px;border-radius:6px;background:var(--bg);overflow:hidden}
+    .mt-repbar .bar i{display:block;height:100%;border-radius:6px;transition:width .6s var(--ease)}
+    .mt-repbar b{text-align:right}
+    @media(max-width:1200px){.mt-days{grid-template-columns:repeat(4,1fr)}.mt-day{min-height:120px}.mt-lower{grid-template-columns:1fr}}
+    @media(max-width:768px){.mt-days{grid-template-columns:1fr}.mt-day.empty{display:none}.mt-day{min-height:0}}
   </style>
 </head>
 <body>
@@ -1441,6 +1570,7 @@
         <button class="view-tab" onclick="switchView('tradeshows')" data-short="Shows"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M3 21V10l9-7 9 7v11"/><path d="M9 21v-6h6v6"/></svg> Trade Shows</button>
         <button class="view-tab" onclick="switchView('leads')" data-short="Leads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> Inbound Leads</button>
         <button class="view-tab" onclick="switchView('meetings')" data-short="Meetings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Meetings</button>
+        <button class="view-tab" onclick="switchView('landing')" data-short="Pages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Landing Pages</button>
         <div class="nav-group">Marketing</div>
         <button class="view-tab soon" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg> Campaigns<span class="soon-tag">Soon</span></button>
         <div class="nav-group bottom">Workspace</div>
@@ -1450,13 +1580,22 @@
       </div>
 
       <div class="view-content active" id="dashboardView">
-        <div class="pp-upcoming" id="ppUpcoming">
-          <div class="stat-card"><h3>Upcoming Trade Shows</h3><div class="pp-up-list" id="upShows"><div class="pp-up-empty">Loading...</div></div></div>
-          <div class="stat-card"><h3>Upcoming Go-Lives</h3><div class="pp-up-list" id="upGoLives"><div class="pp-up-empty">Loading...</div></div></div>
+        <div class="hq-head"><div><div class="hq-greet" id="hqGreet">Welcome</div><div class="hq-date" id="hqDate"></div></div><div class="hq-pills" id="hqPills"></div></div>
+        <div class="hq-kpis" id="hqKpis"></div>
+        <div class="hq-grid" id="ppUpcoming">
+          <div class="stat-card hq-tall"><h3>Needs Attention</h3><div class="pp-up-list" id="upAttention"><div class="pp-up-empty">Loading...</div></div></div>
           <div class="stat-card"><h3>This Week's Meetings</h3><div class="pp-up-list" id="upMeetings"><div class="pp-up-empty">Loading...</div></div></div>
           <div class="stat-card"><h3>New Inbound Leads</h3><div class="pp-up-list" id="upLeads"><div class="pp-up-empty">Loading...</div></div></div>
-          <div class="stat-card"><h3>Needs Attention</h3><div class="pp-up-list" id="upAttention"><div class="pp-up-empty">Loading...</div></div></div>
+          <div class="stat-card"><h3>Upcoming Trade Shows</h3><div class="pp-up-list" id="upShows"><div class="pp-up-empty">Loading...</div></div></div>
+          <div class="stat-card"><h3>Upcoming Go-Lives</h3><div class="pp-up-list" id="upGoLives"><div class="pp-up-empty">Loading...</div></div></div>
+          <div class="stat-card"><h3>Team Pulse</h3><div id="hqTeam"></div></div>
+          <div class="stat-card"><h3>Onboarding Snapshot</h3><div id="hqPipeline"></div></div>
+          <div class="stat-card"><h3>Recent Activity</h3><div id="hqActivity"></div></div>
         </div>
+
+      </div>
+
+      <div class="view-content" id="submissionsView">
         <div class="stats-row">
           <div class="stat-card"><h3>Form Conversions</h3><div class="conversions-card" id="conversionsCard"></div></div>
           <div class="stat-card"><h3>Form Completion Metrics</h3><div class="time-stats-container"><div class="time-hero"><div class="time-hero-ring"><svg width="100" height="100" viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="42"/><circle class="progress" id="timeRingProgress" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="264"/></svg><div class="time-hero-value"><span class="num" id="avgTime">-</span><span class="unit" id="avgTimeUnit">days</span></div></div><div class="time-hero-info"><div class="label">Average Time to Complete</div><div class="desc">From first save to final submission</div></div></div><div class="time-range"><div class="time-range-item"><div class="val" id="fastestTime">-</div><div class="lbl">Fastest</div></div><div class="time-range-item"><div class="val" id="slowestTime">-</div><div class="lbl">Slowest</div></div></div></div></div>
@@ -1465,10 +1604,6 @@
           <div class="stat-card"><h3>Team Assignments</h3><div class="rep-chart" id="repChart"></div></div>
           <div class="stat-card"><h3>Checklist Completion</h3><div id="checklistChart"></div></div>
         </div>
-
-      </div>
-
-      <div class="view-content" id="submissionsView">
         <div class="table-section">
           <div class="controls-row">
             <div class="section-title">Submissions</div>
@@ -1483,7 +1618,7 @@
                 <button class="text-action-btn" id="myAccountsBtn" onclick="toggleMyAccounts()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> My Accounts</button>
               </div>
               <div class="controls-group actions-group">
-                <button class="text-action-btn" onclick="startImport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button>
+                <button class="text-action-btn" onclick="startImport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button><button class="text-action-btn" onclick="startOnboardingImport()" title="Create a submission from a district onboarding workbook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg> Workbook</button><input type="file" id="obImportFile" accept=".xlsx,.xls" style="display:none" onchange="handleOnboardingWorkbook(this.files[0]);this.value=''">
                 <input type="file" id="importFileInput" accept=".csv,text/csv" style="display:none" onchange="handleImportFile(this.files[0]);this.value=''">
                 <button class="text-action-btn" onclick="exportCSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
                 <button class="text-action-btn" onclick="loadData()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh</button>
@@ -1714,6 +1849,15 @@
       <div class="view-content" id="meetingsView">
         <div class="controls-row"><div><div class="section-title">Meetings</div><div class="pp-toolbar-note" id="meetingsHead"></div></div><div class="controls-right"><div class="controls-group filters-group"><div class="styled-select"><select id="meetRepFilter" onchange="meetRep=this.value;renderMeetings()"><option value="all">Everyone</option><option value="me">My meetings</option></select></div></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="syncCloseMeetingsNow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Sync now</button></div></div></div>
         <div id="meetingsList"><div class="pp-empty">Loading meetings...</div></div>
+      </div>
+
+      <!-- ===== Landing Pages view ===== -->
+      <div class="view-content" id="landingView">
+        <div class="pp-stat-strip" id="lpStats"></div>
+        <div class="table-section">
+          <div class="controls-row"><div class="section-title">Landing Pages</div><div class="controls-right"><div class="controls-group search-group"><input type="text" class="search-input" placeholder="Search pages..." oninput="lpSearch=this.value.toLowerCase();renderLandingPages()" style="width:200px"></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="startLpImport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button><input type="file" id="lpImportFile" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleLpImportFile(this.files[0]);this.value=''"><button class="text-action-btn pp-icon-only" title="Refresh" onclick="loadLandingPages(true).then(renderLandingPages)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button></div></div></div>
+          <div class="table-wrapper"><table class="pp-table" id="lpTable"><thead><tr><th>Page</th><th>URL</th><th>Show</th><th>Leads go to</th><th>Source key</th><th>Leads</th><th>Notes</th><th></th></tr></thead><tbody id="lpTableBody"><tr><td colspan="8" class="pp-empty">Loading...</td></tr></tbody></table></div>
+        </div>
       </div>
 
       <div class="view-content" id="calendarView">
@@ -1986,6 +2130,7 @@
       if (view === 'leads') { renderLeads(); loadLeads(false).then(function() { renderLeads(); }); }
       if (view === 'resources') { renderResources(); loadResources(false).then(function() { renderResources(); }); }
       if (view === 'meetings') { renderMeetings(); loadCloseMeetings(false).then(function() { renderMeetings(); }); }
+      if (view === 'landing') { renderLandingPages(); Promise.all([loadLandingPages(false), loadTradeShows(false), loadLeads(false)]).then(function() { renderLandingPages(); }); }
       if (view === 'customers') { renderCloseAccounts(); loadCloseAccounts(false).then(function() { renderCloseAccounts(); }); }
       ppSetHeaderTitle(view);
       if (typeof ppPopoverClose === 'function') ppPopoverClose();
@@ -2037,7 +2182,7 @@
           // Load shared data before rendering
           await sideLoads;
           updateStats(); renderTable(); renderPipeline(); renderCalendar(); finishLoading(allData); ppSyncPill(false); window._ppCachedRender = false;
-          setTimeout(function() { loadCredList(false).then(function() { if (document.getElementById('credentialsView').classList.contains('active')) renderCredentials(); renderUpcoming(); }); loadTradeShows(false).then(function() { if (document.getElementById('tradeshowsView').classList.contains('active')) renderTradeShows(); renderUpcoming(); }); loadLeads(false).then(function() { if (document.getElementById('leadsView').classList.contains('active')) renderLeads(); renderUpcoming(); }); loadCloseMeetings(false).then(function() { if (document.getElementById('calendarView').classList.contains('active')) renderCalendar(); renderUpcoming(); }); loadCloseAccounts(false).then(function() { if (document.getElementById('customersView').classList.contains('active')) renderCloseAccounts(); renderUpcoming(); }); }, 1500);
+          setTimeout(function() { loadCredList(false).then(function() { if (document.getElementById('credentialsView').classList.contains('active')) renderCredentials(); renderUpcoming(); }); loadTradeShows(false).then(function() { if (document.getElementById('tradeshowsView').classList.contains('active')) renderTradeShows(); renderUpcoming(); }); loadLeads(false).then(function() { if (document.getElementById('leadsView').classList.contains('active')) renderLeads(); renderUpcoming(); }); loadCloseMeetings(false).then(function() { if (document.getElementById('calendarView').classList.contains('active')) renderCalendar(); renderUpcoming(); }); loadCloseAccounts(false).then(function() { if (document.getElementById('customersView').classList.contains('active')) renderCloseAccounts(); renderUpcoming(); }); loadActivity().then(function() { window._ppActivityLoaded = true; renderUpcoming(); }); loadLandingPages(false).then(function() { if (document.getElementById('tradeshowsView').classList.contains('active')) renderTradeShows(); }); }, 1500);
           // Start auto-refresh every 60 seconds
           if (!window._refreshInterval) {
             window._refreshInterval = setInterval(async function() {
@@ -3695,13 +3840,13 @@
         setTimeout(function() { finish(rej, new Error('Timeout after ' + Math.round(timeoutMs / 1000) + 's (no JSONP reply)')); }, timeoutMs);
       }).catch(function(e) { if (attempt < 2) return new Promise(function(r) { setTimeout(r, 1200); }).then(function() { return ppJsonp(url, timeoutMs, attempt + 1); }); throw e; });
     }
-    function ppApi(action, params) {
+    function ppApi(action, params, timeoutMs) {
       var url = API_URL + '?action=' + encodeURIComponent(action) + '&email=' + encodeURIComponent(currentUser?.email || '');
       Object.keys(params || {}).forEach(function(k) {
         var v = params[k]; if (v === undefined || v === null) v = '';
         url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(typeof v === 'object' ? JSON.stringify(v) : String(v));
       });
-      return ppJsonp(url, 30000);
+      return ppJsonp(url, timeoutMs || 30000);
     }
     function ppTodayISO() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
     function ppParseISO(s) { if (!s) return null; var p = String(s).split('-'); if (p.length < 3) return null; return new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2])); }
@@ -3764,16 +3909,19 @@
     function ppReadFileText(file) { return new Promise(function(res, rej) { var r = new FileReader(); r.onload = function() { res(r.result); }; r.onerror = rej; r.readAsText(file); }); }
     function ppLoadScript(src) { return new Promise(function(res, rej) { if (window.XLSX) return res(); var s = document.createElement('script'); s.src = src; s.onload = function() { res(); }; s.onerror = function() { rej(new Error('Could not load the Excel reader. Check your connection and try again, or save the file as CSV.')); }; document.head.appendChild(s); }); }
     // Reads .xlsx/.xls (via SheetJS, loaded on first use) or .csv into an array of string rows. Dates come through as Excel serials, which ppNormalizeDate understands.
-    async function ppParseWorkbook(file) {
-      // Returns [{ name, rows }] for every sheet of an .xlsx, or one unnamed sheet for a .csv
+    async function ppParseWorkbook(file, opts) {
+      // Returns [{ name, rows }] for every sheet of an .xlsx, or one unnamed sheet for a .csv.
+      // opts.keepEmpty keeps blank rows in place (needed when a template relies on fixed row positions).
+      opts = opts || {};
       var name = String(file.name || '').toLowerCase();
       if (/\.(xlsx|xlsm|xls)$/.test(name)) {
         await ppLoadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
         var buf = await new Promise(function(res, rej) { var r = new FileReader(); r.onload = function() { res(r.result); }; r.onerror = rej; r.readAsArrayBuffer(file); });
         var wb = XLSX.read(new Uint8Array(buf), { type: 'array', cellDates: false });
         return wb.SheetNames.map(function(sn) {
-          var rows = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, raw: true, defval: '' });
-          return { name: sn, rows: rows.map(function(r) { return r.map(function(v) { return (v === null || v === undefined) ? '' : String(v); }); }).filter(function(r) { return r.some(function(v) { return v.trim(); }); }) };
+          var rows = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, raw: true, defval: '', blankrows: !!opts.keepEmpty });
+          rows = rows.map(function(r) { return r.map(function(v) { return (v === null || v === undefined) ? '' : String(v); }); });
+          return { name: sn, rows: opts.keepEmpty ? rows : rows.filter(function(r) { return r.some(function(v) { return v.trim(); }); }) };
         });
       }
       return [{ name: '', rows: parseCSV(await ppReadFileText(file)) }];
@@ -3788,7 +3936,7 @@
       else if (/Timeout|Script load failed|unreachable/i.test(err)) hint = 'No reply came back from the script. Usually the one-line hook is missing from doGet (<code>var pp = ppHandleExtra_(e); if (pp) return pp;</code>) or the deployment has not been updated to a new version.';
       else if (/Unauthorized/i.test(err)) hint = 'Your signed-in email (' + ppEsc(currentUser?.email || '') + ') is not in <code>PP_ADMIN_EMAILS</code> at the top of Extras.gs.';
       else hint = 'The Apps Script behind this admin needs the new actions for this tab. Paste <code>AppsScript_additions.gs</code> in as Extras.gs, add the one-line hook to doGet, and deploy a new version.';
-      var retry = what === 'Credentials' ? 'loadCredList(true).then(renderCredentials)' : what === 'Inbound Leads' ? 'loadLeads(true).then(renderLeads)' : what === 'Resources' ? 'loadResources(true).then(renderResources)' : what === 'Meetings' ? 'loadCloseMeetings(true).then(renderMeetings)' : 'loadTradeShows(true).then(renderTradeShows)';
+      var retry = what === 'Credentials' ? 'loadCredList(true).then(renderCredentials)' : what === 'Inbound Leads' ? 'loadLeads(true).then(renderLeads)' : what === 'Resources' ? 'loadResources(true).then(renderResources)' : what === 'Meetings' ? 'loadCloseMeetings(true).then(renderMeetings)' : what === 'Landing Pages' ? 'loadLandingPages(true).then(renderLandingPages)' : 'loadTradeShows(true).then(renderTradeShows)';
       return '<div class="pp-empty"><strong>' + what + ': backend not connected yet</strong><div style="max-width:520px;margin:0 auto;line-height:1.6">' + hint + '</div>'
         + (err ? '<div class="pp-toolbar-note" style="margin-top:10px">Reply from server: ' + ppEsc(err) + '</div>' : '')
         + '<div style="margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><a class="pp-btn" target="_blank" rel="noopener" href="' + ppEsc(API_URL + '?action=ppPing&email=' + encodeURIComponent(currentUser?.email || '')) + '">Test backend</a><button class="pp-btn primary" onclick="' + retry + '">Retry</button></div></div>';
@@ -4103,7 +4251,7 @@
       var chip = function(field, list) { var val = s[field] || ''; var item = list.find(function(x) { return x.val === val; }) || list[0]; var label = val ? (item.short || item.label) : (field === 'registration' ? 'Register' : field === 'hotel' ? 'Hotel?' : 'Flight?'); return '<span class="pp-chip pick ' + (val || 'unset') + '" title="' + ppEsc(item.label) + '">' + ppEsc(label) + '<i class="caret"></i></span>'; };
       var out = '<span class="ts-outcome"><span><b>Leads</b>' + ppEsc(s.leads || '-') + '</span><span><b>Demos</b>' + ppEsc(s.demos || '-') + '</span><span><b>Deals</b>' + ppEsc(s.deals || '-') + '</span></span>';
       return '<tr data-id="' + ppEsc(s.id) + '"' + (s._isPast ? ' class="past"' : '') + '>'
-        + cell('details', '<div class="pp-org-cell"><div><div class="pp-org-name">' + ppEsc(s.name) + (s.podcast ? ' <span title="Includes podcast" style="color:var(--pp-blue);display:inline-flex;vertical-align:middle;width:12px;height:12px">' + ppSvg('mic') + '</span>' : '') + (s.link ? ' <a class="ts-link" href="' + ppEsc(s.link) + '" target="_blank" rel="noopener" title="Open event site" style="vertical-align:middle">' + ppSvg('link') + '</a>' : '') + '</div><div class="pp-org-sub">' + (s.location ? ppEsc(s.location) : '<span class="pp-placeholder">Location?</span>') + '</div></div></div>')
+        + cell('details', '<div class="pp-org-cell"><div><div class="pp-org-name">' + ppEsc(s.name) + (s.podcast ? ' <span title="Includes podcast" style="color:var(--pp-blue);display:inline-flex;vertical-align:middle;width:12px;height:12px">' + ppSvg('mic') + '</span>' : '') + (s.link ? ' <a class="ts-link" href="' + ppEsc(s.link) + '" target="_blank" rel="noopener" title="Open event site" style="vertical-align:middle">' + ppSvg('link') + '</a>' : '') + (typeof lpChipForShow === 'function' ? lpChipForShow(s) : '') + '</div><div class="pp-org-sub">' + (s.location ? ppEsc(s.location) : '<span class="pp-placeholder">Location?</span>') + '</div></div></div>')
         + cell('dates', '<div class="ts-date' + (soon ? ' soon' : '') + '">' + ppFmtRange(s._start, s._end) + '<span class="sub">' + when + '</span></div>')
         + cell('audience', '<span class="pp-chip pick aud-' + (s.audience || 'other') + (s.audience ? '' : ' unset') + '" title="' + ppEsc(tsAudLabel(s.audience)) + '">' + ppEsc(s.audience ? ((TS_AUDIENCES.find(function(a) { return a.val === s.audience; }) || {}).short || tsAudLabel(s.audience)) : 'Audience?') + '<i class="caret"></i></span>')
         + cell('reps', ppRepAvatars(s.reps, 26))
@@ -4468,6 +4616,7 @@
       attEl.innerHTML = items.length ? items.slice(0, 5).map(function(it) {
         return '<div class="pp-up-item" onclick="' + it.go + '"><div class="pp-att-icon ' + it.cls + '">' + icons[it.cls] + '</div><div class="pp-up-main"><div class="pp-up-title">' + it.title + '</div><div class="pp-up-sub">' + it.sub + '</div></div><div class="pp-up-right" style="color:var(--text3)">&rsaquo;</div></div>';
       }).join('') : '<div class="pp-up-empty"><span style="color:var(--pp-green);font-weight:600">All clear.</span> Nothing needs attention right now.</div>';
+      try { renderHQ(); } catch(e) { console.log('hq:', e.message); }
     }
     // =====================================================================
     // TRADE SHOWS: INSIGHTS (breakdowns, charts, rep coverage)  (Sept 2026)
@@ -4624,8 +4773,9 @@
       if (cell.closest('#tsGroups')) { e.stopPropagation(); tsCellEdit(id, field, cell); }
       else if (cell.closest('#credTableBody')) { e.stopPropagation(); credCellEdit(id, field, cell); }
       else if (cell.closest('#leadTableBody')) { e.stopPropagation(); leadCellEdit(id, field, cell); }
+      else if (cell.closest('#lpTableBody')) { e.stopPropagation(); lpCellEdit(id, field, cell); }
     });
-    document.addEventListener('keydown', function(e) { if (e.key === 'Enter' && e.target && e.target.classList && e.target.classList.contains('ts-add-input')) { e.preventDefault(); tsQuickAdd(e.target); } });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Enter' && e.target && e.target.classList && e.target.classList.contains('ts-add-input') && !e.target.classList.contains('lp-add-input')) { e.preventDefault(); tsQuickAdd(e.target); } });
 
     // ---- trade show cells ----
     function tsCellEdit(id, field, cell) {
@@ -4738,7 +4888,7 @@
     function openDataHealth() { dhOpen = true; dhFilter = 'all'; switchView('pipeline'); setTimeout(renderDataHealth, 50); }
 
     // ---- sidebar layout + header title ----
-    var PP_VIEW_TITLES = { dashboard: ['HQ', 'Dashboard'], calendar: ['HQ', 'Calendar'], submissions: ['Onboarding', 'Submissions'], pipeline: ['Onboarding', 'Pipeline'], customers: ['Client Success', 'Client Overview'], credentials: ['Client Success', 'Client Credentials'], tradeshows: ['Sales', 'Trade Shows'], leads: ['Sales', 'Inbound Leads'], meetings: ['Sales', 'Meetings'], resources: ['Workspace', 'Resources'], activity: ['Workspace', 'Activity'] };
+    var PP_VIEW_TITLES = { dashboard: ['HQ', 'Dashboard'], calendar: ['HQ', 'Calendar'], submissions: ['Onboarding', 'Submissions'], pipeline: ['Onboarding', 'Pipeline'], customers: ['Client Success', 'Client Overview'], credentials: ['Client Success', 'Client Credentials'], tradeshows: ['Sales', 'Trade Shows'], leads: ['Sales', 'Inbound Leads'], meetings: ['Sales', 'Meetings'], landing: ['Sales', 'Landing Pages'], resources: ['Workspace', 'Resources'], activity: ['Workspace', 'Activity'] };
     function ppSetHeaderTitle(view) { var t = document.getElementById('hdrTitle'); if (!t || !PP_VIEW_TITLES[view]) return; t.innerHTML = '<span class="crumb">' + PP_VIEW_TITLES[view][0] + '</span><b>' + PP_VIEW_TITLES[view][1] + '</b>'; }
     function ppLayoutInit() {
       var tabs = document.querySelector('.view-tabs'), dash = document.getElementById('dashboard'), main = document.querySelector('.main-content'); if (!tabs || !dash || !main) return;
@@ -4897,7 +5047,7 @@
         + cell('contact', '<div class="lead-contact">' + (l.email ? '<span class="pp-copyable" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(l.email) + '\',\'Email\')">' + ppEsc(l.email) + '</span>' : '<span class="pp-placeholder">Email?</span>') + (l.phone ? '<span class="pp-copyable sub" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(l.phone) + '\',\'Phone\')">' + ppEsc(formatPhone(l.phone)) + '</span>' : '') + '</div>')
         + cell('source', l.source ? '<span class="pp-chip aud-other">' + ppEsc(l.source) + '</span>' : '<span class="pp-placeholder">Source?</span>')
         + '<td><div class="ts-date">' + leadAge(l) + '<span class="sub">' + ppFmtDate(l.receivedAt.slice(0, 10), { month: 'short', day: 'numeric' }) + '</span></div></td>'
-        + cell('assignedTo', l.assignedTo ? '<div style="display:flex;align-items:center;gap:8px">' + ppRepAvatars(l.assignedTo, 24) + '<span style="font-size:11px;color:var(--text2)">' + ppEsc(ppRepName(l.assignedTo)) + '</span></div>' : '<span class="pp-chip need-to-book">Assign<i class="caret"></i></span>')
+        + cell('assignedTo', l.assignedTo ? '<div style="display:flex;align-items:center;gap:8px">' + ppRepAvatars(l.assignedTo, 24) + '<span style="font-size:11px;color:var(--text2)">' + ppEsc(ppRepName(l.assignedTo)) + (/^show:/.test(l.assignedBy) ? '<span class="ca-sub" title="' + ppEsc(l.assignedBy.slice(5)) + '">via show</span>' : l.assignedBy === 'round-robin' ? '<span class="ca-sub">rotation</span>' : '') + '</span></div>' : '<span class="pp-chip need-to-book">Assign<i class="caret"></i></span>')
         + cell('status', '<span class="pp-chip pick ' + st.cls + '">' + st.label + '<i class="caret"></i></span>')
         + '<td>' + (touch === null ? '<span class="pp-placeholder">' + (l.status === 'new' ? 'not yet' : '-') + '</span>' : '<span class="' + (touch <= 24 ? 'lead-fast' : touch <= 72 ? '' : 'lead-slow') + '">' + (touch < 48 ? touch + 'h' : Math.round(touch / 24) + 'd') + '</span>') + '</td>'
         + cell('internalNotes', l.internalNotes ? '<span class="lead-note" title="' + ppEsc(l.internalNotes) + '">' + ppEsc(l.internalNotes) + '</span>' : (l.notes ? '<span class="lead-note pp-placeholder" title="From the form: ' + ppEsc(l.notes) + '">' + ppEsc(l.notes) + '</span>' : '<span class="pp-placeholder">Add a note</span>'))
@@ -5093,6 +5243,15 @@
       if (btn) { btn.disabled = false; btn.innerHTML = orig; }
     }
     function meetingTime(m) { var d = new Date(m.start); if (isNaN(d)) return ''; return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); }
+    var meetWeekOffset = 0;
+    function meetWeekStart(offset) { var d = new Date(); d.setHours(0, 0, 0, 0); var dow = (d.getDay() + 6) % 7; d.setDate(d.getDate() - dow + (offset || 0) * 7); return d; }
+    function meetIso(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+    var MEET_REP_COLORS = ['#0076bb', '#00a84f', '#7c3aed', '#ea580c', '#db2777', '#0891b2'];
+    function meetRepColor(email) { var i = TEAM_MEMBERS.findIndex(function(m) { return m.email === email; }); return MEET_REP_COLORS[(i >= 0 ? i : 5) % MEET_REP_COLORS.length]; }
+    function meetCard(m, compact) {
+      var col = meetRepColor(m.rep), href = m.url || '';
+      return '<div class="mt-card' + (m.status === 'completed' ? ' done' : '') + '" style="--rep:' + col + '" onclick="' + (href ? 'window.open(\'' + ppEsc(href) + '\',\'_blank\')' : '') + '"><div class="mt-time">' + meetingTime(m) + (m.end ? ' <span>' + new Date(m.end).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) + '</span>' : '') + '</div><div class="mt-title">' + ppEsc(m.title) + '</div>' + (m.leadName ? '<div class="mt-lead">' + ppEsc(m.leadName) + '</div>' : '') + (!compact && m.attendees ? '<div class="mt-att">' + ppEsc(m.attendees) + '</div>' : '') + '<div class="mt-foot">' + (m.rep ? getTeamPhoto(m.rep, 20) : '') + '<span class="mt-rep">' + ppEsc(m.repName ? m.repName.split(' ')[0] : '') + '</span>' + (m.link ? '<a class="mt-join" href="' + ppEsc(m.link) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">Join</a>' : '') + '</div></div>';
+    }
     function renderMeetings() {
       var el = document.getElementById('meetingsList'); if (!el) return;
       var head = document.getElementById('meetingsHead'); if (head) head.innerHTML = closeMeetingsSyncedAt ? 'Synced from Close ' + ppAgo(closeMeetingsSyncedAt) + '. Refreshes every 15 minutes.' : '';
@@ -5100,22 +5259,28 @@
       if (!closeKeyPresent) { el.innerHTML = '<div class="pp-empty"><strong>Close is not connected</strong>Add CLOSE_API_KEY to the Apps Script project, then run ppSetupCloseTriggers once.</div>'; return; }
       var today = ppTodayISO(), me = currentUser?.email || '';
       var list = closeMeetings.filter(function(m) { return m.start && (meetRep === 'all' || (meetRep === 'me' ? m.rep === me : m.rep === meetRep)); }).sort(function(a, b) { return a.start < b.start ? -1 : 1; });
-      var upcoming = list.filter(function(m) { return m.start.slice(0, 10) >= today; }), past = list.filter(function(m) { return m.start.slice(0, 10) < today; }).reverse();
-      var block = function(m) { var d = ppParseISO(m.start.slice(0, 10)); return '<div class="meet-item" onclick="' + (m.url ? 'window.open(\'' + ppEsc(m.url) + '\',\'_blank\')' : '') + '"><div class="pp-up-date' + (m.start.slice(0, 10) === today ? ' soon' : '') + '"><b>' + d.getDate() + '</b><span>' + d.toLocaleDateString('en-US', { month: 'short' }) + '</span></div><div class="meet-main"><div class="meet-title">' + ppEsc(m.title) + '</div><div class="meet-sub">' + meetingTime(m) + (m.leadName ? ' &middot; <b>' + ppEsc(m.leadName) + '</b>' : '') + (m.attendees ? ' &middot; ' + ppEsc(m.attendees) : '') + (m.location && !/^https?:/.test(m.location) ? ' &middot; ' + ppEsc(m.location) : '') + '</div></div><div class="meet-right">' + (m.rep ? ppRepAvatars(m.rep, 24) : '<span class="pp-avatar-text">' + ppEsc(m.repName || 'Rep') + '</span>') + (m.link ? '<a class="pp-mini-btn" href="' + ppEsc(m.link) + '" target="_blank" rel="noopener" title="Join or open" onclick="event.stopPropagation()">' + ppSvg('link') + '</a>' : '') + '</div></div>'; };
-      var group = function(title, items, emptyText) { return '<div class="meet-group"><h3>' + title + '<span class="n">' + items.length + '</span></h3>' + (items.length ? items.map(block).join('') : '<div class="pp-empty" style="padding:14px">' + emptyText + '</div>') + '</div>'; };
-      var week = upcoming.filter(function(m) { return ppDaysBetween(m.start.slice(0, 10), today) <= 7; }), later = upcoming.filter(function(m) { return ppDaysBetween(m.start.slice(0, 10), today) > 7; });
-      el.innerHTML = group('This week', week, 'No meetings booked in the next 7 days.') + group('Later', later, 'Nothing further out yet.') + group('Recent', past.slice(0, 15), 'No meetings in the last two weeks.');
+      var ws = meetWeekStart(meetWeekOffset), days = []; for (var i = 0; i < 7; i++) { var d = new Date(ws); d.setDate(ws.getDate() + i); days.push(d); }
+      var wsIso = meetIso(days[0]), weIso = meetIso(days[6]);
+      var inWeek = list.filter(function(m) { return m.start.slice(0, 10) >= wsIso && m.start.slice(0, 10) <= weIso; });
+      var byRep = {}; inWeek.forEach(function(m) { var k = m.rep || m.repName || 'other'; byRep[k] = (byRep[k] || 0) + 1; });
+      var repBars = Object.keys(byRep).sort(function(a, b) { return byRep[b] - byRep[a]; }).map(function(k) { var name = ppRepFull(k) || k; return '<div class="mt-repbar"><span class="who">' + (TEAM_MEMBERS.some(function(m) { return m.email === k; }) ? getTeamPhoto(k, 22) : '') + ppEsc(ppRepName(k) || k) + '</span><span class="bar"><i style="width:' + Math.round(byRep[k] / Math.max(1, inWeek.length) * 100) + '%;background:' + meetRepColor(k) + '"></i></span><b>' + byRep[k] + '</b></div>'; }).join('');
+      var weekLabel = days[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' to ' + days[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      var board = '<div class="mt-week"><div class="mt-week-head"><div><div class="mt-week-title">' + (meetWeekOffset === 0 ? 'This week' : meetWeekOffset === 1 ? 'Next week' : meetWeekOffset === -1 ? 'Last week' : 'Week of ' + days[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })) + '</div><div class="pp-toolbar-note">' + weekLabel + ' &middot; ' + inWeek.length + ' meeting' + (inWeek.length === 1 ? '' : 's') + '</div></div><div class="mt-nav"><button class="calendar-nav-btn" onclick="meetWeekOffset--;renderMeetings()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polyline points="15 18 9 12 15 6"/></svg></button><button class="calendar-today-btn" onclick="meetWeekOffset=0;renderMeetings()">Today</button><button class="calendar-nav-btn" onclick="meetWeekOffset++;renderMeetings()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polyline points="9 18 15 12 9 6"/></svg></button></div></div>'
+        + '<div class="mt-days">' + days.map(function(d) { var iso = meetIso(d), items = inWeek.filter(function(m) { return m.start.slice(0, 10) === iso; }); return '<div class="mt-day' + (iso === today ? ' today' : '') + (iso < today ? ' past' : '') + (items.length ? '' : ' empty') + '"><div class="mt-day-h"><span class="dow">' + d.toLocaleDateString('en-US', { weekday: 'short' }) + '</span><span class="num">' + d.getDate() + '</span>' + (items.length ? '<span class="cnt">' + items.length + '</span>' : '') + '</div><div class="mt-day-body">' + (items.length ? items.map(function(m) { return meetCard(m, false); }).join('') : '<div class="mt-none">&nbsp;</div>') + '</div></div>'; }).join('') + '</div></div>';
+      var upcomingLater = list.filter(function(m) { return m.start.slice(0, 10) > weIso && m.start.slice(0, 10) >= today; }).slice(0, 12), recent = list.filter(function(m) { return m.start.slice(0, 10) < today && m.start.slice(0, 10) < wsIso; }).reverse().slice(0, 8);
+      var strip = function(title, items, empty) { return '<div class="mt-strip"><h3>' + title + '<span class="n">' + items.length + '</span></h3>' + (items.length ? '<div class="mt-strip-list">' + items.map(function(m) { var d = ppParseISO(m.start.slice(0, 10)); return '<div class="mt-mini" style="--rep:' + meetRepColor(m.rep) + '" onclick="' + (m.url ? 'window.open(\'' + ppEsc(m.url) + '\',\'_blank\')' : '') + '"><div class="pp-up-date"><b>' + d.getDate() + '</b><span>' + d.toLocaleDateString('en-US', { month: 'short' }) + '</span></div><div class="mt-mini-main"><div class="mt-title">' + ppEsc(m.title) + '</div><div class="mt-lead">' + meetingTime(m) + (m.leadName ? ' &middot; ' + ppEsc(m.leadName) : '') + '</div></div>' + (m.rep ? getTeamPhoto(m.rep, 22) : '') + '</div>'; }).join('') + '</div>' : '<div class="pp-empty" style="padding:12px">' + empty + '</div>') + '</div>'; };
+      el.innerHTML = board + '<div class="mt-lower"><div class="mt-side"><div class="mt-strip"><h3>By rep this week</h3>' + (repBars || '<div class="pp-empty" style="padding:12px">No meetings this week.</div>') + '</div></div><div class="mt-main">' + strip('Coming up after this week', upcomingLater, 'Nothing booked further out yet.') + strip('Recent', recent, 'No meetings in the last two weeks.') + '</div></div>';
     }
     var meetRep = 'all';
     // ---- account health (Client Overview) ----
     async function loadCloseAccounts(force) {
       if (closeAcctLoaded && !force) return;
-      try { var r = await ppApi('getCloseAccounts'); if (r.success) { closeKeyPresent = r.keyPresent !== false; closeAccounts = (r.rows || []).map(function(a) { var o = {}; ['orgEmail', 'organization', 'closeLeadId', 'closeName', 'closeUrl', 'statusLabel', 'owner', 'ownerName', 'lastTouchAt', 'lastTouchType', 'lastTouchBy', 'openTasks', 'nextTaskDate', 'nextTaskText', 'matchedBy', 'syncedAt'].forEach(function(c) { o[c] = a[c] === undefined ? '' : String(a[c]); }); o.orgEmail = o.orgEmail.toLowerCase(); o.owner = o.owner.toLowerCase(); o._days = ppDaysSince(o.lastTouchAt); return o; }); closeAcctSyncedAt = r.syncedAt || ''; closeAcctLoaded = true; closeAcctError = ''; } else closeAcctError = r.error || 'Unknown error'; }
+      try { var r = await ppApi('getCloseAccounts'); if (r.success) { closeKeyPresent = r.keyPresent !== false; closeAccounts = (r.rows || []).map(function(a) { var o = {}; ['orgEmail', 'organization', 'closeLeadId', 'closeName', 'closeUrl', 'statusLabel', 'owner', 'ownerName', 'lastTouchAt', 'lastTouchType', 'lastTouchBy', 'openTasks', 'nextTaskDate', 'nextTaskText', 'matchedBy', 'syncedAt', 'sources', 'credStatus', 'credRep'].forEach(function(c) { o[c] = a[c] === undefined ? '' : String(a[c]); }); o.orgEmail = o.orgEmail.toLowerCase(); o.owner = o.owner.toLowerCase(); o._days = ppDaysSince(o.lastTouchAt); return o; }); closeAcctSyncedAt = r.syncedAt || ''; closeAcctLoaded = true; closeAcctError = ''; } else closeAcctError = r.error || 'Unknown error'; }
       catch(e) { closeAcctError = e.message; }
     }
     async function syncCloseAccountsNow(btn) {
       var orig = btn ? btn.innerHTML : ''; if (btn) { btn.disabled = true; btn.innerHTML = '<svg class="pp-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></svg> Syncing with Close (up to a minute)...'; }
-      try { var r = await ppApi('syncCloseAccounts'); if (!r.success) throw new Error(r.error || 'Sync failed'); await loadCloseAccounts(true); renderCloseAccounts(); renderUpcoming(); showToast(r.matched + ' of ' + r.accounts + ' accounts matched to Close', 'success'); } catch(e) { showToast('Could not sync: ' + e.message, 'error'); }
+      try { var r = await ppApi('syncCloseAccounts', {}, 170000); if (!r.success) throw new Error(r.error || 'Sync failed'); await loadCloseAccounts(true); renderCloseAccounts(); renderUpcoming(); showToast(r.matched + ' of ' + r.accounts + ' accounts matched to Close', 'success'); } catch(e) { showToast('Could not sync: ' + e.message, 'error'); }
       if (btn) { btn.disabled = false; btn.innerHTML = orig; }
     }
     function closeAcctFor(email) { var e = String(email || '').toLowerCase(); return closeAccounts.find(function(a) { return a.orgEmail === e; }) || null; }
@@ -5129,12 +5294,277 @@
       shown.sort(function(a, b) { if (closeAcctSort === 'stale') { var da = a._days === null ? 9999 : a._days, db = b._days === null ? 9999 : b._days; return db - da; } if (closeAcctSort === 'recent') { return (b.lastTouchAt || '') < (a.lastTouchAt || '') ? -1 : 1; } return a.organization.localeCompare(b.organization); });
       var chip = function(key, label, n, cls) { return '<button type="button" class="dh-chip' + (closeAcctFilter === key ? ' on' : '') + '" onclick="closeAcctFilter=\'' + key + '\';renderCloseAccounts()">' + label + ' <b>' + n + '</b></button>'; };
       var touchCell = function(a) { if (a._days === null) return '<span class="pp-chip on-hold">No touch on record</span>'; var cls = a._days > 60 ? 'on-hold' : a._days > 30 ? 'need-to-book' : 'booked'; return '<span class="pp-chip ' + cls + '" title="' + ppEsc(a.lastTouchType + (a.lastTouchBy ? ' by ' + a.lastTouchBy : '')) + '">' + (a._days === 0 ? 'Today' : a._days + 'd ago') + '</span><span class="ca-sub">' + ppEsc(a.lastTouchType) + (a.lastTouchBy ? ' &middot; ' + ppEsc(a.lastTouchBy.split(' ')[0]) : '') + '</span>'; };
-      el.innerHTML = '<div class="ca-panel"><div class="ca-head"><div><div class="ca-title">Account health from Close</div><div class="pp-toolbar-note">' + matched.length + ' of ' + closeAccounts.length + ' onboarding accounts matched to a Close lead' + (closeAcctSyncedAt ? ' &middot; synced ' + ppAgo(closeAcctSyncedAt) + ', hourly' : '') + '</div></div><div class="ca-actions"><div class="styled-select"><select onchange="closeAcctSort=this.value;renderCloseAccounts()"><option value="stale"' + (closeAcctSort === 'stale' ? ' selected' : '') + '>Stalest first</option><option value="recent"' + (closeAcctSort === 'recent' ? ' selected' : '') + '>Most recent touch</option><option value="name"' + (closeAcctSort === 'name' ? ' selected' : '') + '>A to Z</option></select></div><button class="text-action-btn" onclick="syncCloseAccountsNow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Sync now</button></div></div>'
+      el.innerHTML = '<div class="ca-panel"><div class="ca-head"><div><div class="ca-title">Account health from Close</div><div class="pp-toolbar-note">' + matched.length + ' of ' + closeAccounts.length + ' customer accounts matched to a Close lead (Close customer statuses + Client Credentials + onboarding records)' + (closeAcctSyncedAt ? ' &middot; synced ' + ppAgo(closeAcctSyncedAt) + ', hourly' : '') + '</div></div><div class="ca-actions"><div class="styled-select"><select onchange="closeAcctSort=this.value;renderCloseAccounts()"><option value="stale"' + (closeAcctSort === 'stale' ? ' selected' : '') + '>Stalest first</option><option value="recent"' + (closeAcctSort === 'recent' ? ' selected' : '') + '>Most recent touch</option><option value="name"' + (closeAcctSort === 'name' ? ' selected' : '') + '>A to Z</option></select></div><button class="text-action-btn" onclick="syncCloseAccountsNow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Sync now</button></div></div>'
         + '<div class="dh-chips">' + chip('all', 'Matched', matched.length) + chip('stale', 'No touch in 60 days', stale.length) + chip('tasks', 'Open tasks', matched.filter(function(a) { return parseInt(a.openTasks) > 0; }).length) + chip('unmatched', 'Not found in Close', unmatched.length) + '<span class="pp-toolbar-note" style="align-self:center;margin-left:auto">' + warm.length + ' touched in the last 14 days</span></div>'
         + (shown.length ? '<div class="table-wrapper" style="border-radius:12px"><table class="pp-table ca-table" style="min-width:900px"><thead><tr><th>Account</th><th>Close status</th><th>Owner</th><th>Last touch</th><th>Open tasks</th><th>Next task</th><th></th></tr></thead><tbody>'
-          + shown.slice(0, 80).map(function(a) { return '<tr' + (a._days !== null && a._days > 60 ? ' class="ca-stale"' : '') + '><td><div class="pp-org-cell"><div class="pp-org-avatar" style="background:' + getOrgColor(a.organization || a.orgEmail) + '">' + ppEsc(getOrgInitials(a.organization || a.orgEmail)) + '</div><div><div class="pp-org-name">' + ppEsc(a.organization || a.orgEmail) + '</div><div class="pp-org-sub">' + (a.closeName && a.closeName !== a.organization ? 'Close: ' + ppEsc(a.closeName) + ' &middot; ' : '') + 'matched by ' + ppEsc(a.matchedBy) + '</div></div></div></td><td>' + (a.statusLabel ? '<span class="pp-chip aud-other">' + ppEsc(a.statusLabel) + '</span>' : '-') + '</td><td>' + (a.owner && TEAM_MEMBERS.some(function(m) { return m.email === a.owner; }) ? '<div style="display:flex;align-items:center;gap:8px">' + ppRepAvatars(a.owner, 22) + ppEsc(ppRepName(a.owner)) + '</div>' : ppEsc(a.ownerName || '-')) + '</td><td>' + touchCell(a) + '</td><td>' + (parseInt(a.openTasks) ? '<b>' + a.openTasks + '</b>' : '<span class="pp-placeholder">none</span>') + '</td><td>' + (a.nextTaskDate ? '<div class="ts-date">' + ppFmtDate(a.nextTaskDate, { month: 'short', day: 'numeric' }) + '<span class="sub" title="' + ppEsc(a.nextTaskText) + '">' + ppEsc(a.nextTaskText.slice(0, 40)) + '</span></div>' : '<span class="pp-placeholder">-</span>') + '</td><td style="text-align:right">' + (a.closeUrl ? '<a class="pp-mini-btn ts-link" href="' + ppEsc(a.closeUrl) + '" target="_blank" rel="noopener" title="Open in Close">' + ppSvg('link') + '</a>' : '') + '</td></tr>'; }).join('')
+          + shown.slice(0, 80).map(function(a) { return '<tr' + (a._days !== null && a._days > 60 ? ' class="ca-stale"' : '') + '><td><div class="pp-org-cell"><div class="pp-org-avatar" style="background:' + getOrgColor(a.organization || a.orgEmail) + '">' + ppEsc(getOrgInitials(a.organization || a.orgEmail)) + '</div><div><div class="pp-org-name">' + ppEsc(a.organization || a.orgEmail) + '</div><div class="pp-org-sub">' + (a.sources || '').split(',').filter(Boolean).map(function(s) { return '<span class="ca-src ' + s + '">' + (s === 'close' ? 'Close customer' : s === 'credentials' ? 'Credentials' : 'Onboarding') + '</span>'; }).join('') + (a.closeName && a.closeName !== a.organization ? ' Close: ' + ppEsc(a.closeName) : '') + '</div></div></div></td><td>' + (a.statusLabel ? '<span class="pp-chip aud-other">' + ppEsc(a.statusLabel) + '</span>' : '-') + '</td><td>' + (a.owner && TEAM_MEMBERS.some(function(m) { return m.email === a.owner; }) ? '<div style="display:flex;align-items:center;gap:8px">' + ppRepAvatars(a.owner, 22) + ppEsc(ppRepName(a.owner)) + '</div>' : ppEsc(a.ownerName || '-')) + '</td><td>' + touchCell(a) + '</td><td>' + (parseInt(a.openTasks) ? '<b>' + a.openTasks + '</b>' : '<span class="pp-placeholder">none</span>') + '</td><td>' + (a.nextTaskDate ? '<div class="ts-date">' + ppFmtDate(a.nextTaskDate, { month: 'short', day: 'numeric' }) + '<span class="sub" title="' + ppEsc(a.nextTaskText) + '">' + ppEsc(a.nextTaskText.slice(0, 40)) + '</span></div>' : '<span class="pp-placeholder">-</span>') + '</td><td style="text-align:right">' + (a.closeUrl ? '<a class="pp-mini-btn ts-link" href="' + ppEsc(a.closeUrl) + '" target="_blank" rel="noopener" title="Open in Close">' + ppSvg('link') + '</a>' : '') + '</td></tr>'; }).join('')
           + '</tbody></table></div>' : '<div class="pp-empty">' + (closeAcctFilter === 'unmatched' ? 'Every onboarding account was found in Close.' : 'Nothing in this view.') + '</div>')
         + (closeAcctFilter === 'unmatched' && unmatched.length ? '<div class="pp-toolbar-note" style="padding:8px 4px">These were not found by contact email or organization name. Fix the name in Close or the onboarding record and the next sync will pick them up.</div>' : '') + '</div>';
+    }
+    // =====================================================================
+    // HQ DASHBOARD: greeting, KPIs, team pulse, onboarding snapshot, activity  (Sept 2026)
+    // =====================================================================
+    var HQ_STATUS_COLORS = { 'new': '#94a3b8', 'in-progress': '#f59e0b', 'on-hold': '#ef4444', 'review': '#8b5cf6', 'complete': '#10b981', 'onboarding': '#f97316', 'published': '#00a84f', 'launched': '#0076bb' };
+    function hqKpi(v, label, sub, go, cls) { return '<div class="hq-kpi ' + (cls || '') + '" onclick="' + go + '"><div class="v">' + v + '</div><div class="l">' + label + '</div><div class="s">' + sub + '</div></div>'; }
+    function renderHQ() {
+      var greet = document.getElementById('hqGreet'); if (!greet) return;
+      var h = new Date().getHours(), first = ((currentUser && currentUser.name) || '').split(' ')[0];
+      greet.textContent = (h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening') + (first ? ', ' + first : '');
+      document.getElementById('hqDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+      var pills = [];
+      if (closeMeetingsLoaded && closeKeyPresent) pills.push('<span class="hq-pill"><i class="ok"></i>Close synced ' + ppAgo(closeMeetingsSyncedAt || closeAcctSyncedAt) + '</span>');
+      else if (closeMeetingsLoaded) pills.push('<span class="hq-pill"><i></i>Close not connected</span>');
+      if (leadsLoaded) pills.push('<span class="hq-pill"><i class="ok"></i>Lead intake live &middot; up next ' + ppEsc(ppRepName(leadRotation.next) || '-') + '</span>');
+      document.getElementById('hqPills').innerHTML = pills.join('');
+      // ---- KPIs
+      var today = ppTodayISO(), in30 = function(iso) { var d = ppDaysBetween(iso, today); return d !== null && d >= 0 && d <= 30; };
+      var openLeads = leadsLoaded ? leadList.filter(function(l) { return ['won', 'lost'].indexOf(l.status) < 0; }) : [], unassigned = openLeads.filter(function(l) { return !l.assignedTo; });
+      var wkMeet = closeMeetingsLoaded ? closeMeetings.filter(function(m) { return m.start && m.start.slice(0, 10) >= today && ppDaysBetween(m.start.slice(0, 10), today) <= 7; }) : [];
+      var shows30 = tsLoaded ? tsList.filter(function(s) { return !s.archived && !s._isPast && s._start && in30(s._start) && s.registration !== 'skip'; }) : [];
+      var inOnb = allData.filter(function(d) { return ['published', 'launched', 'on-hold'].indexOf(d.pipelineStatus) < 0; }), live = allData.filter(function(d) { return ['published', 'launched'].indexOf(d.pipelineStatus) >= 0; });
+      var gl30 = allData.filter(function(d) { return d.goLiveDate && in30(d.goLiveDate); });
+      var stale = (closeAcctLoaded && closeKeyPresent) ? closeAccounts.filter(function(a) { return a.closeLeadId && (a._days === null || a._days > 60); }).length : null;
+      document.getElementById('hqKpis').innerHTML = hqKpi(leadsLoaded ? openLeads.length : '-', 'Open leads', unassigned.length ? unassigned.length + ' unassigned' : 'all assigned', "switchView('leads')", unassigned.length ? 'warn' : '')
+        + hqKpi(closeMeetingsLoaded ? wkMeet.length : '-', 'Meetings this week', closeMeetingsLoaded ? (closeMeetings.filter(function(m) { return m.start && m.start.slice(0, 10) >= today; }).length + ' upcoming total') : 'from Close', "switchView('meetings')")
+        + hqKpi(tsLoaded ? shows30.length : '-', 'Shows next 30 days', tsLoaded ? (shows30.filter(function(s) { return s._todo.length; }).length + ' need prep') : '', "switchView('tradeshows')", tsLoaded && shows30.some(function(s) { return s._todo.length; }) ? 'warn' : '')
+        + hqKpi(inOnb.length, 'In onboarding', allData.filter(function(d) { return d.isStale; }).length + ' gone quiet', "switchView('pipeline')")
+        + hqKpi(live.length, 'Live districts', gl30.length + ' go-live' + (gl30.length === 1 ? '' : 's') + ' in 30 days', "switchView('customers')", 'good')
+        + hqKpi(stale === null ? '-' : stale, 'Accounts gone cold', stale === null ? 'connect Close' : 'no Close touch in 60d', "closeAcctFilter='stale';switchView('customers')", stale ? 'warn' : '');
+      // ---- team pulse
+      var month = new Date(); month.setDate(1); month.setHours(0, 0, 0, 0);
+      document.getElementById('hqTeam').innerHTML = '<div class="hq-team-head"><span></span><span>Leads</span><span>Meetings</span><span>Shows</span><span>Accounts</span></div>' + TEAM_MEMBERS.map(function(m) {
+        var e = m.email;
+        var leads = leadsLoaded ? leadList.filter(function(l) { return l.assignedTo === e && new Date(l.receivedAt) >= month; }).length : '-';
+        var meets = closeMeetingsLoaded ? wkMeet.filter(function(x) { return x.rep === e; }).length : '-';
+        var shows = tsLoaded ? tsList.filter(function(s) { return !s.archived && !s._isPast && s._reps.indexOf(e) >= 0; }).length : '-';
+        var accts = allData.filter(function(d) { return (d.accountRep || '').toLowerCase() === e; }).length;
+        return '<div class="hq-team-row"><span class="who">' + getTeamPhoto(e, 26) + '<b>' + ppEsc(m.name) + '</b></span><span>' + leads + '</span><span>' + meets + '</span><span>' + shows + '</span><span>' + accts + '</span></div>';
+      }).join('') + '<div class="pp-toolbar-note" style="margin-top:8px">Leads this month, meetings this week, upcoming shows, onboarding accounts owned.</div>';
+      // ---- onboarding snapshot
+      var order = ['new', 'in-progress', 'review', 'complete', 'onboarding', 'published', 'launched', 'on-hold'], counts = {}; allData.forEach(function(d) { counts[d.pipelineStatus] = (counts[d.pipelineStatus] || 0) + 1; });
+      var total = allData.length || 1;
+      document.getElementById('hqPipeline').innerHTML = '<div class="hq-bar">' + order.filter(function(k) { return counts[k]; }).map(function(k) { return '<span style="width:' + (counts[k] / total * 100) + '%;background:' + HQ_STATUS_COLORS[k] + '" title="' + (PP_STATUS_LABELS[k] || k) + ': ' + counts[k] + '"></span>'; }).join('') + '</div>'
+        + '<div class="hq-legend">' + order.filter(function(k) { return counts[k]; }).map(function(k) { return '<span onclick="switchView(\'pipeline\')"><i style="background:' + HQ_STATUS_COLORS[k] + '"></i>' + (PP_STATUS_LABELS[k] || k) + ' <b>' + counts[k] + '</b></span>'; }).join('') + '</div>'
+        + '<div class="hq-mini"><div><b>' + allData.filter(function(d) { return d.sheetType === 'drafts'; }).length + '</b><span>forms in progress</span></div><div><b>' + allData.filter(function(d) { return d.isStale; }).length + '</b><span>quiet 7+ days</span></div><div><b>' + gl30.length + '</b><span>go-lives in 30d</span></div><div><b>' + live.length + '</b><span>live</span></div></div>'
+        + ppUpFoot('pipeline', 'Open the pipeline') + ' ' + ppUpFoot('submissions', 'Form metrics');
+      // ---- recent activity
+      var act = (typeof allActivities !== 'undefined' && allActivities.length) ? allActivities.slice(0, 8) : [];
+      document.getElementById('hqActivity').innerHTML = act.length ? act.map(function(a) { var who = a.userEmail === 'system' ? '<span class="pp-avatar-text">Auto</span>' : getTeamPhoto(a.userEmail, 24); return '<div class="hq-act"><span class="av">' + who + '</span><span class="txt"><b>' + ppEsc(a.userEmail === 'system' ? 'System' : ppRepName(a.userEmail)) + '</b> ' + ppEsc(a.action) + ' <b>' + ppEsc(a.target) + '</b>' + (a.detail ? ' <span class="d">' + ppEsc(String(a.detail).slice(0, 60)) + '</span>' : '') + '</span><span class="t">' + ppEsc(timeAgo(a.timestamp)) + '</span></div>'; }).join('') + ppUpFoot('activity', 'All activity') : '<div class="pp-up-empty">' + (typeof allActivities !== 'undefined' && allActivities.length === 0 && window._ppActivityLoaded ? 'No activity logged yet.' : 'Loading activity...') + '</div>';
+    }
+    // =====================================================================
+    // LANDING PAGES (conference pages -> leads source -> conference rep)
+    // =====================================================================
+    var LP_COLS = ['id', 'title', 'url', 'showId', 'sourceKey', 'audience', 'notes', 'updatedAt', 'updatedBy'];
+    var lpList = [], lpLoaded = false, lpError = '', lpSearch = '';
+    async function loadLandingPages(force) {
+      if (lpLoaded && !force) return lpList;
+      try { var r = await ppApi('getLandingPages'); if (r.success) { lpList = (r.rows || []).map(function(x) { var o = {}; LP_COLS.forEach(function(c) { o[c] = x[c] === undefined ? '' : String(x[c]); }); return o; }); lpLoaded = true; lpError = ''; } else lpError = r.error || 'Unknown error'; } catch(e) { lpError = e.message; }
+      return lpList;
+    }
+    function lpNormKey(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ''); }
+    function lpSlug(url) { return String(url || '').replace(/^https?:\/\/[^/]+\//, '').replace(/[?#].*$/, '').replace(/\/$/, ''); }
+    function lpShow(p) { return p.showId ? tsList.find(function(s) { return s.id === p.showId; }) || null : null; }
+    function lpForShow(showId) { return lpList.filter(function(p) { return p.showId === showId; }); }
+    function lpLeads(p) { var keys = [lpNormKey(p.sourceKey), lpNormKey(p.title), lpNormKey(lpSlug(p.url))].filter(Boolean); var show = lpShow(p); if (show) keys.push(lpNormKey(show.name)); return leadsLoaded ? leadList.filter(function(l) { var k = lpNormKey(l.source); return k && keys.some(function(x) { return x === k || k.indexOf(x) >= 0 || (x.length > 5 && x.indexOf(k) >= 0); }); }) : []; }
+    function lpRepFor(p) { var show = lpShow(p); return show ? show._reps : []; }
+    async function lpQr(url, title) {
+      try { await ppLoadScript('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'); } catch(e) { showToast('Could not load the QR generator', 'error'); return; }
+      ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + ppEsc(title || 'Landing page') + '</h2><div class="modal-subtitle">Scan to open the landing page. Print it for the booth or drop it on a slide.</div></div><div class="modal-body"><div class="qr-wrap"><div id="qrTarget"></div><div class="qr-url">' + ppEsc(url) + '</div><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="pp-btn" onclick="ppCopy(\'' + ppEsc(url) + '\',\'Link\')">Copy link</button><button class="pp-btn primary" onclick="lpQrDownload(\'' + ppEsc(title || 'landing-page') + '\')">Download PNG</button></div></div></div>');
+      setTimeout(function() { var t = document.getElementById('qrTarget'); if (t && window.QRCode) new QRCode(t, { text: url, width: 260, height: 260, correctLevel: QRCode.CorrectLevel.M }); }, 30);
+    }
+    function lpQrDownload(title) { var c = document.querySelector('#qrTarget canvas'); if (!c) return; var a = document.createElement('a'); a.download = String(title).replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '-qr.png'; a.href = c.toDataURL('image/png'); document.body.appendChild(a); a.click(); document.body.removeChild(a); }
+    // Trade show row: hover/click the page chip for a quick card
+    function lpChipForShow(s) {
+      var pages = lpLoaded ? lpForShow(s.id) : [];
+      if (!pages.length) return '';
+      var p = pages[0];
+      return ' <span class="lp-chip" title="Landing page" onclick="event.stopPropagation();lpQuick(\'' + ppEsc(p.id) + '\',this)"><i></i>' + (pages.length > 1 ? pages.length + ' pages' : 'page') + '</span>';
+    }
+    function lpQuick(id, anchor) {
+      var p = lpList.find(function(x) { return x.id === id; }); if (!p) return;
+      var show = lpShow(p), leads = lpLeads(p), reps = lpRepFor(p);
+      ppPopoverOpen(anchor, '<div class="lp-quick"><div class="lp-quick-title">' + ppEsc(p.title || lpSlug(p.url)) + '</div><a class="lp-quick-url" href="' + ppEsc(p.url) + '" target="_blank" rel="noopener">' + ppEsc(p.url) + '</a><div class="lp-quick-row"><span>' + (show ? 'Leads go to ' + (reps.length ? reps.map(ppRepName).join(', ') : '<i>no rep on the show</i>') : '<i>not linked to a show</i>') + '</span><span><b>' + leads.length + '</b> lead' + (leads.length === 1 ? '' : 's') + (leads.length ? ' &middot; last ' + leadAge(leads.sort(function(a, b) { return a.receivedAt < b.receivedAt ? 1 : -1; })[0]) : '') + '</span></div><div class="lp-quick-actions"><button type="button" class="pp-btn" onclick="ppCopy(\'' + ppEsc(p.url) + '\',\'Link\')">Copy</button><button type="button" class="pp-btn" onclick="ppPopoverClose();lpQr(\'' + ppEsc(p.url) + '\',\'' + ppEsc(p.title) + '\')">QR</button><a class="pp-btn" href="' + ppEsc(p.url) + '" target="_blank" rel="noopener">Open</a><button type="button" class="pp-btn primary" onclick="ppPopoverClose();switchView(\'landing\')">All pages</button></div></div>', { cls: 'pp-pop-form-wrap', focus: false });
+    }
+    // ---- Landing Pages tab ----
+    function lpRow(p) {
+      var cell = function(field, inner, cls) { return '<td class="pp-cell' + (cls ? ' ' + cls : '') + '" data-edit="' + field + '" data-id="' + ppEsc(p.id) + '" title="Click to edit">' + inner + '</td>'; };
+      var show = lpShow(p), leads = lpLeads(p), reps = lpRepFor(p), last = leads.slice().sort(function(a, b) { return a.receivedAt < b.receivedAt ? 1 : -1; })[0];
+      return '<tr data-id="' + ppEsc(p.id) + '">'
+        + cell('title', '<div class="pp-org-cell"><div class="pp-org-avatar" style="background:' + getOrgColor(p.title || p.url) + '">' + ppEsc(getOrgInitials(p.title || lpSlug(p.url))) + '</div><div><div class="pp-org-name">' + ppEsc(p.title || lpSlug(p.url)) + '</div><div class="pp-org-sub">' + (p.audience ? ppEsc(p.audience) : '<span class="pp-placeholder">audience?</span>') + '</div></div></div>')
+        + cell('url', p.url ? '<span class="lp-url"><a href="' + ppEsc(p.url) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + ppEsc(lpSlug(p.url) || p.url) + '</a><button class="pp-mini-btn" title="Copy link" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(p.url) + '\',\'Link\')">' + ppSvg('copy') + '</button><button class="pp-mini-btn" title="QR code" onclick="event.stopPropagation();lpQr(\'' + ppEsc(p.url) + '\',\'' + ppEsc(p.title) + '\')">&#9641;</button></span>' : '<span class="pp-placeholder">URL?</span>')
+        + cell('showId', show ? '<div class="pp-org-name" style="max-width:220px">' + ppEsc(show.name) + '</div><div class="pp-org-sub">' + ppFmtRange(show._start, show._end) + '</div>' : '<span class="pp-chip need-to-book">Link a show<i class="caret"></i></span>')
+        + '<td>' + (reps.length ? ppRepAvatars(reps.join(','), 24) : (show ? '<span class="pp-placeholder">no rep on show</span>' : '<span class="pp-placeholder">rotation</span>')) + '</td>'
+        + cell('sourceKey', p.sourceKey ? '<code class="lp-key">' + ppEsc(p.sourceKey) + '</code>' : '<span class="pp-placeholder">auto</span>')
+        + '<td><b>' + leads.length + '</b>' + (last ? '<span class="ca-sub">last ' + leadAge(last) + '</span>' : '') + '</td>'
+        + cell('notes', p.notes ? '<span class="lead-note">' + ppEsc(p.notes) + '</span>' : '<span class="pp-placeholder">Add a note</span>')
+        + '<td style="text-align:right"><button class="pp-mini-btn danger" title="Remove" onclick="event.stopPropagation();lpDelete(\'' + ppEsc(p.id) + '\')">&#10005;</button></td></tr>';
+    }
+    function renderLandingPages() {
+      var body = document.getElementById('lpTableBody'), stats = document.getElementById('lpStats'); if (!body) return;
+      if (!lpLoaded) { body.innerHTML = '<tr><td colspan="8">' + (lpError ? ppSetupEmpty('Landing Pages', lpError) : '<div class="pp-empty">Loading...</div>') + '</td></tr>'; return; }
+      var q = lpSearch.trim(), rows = lpList.filter(function(p) { if (!q) return true; var show = lpShow(p); return [p.title, p.url, p.sourceKey, p.audience, p.notes, show && show.name].join(' ').toLowerCase().indexOf(q) >= 0; }).sort(function(a, b) { var sa = lpShow(a), sb = lpShow(b); var ka = sa && sa._start ? sa._start : '9999', kb = sb && sb._start ? sb._start : '9999'; return ka < kb ? -1 : ka > kb ? 1 : (a.title || '').localeCompare(b.title || ''); });
+      var linked = lpList.filter(function(p) { return lpShow(p); }).length, withRep = lpList.filter(function(p) { return lpRepFor(p).length; }).length, totalLeads = lpList.reduce(function(n, p) { return n + lpLeads(p).length; }, 0);
+      if (stats) stats.innerHTML = '<div class="pp-stat" style="cursor:default"><div class="v">' + lpList.length + '</div><div class="l">Landing pages</div></div><div class="pp-stat ' + (linked < lpList.length ? 'warn' : 'good') + '" style="cursor:default"><div class="v">' + linked + '</div><div class="l">Linked to a show</div><div class="s">' + (lpList.length - linked) + ' unlinked go to the rotation</div></div><div class="pp-stat ' + (withRep < linked ? 'warn' : 'good') + '" style="cursor:default"><div class="v">' + withRep + '</div><div class="l">Routing to a rep</div><div class="s">show has reps assigned</div></div><div class="pp-stat" style="cursor:default"><div class="v">' + totalLeads + '</div><div class="l">Leads from pages</div><div class="s">matched by source</div></div>';
+      body.innerHTML = rows.length ? rows.map(lpRow).join('') + '<tr class="ts-add-row"><td colspan="8"><input class="ts-add-input lp-add-input" placeholder="+ Paste a landing page URL and press Enter" autocomplete="off"></td></tr>' : '<tr><td colspan="8"><div class="pp-empty"><strong>No landing pages yet</strong>Paste a URL below or import the CSV.</div></td></tr><tr class="ts-add-row"><td colspan="8"><input class="ts-add-input lp-add-input" placeholder="+ Paste a landing page URL and press Enter" autocomplete="off"></td></tr>';
+    }
+    document.addEventListener('keydown', function(e) { if (e.key === 'Enter' && e.target && e.target.classList && e.target.classList.contains('lp-add-input')) { e.preventDefault(); lpQuickAdd(e.target); } });
+    async function lpQuickAdd(input) {
+      var url = input.value.trim(); if (!url) return; if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+      var slug = lpSlug(url), guessShow = tsList.find(function(s) { var k = lpNormKey(slug); return k && (lpNormKey(s.name) === k || k.indexOf(lpNormKey(s.name)) >= 0); });
+      var p = { id: '', title: slug.split('/').pop().replace(/[-_]+/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); }), url: url, showId: guessShow ? guessShow.id : '', sourceKey: slug.split('/').pop(), audience: guessShow ? tsAudLabel(guessShow.audience) : '', notes: '' };
+      input.disabled = true;
+      try { var r = await ppApi('saveLandingPage', { row: p }); if (!r.success) throw new Error(r.error); p.id = r.id; lpList.push(p); renderLandingPages(); renderTradeShows(); showToast('Added ' + p.title + (guessShow ? ' (linked to ' + guessShow.name + ')' : ''), 'success'); } catch(e) { input.disabled = false; showToast('Could not add: ' + e.message, 'error'); }
+    }
+    function lpCellEdit(id, field, cell) {
+      var p = lpList.find(function(x) { return x.id === id; }); if (!p) return;
+      var save = function(patch) { var prev = {}; Object.keys(patch).forEach(function(k) { prev[k] = p[k]; p[k] = patch[k]; }); renderLandingPages(); renderTradeShows(); ppApi('saveLandingPage', { row: p }).then(function(r) { if (!r.success) throw new Error(r.error || 'Save failed'); showToast('Saved', 'success'); }).catch(function(err) { Object.keys(prev).forEach(function(k) { p[k] = prev[k]; }); renderLandingPages(); showToast('Could not save: ' + err.message, 'error'); }); };
+      switch (field) {
+        case 'title': ppFormPopover(cell, [{ key: 'title', label: 'Page title', value: p.title }, { key: 'audience', label: 'Audience', value: p.audience, placeholder: 'e.g. Athletic Directors' }], function(v) { save(v); }, { title: 'Landing page' }); break;
+        case 'url': ppInlineEdit(cell, { value: p.url, type: 'url', placeholder: 'https://', onSave: function(v) { save({ url: v }); } }); break;
+        case 'sourceKey': ppInlineEdit(cell, { value: p.sourceKey, placeholder: 'What the form sends as Source', onSave: function(v) { save({ sourceKey: v }); } }); break;
+        case 'notes': ppInlineEdit(cell, { value: p.notes, placeholder: 'Note', onSave: function(v) { save({ notes: v }); } }); break;
+        case 'showId': { var opts = [{ val: '', label: 'Not linked (rotation)', cls: 'unset' }].concat(tsList.filter(function(s) { return !s.archived; }).sort(function(a, b) { return (b._start || '') < (a._start || '') ? -1 : 1; }).map(function(s) { return { val: s.id, label: s.name + (s._start ? ' (' + ppFmtDate(s._start, { month: 'short', year: 'numeric' }) + ')' : ''), cls: s._isPast ? 'inactive' : 'aud-' + (s.audience || 'other') }; })); ppStatusPicker(cell, opts, p.showId, function(v) { save({ showId: v }); }); break; }
+      }
+    }
+    async function lpDelete(id) { var p = lpList.find(function(x) { return x.id === id; }); if (!p || !confirm('Remove this landing page from the list? The page itself is not affected.')) return; try { var r = await ppApi('deleteLandingPage', { id: id }); if (!r.success) throw new Error(r.error); lpList = lpList.filter(function(x) { return x.id !== id; }); renderLandingPages(); renderTradeShows(); } catch(e) { showToast('Could not remove: ' + e.message, 'error'); } }
+    function startLpImport() {
+      document.querySelector('.import-title').textContent = 'Import Landing Pages';
+      document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2);margin-bottom:14px">Upload the landing page CSV or Excel file. Any column named like Conference, Event, Show, Name or Title becomes the page title; URL or Link becomes the address. Pages are linked to trade shows by name automatically where the names match; fix the rest with the Show column afterwards.</p><button class="import-btn" onclick="document.getElementById(\'lpImportFile\').click()">Choose File</button>';
+      document.getElementById('importOverlay').classList.add('active');
+    }
+    var lpImportRows = [];
+    async function handleLpImportFile(file) {
+      if (!file) return;
+      var rows; try { rows = await ppParseSpreadsheet(file); } catch(e) { showToast(e.message, 'error'); return; }
+      var norm = function(v) { return String(v || '').trim().toLowerCase(); };
+      var hIdx = rows.findIndex(function(r) { return r.some(function(v) { return /url|link/.test(norm(v)); }); }); if (hIdx < 0) { showToast('Could not find a URL column', 'error'); return; }
+      var h = rows[hIdx].map(norm), find = function(re) { for (var i = 0; i < h.length; i++) if (re.test(h[i])) return i; return -1; };
+      var C = { url: find(/url|link/), title: find(/conference|event|show|^name|title|page/), source: find(/source|key|slug|utm/), audience: find(/audience/), notes: find(/note|comment/), date: find(/date/) };
+      var existing = {}; lpList.forEach(function(p) { existing[lpNormKey(p.url)] = p; });
+      lpImportRows = [];
+      rows.slice(hIdx + 1).forEach(function(r) { var g = function(k) { return C[k] >= 0 ? String(r[C[k]] || '').trim() : ''; }; var url = g('url'); if (!/^https?:\/\//i.test(url)) { if (/\./.test(url)) url = 'https://' + url; else return; } var slug = lpSlug(url); var title = g('title') || slug.split('/').pop().replace(/[-_]+/g, ' ');
+        var show = tsList.find(function(s) { var k = lpNormKey(title), sk = lpNormKey(s.name); return k && sk && (k === sk || k.indexOf(sk) >= 0 || sk.indexOf(k) >= 0); });
+        var prev = existing[lpNormKey(url)];
+        lpImportRows.push({ id: prev ? prev.id : '', title: title, url: url, showId: show ? show.id : (prev ? prev.showId : ''), sourceKey: g('source') || slug.split('/').pop(), audience: g('audience') || (show ? tsAudLabel(show.audience) : ''), notes: g('notes'), _update: !!prev, _show: show ? show.name : '' }); });
+      document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2)">' + lpImportRows.length + ' pages found, ' + lpImportRows.filter(function(x) { return x._show; }).length + ' matched to a show by name, ' + lpImportRows.filter(function(x) { return x._update; }).length + ' already in the list (updated).</p><table class="import-preview-table"><thead><tr><th>Page</th><th>URL</th><th>Show</th></tr></thead><tbody>' + lpImportRows.slice(0, 15).map(function(x) { return '<tr><td>' + ppEsc(x.title) + '</td><td>' + ppEsc(lpSlug(x.url)) + '</td><td>' + (x._show ? ppEsc(x._show) : '<span class="pp-placeholder">unlinked</span>') + '</td></tr>'; }).join('') + (lpImportRows.length > 15 ? '<tr><td colspan="3" style="color:var(--text3)">...and ' + (lpImportRows.length - 15) + ' more</td></tr>' : '') + '</tbody></table><div style="display:flex;gap:10px;justify-content:flex-end"><button class="import-btn secondary" onclick="closeImport()">Cancel</button><button class="import-btn" id="lpRunBtn" onclick="runLpImport()"' + (lpImportRows.length ? '' : ' disabled') + '>Import ' + lpImportRows.length + '</button></div>';
+    }
+    async function runLpImport() {
+      var btn = document.getElementById('lpRunBtn'); btn.disabled = true; btn.textContent = 'Importing...';
+      var rows = lpImportRows.map(function(x) { var o = {}; LP_COLS.forEach(function(c) { o[c] = x[c] === undefined ? '' : x[c]; }); return o; });
+      var ok = 0; for (var i = 0; i < rows.length; i += 8) { try { var r = await ppApi('bulkSaveLandingPages', { rows: rows.slice(i, i + 8) }); if (r.success) ok += r.saved || 0; } catch(e) {} }
+      closeImport(); await loadLandingPages(true); renderLandingPages(); renderTradeShows(); showToast('Imported ' + ok + ' landing pages', 'success');
+    }
+    // =====================================================================
+    // ONBOARDING WORKBOOK IMPORT (district template: General Information + one tab per campus)
+    // =====================================================================
+    var OB_PLACEHOLDER = /^(first name last name|email|phone number needed|name \d|email \d|\d(st|nd|rd|th) approver (name|email)|final approver (name|email)|up to 4 approvers.*|weekday availability|weekend availability|example: (weekday|weekend)|campus name|address:?|asset #\d+|sample|\?+|yes or no\?*|tbd|n\/?a)$/i;
+    function obClean(v) { v = (v === undefined || v === null) ? '' : String(v).trim(); return OB_PLACEHOLDER.test(v) ? '' : v; }
+    function obTime(s) {
+      // "4pm-9pm", "3:00 pm to 10:00 pm", "4:30-9:00", "7am-9pm" -> { start:'16:00', end:'21:00' } or null
+      var m = String(s || '').toLowerCase().replace(/\s+/g, '').match(/^(\d{1,2})(?::(\d{2}))?(am|pm)?(?:-|to|–)(\d{1,2})(?::(\d{2}))?(am|pm)?$/);
+      if (!m) return null;
+      var to24 = function(h, mm, ap, assumePm) { h = parseInt(h); mm = mm || '00'; if (ap === 'pm' && h < 12) h += 12; if (ap === 'am' && h === 12) h = 0; if (!ap && assumePm && h < 12 && h <= 11) h += 12; return String(h).padStart(2, '0') + ':' + mm; };
+      var endAp = m[6] || '', startAp = m[3] || (endAp === 'pm' && parseInt(m[1]) >= 12 ? 'pm' : m[3]);
+      return { start: to24(m[1], m[2], startAp, false), end: to24(m[4], m[5], endAp, !endAp && parseInt(m[4]) < 12) };
+    }
+    function obParseGeneral(rows) {
+      var pol = {}, notes = [];
+      var find = function(re) { for (var i = 0; i < rows.length; i++) { var a = String(rows[i][0] || ''); if (re.test(a)) { var b = obClean(rows[i][1]); if (!b) { for (var k = 1; k < rows[i].length; k++) { var c = obClean(rows[i][k]); if (c) { b = c; break; } } } return b; } } return ''; };
+      var canc = find(/how many days.*before the reservation/i); var cm = canc.match(/(\d+)/); pol.cancellationDays = cm ? cm[1] : (canc ? canc : '');
+      var weather = find(/reservation is cancelled due to weather/i); pol.weatherRefund = /credit/i.test(weather) && !/^\s*no/i.test(weather) ? 'credit' : /yes|refund/i.test(weather) ? 'refund' : /no/i.test(weather) ? 'no' : weather;
+      var ins = find(/liability insurance be required/i); pol.requireInsurance = /^\s*yes/i.test(ins) ? 'yes' : /^\s*no/i.test(ins) ? 'no' : ins;
+      pol.waiverText = find(/waivers that need to be agreed/i); pol.facilityAgreement = find(/facility use agreements?\/?policies/i);
+      var inc = find(/time increments for reservations/i); var im = inc.match(/(\d+)\s*(hour|hr|min)/i); pol.timeIncrement = im ? (/(hour|hr)/i.test(im[2]) ? String(parseInt(im[1]) * 60) : im[1]) : (inc || '');
+      // anything else on the tab that is not a question is a note (people write approver matrices and comments here)
+      rows.forEach(function(r) { r.forEach(function(v, k) { var s = String(v || '').trim(); if (k > 1 && s && s.length > 1 && !/^(general information)$/i.test(s)) notes.push(s); }); });
+      return { policies: pol, notes: notes.filter(function(n, i, a) { return a.indexOf(n) === i; }) };
+    }
+    function obParseCampus(name, rows) {
+      var loc = { id: Date.now() + Math.random(), type: 'school', name: name, address: '', contactName: '', contactEmail: '', contactPhone: '', photos: [], assets: [], notes: [] };
+      var get = function(r, c) { return rows[r] && rows[r][c] !== undefined ? rows[r][c] : ''; };
+      // row index 1 (A2) may hold the real campus name if they overwrote the label
+      var a2 = obClean(get(1, 0)); if (a2 && !/campus name/i.test(a2)) loc.name = a2;
+      var contactRow = -1; for (var i = 0; i < Math.min(rows.length, 8); i++) if (/directed contact/i.test(String(get(i, 0)))) { contactRow = i; break; }
+      if (contactRow >= 0) { loc.contactName = obClean(get(contactRow, 2)); loc.contactEmail = obClean(get(contactRow, 3)); loc.contactPhone = obClean(get(contactRow, 4)); }
+      // header row ("Asset" in column A) then a SAMPLE block; real blocks follow every 11 rows
+      var hdr = -1; for (var h = 0; h < Math.min(rows.length, 12); h++) if (/^asset$/i.test(String(get(h, 0)).trim())) { hdr = h; break; }
+      if (hdr < 0) return loc;
+      var start = hdr + 1;
+      // skip the sample block (H cell says SAMPLE or the asset is the template "Main Gymnasium" with example availability)
+      if (/sample/i.test(String(get(start, 7))) || /^example/i.test(String(get(start, 1)))) start += 11;
+      for (var b = start; b < rows.length; b += 11) {
+        var assetName = obClean(get(b, 0)); if (!assetName) { var any = false; for (var q = b; q < b + 11; q++) if (obClean(get(q, 2)) || obClean(get(q, 4))) { any = true; break; } if (!any) continue; }
+        var asset = { id: Date.now() + Math.random(), type: '', name: assetName || ('Space ' + (loc.assets.length + 1)), indoorOutdoor: '', squareFootage: '', maxCapacity: '', reservationTypes: [], features: [], weekdayAvailability: { start: '', end: '' }, weekendAvailability: { start: '', end: '' }, availabilityNotes: '', blackoutOption: 'none', blackoutDates: '', approvers: [], notifications: [], pricing: '', amenities: [], notes: '' };
+        var wk = obClean(get(b, 1)), we = obClean(get(b + 5, 1)); var t1 = obTime(wk), t2 = obTime(we);
+        if (t1) asset.weekdayAvailability = t1; if (t2) asset.weekendAvailability = t2;
+        var avNotes = []; if (wk && !t1) avNotes.push('Weekday: ' + wk); if (we && !t2) avNotes.push('Weekend: ' + we);
+        for (var r = b + 1; r < b + 11; r++) { if (r === b + 5) continue; var extra = obClean(get(r, 1)); if (extra && !/address/i.test(String(get(r, 0)))) avNotes.push(extra); }
+        asset.availabilityNotes = avNotes.join(' | ');
+        // approver queue: column C, names and emails alternate; skip placeholders, pair by email
+        var cur = null; for (var r2 = b; r2 < b + 11; r2++) { var v = obClean(get(r2, 2)); if (!v) continue; if (/@/.test(v)) { if (cur && !cur.email) { cur.email = v; } else asset.approvers.push({ name: '', email: v }); cur = null; } else { cur = { name: v, email: '' }; asset.approvers.push(cur); } }
+        asset.approvers = asset.approvers.filter(function(a) { return a.name || a.email; });
+        // a title on its own line ("Athletic Director") followed by a person with an email is that person's title
+        for (var ai = asset.approvers.length - 2; ai >= 0; ai--) { var t = asset.approvers[ai], nx = asset.approvers[ai + 1]; if (t.name && !t.email && nx.name && nx.email && !/@/.test(t.name) && t.name.split(' ').length <= 3) { nx.name = nx.name + ' (' + t.name + ')'; asset.approvers.splice(ai, 1); } }
+        var nc = null; for (var r3 = b; r3 < b + 11; r3++) { var w = obClean(get(r3, 3)); if (!w) continue; if (/@/.test(w)) { if (nc && !nc.email) nc.email = w; else asset.notifications.push({ name: '', email: w }); nc = null; } else { nc = { name: w, email: '' }; asset.notifications.push(nc); } }
+        var price = obClean(get(b, 4)); if (price) asset.pricing = String(price).replace(/[^0-9.]/g, '');
+        for (var r4 = b; r4 < b + 11; r4++) { var am = obClean(get(r4, 5)); if (am) asset.amenities.push({ name: am, price: String(obClean(get(r4, 6)) || '').replace(/[^0-9.]/g, '') }); }
+        var extraNotes = []; for (var r5 = b; r5 < b + 11; r5++) for (var c = 7; c < 12; c++) { var n = obClean(get(r5, c)); if (n) extraNotes.push(n); }
+        asset.notes = extraNotes.join(' | ');
+        loc.assets.push(asset);
+        // address label inside the block
+        for (var r6 = b; r6 < b + 11; r6++) if (/^address/i.test(String(get(r6, 0)))) { var ad = obClean(get(r6, 1)); if (ad && !loc.address) loc.address = ad; }
+      }
+      return loc;
+    }
+    var obDraft = null;
+    async function handleOnboardingWorkbook(file) {
+      if (!file) return;
+      document.getElementById('importBody').innerHTML = '<div class="pp-empty"><strong>Reading the workbook...</strong></div>';
+      var sheets; try { sheets = await ppParseWorkbook(file, { keepEmpty: true }); } catch(e) { showToast(e.message, 'error'); return; }
+      var general = sheets.find(function(s) { return /general/i.test(s.name); }), campuses = sheets.filter(function(s) { return s !== general && s.rows.some(function(r) { return /^asset$/i.test(String(r[0] || '').trim()); }); });
+      var gen = general ? obParseGeneral(general.rows) : { policies: {}, notes: [] };
+      var locations = campuses.map(function(s) { return obParseCampus(s.name.trim(), s.rows); }).filter(function(l) { return l.assets.length; });
+      var orgGuess = file.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').replace(/\b(onboarding|template|form|copy of)\b/gi, '').replace(/\s+/g, ' ').trim();
+      var contacts = []; locations.forEach(function(l) { if (l.contactEmail || l.contactName) contacts.push({ name: l.contactName, email: l.contactEmail, phone: l.contactPhone }); l.assets.forEach(function(a) { a.approvers.forEach(function(ap) { if (ap.email) contacts.push({ name: ap.name, email: ap.email, phone: '' }); }); }); });
+      var seen = {}; contacts = contacts.filter(function(c) { var k = (c.email || c.name).toLowerCase(); if (!k || seen[k]) return false; seen[k] = true; return true; });
+      var first = contacts[0] || { name: '', email: '', phone: '' };
+      obDraft = { formData: { contactInfo: { fullName: first.name, organization: orgGuess, email: first.email, phone: first.phone, jobTitle: '' }, policies: gen.policies, locations: locations, importNotes: gen.notes, importedFrom: file.name }, contacts: contacts, campusesSkipped: sheets.length - campuses.length - (general ? 1 : 0) };
+      renderOnboardingPreview();
+    }
+    function renderOnboardingPreview() {
+      var d = obDraft, fd = d.formData, spaces = fd.locations.reduce(function(n, l) { return n + l.assets.length; }, 0);
+      var warn = []; fd.locations.forEach(function(l) { l.assets.forEach(function(a) { if (!a.pricing) warn.push(l.name + ' / ' + a.name + ': no price'); if (!a.approvers.length) warn.push(l.name + ' / ' + a.name + ': no approvers'); }); if (!l.address) warn.push(l.name + ': no address'); });
+      var polRows = [['Cancellation window', fd.policies.cancellationDays ? fd.policies.cancellationDays + ' days' : ''], ['Weather refund', fd.policies.weatherRefund], ['Liability insurance', fd.policies.requireInsurance], ['Time increment', fd.policies.timeIncrement ? fd.policies.timeIncrement + ' min' : ''], ['Waivers', fd.policies.waiverText], ['Rental policy', fd.policies.facilityAgreement]];
+      var opt = function(list, val) { return list.map(function(x) { return '<option value="' + ppEsc(x.val) + '"' + (x.val === val ? ' selected' : '') + '>' + ppEsc(x.label) + '</option>'; }).join(''); };
+      document.getElementById('importBody').innerHTML = '<div class="ob-summary"><div class="ob-kpi"><b>' + fd.locations.length + '</b><span>campuses</span></div><div class="ob-kpi"><b>' + spaces + '</b><span>spaces</span></div><div class="ob-kpi"><b>' + d.contacts.length + '</b><span>contacts found</span></div><div class="ob-kpi ' + (warn.length ? 'warn' : '') + '"><b>' + warn.length + '</b><span>gaps</span></div></div>'
+        + '<div class="pp-form" style="margin-bottom:12px"><div><label>Organization</label><input id="ob_org" value="' + ppEsc(fd.contactInfo.organization) + '"></div><div><label>Contact name</label><input id="ob_name" value="' + ppEsc(fd.contactInfo.fullName) + '" list="obContacts"><datalist id="obContacts">' + d.contacts.map(function(c) { return '<option value="' + ppEsc(c.name) + '">'; }).join('') + '</datalist></div><div><label>Contact email (record key)</label><input id="ob_email" type="email" value="' + ppEsc(fd.contactInfo.email) + '" list="obEmails"><datalist id="obEmails">' + d.contacts.map(function(c) { return c.email ? '<option value="' + ppEsc(c.email) + '">' + ppEsc(c.name) + '</option>' : ''; }).join('') + '</datalist></div><div><label>Phone</label><input id="ob_phone" value="' + ppEsc(fd.contactInfo.phone) + '"></div><div><label>Account rep</label><select id="ob_rep"><option value="">Unassigned</option>' + TEAM_MEMBERS.map(function(m) { return '<option value="' + ppEsc(m.email) + '">' + ppEsc(m.name) + '</option>'; }).join('') + '</select></div><div><label>Pipeline stage</label><select id="ob_stage">' + opt([{ val: 'onboarding', label: 'Onboarding' }, { val: 'complete', label: 'Form Complete' }, { val: 'review', label: 'Review' }, { val: 'published', label: 'Published' }, { val: 'launched', label: 'Launched' }], 'onboarding') + '</select></div><div><label>Go-live date</label><input id="ob_golive" type="date"></div><div><label>&nbsp;</label><label class="rot-notify" style="padding:0"><input type="checkbox" id="ob_replace"> Replace an existing record with this email</label></div></div>'
+        + '<div class="ob-cols"><div><div class="ob-h">Policies</div><table class="import-preview-table">' + polRows.map(function(r) { return '<tr><td style="color:var(--text3)">' + r[0] + '</td><td>' + (r[1] ? ppEsc(r[1]) : '<span class="pp-placeholder">not answered</span>') + '</td></tr>'; }).join('') + '</table>' + (fd.importNotes.length ? '<div class="ob-h" style="margin-top:10px">Notes found on the General tab</div><div class="ob-notes">' + fd.importNotes.map(function(n) { return '<span>' + ppEsc(n) + '</span>'; }).join('') + '</div>' : '') + '</div>'
+        + '<div><div class="ob-h">Campuses and spaces</div><div class="ob-tree">' + fd.locations.map(function(l, li) { return '<div class="ob-loc"><div class="ob-loc-h"><b>' + ppEsc(l.name) + '</b><span>' + l.assets.length + ' space' + (l.assets.length === 1 ? '' : 's') + (l.contactName ? ' &middot; ' + ppEsc(l.contactName) : '') + (l.address ? '' : ' &middot; <i>no address</i>') + '</span></div>' + l.assets.map(function(a, ai) { return '<div class="ob-asset"><span class="n">' + ppEsc(a.name) + '</span><span class="m">' + (a.pricing ? '$' + a.pricing + '/hr' : '<i>no price</i>') + ' &middot; ' + a.approvers.length + ' approver' + (a.approvers.length === 1 ? '' : 's') + (a.amenities.length ? ' &middot; ' + a.amenities.length + ' amenit' + (a.amenities.length === 1 ? 'y' : 'ies') : '') + (a.weekdayAvailability.start ? ' &middot; ' + a.weekdayAvailability.start + '-' + a.weekdayAvailability.end : '') + (a.notes ? ' &middot; <i title="' + ppEsc(a.notes) + '">note</i>' : '') + '</span><button class="pp-mini-btn danger" title="Leave this space out" onclick="obDraft.formData.locations[' + li + '].assets.splice(' + ai + ',1);if(!obDraft.formData.locations[' + li + '].assets.length)obDraft.formData.locations.splice(' + li + ',1);renderOnboardingPreview()">&#10005;</button></div>'; }).join('') + '</div>'; }).join('') + '</div></div></div>'
+        + (warn.length ? '<div class="ob-h" style="margin-top:12px">Gaps to fill in after import</div><div class="ob-notes warn">' + warn.slice(0, 12).map(function(w) { return '<span>' + ppEsc(w) + '</span>'; }).join('') + (warn.length > 12 ? '<span>+' + (warn.length - 12) + ' more</span>' : '') + '</div>' : '')
+        + '<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px"><button class="import-btn secondary" onclick="closeImport()">Cancel</button><button class="import-btn" id="obRunBtn" onclick="runOnboardingImport()">Create submission</button></div>';
+      var f = fd.contactInfo; setTimeout(function() { var e = document.getElementById('ob_email'); if (e) e.addEventListener('change', function() { var c = obDraft.contacts.find(function(x) { return x.email === e.value; }); if (c && !document.getElementById('ob_name').value) document.getElementById('ob_name').value = c.name; }); }, 0);
+    }
+    async function runOnboardingImport() {
+      var fd = obDraft.formData, btn = document.getElementById('obRunBtn');
+      fd.contactInfo.organization = document.getElementById('ob_org').value.trim(); fd.contactInfo.fullName = document.getElementById('ob_name').value.trim(); fd.contactInfo.email = document.getElementById('ob_email').value.trim().toLowerCase(); fd.contactInfo.phone = document.getElementById('ob_phone').value.trim();
+      fd.policies.goLiveDate = document.getElementById('ob_golive').value || '';
+      if (!fd.contactInfo.organization) { showToast('Organization is required', 'error'); return; }
+      if (!fd.contactInfo.email) { showToast('A contact email is required. Pick one from the list or type it in.', 'error'); return; }
+      if (!fd.locations.length) { showToast('No campuses left to import', 'error'); return; }
+      btn.disabled = true; btn.textContent = 'Creating...';
+      try {
+        var meta = { email: fd.contactInfo.email, accountRep: document.getElementById('ob_rep').value, pipelineStatus: document.getElementById('ob_stage').value, replace: document.getElementById('ob_replace').checked };
+        var r = await ppApi('createSubmission', { formData: fd, meta: meta }, 60000);
+        if (!r.success) throw new Error(r.error || 'Import failed');
+        closeImport(); showToast((r.replaced ? 'Replaced ' : 'Created ') + fd.contactInfo.organization + ': ' + r.locations + ' campuses, ' + r.spaces + ' spaces', 'success');
+        logActivityToServer('imported onboarding workbook for', fd.contactInfo.organization, r.locations + ' campuses, ' + r.spaces + ' spaces', 'other');
+        ppCacheClear(); await loadData();
+      } catch(e) { btn.disabled = false; btn.textContent = 'Create submission'; showToast('Could not import: ' + e.message, 'error'); }
+    }
+    function startOnboardingImport() {
+      document.querySelector('.import-title').textContent = 'Import an Onboarding Workbook';
+      document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2);margin-bottom:14px">Upload the district\'s completed onboarding workbook (.xlsx): the General Information tab plus one tab per campus. The importer reads policies, every campus, every space with availability, approvers, notification list, pricing and amenities, skips the sample block and blank placeholders, and shows you everything it found before anything is saved. The result behaves exactly like a form submission.</p><button class="import-btn" onclick="document.getElementById(\'obImportFile\').click()">Choose Workbook</button>';
+      document.getElementById('importOverlay').classList.add('active');
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
