@@ -1246,6 +1246,40 @@
     body.pp-sidebar #tradeshowsView>.controls-row>.section-title{display:none}
     body.pp-sidebar #tradeshowsView>.controls-row{justify-content:flex-start}
     body.pp-sidebar #tradeshowsView>.controls-row .controls-right{justify-content:flex-start}
+    /* ---- unified calendar ---- */
+    .calendar-header{flex-wrap:wrap;gap:10px}
+    .cal-filters{display:flex;gap:6px;flex-wrap:wrap;margin-right:auto;margin-left:14px}
+    .cal-chip{display:inline-flex;align-items:center;gap:7px;padding:6px 11px;border-radius:50px;border:1px solid var(--border);background:var(--card);font:inherit;font-size:11px;font-weight:600;color:var(--text3);cursor:pointer;transition:all var(--t-fast)}
+    .cal-chip i{width:9px;height:9px;border-radius:3px;background:var(--border);flex-shrink:0}
+    .cal-chip b{color:inherit;opacity:0.7}
+    .cal-chip.on{color:var(--text);border-color:var(--border-2)}
+    .cal-chip.golive.on i{background:var(--pp-green)}.cal-chip.show.on i{background:var(--pp-blue)}.cal-chip.meeting.on i{background:#7c3aed}
+    .cal-chip.soon{opacity:0.55;cursor:default}
+    .cal-chip .soon-tag{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:1px 6px;border-radius:50px;background:var(--bg);color:var(--text3)}
+    .cal-ev{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:600;padding:3px 6px;border-radius:6px;margin-bottom:3px;cursor:pointer;white-space:nowrap;overflow:hidden;color:var(--text);background:var(--bg);border-left:3px solid var(--border);transition:transform var(--t-fast),box-shadow var(--t-fast)}
+    .cal-ev:hover{transform:translateX(1px);box-shadow:var(--sh-xs)}
+    .cal-ev .ico{font-size:8px;flex-shrink:0}
+    .cal-ev .t{overflow:hidden;text-overflow:ellipsis}
+    .cal-ev .s{color:var(--text3);font-weight:500;margin-left:auto;padding-left:8px;white-space:nowrap}
+    .cal-ev.golive{background:rgba(0,168,79,0.10);border-left-color:var(--pp-green)}.cal-ev.golive .ico{color:var(--pp-green)}
+    .cal-ev.show{background:rgba(0,118,187,0.10);border-left-color:var(--pp-blue)}.cal-ev.show .ico{color:var(--pp-blue)}
+    .cal-ev.show.aud-supers{background:rgba(124,58,237,0.10);border-left-color:#7c3aed}.cal-ev.show.aud-supers .ico{color:#7c3aed}
+    .cal-ev.show.aud-sbo{background:rgba(5,150,105,0.10);border-left-color:#059669}.cal-ev.show.aud-sbo .ico{color:#059669}
+    .cal-ev.show.aud-munis{background:rgba(234,88,12,0.10);border-left-color:#ea580c}.cal-ev.show.aud-munis .ico{color:#ea580c}
+    .cal-ev.show.aud-heads{background:rgba(219,39,119,0.10);border-left-color:#db2777}.cal-ev.show.aud-heads .ico{color:#db2777}
+    .cal-ev.meeting{background:rgba(124,58,237,0.10);border-left-color:#7c3aed}.cal-ev.meeting .ico{color:#7c3aed}
+    .cal-ev.cont{border-left-style:dashed;opacity:0.85}
+    .cal-ev.past{opacity:0.5}
+    .calendar-day.has-events{cursor:default}
+    .cal-day-pop{min-width:280px}
+    .cal-day-list{padding:6px 10px 12px;display:flex;flex-direction:column;gap:4px;max-height:360px;overflow-y:auto}
+    .cal-day-list .cal-ev{white-space:normal;padding:7px 9px;font-size:12px}
+    .cal-list-event-dot.golive{background:var(--pp-green)}.cal-list-event-dot.show{background:var(--pp-blue)}.cal-list-event-dot.meeting{background:#7c3aed}
+    @media(max-width:768px){.cal-filters{margin-left:0;width:100%;order:3}}
+    /* ---- bottom nav group in sidebar ---- */
+    body.pp-sidebar .pp-side-nav{display:flex;flex-direction:column}
+    body.pp-sidebar .view-tabs{flex:1}
+    body.pp-sidebar .nav-group.bottom{margin-top:auto;padding-top:18px;border-top:1px solid var(--border)}
   </style>
 </head>
 <body>
@@ -1308,10 +1342,8 @@
         <div class="nav-group">Onboarding</div>
         <button class="view-tab active" onclick="switchView('dashboard')" data-short="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Dashboard</button>
         <button class="view-tab" onclick="switchView('pipeline')" data-short="Pipeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Pipeline</button>
-        <button class="view-tab" onclick="switchView('calendar')" data-short="Go-Live"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Go-Live</button>
-        <button class="view-tab" onclick="switchView('activity')" data-short="Activity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Activity</button>
         <div class="nav-group">Client Success</div>
-        <button class="view-tab" onclick="switchView('customers')" data-short="Success"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Customer Success</button>
+        <button class="view-tab" onclick="switchView('customers')" data-short="Overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Client Overview</button>
         <button class="view-tab" onclick="switchView('credentials')" data-short="Logins"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Client Credentials</button>
         <div class="nav-group">Sales</div>
         <button class="view-tab" onclick="switchView('tradeshows')" data-short="Shows"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M3 21V10l9-7 9 7v11"/><path d="M9 21v-6h6v6"/></svg> Trade Shows</button>
@@ -1319,6 +1351,10 @@
         <button class="view-tab soon" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Meetings<span class="soon-tag">Soon</span></button>
         <div class="nav-group">Marketing</div>
         <button class="view-tab soon" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg> Campaigns<span class="soon-tag">Soon</span></button>
+        <div class="nav-group bottom">Workspace</div>
+        <button class="view-tab" onclick="switchView('calendar')" data-short="Calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Calendar</button>
+        <button class="view-tab" onclick="switchView('activity')" data-short="Activity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Activity</button>
+        <button class="view-tab soon" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Settings<span class="soon-tag">Soon</span></button>
       </div>
 
       <div class="view-content active" id="dashboardView">
@@ -1496,7 +1532,7 @@
         <div class="controls-row">
           <div class="section-title">Trade Shows &amp; Events</div>
           <div class="controls-right">
-            <div class="pp-view-toggle"><button class="on" id="tsViewList" onclick="setTsView('list')">List</button><button id="tsViewCal" onclick="setTsView('calendar')">Calendar</button><button id="tsViewIns" onclick="setTsView('insights')">Insights</button></div>
+            <div class="pp-view-toggle"><button class="on" id="tsViewList" onclick="setTsView('list')">List</button><button id="tsViewIns" onclick="setTsView('insights')">Insights</button></div>
             <div class="controls-group filters-group">
               <div class="styled-select"><select id="tsAudFilter" onchange="tsAudFilter=this.value;renderTradeShows()"><option value="all">All audiences</option><option value="supers">Superintendents</option><option value="ads">Athletic Directors</option><option value="sbo">Business Officials</option><option value="munis">Parks &amp; Rec</option><option value="heads">Heads of School</option><option value="other">Other</option></select></div>
               <div class="styled-select"><select id="tsRepFilter" onchange="tsRepFilter=this.value;renderTradeShows()"><option value="all">All reps</option><option value="none">Unassigned</option></select></div>
@@ -1540,7 +1576,7 @@
       <div class="view-content" id="calendarView">
         <div class="calendar-container">
           <div class="calendar-header">
-            <div class="calendar-title">Go-Live Calendar</div>
+            <div class="calendar-title">Calendar</div><div class="cal-filters" id="calFilters"></div>
             <div class="calendar-nav">
               <button class="calendar-today-btn" onclick="goToday()">Today</button>
               <button class="calendar-nav-btn" onclick="prevMonth()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
@@ -1805,6 +1841,7 @@
       if (view === 'credentials') { renderCredentials(); loadCredList(false).then(function() { renderCredentials(); }); }
       if (view === 'tradeshows') { renderTradeShows(); loadTradeShows(false).then(function() { renderTradeShows(); }); }
       ppSetHeaderTitle(view);
+      if (typeof ppPopoverClose === 'function') ppPopoverClose();
       ppTabInk();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -4194,7 +4231,7 @@
       if (typing) return;
       if (!document.getElementById('dashboard').classList.contains('active')) return;
       if (document.getElementById('modalOverlay').classList.contains('active')) return;
-      var tabs = ['dashboard', 'pipeline', 'calendar', 'activity', 'customers', 'credentials', 'tradeshows'];
+      var tabs = ['dashboard', 'pipeline', 'customers', 'credentials', 'tradeshows', 'calendar', 'activity'];
       if (/^[1-7]$/.test(e.key)) { switchView(tabs[parseInt(e.key) - 1]); e.preventDefault(); return; }
       if (e.key === '/') { var s = document.querySelector('.view-content.active .search-input'); if (s) { s.focus(); s.select(); e.preventDefault(); } return; }
       if (e.key.toLowerCase() === 'n') { var v = document.querySelector('.view-content.active'); if (v && v.id === 'credentialsView') { openCredModal(null); e.preventDefault(); } else if (v && v.id === 'tradeshowsView') { openTsModal(null); e.preventDefault(); } }
@@ -4231,7 +4268,7 @@
         return '<div class="pp-up-item" onclick="viewDetails(allData.find(function(x){return x.email===\'' + ppEsc(d.email) + '\'}))">' + ppDateBox(d.goLiveDate, days <= 14)
           + '<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(d.organization || 'Unnamed') + '</div><div class="pp-up-sub">' + ppInDays(days) + (d.locationStr ? ' &middot; ' + ppEsc(d.locationStr) : '') + '</div></div>'
           + '<div class="pp-up-right"><span class="status-badge ' + ppEsc(d.pipelineStatus) + '">' + (PP_STATUS_LABELS[d.pipelineStatus] || ppEsc(d.pipelineStatus)) + '</span></div></div>';
-      }).join('') + ppUpFoot('calendar', 'Go-live calendar') : '<div class="pp-up-empty">No go-live dates scheduled.</div>' + ppUpFoot('calendar', 'Go-live calendar');
+      }).join('') + ppUpFoot('calendar', 'Open calendar') : '<div class="pp-up-empty">No go-live dates scheduled.</div>' + ppUpFoot('calendar', 'Open calendar');
       // --- needs attention
       var items = [];
       var overdue = allData.filter(function(d) { return d.goLiveDate && d.goLiveDate < today && ['published', 'launched', 'on-hold'].indexOf(d.pipelineStatus) < 0; });
@@ -4515,7 +4552,7 @@
     function openDataHealth() { dhOpen = true; dhFilter = 'all'; switchView('pipeline'); setTimeout(renderDataHealth, 50); }
 
     // ---- sidebar layout + header title ----
-    var PP_VIEW_TITLES = { dashboard: ['Onboarding', 'Dashboard'], pipeline: ['Onboarding', 'Pipeline'], calendar: ['Onboarding', 'Go-Live Calendar'], activity: ['Onboarding', 'Activity'], customers: ['Client Success', 'Customer Success'], credentials: ['Client Success', 'Client Credentials'], tradeshows: ['Sales', 'Trade Shows'] };
+    var PP_VIEW_TITLES = { dashboard: ['Onboarding', 'Dashboard'], pipeline: ['Onboarding', 'Pipeline'], calendar: ['Workspace', 'Calendar'], activity: ['Workspace', 'Activity'], customers: ['Client Success', 'Client Overview'], credentials: ['Client Success', 'Client Credentials'], tradeshows: ['Sales', 'Trade Shows'] };
     function ppSetHeaderTitle(view) { var t = document.getElementById('hdrTitle'); if (!t || !PP_VIEW_TITLES[view]) return; t.innerHTML = '<span class="crumb">' + PP_VIEW_TITLES[view][0] + '</span><b>' + PP_VIEW_TITLES[view][1] + '</b>'; }
     function ppLayoutInit() {
       var tabs = document.querySelector('.view-tabs'), dash = document.getElementById('dashboard'), main = document.querySelector('.main-content'); if (!tabs || !dash || !main) return;
@@ -4538,6 +4575,69 @@
     }
     window.addEventListener('resize', function() { clearTimeout(window._ppLayoutT); window._ppLayoutT = setTimeout(ppLayoutInit, 120); });
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ppLayoutInit); else ppLayoutInit();
+    // =====================================================================
+    // UNIFIED CALENDAR: go-lives + trade shows (+ Close meetings when wired)  (Sept 2026)
+    // Replaces the go-live-only renderCalendar; keeps the same container, ids and month nav.
+    // =====================================================================
+    var calShow = { golive: true, show: true, meeting: true };
+    var closeMeetings = [];   // populated by the Close integration: [{ id, start, end, title, sub, url }]
+    function calToggle(k) { calShow[k] = !calShow[k]; renderCalendar(); }
+    function calEvents() {
+      var ev = [];
+      if (calShow.golive) allData.forEach(function(d) { var iso = ppNormalizeDate(d.goLiveDate); if (!iso) return; ev.push({ type: 'golive', start: iso, end: iso, title: d.organization || 'Unnamed', sub: d.locationStr || '', key: d.email, status: d.pipelineStatus }); });
+      if (calShow.show && tsLoaded) tsList.forEach(function(s) { if (s.archived || !s._start || s.registration === 'skip') return; ev.push({ type: 'show', start: s._start, end: s._end, title: s.name, sub: s.location ? s.location.replace(/, USA$/, '') : '', key: s.id, aud: s.audience || 'other', reps: s.reps }); });
+      if (calShow.meeting) closeMeetings.forEach(function(m) { ev.push({ type: 'meeting', start: ppNormalizeDate(m.start), end: ppNormalizeDate(m.end || m.start), title: m.title, sub: m.sub || '', key: m.id, url: m.url }); });
+      return ev;
+    }
+    function calEvHtml(e, iso, compact) {
+      var today = ppTodayISO(), cls = 'cal-ev ' + e.type + (e.end < today ? ' past' : '') + (e.start < iso ? ' cont' : '') + (e.type === 'show' ? ' aud-' + e.aud : '');
+      var icon = e.type === 'golive' ? '&#9679;' : e.type === 'show' ? '&#9632;' : '&#9670;';
+      return '<div class="' + cls + '" title="' + ppEsc(e.title + (e.sub ? ' - ' + e.sub : '')) + '" onclick="event.stopPropagation();calOpen(\'' + e.type + '\',\'' + ppEsc(e.key) + '\')"><span class="ico">' + icon + '</span><span class="t">' + ppEsc(e.title) + '</span>' + (compact ? '' : '<span class="s">' + ppEsc(e.sub) + '</span>') + '</div>';
+    }
+    function calOpen(type, key) {
+      if (type === 'golive') { var d = allData.find(function(x) { return x.email === key; }) || archivedData.find(function(x) { return x.email === key; }); if (d) viewDetails(d); }
+      else if (type === 'show') openTsModal(key);
+      else if (type === 'meeting') { var m = closeMeetings.find(function(x) { return x.id === key; }); if (m && m.url) window.open(m.url, '_blank'); }
+    }
+    function calDay(iso, anchor) {
+      var list = calEvents().filter(function(e) { return e.start <= iso && e.end >= iso; }).sort(function(a, b) { return a.type < b.type ? -1 : 1; });
+      ppPopoverOpen(anchor, '<div class="pp-pop-title">' + ppFmtDate(iso, { weekday: 'long', month: 'long', day: 'numeric' }) + '</div><div class="cal-day-list">' + list.map(function(e) { return calEvHtml(e, iso, false); }).join('') + '</div>', { cls: 'cal-day-pop', focus: false });
+    }
+    function renderUnifiedCalendar() {
+      if (typeof closeCalPopover === 'function') closeCalPopover();
+      var grid = document.getElementById('calendarGrid'), title = document.getElementById('calendarMonth'), mobile = document.getElementById('calendarListMobile'), filters = document.getElementById('calFilters'); if (!grid) return;
+      var year = calendarDate.getFullYear(), month = calendarDate.getMonth();
+      title.textContent = new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      var mStart = year + '-' + String(month + 1).padStart(2, '0') + '-01', mEnd = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(new Date(year, month + 1, 0).getDate()).padStart(2, '0');
+      var all = calEvents(), inMonth = function(e) { return e.start <= mEnd && e.end >= mStart; };
+      if (filters) {
+        var count = function(t) { return (t === 'golive' ? allData.filter(function(d) { var i = ppNormalizeDate(d.goLiveDate); return i && i >= mStart && i <= mEnd; }) : t === 'show' ? (tsLoaded ? tsList.filter(function(s) { return !s.archived && s._start && s.registration !== 'skip' && s._start <= mEnd && s._end >= mStart; }) : []) : closeMeetings.filter(function(m) { var i = ppNormalizeDate(m.start); return i >= mStart && i <= mEnd; })).length; };
+        filters.innerHTML = [['golive', 'Go-lives'], ['show', 'Trade shows'], ['meeting', 'Meetings']].map(function(f) {
+          var soon = f[0] === 'meeting' && !closeMeetings.length;
+          return '<button type="button" class="cal-chip ' + f[0] + (calShow[f[0]] && !soon ? ' on' : '') + (soon ? ' soon' : '') + '" onclick="calToggle(\'' + f[0] + '\')"' + (soon ? ' disabled title="Meetings arrive with the Close CRM integration"' : '') + '><i></i>' + f[1] + (soon ? '<span class="soon-tag">Soon</span>' : '<b>' + count(f[0]) + '</b>') + '</button>';
+        }).join('');
+      }
+      var firstDay = new Date(year, month, 1).getDay(), daysInMonth = new Date(year, month + 1, 0).getDate(), daysInPrev = new Date(year, month, 0).getDate(), todayISO = ppTodayISO();
+      var html = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(function(d) { return '<div class="calendar-day-header">' + d + '</div>'; }).join('');
+      var day = 1, nextDay = 1;
+      for (var i = 0; i < 42; i++) {
+        var dateNum, isOther = false, dObj;
+        if (i < firstDay) { dateNum = daysInPrev - firstDay + i + 1; isOther = true; dObj = new Date(year, month - 1, dateNum); }
+        else if (day > daysInMonth) { dateNum = nextDay++; isOther = true; dObj = new Date(year, month + 1, dateNum); }
+        else { dateNum = day++; dObj = new Date(year, month, dateNum); }
+        var iso = dObj.getFullYear() + '-' + String(dObj.getMonth() + 1).padStart(2, '0') + '-' + String(dObj.getDate()).padStart(2, '0');
+        var dayEv = all.filter(function(e) { return e.start <= iso && e.end >= iso; }).sort(function(a, b) { return a.type === b.type ? (a.start < b.start ? -1 : 1) : (a.type === 'show' ? -1 : b.type === 'show' ? 1 : a.type === 'meeting' ? -1 : 1); });
+        html += '<div class="calendar-day' + (isOther ? ' other-month' : '') + (iso === todayISO ? ' today' : '') + (dayEv.length ? ' has-events' : '') + '" onclick="' + (dayEv.length > 3 ? 'calDay(\'' + iso + '\',this)' : '') + '"><div class="calendar-date">' + dateNum + '</div>'
+          + dayEv.slice(0, 3).map(function(e) { return calEvHtml(e, iso, true); }).join('') + (dayEv.length > 3 ? '<div class="calendar-more" onclick="event.stopPropagation();calDay(\'' + iso + '\',this)">+' + (dayEv.length - 3) + ' more</div>' : '') + '</div>';
+        if (i >= 34 && day > daysInMonth) break;
+      }
+      grid.innerHTML = html;
+      // mobile: chronological list for the month
+      var days = {}; all.filter(inMonth).forEach(function(e) { var s = e.start < mStart ? mStart : e.start; (days[s] = days[s] || []).push(e); });
+      var keys = Object.keys(days).sort();
+      mobile.innerHTML = keys.length ? keys.map(function(iso) { var d = ppParseISO(iso); return '<div class="cal-list-day"><div class="cal-list-date' + (iso < todayISO ? ' is-past' : '') + (iso === todayISO ? ' is-today' : '') + '"><div class="cal-date-dow">' + d.toLocaleDateString('en-US', { weekday: 'short' }) + '</div><div class="cal-date-num">' + d.getDate() + '</div></div><div class="cal-list-events">' + days[iso].map(function(e) { return '<div class="cal-list-event" onclick="calOpen(\'' + e.type + '\',\'' + ppEsc(e.key) + '\')"><span class="cal-list-event-dot ' + e.type + '"></span><div class="cal-list-event-info"><div class="cal-list-event-org">' + ppEsc(e.title) + '</div><div class="cal-list-event-meta">' + (e.type === 'golive' ? 'Go-live' : e.type === 'show' ? ppFmtRange(e.start, e.end) : 'Meeting') + (e.sub ? ' &middot; ' + ppEsc(e.sub) : '') + '</div></div></div>'; }).join('') + '</div></div>'; }).join('') : '<div class="cal-list-no-events" style="padding:20px 16px">Nothing on the calendar this month</div>';
+    }
+    renderCalendar = function() { try { renderUnifiedCalendar(); } catch(e) { console.log('calendar:', e.message); } };
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
     document.addEventListener('touchmove', function(e) {
