@@ -1089,8 +1089,7 @@
       .stats-row>*,.pp-stat-strip>*{animation-delay:0ms!important}
     }
     /* ---- dashboard: coming up panel ---- */
-    .pp-upcoming{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
-    @media(max-width:1400px){.pp-upcoming{grid-template-columns:1fr 1fr}}
+    .pp-upcoming{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-bottom:14px}
     .pp-up-list{display:flex;flex-direction:column;gap:4px}
     .pp-up-item{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:12px;cursor:pointer;transition:background var(--t-fast),transform var(--t-fast) var(--ease)}
     .pp-up-item:hover{background:rgba(0,118,187,0.05);transform:translateX(2px)}
@@ -1351,6 +1350,25 @@
     .ts-group.past-group tr.past .pp-chip{filter:saturate(0.5)}
     .pp-spin{width:14px;height:14px;animation:ppSpin 0.9s linear infinite;transform-origin:50% 50%}
     .text-action-btn.busy{opacity:0.8;cursor:progress}
+    /* ---- meetings ---- */
+    .meet-group{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--sh-sm)}
+    .meet-group h3{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);margin:0 0 8px;display:flex;align-items:center;gap:8px}
+    .meet-group h3 .n{font-size:10px;background:var(--bg);border:1px solid var(--border);padding:1px 7px;border-radius:50px;color:var(--text2)}
+    .meet-item{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:12px;cursor:pointer;transition:background var(--t-fast)}
+    .meet-item:hover{background:rgba(0,118,187,0.05)}
+    .meet-main{flex:1;min-width:0}
+    .meet-title{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .meet-sub{font-size:11.5px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+    .meet-sub b{color:var(--text2);font-weight:600}
+    .meet-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+    /* ---- close account health ---- */
+    .ca-panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 18px;margin-bottom:18px;box-shadow:var(--sh-sm)}
+    .ca-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+    .ca-title{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--text)}
+    .ca-actions{display:flex;gap:8px;align-items:center}
+    .ca-sub{display:block;font-size:10px;color:var(--text3);margin-top:3px}
+    .ca-table td{white-space:nowrap}
+    .ca-table tr.ca-stale td:first-child .pp-org-name{color:#b91c1c}
   </style>
 </head>
 <body>
@@ -1422,7 +1440,7 @@
         <div class="nav-group">Sales</div>
         <button class="view-tab" onclick="switchView('tradeshows')" data-short="Shows"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M3 21V10l9-7 9 7v11"/><path d="M9 21v-6h6v6"/></svg> Trade Shows</button>
         <button class="view-tab" onclick="switchView('leads')" data-short="Leads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> Inbound Leads</button>
-        <button class="view-tab soon" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Meetings<span class="soon-tag">Soon</span></button>
+        <button class="view-tab" onclick="switchView('meetings')" data-short="Meetings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Meetings</button>
         <div class="nav-group">Marketing</div>
         <button class="view-tab soon" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg> Campaigns<span class="soon-tag">Soon</span></button>
         <div class="nav-group bottom">Workspace</div>
@@ -1435,6 +1453,7 @@
         <div class="pp-upcoming" id="ppUpcoming">
           <div class="stat-card"><h3>Upcoming Trade Shows</h3><div class="pp-up-list" id="upShows"><div class="pp-up-empty">Loading...</div></div></div>
           <div class="stat-card"><h3>Upcoming Go-Lives</h3><div class="pp-up-list" id="upGoLives"><div class="pp-up-empty">Loading...</div></div></div>
+          <div class="stat-card"><h3>This Week's Meetings</h3><div class="pp-up-list" id="upMeetings"><div class="pp-up-empty">Loading...</div></div></div>
           <div class="stat-card"><h3>New Inbound Leads</h3><div class="pp-up-list" id="upLeads"><div class="pp-up-empty">Loading...</div></div></div>
           <div class="stat-card"><h3>Needs Attention</h3><div class="pp-up-list" id="upAttention"><div class="pp-up-empty">Loading...</div></div></div>
         </div>
@@ -1518,6 +1537,7 @@
       </div>
 
       <div class="view-content" id="customersView">
+        <div id="closeAccounts"></div>
         <div class="milestone-section" style="margin-top:0">
           <div class="milestone-header">
             <div class="section-title">Customer Success</div>
@@ -1688,6 +1708,12 @@
         <div class="controls-row"><div class="section-title">Sales Tools &amp; Documents</div><div class="controls-right"><div class="controls-group actions-group"><button class="text-action-btn" onclick="openResourceModal(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Link</button><button class="text-action-btn pp-icon-only" title="Refresh" onclick="loadResources(true).then(renderResources)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button></div></div></div>
         <div id="resList"></div>
         <div class="res-drive"><div id="driveBrowser"></div></div>
+      </div>
+
+      <!-- ===== Meetings view (Close) ===== -->
+      <div class="view-content" id="meetingsView">
+        <div class="controls-row"><div><div class="section-title">Meetings</div><div class="pp-toolbar-note" id="meetingsHead"></div></div><div class="controls-right"><div class="controls-group filters-group"><div class="styled-select"><select id="meetRepFilter" onchange="meetRep=this.value;renderMeetings()"><option value="all">Everyone</option><option value="me">My meetings</option></select></div></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="syncCloseMeetingsNow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Sync now</button></div></div></div>
+        <div id="meetingsList"><div class="pp-empty">Loading meetings...</div></div>
       </div>
 
       <div class="view-content" id="calendarView">
@@ -1959,6 +1985,8 @@
       if (view === 'tradeshows') { renderTradeShows(); loadTradeShows(false).then(function() { renderTradeShows(); }); }
       if (view === 'leads') { renderLeads(); loadLeads(false).then(function() { renderLeads(); }); }
       if (view === 'resources') { renderResources(); loadResources(false).then(function() { renderResources(); }); }
+      if (view === 'meetings') { renderMeetings(); loadCloseMeetings(false).then(function() { renderMeetings(); }); }
+      if (view === 'customers') { renderCloseAccounts(); loadCloseAccounts(false).then(function() { renderCloseAccounts(); }); }
       ppSetHeaderTitle(view);
       if (typeof ppPopoverClose === 'function') ppPopoverClose();
       ppTabInk();
@@ -2009,7 +2037,7 @@
           // Load shared data before rendering
           await sideLoads;
           updateStats(); renderTable(); renderPipeline(); renderCalendar(); finishLoading(allData); ppSyncPill(false); window._ppCachedRender = false;
-          setTimeout(function() { loadCredList(false).then(function() { if (document.getElementById('credentialsView').classList.contains('active')) renderCredentials(); renderUpcoming(); }); loadTradeShows(false).then(function() { if (document.getElementById('tradeshowsView').classList.contains('active')) renderTradeShows(); renderUpcoming(); }); loadLeads(false).then(function() { if (document.getElementById('leadsView').classList.contains('active')) renderLeads(); renderUpcoming(); }); }, 1500);
+          setTimeout(function() { loadCredList(false).then(function() { if (document.getElementById('credentialsView').classList.contains('active')) renderCredentials(); renderUpcoming(); }); loadTradeShows(false).then(function() { if (document.getElementById('tradeshowsView').classList.contains('active')) renderTradeShows(); renderUpcoming(); }); loadLeads(false).then(function() { if (document.getElementById('leadsView').classList.contains('active')) renderLeads(); renderUpcoming(); }); loadCloseMeetings(false).then(function() { if (document.getElementById('calendarView').classList.contains('active')) renderCalendar(); renderUpcoming(); }); loadCloseAccounts(false).then(function() { if (document.getElementById('customersView').classList.contains('active')) renderCloseAccounts(); renderUpcoming(); }); }, 1500);
           // Start auto-refresh every 60 seconds
           if (!window._refreshInterval) {
             window._refreshInterval = setInterval(async function() {
@@ -3760,7 +3788,7 @@
       else if (/Timeout|Script load failed|unreachable/i.test(err)) hint = 'No reply came back from the script. Usually the one-line hook is missing from doGet (<code>var pp = ppHandleExtra_(e); if (pp) return pp;</code>) or the deployment has not been updated to a new version.';
       else if (/Unauthorized/i.test(err)) hint = 'Your signed-in email (' + ppEsc(currentUser?.email || '') + ') is not in <code>PP_ADMIN_EMAILS</code> at the top of Extras.gs.';
       else hint = 'The Apps Script behind this admin needs the new actions for this tab. Paste <code>AppsScript_additions.gs</code> in as Extras.gs, add the one-line hook to doGet, and deploy a new version.';
-      var retry = what === 'Credentials' ? 'loadCredList(true).then(renderCredentials)' : what === 'Inbound Leads' ? 'loadLeads(true).then(renderLeads)' : what === 'Resources' ? 'loadResources(true).then(renderResources)' : 'loadTradeShows(true).then(renderTradeShows)';
+      var retry = what === 'Credentials' ? 'loadCredList(true).then(renderCredentials)' : what === 'Inbound Leads' ? 'loadLeads(true).then(renderLeads)' : what === 'Resources' ? 'loadResources(true).then(renderResources)' : what === 'Meetings' ? 'loadCloseMeetings(true).then(renderMeetings)' : 'loadTradeShows(true).then(renderTradeShows)';
       return '<div class="pp-empty"><strong>' + what + ': backend not connected yet</strong><div style="max-width:520px;margin:0 auto;line-height:1.6">' + hint + '</div>'
         + (err ? '<div class="pp-toolbar-note" style="margin-top:10px">Reply from server: ' + ppEsc(err) + '</div>' : '')
         + '<div style="margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><a class="pp-btn" target="_blank" rel="noopener" href="' + ppEsc(API_URL + '?action=ppPing&email=' + encodeURIComponent(currentUser?.email || '')) + '">Test backend</a><button class="pp-btn primary" onclick="' + retry + '">Retry</button></div></div>';
@@ -4405,6 +4433,16 @@
           + '<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(d.organization || 'Unnamed') + '</div><div class="pp-up-sub">' + ppInDays(days) + (d.locationStr ? ' &middot; ' + ppEsc(d.locationStr) : '') + '</div></div>'
           + '<div class="pp-up-right"><span class="status-badge ' + ppEsc(d.pipelineStatus) + '">' + (PP_STATUS_LABELS[d.pipelineStatus] || ppEsc(d.pipelineStatus)) + '</span></div></div>';
       }).join('') + ppUpFoot('calendar', 'Open calendar') : '<div class="pp-up-empty">No go-live dates scheduled.</div>' + ppUpFoot('calendar', 'Open calendar');
+      // --- this week's meetings (Close)
+      var mtEl = document.getElementById('upMeetings');
+      if (mtEl) {
+        if (!closeMeetingsLoaded) mtEl.innerHTML = '<div class="pp-up-empty">' + (closeMeetingsError ? 'Meetings need the v7 backend.' : 'Loading meetings...') + '</div>';
+        else if (!closeKeyPresent) mtEl.innerHTML = '<div class="pp-up-empty">Connect Close to see meetings here.</div>';
+        else {
+          var wk = closeMeetings.filter(function(m) { return m.start && m.start.slice(0, 10) >= today && ppDaysBetween(m.start.slice(0, 10), today) <= 7; }).sort(function(a, b) { return a.start < b.start ? -1 : 1; }).slice(0, 4);
+          mtEl.innerHTML = wk.length ? wk.map(function(m) { var d0 = m.start.slice(0, 10); return '<div class="pp-up-item" onclick="' + (m.url ? 'window.open(\'' + ppEsc(m.url) + '\',\'_blank\')' : '') + '">' + ppDateBox(d0, d0 === today) + '<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(m.title) + '</div><div class="pp-up-sub">' + meetingTime(m) + (m.leadName ? ' &middot; ' + ppEsc(m.leadName) : '') + '</div></div><div class="pp-up-right">' + (m.rep ? ppRepAvatars(m.rep, 22) : '') + '</div></div>'; }).join('') + ppUpFoot('meetings', 'All meetings') : '<div class="pp-up-empty">No meetings in the next 7 days.</div>' + ppUpFoot('meetings', 'All meetings');
+        }
+      }
       // --- new inbound leads
       var ldEl = document.getElementById('upLeads');
       if (ldEl) {
@@ -4423,6 +4461,7 @@
       if (tsLoaded) tsList.filter(function(s) { return !s.archived && !s._isPast && s._daysUntil !== null && s._daysUntil <= 60 && s._todo.length; }).sort(function(a, b) { return a._daysUntil - b._daysUntil; }).slice(0, 3).forEach(function(s) {
         items.push({ cls: 'amber', title: s.name, sub: s._todo.join(' &middot; ') + ' &middot; ' + ppInDays(s._daysUntil).toLowerCase(), go: "openTsModal('" + ppEsc(s.id) + "')" });
       });
+      if (closeAcctLoaded && closeKeyPresent) { var staleAcc = closeAccounts.filter(function(a) { return a.closeLeadId && (a._days === null || a._days > 60); }).length; if (staleAcc) items.push({ cls: 'amber', title: staleAcc + ' client account' + (staleAcc === 1 ? '' : 's') + ' with no Close touch in 60 days', sub: 'No call, email, or meeting logged', go: "closeAcctFilter='stale';switchView('customers')" }); }
       if (leadsLoaded) { var unl = leadList.filter(function(l) { return !l.assignedTo && ['won', 'lost'].indexOf(l.status) < 0; }).length; if (unl) items.push({ cls: 'red', title: unl + ' inbound lead' + (unl === 1 ? '' : 's') + ' unassigned', sub: 'Waiting for a rep', go: "switchView('leads')" }); var idle = leadList.filter(function(l) { return l.assignedTo && l.status === 'new' && (Date.now() - new Date(l.receivedAt)) > 48 * 3600000; }).length; if (idle) items.push({ cls: 'amber', title: idle + ' lead' + (idle === 1 ? '' : 's') + ' not contacted in 48h', sub: 'Assigned but still marked New', go: "switchView('leads')" }); }
       if (credLoaded) { var missing = credList.filter(function(c) { return c.status !== 'inactive' && (!c.loginEmail || !c.loginPassword); }).length; if (missing) items.push({ cls: 'blue', title: missing + ' client' + (missing === 1 ? '' : 's') + ' missing a login', sub: 'Active or onboarding without email or password', go: "switchView('credentials')" }); }
       var icons = { red: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>', amber: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>', blue: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>' };
@@ -4699,7 +4738,7 @@
     function openDataHealth() { dhOpen = true; dhFilter = 'all'; switchView('pipeline'); setTimeout(renderDataHealth, 50); }
 
     // ---- sidebar layout + header title ----
-    var PP_VIEW_TITLES = { dashboard: ['HQ', 'Dashboard'], calendar: ['HQ', 'Calendar'], submissions: ['Onboarding', 'Submissions'], pipeline: ['Onboarding', 'Pipeline'], customers: ['Client Success', 'Client Overview'], credentials: ['Client Success', 'Client Credentials'], tradeshows: ['Sales', 'Trade Shows'], leads: ['Sales', 'Inbound Leads'], resources: ['Workspace', 'Resources'], activity: ['Workspace', 'Activity'] };
+    var PP_VIEW_TITLES = { dashboard: ['HQ', 'Dashboard'], calendar: ['HQ', 'Calendar'], submissions: ['Onboarding', 'Submissions'], pipeline: ['Onboarding', 'Pipeline'], customers: ['Client Success', 'Client Overview'], credentials: ['Client Success', 'Client Credentials'], tradeshows: ['Sales', 'Trade Shows'], leads: ['Sales', 'Inbound Leads'], meetings: ['Sales', 'Meetings'], resources: ['Workspace', 'Resources'], activity: ['Workspace', 'Activity'] };
     function ppSetHeaderTitle(view) { var t = document.getElementById('hdrTitle'); if (!t || !PP_VIEW_TITLES[view]) return; t.innerHTML = '<span class="crumb">' + PP_VIEW_TITLES[view][0] + '</span><b>' + PP_VIEW_TITLES[view][1] + '</b>'; }
     function ppLayoutInit() {
       var tabs = document.querySelector('.view-tabs'), dash = document.getElementById('dashboard'), main = document.querySelector('.main-content'); if (!tabs || !dash || !main) return;
@@ -4760,8 +4799,8 @@
       if (filters) {
         var count = function(t) { return (t === 'golive' ? allData.filter(function(d) { var i = ppNormalizeDate(d.goLiveDate); return i && i >= mStart && i <= mEnd; }) : t === 'show' ? (tsLoaded ? tsList.filter(function(s) { return !s.archived && s._start && s.registration !== 'skip' && s._start <= mEnd && s._end >= mStart; }) : []) : closeMeetings.filter(function(m) { var i = ppNormalizeDate(m.start); return i >= mStart && i <= mEnd; })).length; };
         filters.innerHTML = [['golive', 'Go-lives'], ['show', 'Trade shows'], ['meeting', 'Meetings']].map(function(f) {
-          var soon = f[0] === 'meeting' && !closeMeetings.length;
-          return '<button type="button" class="cal-chip ' + f[0] + (calShow[f[0]] && !soon ? ' on' : '') + (soon ? ' soon' : '') + '" onclick="calToggle(\'' + f[0] + '\')"' + (soon ? ' disabled title="Meetings arrive with the Close CRM integration"' : '') + '><i></i>' + f[1] + (soon ? '<span class="soon-tag">Soon</span>' : '<b>' + count(f[0]) + '</b>') + '</button>';
+          var soon = f[0] === 'meeting' && (!closeMeetingsLoaded || !closeKeyPresent);
+          return '<button type="button" class="cal-chip ' + f[0] + (calShow[f[0]] && !soon ? ' on' : '') + (soon ? ' soon' : '') + '" onclick="calToggle(\'' + f[0] + '\')"' + (soon ? ' disabled title="Connect Close (CLOSE_API_KEY) to see meetings"' : '') + '><i></i>' + f[1] + (soon ? '<span class="soon-tag">Soon</span>' : '<b>' + count(f[0]) + '</b>') + '</button>';
         }).join('');
       }
       var firstDay = new Date(year, month, 1).getDay(), daysInMonth = new Date(year, month + 1, 0).getDate(), daysInPrev = new Date(year, month, 0).getDate(), todayISO = ppTodayISO();
@@ -5036,6 +5075,67 @@
       try { var r = await ppApi('saveResource', { row: row }); if (!r.success) throw new Error(r.error || 'Save failed'); row.id = r.id; var i = resList.findIndex(function(x) { return x.id === row.id; }); if (i >= 0) resList[i] = Object.assign(resList[i], row); else resList.push(row); closeModal(); renderResources(); showToast('Saved', 'success'); } catch(e) { showToast('Could not save: ' + e.message, 'error'); }
     }
     async function deleteResource(id) { if (!confirm('Remove this link?')) return; try { var r = await ppApi('deleteResource', { id: id }); if (!r.success) throw new Error(r.error || 'Delete failed'); resList = resList.filter(function(x) { return x.id !== id; }); closeModal(); renderResources(); } catch(e) { showToast('Could not delete: ' + e.message, 'error'); } }
+    // =====================================================================
+    // CLOSE CRM: meetings + account health  (Sept 2026)
+    // =====================================================================
+    var closeMeetingsLoaded = false, closeMeetingsError = '', closeMeetingsSyncedAt = '', closeKeyPresent = true;
+    var closeAccounts = [], closeAcctLoaded = false, closeAcctError = '', closeAcctSyncedAt = '', closeAcctSort = 'stale', closeAcctFilter = 'all';
+    function ppAgo(iso) { if (!iso) return ''; var ms = Date.now() - new Date(iso).getTime(); if (isNaN(ms)) return ''; var m = Math.floor(ms / 60000); if (m < 2) return 'just now'; if (m < 60) return m + ' min ago'; var h = Math.floor(m / 60); if (h < 24) return h + 'h ago'; return Math.floor(h / 24) + 'd ago'; }
+    function ppDaysSince(iso) { if (!iso) return null; return Math.floor((Date.now() - new Date(iso).getTime()) / 86400000); }
+    async function loadCloseMeetings(force) {
+      if (closeMeetingsLoaded && !force) return;
+      try { var r = await ppApi('getCloseMeetings'); if (r.success) { closeKeyPresent = r.keyPresent !== false; closeMeetingsSyncedAt = r.syncedAt || ''; closeMeetings = (r.rows || []).map(function(m) { return { id: m.id, start: m.startsAt, end: m.endsAt, title: m.title, sub: [m.leadName, m.repName].filter(Boolean).join(' · '), url: m.leadUrl || m.link, leadName: m.leadName, leadUrl: m.leadUrl, rep: String(m.rep || '').toLowerCase(), repName: m.repName, attendees: m.attendees, location: m.location, link: m.link, status: m.status }; }); closeMeetingsLoaded = true; closeMeetingsError = ''; } else closeMeetingsError = r.error || 'Unknown error'; }
+      catch(e) { closeMeetingsError = e.message; }
+    }
+    async function syncCloseMeetingsNow(btn) {
+      var orig = btn ? btn.innerHTML : ''; if (btn) { btn.disabled = true; btn.innerHTML = '<svg class="pp-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></svg> Syncing with Close...'; }
+      try { var r = await ppApi('syncCloseMeetings'); if (!r.success) throw new Error(r.error || 'Sync failed'); await loadCloseMeetings(true); renderMeetings(); renderCalendar(); renderUpcoming(); showToast(r.meetings + ' meeting' + (r.meetings === 1 ? '' : 's') + ' synced from Close', 'success'); } catch(e) { showToast('Could not sync: ' + e.message, 'error'); }
+      if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+    }
+    function meetingTime(m) { var d = new Date(m.start); if (isNaN(d)) return ''; return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); }
+    function renderMeetings() {
+      var el = document.getElementById('meetingsList'); if (!el) return;
+      var head = document.getElementById('meetingsHead'); if (head) head.innerHTML = closeMeetingsSyncedAt ? 'Synced from Close ' + ppAgo(closeMeetingsSyncedAt) + '. Refreshes every 15 minutes.' : '';
+      if (!closeMeetingsLoaded) { el.innerHTML = closeMeetingsError ? ppSetupEmpty('Meetings', closeMeetingsError) : '<div class="pp-empty">Loading meetings...</div>'; return; }
+      if (!closeKeyPresent) { el.innerHTML = '<div class="pp-empty"><strong>Close is not connected</strong>Add CLOSE_API_KEY to the Apps Script project, then run ppSetupCloseTriggers once.</div>'; return; }
+      var today = ppTodayISO(), me = currentUser?.email || '';
+      var list = closeMeetings.filter(function(m) { return m.start && (meetRep === 'all' || (meetRep === 'me' ? m.rep === me : m.rep === meetRep)); }).sort(function(a, b) { return a.start < b.start ? -1 : 1; });
+      var upcoming = list.filter(function(m) { return m.start.slice(0, 10) >= today; }), past = list.filter(function(m) { return m.start.slice(0, 10) < today; }).reverse();
+      var block = function(m) { var d = ppParseISO(m.start.slice(0, 10)); return '<div class="meet-item" onclick="' + (m.url ? 'window.open(\'' + ppEsc(m.url) + '\',\'_blank\')' : '') + '"><div class="pp-up-date' + (m.start.slice(0, 10) === today ? ' soon' : '') + '"><b>' + d.getDate() + '</b><span>' + d.toLocaleDateString('en-US', { month: 'short' }) + '</span></div><div class="meet-main"><div class="meet-title">' + ppEsc(m.title) + '</div><div class="meet-sub">' + meetingTime(m) + (m.leadName ? ' &middot; <b>' + ppEsc(m.leadName) + '</b>' : '') + (m.attendees ? ' &middot; ' + ppEsc(m.attendees) : '') + (m.location && !/^https?:/.test(m.location) ? ' &middot; ' + ppEsc(m.location) : '') + '</div></div><div class="meet-right">' + (m.rep ? ppRepAvatars(m.rep, 24) : '<span class="pp-avatar-text">' + ppEsc(m.repName || 'Rep') + '</span>') + (m.link ? '<a class="pp-mini-btn" href="' + ppEsc(m.link) + '" target="_blank" rel="noopener" title="Join or open" onclick="event.stopPropagation()">' + ppSvg('link') + '</a>' : '') + '</div></div>'; };
+      var group = function(title, items, emptyText) { return '<div class="meet-group"><h3>' + title + '<span class="n">' + items.length + '</span></h3>' + (items.length ? items.map(block).join('') : '<div class="pp-empty" style="padding:14px">' + emptyText + '</div>') + '</div>'; };
+      var week = upcoming.filter(function(m) { return ppDaysBetween(m.start.slice(0, 10), today) <= 7; }), later = upcoming.filter(function(m) { return ppDaysBetween(m.start.slice(0, 10), today) > 7; });
+      el.innerHTML = group('This week', week, 'No meetings booked in the next 7 days.') + group('Later', later, 'Nothing further out yet.') + group('Recent', past.slice(0, 15), 'No meetings in the last two weeks.');
+    }
+    var meetRep = 'all';
+    // ---- account health (Client Overview) ----
+    async function loadCloseAccounts(force) {
+      if (closeAcctLoaded && !force) return;
+      try { var r = await ppApi('getCloseAccounts'); if (r.success) { closeKeyPresent = r.keyPresent !== false; closeAccounts = (r.rows || []).map(function(a) { var o = {}; ['orgEmail', 'organization', 'closeLeadId', 'closeName', 'closeUrl', 'statusLabel', 'owner', 'ownerName', 'lastTouchAt', 'lastTouchType', 'lastTouchBy', 'openTasks', 'nextTaskDate', 'nextTaskText', 'matchedBy', 'syncedAt'].forEach(function(c) { o[c] = a[c] === undefined ? '' : String(a[c]); }); o.orgEmail = o.orgEmail.toLowerCase(); o.owner = o.owner.toLowerCase(); o._days = ppDaysSince(o.lastTouchAt); return o; }); closeAcctSyncedAt = r.syncedAt || ''; closeAcctLoaded = true; closeAcctError = ''; } else closeAcctError = r.error || 'Unknown error'; }
+      catch(e) { closeAcctError = e.message; }
+    }
+    async function syncCloseAccountsNow(btn) {
+      var orig = btn ? btn.innerHTML : ''; if (btn) { btn.disabled = true; btn.innerHTML = '<svg class="pp-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></svg> Syncing with Close (up to a minute)...'; }
+      try { var r = await ppApi('syncCloseAccounts'); if (!r.success) throw new Error(r.error || 'Sync failed'); await loadCloseAccounts(true); renderCloseAccounts(); renderUpcoming(); showToast(r.matched + ' of ' + r.accounts + ' accounts matched to Close', 'success'); } catch(e) { showToast('Could not sync: ' + e.message, 'error'); }
+      if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+    }
+    function closeAcctFor(email) { var e = String(email || '').toLowerCase(); return closeAccounts.find(function(a) { return a.orgEmail === e; }) || null; }
+    function renderCloseAccounts() {
+      var el = document.getElementById('closeAccounts'); if (!el) return;
+      if (!closeAcctLoaded) { el.innerHTML = '<div class="dh-bar" style="cursor:default"><span class="dh-dot"></span>' + (closeAcctError ? '<b>Close account health:</b>&nbsp;' + ppEsc(closeAcctError) : '<b>Close account health:</b>&nbsp;loading...') + '</div>'; return; }
+      if (!closeKeyPresent) { el.innerHTML = '<div class="dh-bar" style="cursor:default"><span class="dh-dot"></span><b>Close account health:</b>&nbsp;add CLOSE_API_KEY to the Apps Script project and run ppSetupCloseTriggers once.</div>'; return; }
+      var matched = closeAccounts.filter(function(a) { return a.closeLeadId; }), unmatched = closeAccounts.filter(function(a) { return !a.closeLeadId; });
+      var stale = matched.filter(function(a) { return a._days === null || a._days > 60; }), warm = matched.filter(function(a) { return a._days !== null && a._days <= 14; }), tasks = matched.reduce(function(n, a) { return n + (parseInt(a.openTasks) || 0); }, 0);
+      var shown = (closeAcctFilter === 'stale' ? stale : closeAcctFilter === 'unmatched' ? unmatched : closeAcctFilter === 'tasks' ? matched.filter(function(a) { return parseInt(a.openTasks) > 0; }) : matched).slice();
+      shown.sort(function(a, b) { if (closeAcctSort === 'stale') { var da = a._days === null ? 9999 : a._days, db = b._days === null ? 9999 : b._days; return db - da; } if (closeAcctSort === 'recent') { return (b.lastTouchAt || '') < (a.lastTouchAt || '') ? -1 : 1; } return a.organization.localeCompare(b.organization); });
+      var chip = function(key, label, n, cls) { return '<button type="button" class="dh-chip' + (closeAcctFilter === key ? ' on' : '') + '" onclick="closeAcctFilter=\'' + key + '\';renderCloseAccounts()">' + label + ' <b>' + n + '</b></button>'; };
+      var touchCell = function(a) { if (a._days === null) return '<span class="pp-chip on-hold">No touch on record</span>'; var cls = a._days > 60 ? 'on-hold' : a._days > 30 ? 'need-to-book' : 'booked'; return '<span class="pp-chip ' + cls + '" title="' + ppEsc(a.lastTouchType + (a.lastTouchBy ? ' by ' + a.lastTouchBy : '')) + '">' + (a._days === 0 ? 'Today' : a._days + 'd ago') + '</span><span class="ca-sub">' + ppEsc(a.lastTouchType) + (a.lastTouchBy ? ' &middot; ' + ppEsc(a.lastTouchBy.split(' ')[0]) : '') + '</span>'; };
+      el.innerHTML = '<div class="ca-panel"><div class="ca-head"><div><div class="ca-title">Account health from Close</div><div class="pp-toolbar-note">' + matched.length + ' of ' + closeAccounts.length + ' onboarding accounts matched to a Close lead' + (closeAcctSyncedAt ? ' &middot; synced ' + ppAgo(closeAcctSyncedAt) + ', hourly' : '') + '</div></div><div class="ca-actions"><div class="styled-select"><select onchange="closeAcctSort=this.value;renderCloseAccounts()"><option value="stale"' + (closeAcctSort === 'stale' ? ' selected' : '') + '>Stalest first</option><option value="recent"' + (closeAcctSort === 'recent' ? ' selected' : '') + '>Most recent touch</option><option value="name"' + (closeAcctSort === 'name' ? ' selected' : '') + '>A to Z</option></select></div><button class="text-action-btn" onclick="syncCloseAccountsNow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Sync now</button></div></div>'
+        + '<div class="dh-chips">' + chip('all', 'Matched', matched.length) + chip('stale', 'No touch in 60 days', stale.length) + chip('tasks', 'Open tasks', matched.filter(function(a) { return parseInt(a.openTasks) > 0; }).length) + chip('unmatched', 'Not found in Close', unmatched.length) + '<span class="pp-toolbar-note" style="align-self:center;margin-left:auto">' + warm.length + ' touched in the last 14 days</span></div>'
+        + (shown.length ? '<div class="table-wrapper" style="border-radius:12px"><table class="pp-table ca-table" style="min-width:900px"><thead><tr><th>Account</th><th>Close status</th><th>Owner</th><th>Last touch</th><th>Open tasks</th><th>Next task</th><th></th></tr></thead><tbody>'
+          + shown.slice(0, 80).map(function(a) { return '<tr' + (a._days !== null && a._days > 60 ? ' class="ca-stale"' : '') + '><td><div class="pp-org-cell"><div class="pp-org-avatar" style="background:' + getOrgColor(a.organization || a.orgEmail) + '">' + ppEsc(getOrgInitials(a.organization || a.orgEmail)) + '</div><div><div class="pp-org-name">' + ppEsc(a.organization || a.orgEmail) + '</div><div class="pp-org-sub">' + (a.closeName && a.closeName !== a.organization ? 'Close: ' + ppEsc(a.closeName) + ' &middot; ' : '') + 'matched by ' + ppEsc(a.matchedBy) + '</div></div></div></td><td>' + (a.statusLabel ? '<span class="pp-chip aud-other">' + ppEsc(a.statusLabel) + '</span>' : '-') + '</td><td>' + (a.owner && TEAM_MEMBERS.some(function(m) { return m.email === a.owner; }) ? '<div style="display:flex;align-items:center;gap:8px">' + ppRepAvatars(a.owner, 22) + ppEsc(ppRepName(a.owner)) + '</div>' : ppEsc(a.ownerName || '-')) + '</td><td>' + touchCell(a) + '</td><td>' + (parseInt(a.openTasks) ? '<b>' + a.openTasks + '</b>' : '<span class="pp-placeholder">none</span>') + '</td><td>' + (a.nextTaskDate ? '<div class="ts-date">' + ppFmtDate(a.nextTaskDate, { month: 'short', day: 'numeric' }) + '<span class="sub" title="' + ppEsc(a.nextTaskText) + '">' + ppEsc(a.nextTaskText.slice(0, 40)) + '</span></div>' : '<span class="pp-placeholder">-</span>') + '</td><td style="text-align:right">' + (a.closeUrl ? '<a class="pp-mini-btn ts-link" href="' + ppEsc(a.closeUrl) + '" target="_blank" rel="noopener" title="Open in Close">' + ppSvg('link') + '</a>' : '') + '</td></tr>'; }).join('')
+          + '</tbody></table></div>' : '<div class="pp-empty">' + (closeAcctFilter === 'unmatched' ? 'Every onboarding account was found in Close.' : 'Nothing in this view.') + '</div>')
+        + (closeAcctFilter === 'unmatched' && unmatched.length ? '<div class="pp-toolbar-note" style="padding:8px 4px">These were not found by contact email or organization name. Fix the name in Close or the onboarding record and the next sync will pick them up.</div>' : '') + '</div>';
+    }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
     document.addEventListener('touchmove', function(e) {
