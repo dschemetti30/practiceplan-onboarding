@@ -1576,6 +1576,64 @@
     .ca-table td{overflow:hidden;text-overflow:ellipsis}
     .ca-table td.ca-detail-cell,.ca-detail td{overflow:visible}
     .sub-table th:nth-child(1){width:19%}.sub-table th:nth-child(2){width:14%}.sub-table th:nth-child(3){width:12%}.sub-table th:nth-child(4){width:10%}.sub-table th:nth-child(5){width:11%}.sub-table th:nth-child(6){width:9%}.sub-table th:nth-child(7){width:10%}.sub-table th:nth-child(8){width:7%}.sub-table th:nth-child(9){width:8%}
+    /* ---- signed documents panel ---- */
+    #docsPanel{margin-bottom:14px}
+    .docs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .docs-col{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;min-width:0}
+    .docs-col h4{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin:0 0 8px;display:flex;justify-content:space-between}
+    .doc-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 0;border-top:1px solid var(--border);font-size:12.5px;flex-wrap:wrap}
+    .doc-row:first-of-type{border-top:none}
+    .doc-row b{color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .doc-row>span{display:flex;gap:4px;flex-wrap:wrap}
+    .doc-row.unmatched{align-items:flex-start}
+    .doc-row.unmatched b a{color:var(--text);text-decoration:none}
+    .doc-pill{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:50px;background:var(--bg);color:var(--text3);text-decoration:none;white-space:nowrap}
+    .doc-pill.on{background:rgba(0,168,79,0.12);color:var(--pp-green)}
+    .doc-pill.folder{background:rgba(245,158,11,0.14);color:#b45309}
+    @media(max-width:1200px){.docs-grid{grid-template-columns:1fr}}
+    /* ---- team view ---- */
+    .team-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:16px}
+    .team-card{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:14px;cursor:pointer;box-shadow:var(--sh-xs);transition:all var(--t-base) var(--ease);min-width:0}
+    .team-card:hover{box-shadow:var(--sh-md);transform:translateY(-1px)}
+    .team-card.on{border-color:var(--pp-blue);box-shadow:0 0 0 3px var(--ring),var(--sh-sm)}
+    .team-card img,.team-card>span:first-child{border-radius:50%;flex-shrink:0}
+    .team-card-main{flex:1;min-width:0}
+    .team-card-main b{display:block;font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .team-card-main span{font-size:10.5px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+    .team-flag{font-size:10px;font-weight:800;min-width:20px;height:20px;padding:0 6px;border-radius:50px;background:#fef3c7;color:#b45309;display:inline-flex;align-items:center;justify-content:center}
+    .team-flag.ok{background:rgba(0,168,79,0.12);color:var(--pp-green)}
+    .team-head{display:flex;align-items:center;gap:14px;margin:6px 0 14px}
+    .team-head img,.team-head>span:first-child{border-radius:50%}
+    .team-name{font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--text)}
+    .team-kpis{grid-template-columns:repeat(6,1fr)}
+    .team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .team-sec h3{display:flex;align-items:center;gap:8px}
+    .team-sec h3 .n{font-size:10px;background:var(--bg);border:1px solid var(--border);padding:1px 7px;border-radius:50px;color:var(--text2);text-transform:none;letter-spacing:0}
+    @media(max-width:1400px){.team-grid{grid-template-columns:1fr 1fr}.team-kpis{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:768px){.team-grid{grid-template-columns:1fr}.team-kpis{grid-template-columns:1fr 1fr}}
+    /* ---- landing page inside shows ---- */
+    .ts-page-link{font-size:10.5px;color:var(--pp-blue);text-decoration:none;white-space:nowrap}
+    .ts-page-link:hover{text-decoration:underline}
+    .ts-lp-sec .lp-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--border);flex-wrap:wrap}
+    .ts-lp-sec .lp-row:first-child{border-top:none}
+    .ts-lp-sec .lp-row .lp-quick-url{margin:0;flex:1;min-width:200px}
+    .ts-lead-row{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:12px;border-top:1px solid var(--border)}
+    .ts-lead-row:first-child{border-top:none}
+    .ts-lead-row b{color:var(--text)}
+    .ts-lead-row .ca-sub{margin:0 0 0 auto;white-space:nowrap}
+    .team-grid{align-items:start}
+    .team-sec{display:block}
+    .team-sec .pp-up-item{margin-bottom:2px}
+    /* ---- merge + link ---- */
+    .ca-sel{width:15px;height:15px;accent-color:var(--pp-blue);cursor:pointer;flex-shrink:0;margin-right:2px}
+    .ca-row.selected td{background:rgba(0,118,187,0.06)}
+    .ca-merge-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 14px;margin-bottom:10px;border-radius:12px;background:rgba(0,118,187,0.06);border:1px solid rgba(0,118,187,0.25);font-size:12.5px;color:var(--text2);animation:ppViewIn .2s var(--ease) both}
+    .ca-primary-list{display:flex;gap:6px;flex-wrap:wrap}
+    .ca-primary-opt{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:50px;background:var(--card);border:1px solid var(--border);font-size:12px;color:var(--text);cursor:pointer}
+    .ca-dupes{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:8px;margin-bottom:12px}
+    .ca-dupe{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:12px;background:var(--card);border:1px solid var(--border);font-size:12.5px}
+    .ca-dupe b{color:var(--text)}
+    .ca-relink{margin-top:4px}
   </style>
 </head>
 <body>
@@ -1638,6 +1696,7 @@
         <div class="nav-group">HQ</div>
         <button class="view-tab active" onclick="switchView('dashboard')" data-short="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Dashboard</button>
         <button class="view-tab" onclick="switchView('calendar')" data-short="Calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Calendar</button>
+        <button class="view-tab" onclick="switchView('team')" data-short="Team"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Team</button>
         <div class="nav-group">Onboarding</div>
         <button class="view-tab" onclick="switchView('submissions')" data-short="Forms"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Submissions</button>
         <button class="view-tab" onclick="switchView('pipeline')" data-short="Pipeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Pipeline</button>
@@ -1705,6 +1764,7 @@
               </div>
             </div>
           </div>
+          <div id="docsPanel"></div>
           <div id="subBoard"></div>
           <div class="table-wrapper"><table><thead><tr><th onclick="sortBy('organization')">Organization <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('contact')">Contact <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('pipelineStatus')">Status <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('checklistCount')">Onboarding <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('launchCount')">Launch <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('goLiveDate')">Go Live <span class="sort-arrow">&#x25B2;</span></th><th onclick="sortBy('lastUpdated')" class="sorted">Updated <span class="sort-arrow">&#x25BC;</span></th><th onclick="sortBy('accountRep')">Rep <span class="sort-arrow">&#x25B2;</span></th><th>Actions</th></tr></thead><tbody id="tableBody"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody></table></div>
           <div class="mobile-cards" id="mobileCards"></div>
@@ -1940,6 +2000,12 @@
           <div class="controls-row"><div class="section-title">Landing Pages</div><div class="controls-right"><div class="controls-group search-group"><input type="text" class="search-input" placeholder="Search pages..." oninput="lpSearch=this.value.toLowerCase();renderLandingPages()" style="width:200px"></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="startLpImport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button><input type="file" id="lpImportFile" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleLpImportFile(this.files[0]);this.value=''"><button class="text-action-btn pp-icon-only" title="Refresh" onclick="loadLandingPages(true).then(renderLandingPages)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button></div></div></div>
           <div class="table-wrapper"><table class="pp-table" id="lpTable"><thead><tr><th>Page</th><th>URL</th><th>Show</th><th>Leads go to</th><th>Source key</th><th>Leads</th><th>Notes</th><th></th></tr></thead><tbody id="lpTableBody"><tr><td colspan="8" class="pp-empty">Loading...</td></tr></tbody></table></div>
         </div>
+      </div>
+
+      <!-- ===== Team view ===== -->
+      <div class="view-content" id="teamView">
+        <div class="team-cards" id="teamCards"></div>
+        <div id="teamDetail"></div>
       </div>
 
       <div class="view-content" id="calendarView">
@@ -2213,6 +2279,8 @@
       if (view === 'resources') { renderResources(); loadResources(false).then(function() { renderResources(); }); }
       if (view === 'meetings') { renderMeetings(); loadCloseMeetings(false).then(function() { renderMeetings(); }); }
       if (view === 'landing') { renderLandingPages(); Promise.all([loadLandingPages(false), loadTradeShows(false), loadLeads(false)]).then(function() { renderLandingPages(); }); }
+      if (view === 'team') { renderTeam(); Promise.all([loadCloseAccounts(false), loadLeads(false), loadCloseMeetings(false), loadTradeShows(false), loadLandingPages(false), loadActivity()]).then(function() { renderTeam(); }); }
+      if (view === 'submissions') { renderDocsPanel(); loadSignedDocs(false).then(function() { renderDocsPanel(); }); }
       if (view === 'customers') { renderCloseAccounts(); loadCloseAccounts(false).then(function() { renderCloseAccounts(); }); }
       ppSetHeaderTitle(view);
       if (typeof ppPopoverClose === 'function') ppPopoverClose();
@@ -2264,7 +2332,7 @@
           // Load shared data before rendering
           await sideLoads;
           updateStats(); renderTable(); renderPipeline(); renderCalendar(); finishLoading(allData); ppSyncPill(false); window._ppCachedRender = false;
-          setTimeout(function() { loadCredList(false).then(function() { if (document.getElementById('credentialsView').classList.contains('active')) renderCredentials(); renderUpcoming(); }); loadTradeShows(false).then(function() { if (document.getElementById('tradeshowsView').classList.contains('active')) renderTradeShows(); renderUpcoming(); }); loadLeads(false).then(function() { if (document.getElementById('leadsView').classList.contains('active')) renderLeads(); renderUpcoming(); }); loadCloseMeetings(false).then(function() { if (document.getElementById('calendarView').classList.contains('active')) renderCalendar(); renderUpcoming(); }); loadCloseAccounts(false).then(function() { if (document.getElementById('customersView').classList.contains('active')) renderCloseAccounts(); renderUpcoming(); }); loadActivity().then(function() { window._ppActivityLoaded = true; renderUpcoming(); }); loadLandingPages(false).then(function() { if (document.getElementById('tradeshowsView').classList.contains('active')) renderTradeShows(); }); }, 1500);
+          setTimeout(function() { loadCredList(false).then(function() { if (document.getElementById('credentialsView').classList.contains('active')) renderCredentials(); renderUpcoming(); }); loadTradeShows(false).then(function() { if (document.getElementById('tradeshowsView').classList.contains('active')) renderTradeShows(); renderUpcoming(); }); loadLeads(false).then(function() { if (document.getElementById('leadsView').classList.contains('active')) renderLeads(); renderUpcoming(); }); loadCloseMeetings(false).then(function() { if (document.getElementById('calendarView').classList.contains('active')) renderCalendar(); renderUpcoming(); }); loadCloseAccounts(false).then(function() { if (document.getElementById('customersView').classList.contains('active')) renderCloseAccounts(); renderUpcoming(); }); loadActivity().then(function() { window._ppActivityLoaded = true; renderUpcoming(); }); loadLandingPages(false).then(function() { if (document.getElementById('tradeshowsView').classList.contains('active')) renderTradeShows(); }); loadSignedDocs(false).then(function() { renderDocsPanel(); }); }, 1500);
           // Start auto-refresh every 60 seconds
           if (!window._refreshInterval) {
             window._refreshInterval = setInterval(async function() {
@@ -4334,7 +4402,7 @@
       var chip = function(field, list) { var val = s[field] || ''; var item = list.find(function(x) { return x.val === val; }) || list[0]; var label = val ? (item.short || item.label) : (field === 'registration' ? 'Register' : field === 'hotel' ? 'Hotel?' : 'Flight?'); return '<span class="pp-chip pick ' + (val || 'unset') + '" title="' + ppEsc(item.label) + '">' + ppEsc(label) + '<i class="caret"></i></span>'; };
       var out = '<span class="ts-outcome"><span><b>Leads</b>' + ppEsc(s.leads || '-') + '</span><span><b>Demos</b>' + ppEsc(s.demos || '-') + '</span><span><b>Deals</b>' + ppEsc(s.deals || '-') + '</span></span>';
       return '<tr data-id="' + ppEsc(s.id) + '"' + (s._isPast ? ' class="past"' : '') + '>'
-        + cell('details', '<div class="pp-org-cell"><div><div class="pp-org-name">' + ppEsc(s.name) + (s.link ? ' <a class="ts-link" href="' + ppEsc(s.link) + '" target="_blank" rel="noopener" title="Open event site" style="vertical-align:middle">' + ppSvg('link') + '</a>' : '') + (typeof lpChipForShow === 'function' ? lpChipForShow(s) : '') + '</div><div class="pp-org-sub">' + (s.location ? ppEsc(s.location) : '<span class="pp-placeholder">Location?</span>') + '</div></div></div>')
+        + cell('details', '<div class="pp-org-cell"><div><div class="pp-org-name">' + ppEsc(s.name) + (s.link ? ' <a class="ts-link" href="' + ppEsc(s.link) + '" target="_blank" rel="noopener" title="Open event site" style="vertical-align:middle">' + ppSvg('link') + '</a>' : '') + (typeof lpChipForShow === 'function' ? lpChipForShow(s) : '') + '</div><div class="pp-org-sub">' + (s.location ? ppEsc(s.location) : '<span class="pp-placeholder">Location?</span>') + (typeof lpForShow === 'function' && lpLoaded && lpForShow(s.id).length ? ' &middot; <a class="ts-page-link" href="' + ppEsc(lpForShow(s.id)[0].url) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + ppEsc(lpSlug(lpForShow(s.id)[0].url).split('/').pop()) + '</a>' : '') + '</div></div></div>')
         + cell('dates', '<div class="ts-date' + (soon ? ' soon' : '') + '">' + ppFmtRange(s._start, s._end) + '<span class="sub">' + when + '</span></div>')
         + cell('audience', '<span class="pp-chip pick aud-' + (s.audience || 'other') + (s.audience ? '' : ' unset') + '" title="' + ppEsc(tsAudLabel(s.audience)) + '">' + ppEsc(s.audience ? ((TS_AUDIENCES.find(function(a) { return a.val === s.audience; }) || {}).short || tsAudLabel(s.audience)) : 'Audience?') + '<i class="caret"></i></span>')
         + cell('reps', ppRepAvatars(s.reps, 26))
@@ -4443,6 +4511,7 @@
         + '<div><label>Flight</label><select id="tf_flight">' + opt(TS_TRAVEL, s.flight) + '</select></div>'
         + '<div class="full"><label>PP Reps Attending</label><div class="pp-reps-pick" id="tf_reps">' + credRepOptions(s.reps) + '</div></div>'
         + '</div></div>'
+        + (!isNew && typeof tsShowPagesSection === 'function' ? tsShowPagesSection(s) : '')
         + '<div class="detail-section" id="tf_outcomes_section"><h3>Outcomes</h3><div class="pp-form" style="grid-template-columns:repeat(3,1fr)">'
         + '<div><label>Leads</label><input id="tf_leads" value="' + ppEsc(s.leads) + '" inputmode="numeric" placeholder="0"></div>'
         + '<div><label>Demos Booked</label><input id="tf_demos" value="' + ppEsc(s.demos) + '" inputmode="numeric" placeholder="0"></div>'
@@ -4554,6 +4623,18 @@
       logActivityToServer('imported trade shows', ok + ' rows', '', 'other');
       await loadTradeShows(true); renderTradeShows();
     }
+
+    // Landing pages and leads that belong to a show, inside the show editor
+    function tsShowPagesSection(s) {
+      var pages = lpLoaded ? lpForShow(s.id) : [], leads = [];
+      if (leadsLoaded) { var keys = [lpNormKey(s.name)].concat(pages.map(function(p) { return lpNormKey(p.sourceKey || p.title); })).filter(Boolean); leads = leadList.filter(function(l) { var k = lpNormKey(l.source); return k && keys.some(function(x) { return x === k || k.indexOf(x) >= 0 || (x.length > 5 && x.indexOf(k) >= 0); }); }); }
+      var unlinked = lpLoaded ? lpList.filter(function(p) { return !p.showId; }) : [];
+      var pagesHtml = pages.length ? pages.map(function(p) { return '<div class="lp-row"><a class="lp-quick-url" href="' + ppEsc(p.url) + '" target="_blank" rel="noopener">' + ppEsc(lpSlug(p.url)) + '</a><button type="button" class="pp-btn" style="padding:6px 10px;font-size:11px" onclick="ppCopy(\'' + ppEsc(p.url) + '\',\'Link\')">Copy</button><button type="button" class="pp-btn" style="padding:6px 10px;font-size:11px" onclick="lpQr(\'' + ppEsc(p.url) + '\',\'' + ppEsc(p.title) + '\')">QR</button><button type="button" class="pp-btn" style="padding:6px 10px;font-size:11px" onclick="lpQuick(\'' + ppEsc(p.id) + '\',this)">Tracked links</button></div>'; }).join('') : '<div class="pp-toolbar-note">No landing page linked to this show.</div>';
+      var linkSel = unlinked.length ? '<div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><div class="styled-select"><select id="tf_linkpage"><option value="">Link an existing page...</option>' + unlinked.map(function(p) { return '<option value="' + ppEsc(p.id) + '">' + ppEsc(p.title) + ' (' + ppEsc(lpSlug(p.url)) + ')</option>'; }).join('') + '</select></div><button type="button" class="pp-btn" style="padding:7px 12px;font-size:12px" onclick="tsLinkPage(\'' + ppEsc(s.id) + '\')">Link</button><a class="pp-toolbar-note" style="cursor:pointer;color:var(--pp-blue)" onclick="closeModal();switchView(\'landing\')">or add a new page</a></div>' : '';
+      var leadsHtml = leads.length ? leads.sort(function(a, b) { return a.receivedAt < b.receivedAt ? 1 : -1; }).slice(0, 8).map(function(l) { var st = LEAD_STATUSES.find(function(x) { return x.val === l.status; }) || LEAD_STATUSES[0]; return '<div class="ts-lead-row"><b>' + ppEsc(l.name || l.org) + '</b><span style="color:var(--text3)">' + ppEsc(l.org || '') + '</span><span class="pp-chip ' + st.cls + '">' + st.label + '</span>' + (l.assignedTo ? ppRepAvatars(l.assignedTo, 20) : '') + '<span class="ca-sub">' + leadAge(l) + '</span></div>'; }).join('') + (leads.length > 8 ? '<div class="pp-toolbar-note">+' + (leads.length - 8) + ' more on the Inbound Leads tab</div>' : '') : '<div class="pp-toolbar-note">No leads have come in from this show yet.</div>';
+      return '<div class="detail-section ts-lp-sec"><h3>Landing page &amp; leads</h3>' + pagesHtml + linkSel + '<h3 style="margin-top:14px">Leads from this show<span class="n" style="margin-left:8px;font-size:10px;background:var(--bg);border:1px solid var(--border);padding:1px 7px;border-radius:50px">' + leads.length + '</span></h3>' + leadsHtml + '</div>';
+    }
+    async function tsLinkPage(showId) { var sel = document.getElementById('tf_linkpage'); var id = sel && sel.value; if (!id) return; var p = lpList.find(function(x) { return x.id === id; }); if (!p) return; p.showId = showId; try { var r = await ppApi('saveLandingPage', { row: p }); if (!r.success) throw new Error(r.error); showToast('Linked ' + p.title, 'success'); renderTradeShows(); openTsModal(showId); } catch(e) { p.showId = ''; showToast('Could not link: ' + e.message, 'error'); } }
     // =====================================================================
     // PREMIUM UI BEHAVIOR (Sept 2026): tab ink, splash, cache, shortcuts
     // =====================================================================
@@ -4982,7 +5063,7 @@
     function openDataHealth() { dhOpen = true; dhFilter = 'all'; switchView('pipeline'); setTimeout(renderDataHealth, 50); }
 
     // ---- sidebar layout + header title ----
-    var PP_VIEW_TITLES = { dashboard: ['HQ', 'Dashboard'], calendar: ['HQ', 'Calendar'], submissions: ['Onboarding', 'Submissions'], pipeline: ['Onboarding', 'Pipeline'], customers: ['Client Success', 'Client Overview'], credentials: ['Client Success', 'Client Credentials'], tradeshows: ['Sales', 'Trade Shows'], leads: ['Sales', 'Inbound Leads'], meetings: ['Sales', 'Meetings'], landing: ['Sales', 'Landing Pages'], resources: ['Workspace', 'Resources'], activity: ['Workspace', 'Activity'] };
+    var PP_VIEW_TITLES = { dashboard: ['HQ', 'Dashboard'], calendar: ['HQ', 'Calendar'], team: ['HQ', 'Team'], submissions: ['Onboarding', 'Submissions'], pipeline: ['Onboarding', 'Pipeline'], customers: ['Client Success', 'Client Overview'], credentials: ['Client Success', 'Client Credentials'], tradeshows: ['Sales', 'Trade Shows'], leads: ['Sales', 'Inbound Leads'], meetings: ['Sales', 'Meetings'], landing: ['Sales', 'Landing Pages'], resources: ['Workspace', 'Resources'], activity: ['Workspace', 'Activity'] };
     function ppSetHeaderTitle(view) { var t = document.getElementById('hdrTitle'); if (!t || !PP_VIEW_TITLES[view]) return; t.innerHTML = '<span class="crumb">' + PP_VIEW_TITLES[view][0] + '</span><b>' + PP_VIEW_TITLES[view][1] + '</b>'; }
     function ppLayoutInit() {
       var tabs = document.querySelector('.view-tabs'), dash = document.getElementById('dashboard'), main = document.querySelector('.main-content'); if (!tabs || !dash || !main) return;
@@ -5380,7 +5461,7 @@
     // ---- account health (Client Overview) ----
     async function loadCloseAccounts(force) {
       if (closeAcctLoaded && !force) return;
-      try { var r = await ppApi('getCloseAccounts'); if (r.success) { closeKeyPresent = r.keyPresent !== false; closeAccounts = (r.rows || []).map(function(a) { var o = {}; ['orgEmail', 'organization', 'closeLeadId', 'closeName', 'closeUrl', 'statusLabel', 'owner', 'ownerName', 'lastTouchAt', 'lastTouchType', 'lastTouchBy', 'openTasks', 'nextTaskDate', 'nextTaskText', 'matchedBy', 'syncedAt', 'sources', 'credStatus', 'credRep', 'domain', 'website'].forEach(function(c) { o[c] = a[c] === undefined ? '' : String(a[c]); }); o.orgEmail = o.orgEmail.toLowerCase(); o.owner = o.owner.toLowerCase(); o._days = ppDaysSince(o.lastTouchAt); return o; }); closeAcctSyncedAt = r.syncedAt || ''; closeAcctLoaded = true; closeAcctError = ''; } else closeAcctError = r.error || 'Unknown error'; }
+      try { var r = await ppApi('getCloseAccounts'); if (r.success) { closeKeyPresent = r.keyPresent !== false; closeAccounts = (r.rows || []).map(function(a) { var o = {}; ['orgEmail', 'organization', 'closeLeadId', 'closeName', 'closeUrl', 'statusLabel', 'owner', 'ownerName', 'lastTouchAt', 'lastTouchType', 'lastTouchBy', 'openTasks', 'nextTaskDate', 'nextTaskText', 'matchedBy', 'syncedAt', 'sources', 'credStatus', 'credRep', 'domain', 'website', 'aliases'].forEach(function(c) { o[c] = a[c] === undefined ? '' : String(a[c]); }); o.orgEmail = o.orgEmail.toLowerCase(); o.owner = o.owner.toLowerCase(); o._days = ppDaysSince(o.lastTouchAt); return o; }); closeAcctSyncedAt = r.syncedAt || ''; closeAcctLoaded = true; closeAcctError = ''; } else closeAcctError = r.error || 'Unknown error'; }
       catch(e) { closeAcctError = e.message; }
     }
     async function syncCloseAccountsNow(btn) {
@@ -5688,11 +5769,13 @@
       { title: 'Advocacy', items: [['suc_testimonial', 'Testimonial'], ['suc_review', 'Review'], ['suc_referral', 'Referral'], ['suc_case_study', 'Case study'], ['suc_renewed_y1', 'Renewed year 1']] }
     ];
     var CA_ALL = CA_GROUPS.reduce(function(a, g) { return a.concat(g.items.map(function(i) { return i[0]; })); }, []);
-    var caSort = { key: 'touch', dir: 'desc' }, caOpen = {};
+    var caSort = { key: 'touch', dir: 'desc' }, caOpen = {}, caSelected = {}, caDupes = null;
     function caKey(a) { return a.orgEmail; }
-    function caChecks(a) { var cl = getChecklist(caKey(a)); return CA_ALL.filter(function(id) { return cl[id] === true || cl[id] === 'true'; }).length; }
-    function caField(a, id) { var v = getChecklist(caKey(a))[id]; return (v === undefined || v === null || v === false || v === 'false' || v === true || v === 'true') ? '' : String(v); }
-    function caOnboarding(a) { return allData.find(function(d) { return d.email === a.orgEmail; }) || null; }
+    function caKeys(a) { var ks = [a.orgEmail].concat(String(a.aliases || '').split(',').filter(Boolean)); var ob = caOnboarding(a); if (ob && ks.indexOf(ob.email) < 0) ks.push(ob.email); return ks; }
+    function caCl(a) { var out = {}; caKeys(a).forEach(function(k) { var cl = getChecklist(k); Object.keys(cl).forEach(function(id) { if (out[id] === undefined || out[id] === '' || out[id] === false || out[id] === 'false') out[id] = cl[id]; }); }); return out; }
+    function caChecks(a) { var cl = caCl(a); return CA_ALL.filter(function(id) { return cl[id] === true || cl[id] === 'true'; }).length; }
+    function caField(a, id) { var v = caCl(a)[id]; return (v === undefined || v === null || v === false || v === 'false' || v === true || v === 'true') ? '' : String(v); }
+    function caOnboarding(a) { var ks = [a.orgEmail].concat(String(a.aliases || '').split(',').filter(Boolean)); return allData.find(function(d) { return ks.indexOf(d.email) >= 0; }) || null; }
     function caSortBy(key) { if (caSort.key === key) caSort.dir = caSort.dir === 'asc' ? 'desc' : 'asc'; else caSort = { key: key, dir: key === 'name' ? 'asc' : 'desc' }; renderCloseAccounts(); }
     function renderCloseAccounts() {
       var el = document.getElementById('closeAccounts'); if (!el) return;
@@ -5700,7 +5783,7 @@
       var list = closeAccounts.slice();
       var matched = list.filter(function(a) { return a.closeLeadId; }), unmatched = list.filter(function(a) { return !a.closeLeadId; });
       var stale = matched.filter(function(a) { return a._days === null || a._days > 60; }), tasks = matched.filter(function(a) { return parseInt(a.openTasks) > 0; });
-      var shown = closeAcctFilter === 'stale' ? stale : closeAcctFilter === 'unmatched' ? unmatched : closeAcctFilter === 'tasks' ? tasks : list;
+      var shown = closeAcctFilter === 'stale' ? stale : closeAcctFilter === 'unmatched' ? unmatched : closeAcctFilter === 'tasks' ? tasks : closeAcctFilter === 'dupes' ? list.filter(function(a) { return (caDupes || []).some(function(g) { return g.keys.indexOf(a.orgEmail) >= 0; }); }) : list;
       var q = (document.getElementById('caSearch') || {}).value || ''; q = q.toLowerCase().trim();
       if (q) shown = shown.filter(function(a) { return [a.organization, a.closeName, a.ownerName, a.statusLabel, a.credStatus].join(' ').toLowerCase().indexOf(q) >= 0; });
       var val = function(a) { switch (caSort.key) { case 'name': return (a.organization || '').toLowerCase(); case 'status': return (a.statusLabel || a.credStatus || '').toLowerCase(); case 'owner': return (a.ownerName || ppRepName(a.owner) || '').toLowerCase(); case 'touch': return a._days === null ? 99999 : a._days; case 'tasks': return parseInt(a.openTasks) || 0; case 'next': return a.nextTaskDate || '9999'; case 'score': return caChecks(a); case 'nps': return parseFloat(caField(a, 'suc_nps_field')) || -1; case 'renewal': return caField(a, 'suc_renewal_field') || '9999'; } return ''; };
@@ -5711,8 +5794,8 @@
       var rows = shown.slice(0, 150).map(function(a) {
         var k = caKey(a), open = !!caOpen[k], score = caChecks(a), nps = caField(a, 'suc_nps_field'), renewal = caField(a, 'suc_renewal_field'), ob = caOnboarding(a);
         var srcs = (a.sources || '').split(',').filter(Boolean).map(function(s) { return '<span class="ca-src ' + s + '">' + (s === 'close' ? 'Close' : s === 'credentials' ? 'Credentials' : 'Onboarding') + '</span>'; }).join('');
-        return '<tr class="ca-row' + (open ? ' open' : '') + (a._days !== null && a._days > 60 ? ' ca-stale' : '') + '" data-key="' + ppEsc(k) + '" onclick="caToggle(\'' + ppEsc(k) + '\')">'
-          + '<td><div class="pp-org-cell"><span class="ca-caret">' + (open ? '&#x25BC;' : '&#x25B6;') + '</span>' + ppAvatar(a.organization, a.domain || a.orgEmail, 34) + '<div><div class="pp-org-name">' + ppEsc(a.organization) + '</div><div class="pp-org-sub">' + srcs + (a.closeName && a.closeName !== a.organization ? ' ' + ppEsc(a.closeName) : '') + '</div></div></div></td>'
+        return '<tr class="ca-row' + (open ? ' open' : '') + (a._days !== null && a._days > 60 ? ' ca-stale' : '') + (caSelected[k] ? ' selected' : '') + '" data-key="' + ppEsc(k) + '" onclick="caToggle(\'' + ppEsc(k) + '\')">'
+          + '<td><div class="pp-org-cell"><input type="checkbox" class="ca-sel"' + (caSelected[k] ? ' checked' : '') + ' onclick="event.stopPropagation();caSelected[\'' + ppEsc(k) + '\']=this.checked;if(!this.checked)delete caSelected[\'' + ppEsc(k) + '\'];renderCloseAccounts()" title="Select to merge"><span class="ca-caret">' + (open ? '&#x25BC;' : '&#x25B6;') + '</span>' + ppAvatar(a.organization, a.domain || a.orgEmail, 34) + '<div><div class="pp-org-name">' + ppEsc(a.organization) + '</div><div class="pp-org-sub">' + srcs + (a.closeName && a.closeName !== a.organization ? ' ' + ppEsc(a.closeName) : '') + '</div></div></div></td>'
           + '<td>' + (a.statusLabel ? '<span class="pp-chip aud-other">' + ppEsc(a.statusLabel) + '</span>' : a.credStatus ? '<span class="pp-chip ' + ppEsc(a.credStatus) + '">' + ppEsc(a.credStatus) + '</span>' : '<span class="pp-placeholder">-</span>') + (ob ? '<span class="ca-sub">' + (PP_STATUS_LABELS[ob.pipelineStatus] || ob.pipelineStatus) + '</span>' : '') + '</td>'
           + '<td>' + (a.owner && TEAM_MEMBERS.some(function(m) { return m.email === a.owner; }) ? '<div style="display:flex;align-items:center;gap:8px">' + ppRepAvatars(a.owner, 22) + ppEsc(ppRepName(a.owner)) + '</div>' : (a.ownerName ? ppEsc(a.ownerName) : (a.credRep ? '<div style="display:flex;align-items:center;gap:8px">' + ppRepAvatars(a.credRep, 22) + ppEsc(ppSplitReps(a.credRep).map(ppRepName).join(', ')) + '</div>' : '<span class="pp-placeholder">-</span>'))) + '</td>'
           + '<td>' + touchCell(a) + '</td>'
@@ -5725,27 +5808,53 @@
           + '</tr>' + (open ? '<tr class="ca-detail"><td colspan="10">' + caDetail(a) + '</td></tr>' : '');
       }).join('');
       el.innerHTML = '<div class="ca-panel"><div class="ca-head"><div><div class="ca-title">Client Overview</div><div class="pp-toolbar-note">' + list.length + ' customer accounts &middot; ' + matched.length + ' matched to Close' + (closeAcctSyncedAt ? ' &middot; synced ' + ppAgo(closeAcctSyncedAt) + ', hourly' : '') + '</div></div><div class="ca-actions"><input class="search-input" id="caSearch" placeholder="Search accounts..." value="' + ppEsc(q) + '" oninput="renderCloseAccounts();var s=document.getElementById(\'caSearch\');s.focus();s.setSelectionRange(s.value.length,s.value.length)" style="width:200px"><button class="text-action-btn" onclick="syncCloseAccountsNow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Sync with Close</button></div></div>'
-        + '<div class="dh-chips">' + chip('all', 'All accounts', list.length) + chip('stale', 'No touch in 60 days', stale.length) + chip('tasks', 'Open tasks', tasks.length) + chip('unmatched', 'Not linked to Close', unmatched.length) + '<span class="pp-toolbar-note" style="align-self:center;margin-left:auto">Click a column to sort. Click a row for the success checklist.</span></div>'
+        + '<div class="dh-chips">' + chip('all', 'All accounts', list.length) + chip('stale', 'No touch in 60 days', stale.length) + chip('tasks', 'Open tasks', tasks.length) + chip('unmatched', 'Not linked to Close', unmatched.length) + '<button type="button" class="dh-chip' + (closeAcctFilter === 'dupes' ? ' on' : '') + '" onclick="caLoadDupes()">Possible duplicates' + (caDupes ? ' <b>' + caDupes.length + '</b>' : '') + '</button><span class="pp-toolbar-note" style="align-self:center;margin-left:auto">Click a column to sort, a row for the checklist, the box to select for merging.</span></div>'
+        + caMergeBar() + (closeAcctFilter === 'dupes' ? caDupesPanel() : '')
         + (shown.length ? '<div class="table-wrapper" style="border-radius:12px"><table class="pp-table ca-table" style="min-width:1100px"><thead><tr>' + th('name', 'Account') + th('status', 'Status') + th('owner', 'Owner') + th('touch', 'Last touch') + th('tasks', 'Tasks') + th('next', 'Next task') + th('score', 'Success') + th('nps', 'NPS') + th('renewal', 'Renewal') + '<th></th></tr></thead><tbody>' + rows + '</tbody></table></div>' + (shown.length > 150 ? '<div class="pp-toolbar-note" style="padding:8px 4px">Showing 150 of ' + shown.length + '. Use search or a chip to narrow.</div>' : '') : '<div class="pp-empty">' + (closeAcctFilter === 'unmatched' ? 'Every account is linked to a Close lead.' : 'Nothing in this view.') + '</div>') + '</div>';
     }
     function caToggle(key) { caOpen[key] = !caOpen[key]; renderCloseAccounts(); if (caOpen[key]) setTimeout(function() { var r = document.querySelector('.ca-row[data-key="' + ((window.CSS && CSS.escape) ? CSS.escape(key) : key.replace(/["\\]/g, '\\$&')) + '"]'); if (r) r.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 30); }
     function caDetail(a) {
-      var k = caKey(a), cl = getChecklist(k), ob = caOnboarding(a);
+      var k = caKey(a), cl = caCl(a), ob = caOnboarding(a);
       var check = function(id, label) { var on = cl[id] === true || cl[id] === 'true'; return '<button type="button" class="ca-check' + (on ? ' on' : '') + '" onclick="event.stopPropagation();caSetCheck(\'' + ppEsc(k) + '\',\'' + id + '\',' + (!on) + ')"><i>' + (on ? '&#10003;' : '') + '</i>' + label + '</button>'; };
       var field = function(id, label, ph, type) { var v = caField(a, id); return '<label class="ca-field"><span>' + label + '</span><input type="' + (type || 'text') + '" value="' + ppEsc(v) + '" placeholder="' + ph + '" onclick="event.stopPropagation()" onchange="caSetCheck(\'' + ppEsc(k) + '\',\'' + id + '\',this.value)"></label>'; };
       var contact = ob ? '<div class="ca-fact"><span>Contact</span><b>' + ppEsc(ob.contact || '-') + '</b>' + (ob.email ? '<a href="mailto:' + ppEsc(ob.email) + '" onclick="event.stopPropagation()">' + ppEsc(ob.email) + '</a>' : '') + (ob.phone ? '<span>' + ppEsc(formatPhone(ob.phone)) + '</span>' : '') + '</div><div class="ca-fact"><span>Go-live</span><b>' + (ob.goLiveDate ? ppFmtDate(ob.goLiveDate) : '-') + '</b><span>' + (PP_STATUS_LABELS[ob.pipelineStatus] || ob.pipelineStatus) + ' &middot; onboarding ' + getChecklistCount(ob.email) + '/' + CHECKLIST_ITEMS.length + '</span></div>' : '<div class="ca-fact"><span>Onboarding</span><b>No onboarding record</b><span>Import the district workbook or form to track go-live and checklists here.</span></div>';
-      var closeFacts = a.closeLeadId ? '<div class="ca-fact"><span>Close</span><b><a href="' + ppEsc(a.closeUrl) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + ppEsc(a.closeName || a.organization) + '</a></b><span>' + ppEsc(a.statusLabel || '') + (a.ownerName ? ' &middot; owner ' + ppEsc(a.ownerName) : '') + (a.website ? ' &middot; <a href="' + ppEsc(/^https?:/.test(a.website) ? a.website : 'https://' + a.website) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + ppEsc(a.domain || a.website) + '</a>' : '') + '</span></div><div class="ca-fact"><span>Last touch</span><b>' + (a.lastTouchAt ? ppFmtDate(a.lastTouchAt.slice(0, 10)) + ' (' + a._days + 'd)' : 'None on record') + '</b><span>' + ppEsc([a.lastTouchType, a.lastTouchBy].filter(Boolean).join(' by ')) + '</span></div>' + (a.nextTaskText ? '<div class="ca-fact"><span>Next task</span><b>' + ppEsc(a.nextTaskText) + '</b><span>' + ppFmtDate(a.nextTaskDate) + '</span></div>' : '')
+      var relink = '<div class="ca-relink" id="caRelink_' + ppEsc(k).replace(/[^a-z0-9]/gi, '_') + '" style="display:none"><div class="drive-connect-form" style="max-width:420px;margin-top:6px"><input placeholder="Paste the right Close lead URL" onclick="event.stopPropagation()"><button class="pp-btn primary" onclick="event.stopPropagation();caLinkClose(\'' + ppEsc(k) + '\',this,true)">Re-link</button></div></div>';
+      var closeFacts = a.closeLeadId ? '<div class="ca-fact"><span>Close ' + (a.matchedBy === 'manual' ? '(linked by hand)' : a.matchedBy === 'close-status' ? '' : '(matched by ' + ppEsc(a.matchedBy) + ')') + '</span><b><a href="' + ppEsc(a.closeUrl) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + ppEsc(a.closeName || a.organization) + '</a></b><span>' + ppEsc(a.statusLabel || '') + (a.ownerName ? ' &middot; owner ' + ppEsc(a.ownerName) : '') + (a.website ? ' &middot; <a href="' + ppEsc(/^https?:/.test(a.website) ? a.website : 'https://' + a.website) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + ppEsc(a.domain || a.website) + '</a>' : '') + (a.matchedBy !== 'close-status' ? ' &middot; <a onclick="event.stopPropagation();var r=document.getElementById(\'caRelink_' + ppEsc(k).replace(/[^a-z0-9]/gi, '_') + '\');r.style.display=r.style.display===\'none\'?\'\':\'none\'">wrong lead?</a>' : '') + '</span>' + relink + '</div><div class="ca-fact"><span>Last touch</span><b>' + (a.lastTouchAt ? ppFmtDate(a.lastTouchAt.slice(0, 10)) + ' (' + a._days + 'd)' : 'None on record') + '</b><span>' + ppEsc([a.lastTouchType, a.lastTouchBy].filter(Boolean).join(' by ')) + '</span></div>' + (a.nextTaskText ? '<div class="ca-fact"><span>Next task</span><b>' + ppEsc(a.nextTaskText) + '</b><span>' + ppFmtDate(a.nextTaskDate) + '</span></div>' : '')
         : '<div class="ca-fact ca-link"><span>Close</span><b>Not linked</b><div class="drive-connect-form" style="max-width:420px;margin-top:6px"><input id="caLink_' + ppEsc(k).replace(/[^a-z0-9]/gi, '_') + '" placeholder="Paste the Close lead URL" onclick="event.stopPropagation()"><button class="pp-btn primary" onclick="event.stopPropagation();caLinkClose(\'' + ppEsc(k) + '\',this)">Link</button></div></div>';
       var cred = credLoaded ? credList.find(function(c) { return ppLogoDomain(c.loginEmail) && a.domain && ppLogoDomain(c.loginEmail) === a.domain || (c.organization || '').toLowerCase().replace(/[^a-z0-9]/g, '') === (a.organization || '').toLowerCase().replace(/[^a-z0-9]/g, ''); }) : null;
+      var dl = (typeof docsForKey === 'function') ? docsForKey(k, ob ? ob.email : '', a.aliases) : [];
+      var docFact = docsLoaded && docsMeta.folder ? '<div class="ca-fact"><span>Signed documents</span><b>' + (dl.some(function(d) { return d.kind === 'both' || d.isFolder === 'TRUE'; }) || (dl.some(function(d) { return d.kind === 'mou'; }) && dl.some(function(d) { return d.kind === 'deposit'; })) ? 'Complete' : dl.length ? 'One of two' : 'None received') + '</b><span style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px">' + (dl.length ? dl.map(function(d) { return '<a class="doc-pill on" href="' + ppEsc(d.url) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + (d.kind === 'both' || d.isFolder === 'TRUE' ? '&#128193; folder' : d.kind === 'mou' ? '&#10003; MOU' : '&#10003; Direct deposit') + '</a>'; }).join('') : '<span class="doc-pill">MOU</span><span class="doc-pill">Direct deposit</span>') + '</span></div>' : '';
       var credFact = cred ? '<div class="ca-fact"><span>Admin login</span><b>' + ppEsc(cred.adminName || '-') + '</b><span>' + ppEsc(cred.loginEmail || '') + ' &middot; <a onclick="event.stopPropagation();switchView(\'credentials\')">credentials</a></span></div>' : '';
-      return '<div class="ca-detail-wrap"><div class="ca-facts">' + contact + closeFacts + credFact + '</div><div class="ca-groups">' + CA_GROUPS.map(function(g) { var done = g.items.filter(function(i) { return cl[i[0]] === true || cl[i[0]] === 'true'; }).length; return '<div class="ca-group"><h4>' + g.title + '<span>' + done + '/' + g.items.length + '</span></h4><div class="ca-checks">' + g.items.map(function(i) { return check(i[0], i[1]); }).join('') + '</div></div>'; }).join('') + '<div class="ca-group"><h4>Measures</h4><div class="ca-fields">' + field('suc_nps_field', 'NPS (0-10)', '9', 'number') + field('suc_baseline_rev_field', 'Baseline rental revenue', '12000') + field('suc_renewal_field', 'Renewal date', '', 'date') + field('suc_contact_verified_field', 'Contact verified on', '', 'date') + '</div></div></div></div>';
+      var aliasFact = a.aliases ? '<div class="ca-fact"><span>Merged records</span><b>' + String(a.aliases).split(',').filter(Boolean).length + ' folded in</b><span style="display:flex;flex-direction:column;gap:3px;margin-top:4px">' + String(a.aliases).split(',').filter(Boolean).map(function(al) { return '<span>' + ppEsc(al.replace(/^org:/, '').replace(/^close:/, 'Close lead ')) + ' <a onclick="event.stopPropagation();caUnmerge(\'' + ppEsc(al) + '\')" style="font-size:11px">unmerge</a></span>'; }).join('') + '</span></div>' : '';
+      return '<div class="ca-detail-wrap"><div class="ca-facts">' + contact + closeFacts + credFact + docFact + aliasFact + '</div><div class="ca-groups">' + CA_GROUPS.map(function(g) { var done = g.items.filter(function(i) { return cl[i[0]] === true || cl[i[0]] === 'true'; }).length; return '<div class="ca-group"><h4>' + g.title + '<span>' + done + '/' + g.items.length + '</span></h4><div class="ca-checks">' + g.items.map(function(i) { return check(i[0], i[1]); }).join('') + '</div></div>'; }).join('') + '<div class="ca-group"><h4>Measures</h4><div class="ca-fields">' + field('suc_nps_field', 'NPS (0-10)', '9', 'number') + field('suc_baseline_rev_field', 'Baseline rental revenue', '12000') + field('suc_renewal_field', 'Renewal date', '', 'date') + field('suc_contact_verified_field', 'Contact verified on', '', 'date') + '</div></div></div></div>';
     }
     function caSetCheck(key, id, value) { setChecklist(key, id, value); renderCloseAccounts(); }
-    async function caLinkClose(key, btn) {
-      var inp = document.getElementById('caLink_' + key.replace(/[^a-z0-9]/gi, '_')); var url = inp ? inp.value.trim() : ''; if (!url) return;
+    async function caLinkClose(key, btn, relink) {
+      var inp = relink ? btn.previousElementSibling : document.getElementById('caLink_' + key.replace(/[^a-z0-9]/gi, '_')); var url = inp ? inp.value.trim() : ''; if (!url) return;
       btn.disabled = true; btn.textContent = 'Linking...';
       try { var r = await ppApi('setCloseLink', { key: key, leadUrl: url }, 60000); if (!r.success) throw new Error(r.error || 'Could not link'); await loadCloseAccounts(true); renderCloseAccounts(); renderUpcoming(); showToast('Linked to ' + (r.account.closeName || 'the Close lead'), 'success'); }
       catch(e) { btn.disabled = false; btn.textContent = 'Link'; showToast(e.message, 'error'); }
+    }
+
+    function caMergeBar() {
+      var keys = Object.keys(caSelected); if (keys.length < 2) return keys.length === 1 ? '<div class="ca-merge-bar"><span>1 selected. Select the other record(s) that are really the same account, then merge.</span><button type="button" class="pp-btn" onclick="caSelected={};renderCloseAccounts()">Clear</button></div>' : '';
+      var dflt = window._caPrimary && keys.indexOf(window._caPrimary) >= 0 ? window._caPrimary : (keys.find(function(x) { return (closeAccounts.find(function(y) { return y.orgEmail === x; }) || {}).closeLeadId; }) || keys[0]);
+      var opts = keys.map(function(k) { var a = closeAccounts.find(function(x) { return x.orgEmail === k; }) || { organization: k }; return '<label class="ca-primary-opt"><input type="radio" name="caPrimary" value="' + ppEsc(k) + '"' + (k === dflt ? ' checked' : '') + ' onchange="window._caPrimary=this.value"> ' + ppEsc(a.organization) + ' <span class="ca-sub">' + ppEsc((a.sources || '').split(',').filter(Boolean).join(' + ')) + (a.closeLeadId ? ' · Close' : '') + '</span></label>'; }).join('');
+      return '<div class="ca-merge-bar"><span><b>' + keys.length + ' selected.</b> Keep as the primary:</span><div class="ca-primary-list">' + opts + '</div><button type="button" class="pp-btn primary" onclick="caMerge()">Merge ' + keys.length + ' into one</button><button type="button" class="pp-btn" onclick="caSelected={};renderCloseAccounts()">Clear</button></div>';
+    }
+    async function caMerge() {
+      var keys = Object.keys(caSelected); if (keys.length < 2) return;
+      var primary = (document.querySelector('input[name="caPrimary"]:checked') || {}).value || keys[0];
+      var names = keys.map(function(k) { return (closeAccounts.find(function(x) { return x.orgEmail === k; }) || {}).organization || k; });
+      if (!confirm('Merge ' + names.join(' + ') + ' into one account? The others fold into it and stay merged on future syncs. You can unmerge from the account later.')) return;
+      try { var r = await ppApi('mergeAccounts', { keys: keys, primaryKey: primary }, 90000); if (!r.success) throw new Error(r.error || 'Merge failed'); caSelected = {}; caDupes = null; await loadCloseAccounts(true); caOpen[primary] = true; renderCloseAccounts(); renderUpcoming(); showToast('Merged ' + r.merged + ' record' + (r.merged === 1 ? '' : 's') + ' into ' + r.primary.organization, 'success'); } catch(e) { showToast(e.message, 'error'); }
+    }
+    async function caUnmerge(fromKey) { if (!confirm('Split this record back out? It returns as its own account on the next sync.')) return; try { var r = await ppApi('unmergeAccount', { fromKey: fromKey }, 60000); if (!r.success) throw new Error(r.error); await loadCloseAccounts(true); renderCloseAccounts(); showToast('Unmerged. It will reappear after the next sync.', 'success'); } catch(e) { showToast(e.message, 'error'); } }
+    async function caLoadDupes() { closeAcctFilter = 'dupes'; if (!caDupes) { renderCloseAccounts(); try { var r = await ppApi('suggestDuplicates', {}, 60000); caDupes = r.success ? (r.groups || []) : []; } catch(e) { caDupes = []; } } renderCloseAccounts(); }
+    function caDupesPanel() {
+      if (!caDupes) return '<div class="pp-empty">Looking for duplicates...</div>';
+      if (!caDupes.length) return '<div class="dh-bar clean" style="margin-bottom:10px"><span class="dh-dot"></span>No two accounts share a name or website.</div>';
+      return '<div class="ca-dupes">' + caDupes.map(function(g) { return '<div class="ca-dupe"><div><b>' + g.orgs.map(ppEsc).join('</b> + <b>') + '</b><span class="ca-sub">' + g.reason + '</span></div><button type="button" class="pp-btn" onclick="caSelected={};' + g.keys.map(function(k) { return 'caSelected[\'' + ppEsc(k) + '\']=true;'; }).join('') + 'window._caPrimary=\'' + ppEsc(g.keys[0]) + '\';renderCloseAccounts();window.scrollTo({top:0,behavior:\'smooth\'})">Select to merge</button></div>'; }).join('') + '</div>';
     }
     // =====================================================================
     // SUBMISSIONS BOARD (replaces the flat table)  (Sept 2026)
@@ -5800,6 +5909,81 @@
       var html = '<div class="pp-pop-title">' + title + '</div><div class="pp-pop-list">' + items.map(function(i) { var on = cl[i.id] === true || cl[i.id] === 'true', link = cl[i.id + '_doc_field'] || (i.fieldKey ? cl[i.id + '_field'] : ''); return '<button type="button" class="pp-pop-opt rep' + (on ? ' on' : '') + '" data-val="' + i.id + '"><span class="ca-check-box' + (on ? ' on' : '') + '">' + (on ? '&#10003;' : '') + '</span><span class="lbl">' + ppEsc(i.label) + (link && String(link).indexOf('http') === 0 ? ' <a href="' + ppEsc(link) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="font-size:10px">open</a>' : '') + '</span></button>'; }).join('') + '</div>';
       var p = ppPopoverOpen(cell, html, { cls: 'pp-pop-status', focus: false, onClose: function() { updateStats(); renderTable(); renderPipeline(); } });
       p.querySelectorAll('.pp-pop-opt').forEach(function(b) { b.addEventListener('click', function() { var id = b.getAttribute('data-val'), on = !b.classList.contains('on'); setChecklist(d.email, id, on); b.classList.toggle('on', on); b.querySelector('.ca-check-box').classList.toggle('on', on); b.querySelector('.ca-check-box').innerHTML = on ? '&#10003;' : ''; logActivityToServer((on ? 'checked ' : 'unchecked ') + ((items.find(function(i) { return i.id === id; }) || {}).label || id) + ' for', d.organization, '', 'checklist'); }); });
+    }
+    // =====================================================================
+    // SIGNED DOCUMENTS PANEL (Submissions) + doc facts elsewhere
+    // =====================================================================
+    var signedDocs = [], docsLoaded = false, docsMeta = {};
+    async function loadSignedDocs(force) { if (docsLoaded && !force) return; try { var r = await ppApi('getSignedDocs'); if (r.success) { signedDocs = r.rows || []; docsMeta = { folder: r.folder, lastScan: r.lastScan, triggerOn: r.triggerOn }; docsLoaded = true; } } catch(e) {} }
+    function docsForKey(key, email, aliases) { var ks = [key, email].concat(String(aliases || '').split(',')).filter(Boolean); return signedDocs.filter(function(d) { return d.accountKey && ks.indexOf(d.accountKey) >= 0; }); }
+    function docsAccountOptions() {
+      var opts = []; var seen = {};
+      (closeAcctLoaded ? closeAccounts : []).forEach(function(a) { if (!seen[a.orgEmail]) { seen[a.orgEmail] = true; opts.push({ key: a.orgEmail, org: a.organization }); } });
+      allData.forEach(function(d) { if (!seen[d.email]) { seen[d.email] = true; opts.push({ key: d.email, org: d.organization }); } });
+      return opts.sort(function(a, b) { return (a.org || '').localeCompare(b.org || ''); });
+    }
+    function renderDocsPanel() {
+      var el = document.getElementById('docsPanel'); if (!el) return;
+      if (!docsLoaded) { el.innerHTML = ''; return; }
+      if (!docsMeta.folder) { el.innerHTML = '<div class="dh-bar" style="cursor:default"><span class="dh-dot"></span><b>Signed documents:</b>&nbsp;no SignNow folder is being watched yet. <a onclick="switchView(\'resources\')" style="color:var(--pp-blue);cursor:pointer">Set it up under Resources.</a></div>'; return; }
+      var matched = signedDocs.filter(function(d) { return d.accountKey; }), unmatched = signedDocs.filter(function(d) { return !d.accountKey && d.matchedBy !== 'ignored'; });
+      var byAcct = {}; matched.forEach(function(d) { var k = d.accountKey; (byAcct[k] = byAcct[k] || { key: k, org: d.organization, mou: null, deposit: null, folder: null }); if (d.kind === 'both' || d.isFolder === 'TRUE') byAcct[k].folder = d; else if (d.kind === 'mou') byAcct[k].mou = d; else if (d.kind === 'deposit') byAcct[k].deposit = d; });
+      var list = Object.keys(byAcct).map(function(k) { return byAcct[k]; });
+      var both = list.filter(function(a) { return a.folder || (a.mou && a.deposit); }), partial = list.filter(function(a) { return !a.folder && !(a.mou && a.deposit); });
+      var open = window._docsOpen === undefined ? unmatched.length > 0 : window._docsOpen;
+      var status = function(a, kind) { var d = kind === 'mou' ? (a.mou || a.folder) : (a.deposit || a.folder); return d ? '<a class="doc-pill on" href="' + ppEsc(d.url) + '" target="_blank" rel="noopener" title="' + ppEsc(d.name) + '">&#10003; ' + (kind === 'mou' ? 'MOU' : 'Direct deposit') + '</a>' : '<span class="doc-pill">' + (kind === 'mou' ? 'MOU' : 'Direct deposit') + '</span>'; };
+      var opts = docsAccountOptions();
+      el.innerHTML = '<div class="dh-bar" onclick="window._docsOpen=!' + open + ';renderDocsPanel()"><span class="dh-dot' + (unmatched.length ? ' warn' : '') + '"></span><b>Signed documents:</b>&nbsp;' + both.length + ' district' + (both.length === 1 ? '' : 's') + ' complete, ' + partial.length + ' with one of two' + (unmatched.length ? ', <span style="color:#b45309;font-weight:700">' + unmatched.length + ' file' + (unmatched.length === 1 ? '' : 's') + ' not matched</span>' : '') + (docsMeta.lastScan ? ' &middot; scanned ' + ppAgo(docsMeta.lastScan) : '') + '<span class="dh-caret">' + (open ? '&#x25B2;' : '&#x25BC;') + '</span></div>'
+        + (open ? '<div class="dh-body"><div class="docs-grid">'
+          + '<div class="docs-col"><h4>Complete<span>' + both.length + '</span></h4>' + (both.length ? both.map(function(a) { return '<div class="doc-row"><b>' + ppEsc(a.org) + '</b><span>' + status(a, 'mou') + status(a, 'deposit') + (a.folder ? '<a class="doc-pill folder" href="' + ppEsc(a.folder.url) + '" target="_blank" rel="noopener">&#128193; folder</a>' : '') + '</span></div>'; }).join('') : '<div class="pp-up-empty">None yet.</div>') + '</div>'
+          + '<div class="docs-col"><h4>One of two<span>' + partial.length + '</span></h4>' + (partial.length ? partial.map(function(a) { return '<div class="doc-row"><b>' + ppEsc(a.org) + '</b><span>' + status(a, 'mou') + status(a, 'deposit') + '</span></div>'; }).join('') : '<div class="pp-up-empty">Nothing waiting on a second document.</div>') + '</div>'
+          + '<div class="docs-col"><h4>Not matched<span>' + unmatched.length + '</span></h4>' + (unmatched.length ? unmatched.map(function(d) { return '<div class="doc-row unmatched"><div><b><a href="' + ppEsc(d.url) + '" target="_blank" rel="noopener">' + ppEsc(d.name) + '</a></b><div class="ca-sub">' + (d.isFolder === 'TRUE' ? 'folder (counts as both)' : d.kind === 'mou' ? 'MOU' : d.kind === 'deposit' ? 'direct deposit' : 'unknown type') + (d.folderName ? ' &middot; in ' + ppEsc(d.folderName) : '') + '</div></div><div class="styled-select"><select onchange="if(this.value)matchSignedDoc(\'' + ppEsc(d.fileId) + '\',this.value,this)"><option value="">Match to...</option>' + opts.map(function(o) { return '<option value="' + ppEsc(o.key) + '">' + ppEsc(o.org) + '</option>'; }).join('') + '</select></div></div>'; }).join('') : '<div class="pp-up-empty">Every file found a district.</div>') + '</div>'
+          + '</div><div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="text-action-btn" onclick="scanSignedDocsNow(this)">Scan now</button><button class="text-action-btn" onclick="rescanSignedDocs(this)" title="Forget automatic matches and re-run the matcher (manual matches are kept)">Re-match everything</button><span class="pp-toolbar-note" style="align-self:center">Watching the SignNow folder' + (docsMeta.triggerOn ? ' every 30 minutes' : '') + '. <a onclick="switchView(\'resources\')" style="color:var(--pp-blue);cursor:pointer">Change folder</a></span></div></div>' : '');
+    }
+    async function matchSignedDoc(fileId, key, sel) {
+      if (sel) sel.disabled = true;
+      try { var r = await ppApi('matchSignedDoc', { fileId: fileId, accountKey: key }, 60000); if (!r.success) throw new Error(r.error || 'Could not match'); await Promise.all([loadSignedDocs(true), loadChecklists()]); renderDocsPanel(); renderTable(); updateStats(); if (typeof renderCloseAccounts === 'function') renderCloseAccounts(); showToast('Matched to ' + (r.row.organization || 'the account'), 'success'); }
+      catch(e) { if (sel) sel.disabled = false; showToast(e.message, 'error'); }
+    }
+    async function rescanSignedDocs(btn) { var o = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<svg class="pp-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></svg> Re-matching...'; try { var r = await ppApi('rescanSignedDocs', {}, 120000); if (!r.success) throw new Error(r.error); await Promise.all([loadSignedDocs(true), loadChecklists()]); renderDocsPanel(); renderTable(); updateStats(); showToast(r.matched + ' matched, ' + r.unmatched + ' still unmatched', r.unmatched ? 'error' : 'success'); } catch(e) { showToast(e.message, 'error'); } btn.disabled = false; btn.innerHTML = o; }
+    // patch: Scan now on the Resources tab also refreshes this panel
+    var _scanSignedDocsNowV9 = scanSignedDocsNow;
+    scanSignedDocsNow = async function(btn) { await _scanSignedDocsNowV9(btn); await loadSignedDocs(true); renderDocsPanel(); if (typeof renderCloseAccounts === 'function') renderCloseAccounts(); };
+    // =====================================================================
+    // TEAM VIEW: everything by rep in one place
+    // =====================================================================
+    var teamSel = '';
+    function teamRepData(email) {
+      var today = ppTodayISO(), month = new Date(); month.setDate(1); month.setHours(0, 0, 0, 0);
+      var accounts = (closeAcctLoaded ? closeAccounts : []).filter(function(a) { return a.owner === email || ppSplitReps(a.credRep).indexOf(email) >= 0 || allData.some(function(d) { return d.email === a.orgEmail && (d.accountRep || '').toLowerCase() === email; }); });
+      var onboardings = allData.filter(function(d) { return (d.accountRep || '').toLowerCase() === email; });
+      var leads = leadsLoaded ? leadList.filter(function(l) { return l.assignedTo === email; }) : [];
+      var openLeads = leads.filter(function(l) { return ['won', 'lost'].indexOf(l.status) < 0; });
+      var meetings = closeMeetingsLoaded ? closeMeetings.filter(function(m) { return m.rep === email && m.start && m.start.slice(0, 10) >= today; }).sort(function(a, b) { return a.start < b.start ? -1 : 1; }) : [];
+      var shows = tsLoaded ? tsList.filter(function(s) { return !s.archived && s._reps.indexOf(email) >= 0; }).sort(tsSortByStart) : [];
+      var pages = lpLoaded ? lpList.filter(function(p) { return lpRepFor(p).indexOf(email) >= 0; }) : [];
+      var acts = (typeof allActivities !== 'undefined' ? allActivities : []).filter(function(a) { return String(a.userEmail || '').toLowerCase() === email; }).slice(0, 8);
+      return { email: email, accounts: accounts, onboardings: onboardings, leads: leads, openLeads: openLeads, monthLeads: leads.filter(function(l) { return new Date(l.receivedAt) >= month; }).length, meetings: meetings, weekMeetings: meetings.filter(function(m) { return ppDaysBetween(m.start.slice(0, 10), today) <= 7; }).length, shows: shows, upcomingShows: shows.filter(function(s) { return !s._isPast; }), pages: pages, acts: acts, stale: accounts.filter(function(a) { return a.closeLeadId && (a._days === null || a._days > 60); }).length, quiet: onboardings.filter(function(d) { return d.isStale; }).length, uncontacted: openLeads.filter(function(l) { return l.status === 'new'; }).length };
+    }
+    function renderTeam() {
+      var el = document.getElementById('teamView'); if (!el || !el.classList.contains('active')) return;
+      var cards = document.getElementById('teamCards'), detail = document.getElementById('teamDetail'); if (!cards) return;
+      if (!teamSel || !TEAM_MEMBERS.some(function(m) { return m.email === teamSel; })) teamSel = (TEAM_MEMBERS.find(function(m) { return m.email === (currentUser && currentUser.email); }) || TEAM_MEMBERS[0]).email;
+      cards.innerHTML = TEAM_MEMBERS.map(function(m) { var t = teamRepData(m.email); var flags = t.stale + t.quiet + t.uncontacted; return '<div class="team-card' + (teamSel === m.email ? ' on' : '') + '" onclick="teamSel=\'' + ppEsc(m.email) + '\';renderTeam()">' + getTeamPhoto(m.email, 40) + '<div class="team-card-main"><b>' + ppEsc(m.name) + '</b><span>' + t.accounts.length + ' account' + (t.accounts.length === 1 ? '' : 's') + ' &middot; ' + t.openLeads.length + ' open lead' + (t.openLeads.length === 1 ? '' : 's') + ' &middot; ' + t.upcomingShows.length + ' show' + (t.upcomingShows.length === 1 ? '' : 's') + '</span></div>' + (flags ? '<span class="team-flag" title="Needs attention">' + flags + '</span>' : '<span class="team-flag ok">&#10003;</span>') + '</div>'; }).join('');
+      var t = teamRepData(teamSel), name = ppRepFull(teamSel), today = ppTodayISO();
+      var kpi = function(v, l, s, cls) { return '<div class="hq-kpi ' + (cls || '') + '" style="cursor:default"><div class="v">' + v + '</div><div class="l">' + l + '</div><div class="s">' + s + '</div></div>'; };
+      var section = function(title, count, body, foot) { return '<div class="stat-card team-sec"><h3>' + title + '<span class="n">' + count + '</span></h3>' + body + (foot || '') + '</div>'; };
+      var item = function(inner, onclick) { return '<div class="pp-up-item"' + (onclick ? ' onclick="' + onclick + '"' : '') + '>' + inner + '</div>'; };
+      var accountsHtml = t.accounts.length ? t.accounts.sort(function(a, b) { return (b._days === null ? 9999 : b._days) - (a._days === null ? 9999 : a._days); }).slice(0, 12).map(function(a) { return item(ppAvatar(a.organization, a.domain || a.orgEmail, 30) + '<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(a.organization) + '</div><div class="pp-up-sub">' + (a.statusLabel || a.credStatus || '') + (a.lastTouchAt ? ' &middot; touched ' + a._days + 'd ago' : ' &middot; no Close touch') + '</div></div><div class="pp-up-right">' + (a._days !== null && a._days > 60 ? '<span class="pp-chip on-hold">' + a._days + 'd</span>' : '') + '</div>', "caOpen[\'" + ppEsc(a.orgEmail) + "\']=true;switchView(\'customers\')"); }).join('') : '<div class="pp-up-empty">No accounts owned yet.</div>';
+      var obHtml = t.onboardings.length ? t.onboardings.map(function(d) { return item(ppAvatar(d.organization, d.email, 30) + '<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(d.organization) + '</div><div class="pp-up-sub">' + (PP_STATUS_LABELS[d.pipelineStatus] || d.pipelineStatus) + ' &middot; onboarding ' + getChecklistCount(d.email) + '/' + CHECKLIST_ITEMS.length + (d.goLiveDate ? ' &middot; go-live ' + ppFmtDate(d.goLiveDate, { month: 'short', day: 'numeric' }) : '') + '</div></div><div class="pp-up-right">' + (d.isStale ? '<span class="pp-chip need-to-book">quiet</span>' : '') + '</div>', "viewDetails(allData.find(function(x){return x.email===\'" + ppEsc(d.email) + "\'}))"); }).join('') : '<div class="pp-up-empty">No onboardings assigned.</div>';
+      var leadsHtml = t.openLeads.length ? t.openLeads.sort(function(a, b) { return a.receivedAt < b.receivedAt ? 1 : -1; }).slice(0, 10).map(function(l) { var st = LEAD_STATUSES.find(function(s) { return s.val === l.status; }) || LEAD_STATUSES[0]; return item(ppAvatar(l.org || l.name, l.email, 30) + '<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(l.name || l.org) + '</div><div class="pp-up-sub">' + ppEsc(l.org || '') + ' &middot; ' + leadAge(l) + (l.source ? ' &middot; ' + ppEsc(l.source) : '') + '</div></div><div class="pp-up-right"><span class="pp-chip ' + st.cls + '">' + st.label + '</span></div>', "openLeadModal(\'" + ppEsc(l.id) + "\')"); }).join('') : '<div class="pp-up-empty">No open leads.</div>';
+      var meetHtml = t.meetings.length ? t.meetings.slice(0, 8).map(function(m) { return item(ppDateBox(m.start.slice(0, 10), m.start.slice(0, 10) === today) + '<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(m.title) + '</div><div class="pp-up-sub">' + meetingTime(m) + (m.leadName ? ' &middot; ' + ppEsc(m.leadName) : '') + '</div></div>', m.url ? "window.open(\'" + ppEsc(m.url) + "\',\'_blank\')" : ''); }).join('') : '<div class="pp-up-empty">No upcoming meetings in Close.</div>';
+      var showsHtml = t.upcomingShows.length ? t.upcomingShows.slice(0, 8).map(function(s) { var pages = lpLoaded ? lpForShow(s.id) : []; return item(ppDateBox(s._start, s._daysUntil <= 21) + '<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(s.name) + '</div><div class="pp-up-sub">' + ppFmtRange(s._start, s._end) + (s.location ? ' &middot; ' + ppEsc(s.location.replace(/, USA$/, '')) : '') + (pages.length ? ' &middot; page ready' : '') + '</div></div><div class="pp-up-right">' + (s._todo.length ? '<span class="pp-chip need-to-book">' + s._todo.length + ' to do</span>' : '<span class="pp-chip booked">Ready</span>') + '</div>', "openTsModal(\'" + ppEsc(s.id) + "\',{todo:true})"); }).join('') : '<div class="pp-up-empty">No upcoming shows assigned.</div>';
+      var pagesHtml = t.pages.length ? t.pages.map(function(p) { var n = lpLeads(p).length; return item('<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(p.title) + '</div><div class="pp-up-sub">' + ppEsc(lpSlug(p.url)) + ' &middot; ' + n + ' lead' + (n === 1 ? '' : 's') + '</div></div><div class="pp-up-right"><button class="pp-mini-btn" title="Copy link" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(p.url) + '\',\'Link\')">' + ppSvg('copy') + '</button></div>', "lpQuick(\'" + ppEsc(p.id) + "\',this)"); }).join('') : '<div class="pp-up-empty">No landing pages route to ' + ppEsc(name.split(' ')[0]) + '.</div>';
+      var actHtml = t.acts.length ? t.acts.map(function(a) { return '<div class="hq-act"><span class="txt">' + ppEsc(a.action) + ' <b>' + ppEsc(a.target) + '</b>' + (a.detail ? ' <span class="d">' + ppEsc(String(a.detail).slice(0, 50)) + '</span>' : '') + '</span><span class="t">' + ppEsc(timeAgo(a.timestamp)) + '</span></div>'; }).join('') : '<div class="pp-up-empty">No logged activity yet.</div>';
+      detail.innerHTML = '<div class="team-head">' + getTeamPhoto(teamSel, 56) + '<div><div class="team-name">' + ppEsc(name) + '</div><div class="pp-toolbar-note">' + ppEsc(teamSel) + '</div></div></div>'
+        + '<div class="hq-kpis team-kpis">' + kpi(t.accounts.length, 'Accounts', t.stale ? t.stale + ' cold in Close' : 'all touched in 60d', t.stale ? 'warn' : 'good') + kpi(t.onboardings.length, 'Onboardings', t.quiet ? t.quiet + ' gone quiet' : 'all active', t.quiet ? 'warn' : '') + kpi(t.openLeads.length, 'Open leads', t.uncontacted ? t.uncontacted + ' not contacted' : t.monthLeads + ' this month', t.uncontacted ? 'warn' : '') + kpi(t.weekMeetings, 'Meetings this week', t.meetings.length + ' upcoming', '') + kpi(t.upcomingShows.length, 'Upcoming shows', t.upcomingShows.filter(function(s) { return s._todo.length; }).length + ' need prep', '') + kpi(t.pages.length, 'Landing pages', 'route leads to ' + ppEsc(name.split(' ')[0]), '') + '</div>'
+        + '<div class="team-grid">' + section('Accounts', t.accounts.length, accountsHtml, t.accounts.length > 12 ? ppUpFoot('customers', 'All accounts') : '') + section('Onboardings', t.onboardings.length, obHtml) + section('Open leads', t.openLeads.length, leadsHtml, t.openLeads.length > 10 ? ppUpFoot('leads', 'All leads') : '') + section('Meetings', t.meetings.length, meetHtml) + section('Trade shows', t.upcomingShows.length, showsHtml) + section('Landing pages', t.pages.length, pagesHtml) + section('Recent activity', t.acts.length, actHtml) + '</div>';
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
