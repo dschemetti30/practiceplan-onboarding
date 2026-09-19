@@ -1655,6 +1655,115 @@
     .ts-bar.click:hover{background:rgba(0,118,187,0.05)}
     @media(max-width:1400px){.cs-grid{grid-template-columns:1fr 1fr}}
     @media(max-width:768px){.cs-grid{grid-template-columns:1fr}}
+    /* ---- marketing ---- */
+    .mk-kpis{grid-template-columns:repeat(5,1fr)}
+    .mk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .mk-grid .stat-card{min-width:0}
+    .mk-span2{grid-column:span 2}
+    .mk-cols{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px;height:150px;align-items:end}
+    .mk-col{display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;gap:3px;min-width:0}
+    .mk-col-bars{display:flex;align-items:flex-end;gap:2px;height:110px;width:100%;justify-content:center}
+    .mk-col-bars i{display:block;width:26%;max-width:14px;border-radius:4px 4px 0 0;min-height:2px}
+    .mk-col-bars i.sent{background:var(--pp-blue)}.mk-col-bars i.opened{background:var(--pp-green)}.mk-col-bars i.rep{background:#7c3aed}
+    .mk-col-l{font-size:9px;color:var(--text3)}.mk-col-v{font-size:10px;font-weight:700;color:var(--text2)}
+    .cp-metrics{font-size:11px;color:var(--text2)}
+    .pp-chip.cp-linkedin{background:#dbeafe;color:#1d4ed8}.pp-chip.cp-facebook{background:#e0e7ff;color:#3730a3}.pp-chip.cp-instagram{background:#fce7f3;color:#be185d}.pp-chip.cp-x{background:#e5e7eb;color:#111827}.pp-chip.cp-email{background:#fef3c7;color:#b45309}.pp-chip.cp-blog{background:#d1fae5;color:#065f46}.pp-chip.cp-video{background:#ede9fe;color:#6d28d9}.pp-chip.cp-other{background:var(--bg);color:var(--text2)}
+    #cpTable{table-layout:fixed;min-width:1040px}
+    #cpTable th:nth-child(1){width:11%}#cpTable th:nth-child(2){width:27%}#cpTable th:nth-child(3){width:10%}#cpTable th:nth-child(4){width:10%}#cpTable th:nth-child(5){width:10%}#cpTable th:nth-child(6){width:10%}#cpTable th:nth-child(7){width:7%}#cpTable th:nth-child(8){width:11%}#cpTable th:nth-child(9){width:4%}
+    #cpTable td{overflow:hidden;text-overflow:ellipsis}
+    .soc-setup{font-size:13px;color:var(--text2);line-height:1.55}
+    .soc-setup ol{padding-left:20px;margin:10px 0}
+    .soc-setup li{margin-bottom:8px}
+    .soc-setup code{font-size:11.5px;background:var(--bg);padding:1px 6px;border-radius:5px;color:var(--text)}
+    .soc-setup a{color:var(--pp-blue)}
+    .soc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+    .soc-card{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;text-decoration:none;color:inherit;box-shadow:var(--sh-xs);transition:transform var(--t-fast),box-shadow var(--t-base)}
+    .soc-card:hover{transform:translateY(-2px);box-shadow:var(--sh-md)}
+    .soc-media{position:relative;aspect-ratio:4/3;background:var(--bg);overflow:hidden}
+    .soc-media img{width:100%;height:100%;object-fit:cover;display:block}
+    .soc-media.nomedia img{display:none}
+    .soc-net{position:absolute;top:8px;left:8px;font-size:10px;font-weight:800;padding:2px 7px;border-radius:50px;color:#fff;background:#1877f2;text-transform:lowercase}
+    .soc-net.instagram{background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af)}
+    .soc-body{padding:10px 12px}
+    .soc-msg{font-size:12px;color:var(--text);line-height:1.4;min-height:34px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+    .soc-meta{display:flex;gap:8px;flex-wrap:wrap;font-size:10.5px;color:var(--text3);margin-top:8px}
+    .lp-live{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:1px 6px;border-radius:50px;margin-left:6px;vertical-align:middle}
+    .lp-live.no{background:#fee2e2;color:#b91c1c}.lp-live.yes{background:rgba(0,168,79,0.12);color:var(--pp-green)}
+    @media(max-width:1400px){.mk-kpis{grid-template-columns:repeat(3,1fr)}.mk-grid{grid-template-columns:1fr 1fr}.mk-span2{grid-column:span 2}}
+    @media(max-width:768px){.mk-kpis{grid-template-columns:1fr 1fr}.mk-grid{grid-template-columns:1fr}.mk-span2{grid-column:auto}}
+    .mk-grid .stat-card{display:block}
+    .mk-grid .stat-card h3 .n,.stat-card h3 .n{margin-left:8px;font-size:10px;background:var(--bg);border:1px solid var(--border);padding:1px 7px;border-radius:50px;color:var(--text2);text-transform:none;letter-spacing:0;font-weight:700}
+    /* ---- marketing gate ---- */
+    body.mk-locked .view-tab[onclick*="'outreach'"],body.mk-locked .view-tab[onclick*="'content'"],body.mk-locked .view-tab[onclick*="'social'"]{display:none !important}
+    .view-tab.soon.mk-soon,body.pp-sidebar .view-tab.soon.mk-soon{display:none}
+    body.mk-locked.pp-sidebar .view-tab.soon.mk-soon{display:flex}
+    /* ---- playbook ---- */
+    .pb-layout{display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:start}
+    .pb-side{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--sh-sm);overflow:hidden;position:sticky;top:80px;max-height:calc(100vh - 110px);display:flex;flex-direction:column}
+    .pb-side-h{padding:12px 12px 8px;border-bottom:1px solid var(--border)}
+    .pb-side-h b{display:block;font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+    .pb-side-h .search-input{width:100%}
+    #pbClients{overflow-y:auto;padding:6px}
+    .pb-client{display:flex;align-items:center;gap:10px;padding:8px 8px;border-radius:12px;cursor:pointer;transition:background var(--t-fast)}
+    .pb-client:hover{background:var(--bg)}
+    .pb-client.on{background:rgba(0,118,187,0.08);box-shadow:inset 0 0 0 1px rgba(0,118,187,0.3)}
+    .pb-client-main{flex:1;min-width:0}
+    .pb-client-main b{display:block;font-size:12.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pb-client-main span{display:block;font-size:10.5px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pb-head{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+    .pb-head-main{flex:1;min-width:0}
+    .pb-title{font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--text)}
+    .pb-head-right{display:flex;align-items:center;gap:10px}
+    .pb-toggle{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer}
+    .pb-overall{display:flex;align-items:center;gap:18px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 18px;margin-bottom:14px;box-shadow:var(--sh-sm);flex-wrap:wrap}
+    .pb-ring{width:64px;height:64px;border-radius:50%;background:conic-gradient(var(--pp-green) calc(var(--p)*1%),var(--bg) 0);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
+    .pb-ring::after{content:'';position:absolute;inset:7px;border-radius:50%;background:var(--card)}
+    .pb-ring b{position:relative;font-family:var(--font-display);font-size:14px;font-weight:800;color:var(--text)}
+    .pb-overall-t{font-size:13px;color:var(--text2);margin-bottom:8px}
+    .pb-overall-t b{color:var(--text)}
+    .pb-phase-strip{display:flex;gap:6px}
+    .pb-strip{width:30px;height:30px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--text3);cursor:pointer}
+    .pb-strip.done{background:var(--pp-green);border-color:var(--pp-green);color:#fff}
+    .pb-strip.now{background:var(--pp-blue);border-color:var(--pp-blue);color:#fff;box-shadow:0 0 0 3px var(--ring)}
+    .pb-legend{margin-left:auto;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+    .pb-legend>span:first-child{display:flex;gap:6px}
+    .pb-owner{display:inline-flex;align-items:center;font:inherit;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:50px;border:none;cursor:pointer;white-space:nowrap}
+    .pb-o-lead{background:#dbeafe;color:#1d4ed8}.pb-o-pp{background:rgba(0,168,79,0.14);color:#047857}.pb-o-district{background:#ede9fe;color:#6d28d9}
+    .pb-legend .pb-owner{cursor:default}
+    .pb-phase{background:var(--card);border:1px solid var(--border);border-radius:16px;margin-bottom:12px;box-shadow:var(--sh-sm);overflow:hidden}
+    .pb-phase.now{border-color:var(--pp-blue)}
+    .pb-phase.complete .pb-num{background:var(--pp-green);color:#fff}
+    .pb-phase-h{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;user-select:none}
+    .pb-phase-h:hover{background:rgba(0,118,187,0.03)}
+    .pb-num{width:30px;height:30px;border-radius:9px;background:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:14px;color:var(--text2);flex-shrink:0}
+    .pb-phase.now .pb-num{background:var(--pp-blue);color:#fff}
+    .pb-phase-t{flex:1;min-width:0}
+    .pb-phase-t b{display:block;font-size:14px;color:var(--text)}
+    .pb-phase-t span{font-size:11px;color:var(--text3)}
+    .pb-phase-bar{width:140px;height:8px;border-radius:5px;background:var(--bg);overflow:hidden}
+    .pb-phase-bar i{display:block;height:100%;background:var(--pp-blue);border-radius:5px;transition:width .5s var(--ease)}
+    .pb-phase.complete .pb-phase-bar i{background:var(--pp-green)}
+    .pb-advance{padding:7px 12px;font-size:12px}
+    .pb-phase .ts-caret{font-size:9px;color:var(--text3);transition:transform var(--t-base)}
+    .pb-phase.collapsed .ts-caret{transform:rotate(-90deg)}
+    .pb-phase.collapsed .pb-phase-body{display:none}
+    .pb-phase-body{padding:4px 16px 12px;border-top:1px solid var(--border)}
+    .pb-step{display:flex;align-items:flex-start;gap:12px;padding:9px 0;border-top:1px solid var(--border)}
+    .pb-step:first-child{border-top:none}
+    .pb-step.done .pb-task{color:var(--text3);text-decoration:line-through}
+    .pb-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);background:var(--card);cursor:pointer;flex-shrink:0;margin-top:1px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:12px;transition:all var(--t-fast)}
+    .pb-check:hover{border-color:var(--pp-blue)}
+    .pb-check.on{background:var(--pp-green);border-color:var(--pp-green);animation:ppChipPop .3s var(--ease)}
+    .pb-step-main{flex:1;min-width:0}
+    .pb-task{font-size:13px;color:var(--text);line-height:1.4}
+    .pb-eye{font-size:11px;opacity:.7}
+    .pb-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:3px}
+    .pb-note{font-size:11.5px;color:var(--text2);cursor:text;min-width:120px;padding:1px 0}
+    .pb-note.empty{color:var(--text3);font-style:italic}
+    .pb-note .pp-cell-input{font-size:11.5px;padding:2px 4px;border-bottom:1px solid var(--pp-blue)}
+    .pb-add input{width:100%;margin-top:8px;padding:8px 10px;border:1px dashed var(--border);border-radius:9px;background:transparent;font:inherit;font-size:12px;color:var(--text)}
+    .pb-add input:focus{outline:none;border-style:solid;border-color:var(--pp-blue)}
+    @media(max-width:1100px){.pb-layout{grid-template-columns:1fr}.pb-side{position:static;max-height:260px}}
   </style>
 </head>
 <body>
@@ -1721,6 +1830,7 @@
         <div class="nav-group">Onboarding</div>
         <button class="view-tab" onclick="switchView('submissions')" data-short="Forms"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Submissions</button>
         <button class="view-tab" onclick="switchView('pipeline')" data-short="Pipeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Pipeline</button>
+        <button class="view-tab" onclick="switchView('playbook')" data-short="Playbook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Playbook</button>
         <div class="nav-group">Client Success</div>
         <button class="view-tab" onclick="switchView('customers')" data-short="Overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Client Overview</button>
         <button class="view-tab" onclick="switchView('credentials')" data-short="Logins"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Client Credentials</button>
@@ -1730,7 +1840,10 @@
         <button class="view-tab" onclick="switchView('meetings')" data-short="Meetings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Meetings</button>
         <button class="view-tab" onclick="switchView('landing')" data-short="Pages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Landing Pages</button>
         <div class="nav-group">Marketing</div>
-        <button class="view-tab soon" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg> Campaigns<span class="soon-tag">Soon</span></button>
+        <button class="view-tab" onclick="switchView('outreach')" data-short="Outreach"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Outreach</button>
+        <button class="view-tab" onclick="switchView('content')" data-short="Content"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg> Content Calendar</button>
+        <button class="view-tab" onclick="switchView('social')" data-short="Social"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg> Social</button>
+        <button class="view-tab soon mk-soon" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg> Campaigns<span class="soon-tag">Soon</span></button>
         <div class="nav-group bottom">Workspace</div>
         <button class="view-tab" onclick="switchView('resources')" data-short="Docs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Resources</button>
         <button class="view-tab" onclick="switchView('activity')" data-short="Activity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Activity</button>
@@ -2018,7 +2131,7 @@
       <div class="view-content" id="landingView">
         <div class="pp-stat-strip" id="lpStats"></div>
         <div class="table-section">
-          <div class="controls-row"><div class="section-title">Landing Pages</div><div class="controls-right"><div class="controls-group search-group"><input type="text" class="search-input" placeholder="Search pages..." oninput="lpSearch=this.value.toLowerCase();renderLandingPages()" style="width:200px"></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="startLpImport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button><input type="file" id="lpImportFile" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleLpImportFile(this.files[0]);this.value=''"><button class="text-action-btn pp-icon-only" title="Refresh" onclick="loadLandingPages(true).then(renderLandingPages)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button></div></div></div>
+          <div class="controls-row"><div class="section-title">Landing Pages</div><div class="controls-right"><div class="controls-group search-group"><input type="text" class="search-input" placeholder="Search pages..." oninput="lpSearch=this.value.toLowerCase();renderLandingPages()" style="width:200px"></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="startLpImport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button><input type="file" id="lpImportFile" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleLpImportFile(this.files[0]);this.value=''"><button class="text-action-btn" title="Check which page URLs resolve" onclick="checkLandingPagesNow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Check live</button><button class="text-action-btn pp-icon-only" title="Refresh" onclick="loadLandingPages(true).then(renderLandingPages)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button></div></div></div>
           <div class="table-wrapper"><table class="pp-table" id="lpTable"><thead id="lpTableHead"><tr><th>Page</th><th>URL</th><th>Show</th><th>Leads go to</th><th>Source key</th><th>Leads</th><th>Notes</th><th></th></tr></thead><tbody id="lpTableBody"><tr><td colspan="8" class="pp-empty">Loading...</td></tr></tbody></table></div>
         </div>
       </div>
@@ -2027,6 +2140,35 @@
       <div class="view-content" id="teamView">
         <div class="team-cards" id="teamCards"></div>
         <div id="teamDetail"></div>
+      </div>
+
+      <!-- ===== Marketing: Outreach ===== -->
+      <div class="view-content" id="outreachView">
+        <div class="controls-row"><div><div class="section-title">Outreach from Close</div><div class="pp-toolbar-note" id="outreachHead"></div></div><div class="controls-right"><div class="controls-group filters-group"><div class="styled-select"><select id="outRepFilter" onchange="outRep=this.value;renderOutreach()"><option value="all">Everyone</option></select></div></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="syncOutreachNow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Sync now</button></div></div></div>
+        <div id="outreachBody"><div class="pp-empty">Loading...</div></div>
+      </div>
+
+      <!-- ===== Marketing: Content calendar ===== -->
+      <div class="view-content" id="contentView">
+        <div class="pp-stat-strip" id="cpStats"></div>
+        <div class="table-section">
+          <div class="controls-row"><div class="section-title">Content Calendar</div><div class="controls-right"><div class="controls-group filters-group"><div class="styled-select"><select onchange="cpFilter=this.value;renderContent()"><option value="upcoming">Upcoming and in progress</option><option value="published">Published</option><option value="ideas">Ideas</option><option value="all">Everything</option></select></div></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="openContentModal(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> New Post</button></div></div></div>
+          <div class="table-wrapper"><table class="pp-table" id="cpTable"><thead><tr><th>When</th><th>Post</th><th>Channel</th><th>Status</th><th>Owner</th><th>Campaign</th><th>Links</th><th>Results</th><th></th></tr></thead><tbody id="cpTableBody"><tr><td colspan="9" class="pp-empty">Loading...</td></tr></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- ===== Marketing: Social ===== -->
+      <div class="view-content" id="socialView">
+        <div class="controls-row"><div><div class="section-title">Facebook &amp; Instagram</div><div class="pp-toolbar-note" id="socialHead"></div></div><div class="controls-right"><div class="controls-group filters-group"><div class="styled-select"><select onchange="socialNet=this.value;renderSocial()"><option value="all">Both networks</option><option value="facebook">Facebook</option><option value="instagram">Instagram</option></select></div></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="syncSocialNow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Sync now</button></div></div></div>
+        <div id="socialBody"><div class="pp-empty">Loading...</div></div>
+      </div>
+
+      <!-- ===== Onboarding Playbook ===== -->
+      <div class="view-content" id="playbookView">
+        <div class="pb-layout">
+          <div class="pb-side"><div class="pb-side-h"><b>Onboardings</b><input class="search-input" id="pbSearch" placeholder="Find a district..." oninput="renderPlaybook()"></div><div id="pbClients"></div></div>
+          <div id="pbMain"></div>
+        </div>
       </div>
 
       <div class="view-content" id="calendarView">
@@ -2265,7 +2407,7 @@
         var ov = document.getElementById('dataLoadingOverlay');
         if (ov) ov.classList.add('leaving');
         document.getElementById('dashboard').classList.add('active');
-        requestAnimationFrame(function() { ppLayoutInit(); ppTabInk(); });
+        requestAnimationFrame(function() { ppLayoutInit(); if (typeof ppApplyMarketingGate === 'function') ppApplyMarketingGate(); ppTabInk(); });
         setTimeout(function() { if (ov) { ov.classList.add('hidden'); ov.classList.remove('leaving'); } }, 560);
       }, hold);
     }
@@ -2286,6 +2428,7 @@
     function jsonpRequest(url, attempt) { attempt = attempt || 1; return new Promise((res, rej) => { const cb = 'cb_' + Date.now() + '_' + Math.random().toString(36).substr(2,5); console.log('JSONP request (attempt ' + attempt + '):', url.split('?')[0], 'callback:', cb); window[cb] = (d) => { console.log('JSONP response received:', d); delete window[cb]; if(document.body.contains(s)) document.body.removeChild(s); res(d); }; const s = document.createElement('script'); s.src = url + '&callback=' + cb; s.onerror = (err) => { console.error('JSONP script error:', err); delete window[cb]; if(document.body.contains(s)) document.body.removeChild(s); if (attempt < 3) { console.log('Retrying... attempt ' + (attempt+1)); setTimeout(function() { jsonpRequest(url, attempt+1).then(res).catch(rej); }, 2000); } else { rej(new Error('Script load failed after 3 attempts')); } }; document.body.appendChild(s); setTimeout(() => { if (window[cb]) { console.error('JSONP timeout after 45s, attempt ' + attempt); delete window[cb]; if(document.body.contains(s)) document.body.removeChild(s); if (attempt < 3) { console.log('Retrying after timeout... attempt ' + (attempt+1)); jsonpRequest(url, attempt+1).then(res).catch(rej); } else { rej(new Error('Timeout after 3 attempts - Apps Script may be slow or unreachable')); } } }, 45000); }); }
 
     function switchView(view) {
+      if (typeof PP_MARKETING_VIEWS !== 'undefined' && PP_MARKETING_VIEWS.indexOf(view) >= 0 && !ppMarketingAllowed()) { showToast('Marketing is still being built. Coming soon.', 'error'); return; }
       document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.view-content').forEach(c => c.classList.remove('active'));
       document.querySelector('.view-tab[onclick*="' + view + '"]').classList.add('active');
@@ -2302,6 +2445,10 @@
       if (view === 'landing') { renderLandingPages(); Promise.all([loadLandingPages(false), loadTradeShows(false), loadLeads(false)]).then(function() { renderLandingPages(); }); }
       if (view === 'team') { renderTeam(); Promise.all([loadCloseAccounts(false), loadLeads(false), loadCloseMeetings(false), loadTradeShows(false), loadLandingPages(false), loadActivity()]).then(function() { renderTeam(); }); }
       if (view === 'submissions') { renderDocsPanel(); loadSignedDocs(false).then(function() { renderDocsPanel(); }); }
+      if (view === 'outreach') { renderOutreach(); loadOutreach(false).then(function() { var s = document.getElementById('outRepFilter'); if (s && s.options.length <= 1) { s.innerHTML = '<option value="all">Everyone</option>' + TEAM_MEMBERS.map(function(m) { return '<option value="' + m.email + '">' + m.name + '</option>'; }).join(''); } var h = document.getElementById('outreachHead'); if (h && outreach) h.textContent = outreach.syncedAt ? 'Synced from Close ' + ppAgo(outreach.syncedAt) + '. Refreshes hourly.' : ''; renderOutreach(); }); }
+      if (view === 'content') { renderContent(); loadContentPosts(false).then(function() { renderContent(); }); }
+      if (view === 'playbook') { renderPlaybook(); }
+      if (view === 'social') { renderSocial(); loadSocial(false).then(function() { var h = document.getElementById('socialHead'); if (h && social) h.textContent = social.syncedAt ? 'Synced ' + ppAgo(social.syncedAt) + '. Refreshes every 6 hours.' : ''; renderSocial(); }); }
       if (view === 'customers') { renderCloseAccounts(); loadCloseAccounts(false).then(function() { renderCloseAccounts(); }); }
       ppSetHeaderTitle(view);
       if (typeof ppPopoverClose === 'function') ppPopoverClose();
@@ -4108,7 +4255,7 @@
       else if (/Timeout|Script load failed|unreachable/i.test(err)) hint = 'No reply came back from the script. Usually the one-line hook is missing from doGet (<code>var pp = ppHandleExtra_(e); if (pp) return pp;</code>) or the deployment has not been updated to a new version.';
       else if (/Unauthorized/i.test(err)) hint = 'Your signed-in email (' + ppEsc(currentUser?.email || '') + ') is not in <code>PP_ADMIN_EMAILS</code> at the top of Extras.gs.';
       else hint = 'The Apps Script behind this admin needs the new actions for this tab. Paste <code>AppsScript_additions.gs</code> in as Extras.gs, add the one-line hook to doGet, and deploy a new version.';
-      var retry = what === 'Credentials' ? 'loadCredList(true).then(renderCredentials)' : what === 'Inbound Leads' ? 'loadLeads(true).then(renderLeads)' : what === 'Resources' ? 'loadResources(true).then(renderResources)' : what === 'Meetings' ? 'loadCloseMeetings(true).then(renderMeetings)' : what === 'Landing Pages' ? 'loadLandingPages(true).then(renderLandingPages)' : 'loadTradeShows(true).then(renderTradeShows)';
+      var retry = what === 'Credentials' ? 'loadCredList(true).then(renderCredentials)' : what === 'Inbound Leads' ? 'loadLeads(true).then(renderLeads)' : what === 'Resources' ? 'loadResources(true).then(renderResources)' : what === 'Meetings' ? 'loadCloseMeetings(true).then(renderMeetings)' : what === 'Landing Pages' ? 'loadLandingPages(true).then(renderLandingPages)' : what === 'Outreach' ? 'loadOutreach(true).then(renderOutreach)' : what === 'Content' ? 'loadContentPosts(true).then(renderContent)' : what === 'Social' ? 'loadSocial(true).then(renderSocial)' : 'loadTradeShows(true).then(renderTradeShows)';
       return '<div class="pp-empty"><strong>' + what + ': backend not connected yet</strong><div style="max-width:520px;margin:0 auto;line-height:1.6">' + hint + '</div>'
         + (err ? '<div class="pp-toolbar-note" style="margin-top:10px">Reply from server: ' + ppEsc(err) + '</div>' : '')
         + '<div style="margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><a class="pp-btn" target="_blank" rel="noopener" href="' + ppEsc(API_URL + '?action=ppPing&email=' + encodeURIComponent(currentUser?.email || '')) + '">Test backend</a><button class="pp-btn primary" onclick="' + retry + '">Retry</button></div></div>';
@@ -4733,7 +4880,7 @@
       var tabs = ['dashboard', 'calendar', 'submissions', 'pipeline', 'customers', 'credentials', 'tradeshows', 'leads', 'resources'];
       if (/^[1-9]$/.test(e.key)) { switchView(tabs[parseInt(e.key) - 1]); e.preventDefault(); return; }
       if (e.key === '/') { var s = document.querySelector('.view-content.active .search-input'); if (s) { s.focus(); s.select(); e.preventDefault(); } return; }
-      if (e.key.toLowerCase() === 'n') { var v = document.querySelector('.view-content.active'); if (v && v.id === 'credentialsView') { openCredModal(null); e.preventDefault(); } else if (v && v.id === 'tradeshowsView') { openTsModal(null); e.preventDefault(); } else if (v && v.id === 'leadsView') { openLeadModal(null); e.preventDefault(); } else if (v && v.id === 'resourcesView') { openResourceModal(null); e.preventDefault(); } }
+      if (e.key.toLowerCase() === 'n') { var v = document.querySelector('.view-content.active'); if (v && v.id === 'credentialsView') { openCredModal(null); e.preventDefault(); } else if (v && v.id === 'tradeshowsView') { openTsModal(null); e.preventDefault(); } else if (v && v.id === 'leadsView') { openLeadModal(null); e.preventDefault(); } else if (v && v.id === 'resourcesView') { openResourceModal(null); e.preventDefault(); } else if (v && v.id === 'contentView') { openContentModal(null); e.preventDefault(); } }
     });
     // =====================================================================
     // DASHBOARD: COMING UP (trade shows, go-lives, attention)  (Sept 2026)
@@ -4970,8 +5117,9 @@
       else if (cell.closest('#leadTableBody')) { e.stopPropagation(); leadCellEdit(id, field, cell); }
       else if (cell.closest('#lpTableBody')) { e.stopPropagation(); lpCellEdit(id, field, cell); }
       else if (cell.closest('#subBoard')) { e.stopPropagation(); subCellEdit(id, field, cell); }
+      else if (cell.closest('#cpTableBody')) { e.stopPropagation(); cpCellEdit(id, field, cell); }
     });
-    document.addEventListener('keydown', function(e) { if (e.key === 'Enter' && e.target && e.target.classList && e.target.classList.contains('ts-add-input') && !e.target.classList.contains('lp-add-input')) { e.preventDefault(); tsQuickAdd(e.target); } });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Enter' && e.target && e.target.classList && e.target.classList.contains('ts-add-input') && e.target.closest && e.target.closest('#tsGroups')) { e.preventDefault(); tsQuickAdd(e.target); } });
 
     // ---- trade show cells ----
     function tsCellEdit(id, field, cell) {
@@ -5084,7 +5232,16 @@
     function openDataHealth() { dhOpen = true; dhFilter = 'all'; switchView('pipeline'); setTimeout(renderDataHealth, 50); }
 
     // ---- sidebar layout + header title ----
-    var PP_VIEW_TITLES = { dashboard: ['HQ', 'Dashboard'], calendar: ['HQ', 'Calendar'], team: ['HQ', 'Team'], submissions: ['Onboarding', 'Submissions'], pipeline: ['Onboarding', 'Pipeline'], customers: ['Client Success', 'Client Overview'], credentials: ['Client Success', 'Client Credentials'], tradeshows: ['Sales', 'Trade Shows'], leads: ['Sales', 'Inbound Leads'], meetings: ['Sales', 'Meetings'], landing: ['Sales', 'Landing Pages'], resources: ['Workspace', 'Resources'], activity: ['Workspace', 'Activity'] };
+    var PP_MARKETING_USERS = ['donnie.schemetti@practiceplan.io', 'd.schemetti@gmail.com'];
+    var PP_MARKETING_VIEWS = ['outreach', 'content', 'social'];
+    function ppMarketingAllowed() { var e = String((currentUser && currentUser.email) || '').toLowerCase(); return PP_MARKETING_USERS.indexOf(e) >= 0; }
+    function ppApplyMarketingGate() {
+      var locked = !ppMarketingAllowed(); document.body.classList.toggle('mk-locked', locked);
+      document.querySelectorAll('.view-tab').forEach(function(t) { var oc = t.getAttribute('onclick') || ''; if (PP_MARKETING_VIEWS.some(function(v) { return oc.indexOf("'" + v + "'") >= 0; })) t.style.display = locked ? 'none' : ''; });
+      document.querySelectorAll('.view-tab.mk-soon').forEach(function(t) { t.style.display = locked && document.body.classList.contains('pp-sidebar') ? 'flex' : 'none'; });
+      if (locked && PP_MARKETING_VIEWS.some(function(v) { var el = document.getElementById(v + 'View'); return el && el.classList.contains('active'); })) switchView('dashboard');
+    }
+    var PP_VIEW_TITLES = { dashboard: ['HQ', 'Dashboard'], calendar: ['HQ', 'Calendar'], team: ['HQ', 'Team'], playbook: ['Onboarding', 'Playbook'], submissions: ['Onboarding', 'Submissions'], pipeline: ['Onboarding', 'Pipeline'], customers: ['Client Success', 'Client Overview'], credentials: ['Client Success', 'Client Credentials'], tradeshows: ['Sales', 'Trade Shows'], leads: ['Sales', 'Inbound Leads'], meetings: ['Sales', 'Meetings'], landing: ['Sales', 'Landing Pages'], outreach: ['Marketing', 'Outreach'], content: ['Marketing', 'Content Calendar'], social: ['Marketing', 'Facebook & Instagram'], resources: ['Workspace', 'Resources'], activity: ['Workspace', 'Activity'] };
     function ppSetHeaderTitle(view) { var t = document.getElementById('hdrTitle'); if (!t || !PP_VIEW_TITLES[view]) return; t.innerHTML = '<span class="crumb">' + PP_VIEW_TITLES[view][0] + '</span><b>' + PP_VIEW_TITLES[view][1] + '</b>'; }
     function ppLayoutInit() {
       var tabs = document.querySelector('.view-tabs'), dash = document.getElementById('dashboard'), main = document.querySelector('.main-content'); if (!tabs || !dash || !main) return;
@@ -5102,6 +5259,7 @@
         if (tabs.parentNode !== main) main.insertBefore(tabs, main.firstChild);
         document.body.classList.remove('pp-sidebar');
       }
+      ppApplyMarketingGate();
       var active = document.querySelector('.view-content.active'); if (active) ppSetHeaderTitle(active.id.replace('View', ''));
       setTimeout(ppTabInk, 40);
     }
@@ -5551,7 +5709,7 @@
     // =====================================================================
     // LANDING PAGES (conference pages -> leads source -> conference rep)
     // =====================================================================
-    var LP_COLS = ['id', 'title', 'url', 'showId', 'sourceKey', 'audience', 'notes', 'reps', 'dates', 'utmLinks', 'updatedAt', 'updatedBy'];
+    var LP_COLS = ['id', 'title', 'url', 'showId', 'sourceKey', 'audience', 'notes', 'reps', 'dates', 'utmLinks', 'live', 'liveCheckedAt', 'updatedAt', 'updatedBy'];
     var lpList = [], lpLoaded = false, lpError = '', lpSearch = '';
     async function loadLandingPages(force) {
       if (lpLoaded && !force) return lpList;
@@ -5605,7 +5763,7 @@
       var show = lpShow(p), leads = lpLeads(p), reps = lpRepFor(p), last = leads.slice().sort(function(a, b) { return a.receivedAt < b.receivedAt ? 1 : -1; })[0];
       return '<tr data-id="' + ppEsc(p.id) + '">'
         + cell('title', '<div class="pp-org-cell"><div class="pp-org-avatar" style="background:' + getOrgColor(p.title || p.url) + '">' + ppEsc(getOrgInitials(p.title || lpSlug(p.url))) + '</div><div><div class="pp-org-name">' + ppEsc(p.title || lpSlug(p.url)) + '</div><div class="pp-org-sub">' + (p.audience ? ppEsc(p.audience) : '<span class="pp-placeholder">audience?</span>') + '</div></div></div>')
-        + cell('url', p.url ? '<span class="lp-url"><a href="' + ppEsc(p.url) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + ppEsc(lpSlug(p.url) || p.url) + '</a><button class="pp-mini-btn" title="Copy link" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(p.url) + '\',\'Link\')">' + ppSvg('copy') + '</button><button class="pp-mini-btn" title="QR code" onclick="event.stopPropagation();lpQr(\'' + ppEsc(p.url) + '\',\'' + ppEsc(p.title) + '\')">&#9641;</button></span>' : '<span class="pp-placeholder">URL?</span>')
+        + cell('url', p.url ? '<span class="lp-url"><a href="' + ppEsc(p.url) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + ppEsc(lpSlug(p.url) || p.url) + '</a><button class="pp-mini-btn" title="Copy link" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(p.url) + '\',\'Link\')">' + ppSvg('copy') + '</button><button class="pp-mini-btn" title="QR code" onclick="event.stopPropagation();lpQr(\'' + ppEsc(p.url) + '\',\'' + ppEsc(p.title) + '\')">&#9641;</button>' + (Object.keys(lpUtm(p)).length ? '<button class="pp-mini-btn" title="Tracked links" onclick="event.stopPropagation();lpQuick(\'' + ppEsc(p.id) + '\',this)"><b style="font-size:9px">' + Object.keys(lpUtm(p)).length + '</b></button>' : '') + (p.live === 'no' ? '<span class="lp-live no" title="This URL did not resolve at the last check. Build and deploy the page.">not live</span>' : '') + '</span>' : '<span class="pp-placeholder">URL?</span>')
         + cell('showId', show ? '<div class="pp-org-name" style="max-width:220px">' + ppEsc(show.name) + '</div><div class="pp-org-sub">' + ppFmtRange(show._start, show._end) + (show._isPast ? ' &middot; past' : show._daysUntil !== null ? ' &middot; ' + ppInDays(show._daysUntil).toLowerCase() : '') + '</div>' : '<span class="pp-chip aud-sbo" title="Not tied to a show. Click to link one if it should be.">Evergreen<i class="caret"></i></span>')
         + cell('reps', reps.length ? '<div style="display:flex;align-items:center;gap:6px">' + ppRepAvatars(reps.join(','), 24) + (show && show._reps.length ? '' : '<span class="ca-sub">from page</span>') + '</div>' : '<span class="pp-chip need-to-book">Rotation<i class="caret"></i></span>')
         + cell('sourceKey', p.sourceKey ? '<code class="lp-key">' + ppEsc(p.sourceKey) + '</code>' : '<span class="pp-placeholder">auto</span>')
@@ -5875,7 +6033,7 @@
       var k = caKey(a), cl = caCl(a), ob = caOnboarding(a);
       var check = function(id, label) { var on = cl[id] === true || cl[id] === 'true'; return '<button type="button" class="ca-check' + (on ? ' on' : '') + '" onclick="event.stopPropagation();caSetCheck(\'' + ppEsc(k) + '\',\'' + id + '\',' + (!on) + ')"><i>' + (on ? '&#10003;' : '') + '</i>' + label + '</button>'; };
       var field = function(id, label, ph, type) { var v = caField(a, id); return '<label class="ca-field"><span>' + label + '</span><input type="' + (type || 'text') + '" value="' + ppEsc(v) + '" placeholder="' + ph + '" onclick="event.stopPropagation()" onchange="caSetCheck(\'' + ppEsc(k) + '\',\'' + id + '\',this.value)"></label>'; };
-      var contact = ob ? '<div class="ca-fact"><span>Contact</span><b>' + ppEsc(ob.contact || '-') + '</b>' + (ob.email ? '<a href="mailto:' + ppEsc(ob.email) + '" onclick="event.stopPropagation()">' + ppEsc(ob.email) + '</a>' : '') + (ob.phone ? '<span>' + ppEsc(formatPhone(ob.phone)) + '</span>' : '') + '</div><div class="ca-fact"><span>Go-live</span><b>' + (ob.goLiveDate ? ppFmtDate(ob.goLiveDate) : '-') + '</b><span>' + (PP_STATUS_LABELS[ob.pipelineStatus] || ob.pipelineStatus) + ' &middot; onboarding ' + getChecklistCount(ob.email) + '/' + CHECKLIST_ITEMS.length + '</span></div>' : '<div class="ca-fact"><span>Onboarding</span><b>No onboarding record</b><span>Import the district workbook or form to track go-live and checklists here.</span></div>';
+      var contact = ob ? '<div class="ca-fact"><span>Contact</span><b>' + ppEsc(ob.contact || '-') + '</b>' + (ob.email ? '<a href="mailto:' + ppEsc(ob.email) + '" onclick="event.stopPropagation()">' + ppEsc(ob.email) + '</a>' : '') + (ob.phone ? '<span>' + ppEsc(formatPhone(ob.phone)) + '</span>' : '') + '</div><div class="ca-fact"><span>Go-live</span><b>' + (ob.goLiveDate ? ppFmtDate(ob.goLiveDate) : '-') + '</b><span>' + (PP_STATUS_LABELS[ob.pipelineStatus] || ob.pipelineStatus) + ' &middot; milestones ' + getChecklistCount(ob.email) + '/' + CHECKLIST_ITEMS.length + (typeof pbProgress === 'function' ? ' &middot; playbook ' + pbProgress(ob.email).pct + '% <a onclick="event.stopPropagation();openPlaybookFor(\'' + ppEsc(ob.email) + '\')">open</a>' : '') + '</span></div>' : '<div class="ca-fact"><span>Onboarding</span><b>No onboarding record</b><span>Import the district workbook or form to track go-live and checklists here.</span></div>';
       var relink = '<div class="ca-relink" id="caRelink_' + ppEsc(k).replace(/[^a-z0-9]/gi, '_') + '" style="display:none"><div class="drive-connect-form" style="max-width:420px;margin-top:6px"><input placeholder="Paste the right Close lead URL" onclick="event.stopPropagation()"><button class="pp-btn primary" onclick="event.stopPropagation();caLinkClose(\'' + ppEsc(k) + '\',this,true)">Re-link</button></div></div>';
       var closeFacts = a.closeLeadId ? '<div class="ca-fact"><span>Close ' + (a.matchedBy === 'manual' ? '(linked by hand)' : a.matchedBy === 'close-status' ? '' : '(matched by ' + ppEsc(a.matchedBy) + ')') + '</span><b><a href="' + ppEsc(a.closeUrl) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + ppEsc(a.closeName || a.organization) + '</a></b><span>' + ppEsc(a.statusLabel || '') + (a.ownerName ? ' &middot; owner ' + ppEsc(a.ownerName) : '') + (a.website ? ' &middot; <a href="' + ppEsc(/^https?:/.test(a.website) ? a.website : 'https://' + a.website) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + ppEsc(a.domain || a.website) + '</a>' : '') + (a.matchedBy !== 'close-status' ? ' &middot; <a onclick="event.stopPropagation();var r=document.getElementById(\'caRelink_' + ppEsc(k).replace(/[^a-z0-9]/gi, '_') + '\');r.style.display=r.style.display===\'none\'?\'\':\'none\'">wrong lead?</a>' : '') + '</span>' + relink + '</div><div class="ca-fact"><span>Last touch</span><b>' + (a.lastTouchAt ? ppFmtDate(a.lastTouchAt.slice(0, 10)) + ' (' + a._days + 'd)' : 'None on record') + '</b><span>' + ppEsc([a.lastTouchType, a.lastTouchBy].filter(Boolean).join(' by ')) + '</span></div>' + (a.nextTaskText ? '<div class="ca-fact"><span>Next task</span><b>' + ppEsc(a.nextTaskText) + '</b><span>' + ppFmtDate(a.nextTaskDate) + '</span></div>' : '')
         : '<div class="ca-fact ca-link"><span>Close</span><b>Not linked</b><div class="drive-connect-form" style="max-width:420px;margin-top:6px"><input id="caLink_' + ppEsc(k).replace(/[^a-z0-9]/gi, '_') + '" placeholder="Paste the Close lead URL" onclick="event.stopPropagation()"><button class="pp-btn primary" onclick="event.stopPropagation();caLinkClose(\'' + ppEsc(k) + '\',this)">Link</button></div></div>';
@@ -5954,11 +6112,11 @@
         + '<td><div class="lead-contact"><span>' + ppEsc(d.contact || '-') + '</span>' + (d.email ? '<span class="sub pp-copyable" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(d.email) + '\',\'Email\')">' + ppEsc(d.email) + '</span>' : '') + (d.phone ? '<span class="sub">' + ppEsc(formatPhone(d.phone)) + '</span>' : '') + '</div></td>'
         + cell('stage', '<span class="pp-chip pick" style="background:' + HQ_STATUS_COLORS[d.pipelineStatus] + '22;color:' + HQ_STATUS_COLORS[d.pipelineStatus] + '">' + (PP_STATUS_LABELS[d.pipelineStatus] || d.pipelineStatus) + '<i class="caret"></i></span>' + stale)
         + cell('rep', d.accountRep ? '<div style="display:flex;align-items:center;gap:8px">' + ppRepAvatars(d.accountRep, 24) + '<span style="font-size:11px;color:var(--text2)">' + ppEsc(ppRepName(d.accountRep)) + '</span></div>' : '<span class="pp-chip need-to-book">Assign<i class="caret"></i></span>')
-        + cell('onboarding', subBar(ob, CHECKLIST_ITEMS.length, 'var(--pp-blue)') + (docs.length ? '<div class="sub-docs">' + docs.map(function(x) { return '<a href="' + ppEsc(cl[x[0]]) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Signed ' + x[1] + '">' + ppSvg('link') + ' ' + x[1] + '</a>'; }).join('') + '</div>' : ''))
+        + cell('onboarding', subBar(ob, CHECKLIST_ITEMS.length, 'var(--pp-blue)') + (typeof pbProgress === 'function' ? '<div class="sub-bar" style="margin-top:4px" title="Playbook steps"><div class="sub-bar-track"><i style="width:' + pbProgress(d.email).pct + '%;background:var(--pp-green)"></i></div><span>' + pbProgress(d.email).pct + '%</span></div>' : '') + (docs.length ? '<div class="sub-docs">' + docs.map(function(x) { return '<a href="' + ppEsc(cl[x[0]]) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Signed ' + x[1] + '">' + ppSvg('link') + ' ' + x[1] + '</a>'; }).join('') + '</div>' : ''))
         + cell('launch', subBar(lk, SUCCESS_CHECKLIST_ITEMS.length, 'var(--pp-green)'))
         + cell('golive', d.goLiveDate ? '<div class="ts-date' + (ppDaysBetween(d.goLiveDate, ppTodayISO()) !== null && ppDaysBetween(d.goLiveDate, ppTodayISO()) >= 0 && ppDaysBetween(d.goLiveDate, ppTodayISO()) <= 14 ? ' soon' : '') + '">' + ppFmtDate(d.goLiveDate, { month: 'short', day: 'numeric', year: 'numeric' }) + '<span class="sub">' + ppInDays(ppDaysBetween(d.goLiveDate, ppTodayISO())) + '</span></div>' : '<span class="pp-placeholder">Set date</span>')
         + '<td class="time-ago">' + ppEsc(timeAgo(d.lastUpdated)) + '</td>'
-        + '<td style="text-align:right;white-space:nowrap"><button class="pp-mini-btn" title="Open record" onclick="event.stopPropagation();viewDetails(allData.concat(archivedData).find(function(x){return x.email===\'' + ppEsc(d.email) + '\'}))">' + ppSvg('expand') + '</button> <button class="pp-mini-btn" title="Edit details" onclick="event.stopPropagation();quickEditSubmission(\'' + ppEsc(d.email) + '\',this)">' + ppSvg('edit') + '</button> ' + (currentFilter === 'archived' ? '<button class="pp-mini-btn" title="Restore" onclick="event.stopPropagation();restoreRow(\'' + d.sheetType + '\',' + d.rowIndex + ',\'' + ppEsc(d.email) + '\')">&#8634;</button>' : '<button class="pp-mini-btn danger" title="Archive" onclick="event.stopPropagation();archiveRow(\'' + d.sheetType + '\',' + d.rowIndex + ',\'' + ppEsc(d.email) + '\')">&#10005;</button>') + '</td>'
+        + '<td style="text-align:right;white-space:nowrap"><button class="pp-mini-btn" title="Open record" onclick="event.stopPropagation();viewDetails(allData.concat(archivedData).find(function(x){return x.email===\'' + ppEsc(d.email) + '\'}))">' + ppSvg('expand') + '</button> <button class="pp-mini-btn" title="Open playbook" onclick="event.stopPropagation();openPlaybookFor(\'' + ppEsc(d.email) + '\')">&#9745;</button> <button class="pp-mini-btn" title="Edit details" onclick="event.stopPropagation();quickEditSubmission(\'' + ppEsc(d.email) + '\',this)">' + ppSvg('edit') + '</button> ' + (currentFilter === 'archived' ? '<button class="pp-mini-btn" title="Restore" onclick="event.stopPropagation();restoreRow(\'' + d.sheetType + '\',' + d.rowIndex + ',\'' + ppEsc(d.email) + '\')">&#8634;</button>' : '<button class="pp-mini-btn danger" title="Archive" onclick="event.stopPropagation();archiveRow(\'' + d.sheetType + '\',' + d.rowIndex + ',\'' + ppEsc(d.email) + '\')">&#10005;</button>') + '</td>'
         + '</tr>';
     }
     function renderSubBoard() {
@@ -6056,7 +6214,7 @@
       var section = function(title, count, body, foot) { return '<div class="stat-card team-sec"><h3>' + title + '<span class="n">' + count + '</span></h3>' + body + (foot || '') + '</div>'; };
       var item = function(inner, onclick) { return '<div class="pp-up-item"' + (onclick ? ' onclick="' + onclick + '"' : '') + '>' + inner + '</div>'; };
       var accountsHtml = t.accounts.length ? t.accounts.sort(function(a, b) { return (b._days === null ? 9999 : b._days) - (a._days === null ? 9999 : a._days); }).slice(0, 12).map(function(a) { return item(ppAvatar(a.organization, a.domain || a.orgEmail, 30) + '<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(a.organization) + '</div><div class="pp-up-sub">' + (a.statusLabel || a.credStatus || '') + (a.lastTouchAt ? ' &middot; touched ' + a._days + 'd ago' : ' &middot; no Close touch') + '</div></div><div class="pp-up-right">' + (a._days !== null && a._days > 60 ? '<span class="pp-chip on-hold">' + a._days + 'd</span>' : '') + '</div>', "caOpen[\'" + ppEsc(a.orgEmail) + "\']=true;switchView(\'customers\')"); }).join('') : '<div class="pp-up-empty">No accounts owned yet.</div>';
-      var obHtml = t.onboardings.length ? t.onboardings.map(function(d) { return item(ppAvatar(d.organization, d.email, 30) + '<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(d.organization) + '</div><div class="pp-up-sub">' + (PP_STATUS_LABELS[d.pipelineStatus] || d.pipelineStatus) + ' &middot; onboarding ' + getChecklistCount(d.email) + '/' + CHECKLIST_ITEMS.length + (d.goLiveDate ? ' &middot; go-live ' + ppFmtDate(d.goLiveDate, { month: 'short', day: 'numeric' }) : '') + '</div></div><div class="pp-up-right">' + (d.isStale ? '<span class="pp-chip need-to-book">quiet</span>' : '') + '</div>', "viewDetails(allData.find(function(x){return x.email===\'" + ppEsc(d.email) + "\'}))"); }).join('') : '<div class="pp-up-empty">No onboardings assigned.</div>';
+      var obHtml = t.onboardings.length ? t.onboardings.map(function(d) { return item(ppAvatar(d.organization, d.email, 30) + '<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(d.organization) + '</div><div class="pp-up-sub">' + (PP_STATUS_LABELS[d.pipelineStatus] || d.pipelineStatus) + ' &middot; playbook ' + (typeof pbProgress === 'function' ? pbProgress(d.email).pct + '%' : getChecklistCount(d.email) + '/' + CHECKLIST_ITEMS.length) + (d.goLiveDate ? ' &middot; go-live ' + ppFmtDate(d.goLiveDate, { month: 'short', day: 'numeric' }) : '') + '</div></div><div class="pp-up-right">' + (d.isStale ? '<span class="pp-chip need-to-book">quiet</span>' : '') + '</div>', "viewDetails(allData.find(function(x){return x.email===\'" + ppEsc(d.email) + "\'}))"); }).join('') : '<div class="pp-up-empty">No onboardings assigned.</div>';
       var leadsHtml = t.openLeads.length ? t.openLeads.sort(function(a, b) { return a.receivedAt < b.receivedAt ? 1 : -1; }).slice(0, 10).map(function(l) { var st = LEAD_STATUSES.find(function(s) { return s.val === l.status; }) || LEAD_STATUSES[0]; return item(ppAvatar(l.org || l.name, l.email, 30) + '<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(l.name || l.org) + '</div><div class="pp-up-sub">' + ppEsc(l.org || '') + ' &middot; ' + leadAge(l) + (l.source ? ' &middot; ' + ppEsc(l.source) : '') + '</div></div><div class="pp-up-right"><span class="pp-chip ' + st.cls + '">' + st.label + '</span></div>', "openLeadModal(\'" + ppEsc(l.id) + "\')"); }).join('') : '<div class="pp-up-empty">No open leads.</div>';
       var meetHtml = t.meetings.length ? t.meetings.slice(0, 8).map(function(m) { return item(ppDateBox(m.start.slice(0, 10), m.start.slice(0, 10) === today) + '<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(m.title) + '</div><div class="pp-up-sub">' + meetingTime(m) + (m.leadName ? ' &middot; ' + ppEsc(m.leadName) : '') + '</div></div>', m.url ? "window.open(\'" + ppEsc(m.url) + "\',\'_blank\')" : ''); }).join('') : '<div class="pp-up-empty">No upcoming meetings in Close.</div>';
       var showsHtml = t.upcomingShows.length ? t.upcomingShows.slice(0, 8).map(function(s) { var pages = lpLoaded ? lpForShow(s.id) : []; return item(ppDateBox(s._start, s._daysUntil <= 21) + '<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(s.name) + '</div><div class="pp-up-sub">' + ppFmtRange(s._start, s._end) + (s.location ? ' &middot; ' + ppEsc(s.location.replace(/, USA$/, '')) : '') + (pages.length ? ' &middot; page ready' : '') + '</div></div><div class="pp-up-right">' + (s._todo.length ? '<span class="pp-chip need-to-book">' + s._todo.length + ' to do</span>' : '<span class="pp-chip booked">Ready</span>') + '</div>', "openTsModal(\'" + ppEsc(s.id) + "\',{todo:true})"); }).join('') : '<div class="pp-up-empty">No upcoming shows assigned.</div>';
@@ -6111,6 +6269,205 @@
         + card('Needs a touch', coldest.length ? '<div class="pp-up-list">' + coldest.map(function(a) { return '<div class="pp-up-item" onclick="caOpen[\'' + ppEsc(a.orgEmail) + '\']=true;caGo(\'stale\',\'touch\')">' + ppAvatar(a.organization, a.domain || a.orgEmail, 30) + '<div class="pp-up-main"><div class="pp-up-title">' + ppEsc(a.organization) + '</div><div class="pp-up-sub">' + (a._days === null ? 'no touch on record' : a._days + ' days since ' + (a.lastTouchType || 'last touch').toLowerCase()) + (ppAccountRep(a) ? ' &middot; ' + ppEsc(ppRepName(ppAccountRep(a))) : '') + '</div></div><div class="pp-up-right"><span class="pp-chip on-hold">' + (a._days === null ? 'never' : a._days + 'd') + '</span></div></div>'; }).join('') + '</div>' + ppUpFoot('customers', 'All cold accounts').replace("switchView('customers')", "caGo('stale','touch')") : '<div class="pp-up-empty"><span style="color:var(--pp-green);font-weight:600">All clear.</span> Every linked account was touched in the last 60 days.</div>')
         + '</div></div>';
     }
+    // =====================================================================
+    // MARKETING: Outreach (Close), Content calendar, Social (Facebook/Instagram)
+    // =====================================================================
+    var outreach = null, outreachLoaded = false, outreachError = '', outRep = 'all';
+    async function loadOutreach(force) { if (outreachLoaded && !force) return; try { var r = await ppApi('getOutreach'); if (r.success) { outreach = r; outreachLoaded = true; outreachError = ''; } else outreachError = r.error || 'Unknown error'; } catch(e) { outreachError = e.message; } }
+    function outWeeks() { var ws = {}; ((outreach && outreach.weekly) || []).forEach(function(w) { ws[w.week] = true; }); ((outreach && outreach.sources) || []).forEach(function(s) { ws[s.week] = true; }); return Object.keys(ws).sort().slice(-12); }
+    function renderOutreach() {
+      var el = document.getElementById('outreachBody'); if (!el) return;
+      if (!outreachLoaded) { el.innerHTML = outreachError ? ppSetupEmpty('Outreach', outreachError) : '<div class="pp-empty">Loading Close outreach data...</div>'; return; }
+      if (!outreach.keyPresent) { el.innerHTML = '<div class="pp-empty"><strong>Close is not connected</strong>Add CLOSE_API_KEY, then run ppSetupMarketingTriggers.</div>'; return; }
+      var weeks = outWeeks(), weekly = outreach.weekly.filter(function(w) { return outRep === 'all' || w.rep === outRep; });
+      var byWeek = {}; weeks.forEach(function(w) { byWeek[w] = { sent: 0, opened: 0, replies: 0, bulk: 0, seq: 0 }; }); weekly.forEach(function(w) { var b = byWeek[w.week]; if (!b) return; b.sent += +w.sent || 0; b.opened += +w.opened || 0; b.replies += +w.replies || 0; b.bulk += +w.bulk || 0; b.seq += +w.sequenceSends || 0; });
+      var last4 = weeks.slice(-4), prev4 = weeks.slice(-8, -4), sum = function(list, k) { return list.reduce(function(n, w) { return n + (byWeek[w] ? byWeek[w][k] : 0); }, 0); };
+      var sent4 = sum(last4, 'sent'), open4 = sum(last4, 'opened'), rep4 = sum(last4, 'replies'), sentP = sum(prev4, 'sent');
+      var maxSent = Math.max(1, Math.max.apply(null, weeks.map(function(w) { return byWeek[w].sent; })));
+      var kpi = function(v, l, s, cls) { return '<div class="hq-kpi ' + (cls || '') + '" style="cursor:default"><div class="v">' + v + '</div><div class="l">' + l + '</div><div class="s">' + s + '</div></div>'; };
+      var trend = sentP ? Math.round((sent4 - sentP) / sentP * 100) : null;
+      var repRows = {}; outreach.weekly.forEach(function(w) { if (last4.indexOf(w.week) < 0) return; var r = repRows[w.rep] = repRows[w.rep] || { rep: w.rep, name: w.repName, sent: 0, opened: 0, replies: 0 }; r.sent += +w.sent || 0; r.opened += +w.opened || 0; r.replies += +w.replies || 0; });
+      var reps = Object.keys(repRows).map(function(k) { return repRows[k]; }).sort(function(a, b) { return b.sent - a.sent; });
+      var srcAgg = {}; outreach.sources.forEach(function(s) { if (last4.indexOf(s.week) < 0) return; srcAgg[s.source] = (srcAgg[s.source] || 0) + (+s.count || 0); }); var srcRows = Object.keys(srcAgg).sort(function(a, b) { return srcAgg[b] - srcAgg[a]; }).slice(0, 8);
+      var seqs = outreach.sequences.slice().sort(function(a, b) { return (+b.active || 0) - (+a.active || 0); });
+      el.innerHTML = '<div class="hq-kpis mk-kpis">' + kpi(sent4, 'Emails sent', 'last 4 weeks' + (trend !== null ? ' &middot; ' + (trend >= 0 ? '+' : '') + trend + '% vs prior 4' : ''), trend !== null && trend < 0 ? 'warn' : '') + kpi(sent4 ? Math.round(open4 / sent4 * 100) + '%' : '-', 'Open rate', open4 + ' opened', '') + kpi(rep4, 'Replies received', sent4 ? Math.round(rep4 / sent4 * 100) + '% reply rate' : '', rep4 ? 'good' : '') + kpi(seqs.reduce(function(n, s) { return n + (+s.active || 0); }, 0), 'In sequences now', seqs.filter(function(s) { return +s.active; }).length + ' sequences running', '') + kpi(srcRows.reduce(function(n, s) { return n + srcAgg[s]; }, 0), 'New Close leads', 'last 4 weeks, by source below', '') + '</div>'
+        + '<div class="mk-grid">'
+        + '<div class="stat-card mk-span2"><h3>Emails by week<span class="n">' + (outRep === 'all' ? 'everyone' : ppRepName(outRep)) + '</span></h3><div class="mk-cols">' + weeks.map(function(w) { var b = byWeek[w]; return '<div class="mk-col" title="Week of ' + ppFmtDate(w, { month: 'short', day: 'numeric' }) + ': ' + b.sent + ' sent, ' + b.opened + ' opened, ' + b.replies + ' replies"><div class="mk-col-bars"><i class="sent" style="height:' + Math.round(b.sent / maxSent * 100) + '%"></i><i class="opened" style="height:' + Math.round(b.opened / maxSent * 100) + '%"></i><i class="rep" style="height:' + Math.round(b.replies / maxSent * 100) + '%"></i></div><span class="mk-col-l">' + ppFmtDate(w, { month: 'numeric', day: 'numeric' }) + '</span><span class="mk-col-v">' + b.sent + '</span></div>'; }).join('') + '</div><div class="hq-legend" style="margin-top:8px"><span><i style="background:var(--pp-blue)"></i>Sent</span><span><i style="background:var(--pp-green)"></i>Opened</span><span><i style="background:#7c3aed"></i>Replies</span></div></div>'
+        + '<div class="stat-card"><h3>By rep, last 4 weeks</h3>' + (reps.length ? reps.map(function(r) { return '<div class="ts-bar"><div class="lbl" style="display:flex;align-items:center;gap:6px">' + (TEAM_MEMBERS.some(function(m) { return m.email === r.rep; }) ? getTeamPhoto(r.rep, 20) : '') + ppEsc(ppRepName(r.rep) || r.name || r.rep) + '</div><div class="track"><div class="fill" style="width:' + Math.round(r.sent / Math.max(1, reps[0].sent) * 100) + '%"></div></div><div class="val">' + r.sent + ' <span style="color:var(--text3);font-weight:500">' + (r.sent ? Math.round(r.opened / r.sent * 100) : 0) + '% open, ' + r.replies + ' repl' + (r.replies === 1 ? 'y' : 'ies') + '</span></div></div>'; }).join('') : '<div class="pp-up-empty">No emails in the last 4 weeks.</div>') + '</div>'
+        + '<div class="stat-card"><h3>New leads by source, last 4 weeks</h3>' + (srcRows.length ? csBars(srcRows.map(function(s) { return { label: s, value: srcAgg[s] }; }), srcAgg[srcRows[0]]) : '<div class="pp-up-empty">No leads created in Close in the last 4 weeks.</div>') + '</div>'
+        + '<div class="stat-card mk-span2"><h3>Sequences<span class="n">' + seqs.length + '</span></h3>' + (seqs.length ? '<div class="table-wrapper" style="border-radius:10px"><table class="pp-table" style="min-width:600px"><thead><tr><th>Sequence</th><th>Status</th><th>Active</th><th>Finished</th><th>Replied</th><th>Reply rate</th><th>Unsub / bounce</th></tr></thead><tbody>' + seqs.map(function(s) { var t = +s.total || 0, rp = +s.replied || 0; return '<tr><td><div class="pp-org-name">' + ppEsc(s.name) + '</div><div class="pp-org-sub">' + t + ' enrolled all time</div></td><td><span class="pp-chip ' + (s.status === 'active' ? 'booked' : 'inactive') + '">' + ppEsc(s.status || '-') + '</span></td><td><b>' + (s.active || 0) + '</b></td><td>' + (s.finished || 0) + '</td><td>' + rp + '</td><td>' + (t ? '<span class="pp-chip ' + (rp / t >= 0.1 ? 'booked' : rp / t >= 0.03 ? 'need-to-book' : 'unset') + '">' + Math.round(rp / t * 100) + '%</span>' : '-') + '</td><td>' + (s.unsubscribed || 0) + ' / ' + (s.bounced || 0) + '</td></tr>'; }).join('') + '</tbody></table></div>' : '<div class="pp-up-empty">No sequences in Close yet.</div>') + '</div>'
+        + '</div>';
+    }
+    async function syncOutreachNow(btn) { var o = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<svg class="pp-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></svg> Syncing with Close (a minute or two)...'; try { var r = await ppApi('syncOutreach', {}, 170000); if (!r.success) throw new Error(r.error); await loadOutreach(true); renderOutreach(); showToast('Outreach synced: ' + r.sequences + ' sequences, ' + r.weeks + ' rep-weeks', 'success'); } catch(e) { showToast(e.message, 'error'); } btn.disabled = false; btn.innerHTML = o; }
+
+    // ---- content calendar ----
+    var CP_CHANNELS = ['LinkedIn', 'Facebook', 'Instagram', 'X', 'Email', 'Blog', 'Video', 'Other'], CP_STATUSES = [{ val: 'idea', label: 'Idea', cls: 'unset' }, { val: 'drafted', label: 'Drafted', cls: 'need-to-book' }, { val: 'scheduled', label: 'Scheduled', cls: 'aud-supers' }, { val: 'published', label: 'Published', cls: 'booked' }];
+    var CP_COLS = ['id', 'date', 'channel', 'status', 'title', 'copy', 'assetUrl', 'postUrl', 'owner', 'campaign', 'impressions', 'engagements', 'clicks', 'notes', 'updatedAt', 'updatedBy'];
+    var cpList = [], cpLoaded = false, cpError = '', cpFilter = 'upcoming';
+    async function loadContentPosts(force) { if (cpLoaded && !force) return; try { var r = await ppApi('getContentPosts'); if (r.success) { cpList = (r.rows || []).map(function(x) { var o = {}; CP_COLS.forEach(function(c) { o[c] = x[c] === undefined ? '' : String(x[c]); }); return o; }); cpLoaded = true; cpError = ''; } else cpError = r.error || 'Unknown error'; } catch(e) { cpError = e.message; } }
+    function cpRow(p) {
+      var cell = function(field, inner) { return '<td class="pp-cell" data-edit="' + field + '" data-id="' + ppEsc(p.id) + '" title="Click to edit">' + inner + '</td>'; };
+      var st = CP_STATUSES.find(function(s) { return s.val === p.status; }) || CP_STATUSES[0], d = p.date ? ppDaysBetween(p.date, ppTodayISO()) : null;
+      return '<tr data-id="' + ppEsc(p.id) + '">'
+        + cell('date', p.date ? '<div class="ts-date' + (d !== null && d >= 0 && d <= 3 ? ' soon' : '') + '">' + ppFmtDate(p.date, { weekday: 'short', month: 'short', day: 'numeric' }) + '<span class="sub">' + (d === null ? '' : d === 0 ? 'Today' : d > 0 ? 'in ' + d + 'd' : Math.abs(d) + 'd ago') + '</span></div>' : '<span class="pp-placeholder">Set date</span>')
+        + cell('title', '<div class="pp-org-name">' + ppEsc(p.title || '(untitled)') + '</div><div class="pp-org-sub">' + ppEsc((p.copy || '').slice(0, 90)) + (p.copy && p.copy.length > 90 ? '...' : '') + '</div>')
+        + cell('channel', '<span class="pp-chip pick cp-' + (p.channel || 'other').toLowerCase() + '">' + ppEsc(p.channel || 'Channel?') + '<i class="caret"></i></span>')
+        + cell('status', '<span class="pp-chip pick ' + st.cls + '">' + st.label + '<i class="caret"></i></span>')
+        + cell('owner', p.owner ? '<div style="display:flex;align-items:center;gap:6px">' + ppRepAvatars(p.owner, 22) + '<span style="font-size:11px;color:var(--text2)">' + ppEsc(ppRepName(p.owner)) + '</span></div>' : '<span class="pp-chip need-to-book">Owner<i class="caret"></i></span>')
+        + cell('campaign', p.campaign ? '<span class="pp-chip aud-other">' + ppEsc(p.campaign) + '</span>' : '<span class="pp-placeholder">Campaign</span>')
+        + '<td>' + (p.postUrl ? '<a class="pp-mini-btn ts-link" href="' + ppEsc(p.postUrl) + '" target="_blank" rel="noopener" title="Open the post" onclick="event.stopPropagation()">' + ppSvg('link') + '</a>' : '') + (p.assetUrl ? ' <a class="pp-mini-btn" href="' + ppEsc(p.assetUrl) + '" target="_blank" rel="noopener" title="Asset" onclick="event.stopPropagation()">&#128444;</a>' : '') + '</td>'
+        + cell('metrics', p.status === 'published' ? '<span class="cp-metrics">' + (p.impressions ? '<b>' + ppEsc(p.impressions) + '</b> impr' : '') + (p.engagements ? ' &middot; <b>' + ppEsc(p.engagements) + '</b> eng' : '') + (p.clicks ? ' &middot; <b>' + ppEsc(p.clicks) + '</b> clicks' : '') + (!p.impressions && !p.engagements && !p.clicks ? '<span class="pp-placeholder">Add results</span>' : '') + '</span>' : '<span class="pp-placeholder">-</span>')
+        + '<td style="text-align:right;white-space:nowrap"><button class="pp-mini-btn" title="Open" onclick="event.stopPropagation();openContentModal(\'' + ppEsc(p.id) + '\')">' + ppSvg('expand') + '</button></td></tr>';
+    }
+    function renderContent() {
+      var body = document.getElementById('cpTableBody'), stats = document.getElementById('cpStats'); if (!body) return;
+      if (!cpLoaded) { body.innerHTML = '<tr><td colspan="9">' + (cpError ? ppSetupEmpty('Content', cpError) : '<div class="pp-empty">Loading...</div>') + '</td></tr>'; return; }
+      var today = ppTodayISO(), week = new Date(); week.setDate(week.getDate() - 7);
+      var rows = cpList.filter(function(p) { if (cpFilter === 'upcoming') return p.status !== 'published' || (p.date && p.date >= today); if (cpFilter === 'published') return p.status === 'published'; if (cpFilter === 'ideas') return p.status === 'idea'; return true; }).sort(function(a, b) { return (a.date || '9999') < (b.date || '9999') ? -1 : 1; });
+      var thisWeek = cpList.filter(function(p) { return p.date && ppDaysBetween(p.date, today) !== null && ppDaysBetween(p.date, today) >= 0 && ppDaysBetween(p.date, today) <= 7 && p.status !== 'published'; }).length, pub30 = cpList.filter(function(p) { return p.status === 'published' && p.date && ppDaysBetween(today, p.date) <= 30; }).length, noOwner = cpList.filter(function(p) { return !p.owner && p.status !== 'published'; }).length;
+      var byChan = {}; cpList.filter(function(p) { return p.status === 'published' && p.date && ppDaysBetween(today, p.date) <= 30; }).forEach(function(p) { byChan[p.channel || 'Other'] = (byChan[p.channel || 'Other'] || 0) + 1; });
+      if (stats) stats.innerHTML = '<div class="pp-stat" style="cursor:default"><div class="v">' + thisWeek + '</div><div class="l">Going out this week</div></div><div class="pp-stat" style="cursor:default"><div class="v">' + pub30 + '</div><div class="l">Published, last 30 days</div><div class="s">' + Object.keys(byChan).map(function(c) { return c + ' ' + byChan[c]; }).join(' &middot; ') + '</div></div><div class="pp-stat ' + (noOwner ? 'warn' : 'good') + '" style="cursor:default"><div class="v">' + noOwner + '</div><div class="l">Without an owner</div></div><div class="pp-stat" style="cursor:default"><div class="v">' + cpList.filter(function(p) { return p.status === 'idea'; }).length + '</div><div class="l">Ideas in the backlog</div></div>';
+      body.innerHTML = (rows.length ? rows.map(cpRow).join('') : '<tr><td colspan="9"><div class="pp-empty"><strong>Nothing here yet</strong>Add a post below. Ideas are welcome; give them a date when they are real.</div></td></tr>') + '<tr class="ts-add-row"><td colspan="9"><input class="ts-add-input cp-add-input" placeholder="+ Type a post title and press Enter" autocomplete="off"></td></tr>';
+    }
+    document.addEventListener('keydown', function(e) { if (e.key === 'Enter' && e.target && e.target.classList && e.target.classList.contains('cp-add-input')) { e.preventDefault(); cpQuickAdd(e.target); } });
+    async function cpQuickAdd(input) { var t = input.value.trim(); if (!t) return; var p = { id: '', title: t, date: '', channel: '', status: 'idea', owner: currentUser?.email || '', copy: '', assetUrl: '', postUrl: '', campaign: '', impressions: '', engagements: '', clicks: '', notes: '' }; input.disabled = true; try { var r = await ppApi('saveContentPost', { row: p }); if (!r.success) throw new Error(r.error); p.id = r.id; cpList.push(p); renderContent(); } catch(e) { input.disabled = false; showToast('Could not add: ' + e.message, 'error'); } }
+    function cpCellEdit(id, field, cell) {
+      var p = cpList.find(function(x) { return x.id === id; }); if (!p) return;
+      var save = function(patch) { var prev = {}; Object.keys(patch).forEach(function(k) { prev[k] = p[k]; p[k] = patch[k]; }); renderContent(); ppApi('saveContentPost', { row: p }).then(function(r) { if (!r.success) throw new Error(r.error || 'Save failed'); }).catch(function(err) { Object.keys(prev).forEach(function(k) { p[k] = prev[k]; }); renderContent(); showToast('Could not save: ' + err.message, 'error'); }); };
+      switch (field) {
+        case 'date': ppFormPopover(cell, [{ key: 'date', label: 'Publish date', type: 'date', value: p.date }], function(v) { save(v); }, { title: 'When' }); break;
+        case 'title': ppFormPopover(cell, [{ key: 'title', label: 'Title', value: p.title }, { key: 'copy', label: 'Copy', value: p.copy }], function(v) { save(v); }, { title: 'Post', footer: '<button type="button" class="pp-btn" onclick="ppPopoverClose();openContentModal(\'' + ppEsc(id) + '\')">Full editor</button>' }); break;
+        case 'channel': ppStatusPicker(cell, CP_CHANNELS.map(function(c) { return { val: c, label: c, cls: 'cp-' + c.toLowerCase() }; }), p.channel, function(v) { save({ channel: v }); }); break;
+        case 'status': ppStatusPicker(cell, CP_STATUSES, p.status, function(v) { save({ status: v }); }); break;
+        case 'owner': ppStatusPicker(cell, TEAM_MEMBERS.map(function(m) { return { val: m.email, label: m.name, cls: p.owner === m.email ? 'active' : 'unset' }; }).concat([{ val: '', label: 'Nobody yet', cls: 'inactive' }]), p.owner, function(v) { save({ owner: v }); }); break;
+        case 'campaign': ppInlineEdit(cell, { value: p.campaign, placeholder: 'Campaign name', onSave: function(v) { save({ campaign: v }); } }); break;
+        case 'metrics': ppFormPopover(cell, [{ key: 'impressions', label: 'Impressions', type: 'number', value: p.impressions }, { key: 'engagements', label: 'Engagements', type: 'number', value: p.engagements }, { key: 'clicks', label: 'Clicks', type: 'number', value: p.clicks }], function(v) { save(v); }, { title: 'Results', inline: true }); break;
+      }
+    }
+    function openContentModal(id) {
+      var p = id ? cpList.find(function(x) { return x.id === id; }) : null; var isNew = !p; p = p || { id: '', title: '', date: '', channel: '', status: 'idea', owner: currentUser?.email || '', copy: '', assetUrl: '', postUrl: '', campaign: '', impressions: '', engagements: '', clicks: '', notes: '' };
+      ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + (isNew ? 'New Post' : ppEsc(p.title || 'Post')) + '</h2><div class="modal-subtitle">Content calendar</div></div><div class="modal-body"><div class="detail-section" style="margin-top:20px"><div class="pp-form">'
+        + '<div class="full"><label>Title</label><input id="cp_title" value="' + ppEsc(p.title) + '" autofocus></div><div><label>Date</label><input id="cp_date" type="date" value="' + ppEsc(p.date) + '"></div><div><label>Channel</label><select id="cp_channel"><option value="">Pick one</option>' + CP_CHANNELS.map(function(c) { return '<option' + (p.channel === c ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select></div><div><label>Status</label><select id="cp_status">' + CP_STATUSES.map(function(s) { return '<option value="' + s.val + '"' + (p.status === s.val ? ' selected' : '') + '>' + s.label + '</option>'; }).join('') + '</select></div><div><label>Owner</label><select id="cp_owner"><option value="">Nobody yet</option>' + TEAM_MEMBERS.map(function(m) { return '<option value="' + ppEsc(m.email) + '"' + (p.owner === m.email ? ' selected' : '') + '>' + ppEsc(m.name) + '</option>'; }).join('') + '</select></div><div><label>Campaign</label><input id="cp_campaign" value="' + ppEsc(p.campaign) + '" placeholder="e.g. Texas supts fall push"></div><div class="full"><label>Copy</label><textarea id="cp_copy" style="min-height:120px">' + ppEsc(p.copy) + '</textarea></div><div><label>Asset link</label><input id="cp_asset" type="url" value="' + ppEsc(p.assetUrl) + '" placeholder="Drive, Canva..."></div><div><label>Published post link</label><input id="cp_post" type="url" value="' + ppEsc(p.postUrl) + '"></div><div><label>Impressions</label><input id="cp_impr" type="number" value="' + ppEsc(p.impressions) + '"></div><div><label>Engagements</label><input id="cp_eng" type="number" value="' + ppEsc(p.engagements) + '"></div><div><label>Clicks</label><input id="cp_clicks" type="number" value="' + ppEsc(p.clicks) + '"></div><div class="full"><label>Notes</label><textarea id="cp_notes">' + ppEsc(p.notes) + '</textarea></div></div></div>'
+        + '<div class="pp-modal-actions">' + (isNew ? '<span></span>' : '<button class="pp-btn danger" onclick="deleteContentPost(\'' + ppEsc(p.id) + '\')">Delete</button>') + '<div class="right"><button class="pp-btn" onclick="closeModal()">Cancel</button><button class="pp-btn primary" onclick="saveContentModal(\'' + ppEsc(p.id) + '\')">' + (isNew ? 'Add' : 'Save') + '</button></div></div></div>');
+    }
+    async function saveContentModal(id) {
+      var g = function(i) { return document.getElementById(i).value.trim(); }; var row = { id: id, title: g('cp_title'), date: g('cp_date'), channel: g('cp_channel'), status: g('cp_status'), owner: g('cp_owner'), campaign: g('cp_campaign'), copy: g('cp_copy'), assetUrl: g('cp_asset'), postUrl: g('cp_post'), impressions: g('cp_impr'), engagements: g('cp_eng'), clicks: g('cp_clicks'), notes: g('cp_notes') };
+      if (!row.title) { showToast('Give the post a title', 'error'); return; }
+      try { var r = await ppApi('saveContentPost', { row: row }); if (!r.success) throw new Error(r.error); row.id = r.id; var i = cpList.findIndex(function(x) { return x.id === row.id; }); if (i >= 0) cpList[i] = Object.assign(cpList[i], row); else cpList.push(row); closeModal(); renderContent(); showToast('Saved', 'success'); } catch(e) { showToast('Could not save: ' + e.message, 'error'); }
+    }
+    async function deleteContentPost(id) { if (!confirm('Delete this post from the calendar?')) return; try { var r = await ppApi('deleteContentPost', { id: id }); if (!r.success) throw new Error(r.error); cpList = cpList.filter(function(x) { return x.id !== id; }); closeModal(); renderContent(); } catch(e) { showToast(e.message, 'error'); } }
+
+    // ---- social (Facebook / Instagram) ----
+    var social = null, socialLoaded = false, socialError = '', socialNet = 'all';
+    async function loadSocial(force) { if (socialLoaded && !force) return; try { var r = await ppApi('getSocial'); if (r.success) { social = r; socialLoaded = true; socialError = ''; } else socialError = r.error || 'Unknown error'; } catch(e) { socialError = e.message; } }
+    function renderSocial() {
+      var el = document.getElementById('socialBody'); if (!el) return;
+      if (!socialLoaded) { el.innerHTML = socialError ? ppSetupEmpty('Social', socialError) : '<div class="pp-empty">Loading...</div>'; return; }
+      if (!social.connected) { el.innerHTML = '<div class="stat-card"><h3>Connect Facebook and Instagram</h3><div class="soc-setup"><p>The tool reads your Page and Instagram business account through Meta\'s Graph API with a Page access token. One-time setup, about 15 minutes, done by whoever administers the PracticePlan Facebook Page:</p><ol><li>Go to <a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener">developers.facebook.com/apps</a> and create an app (type: Business). Any name works, e.g. "PracticePlan Admin".</li><li>Open <a href="https://developers.facebook.com/tools/explorer/" target="_blank" rel="noopener">Graph API Explorer</a>, pick that app, click <b>Generate Access Token</b>, and grant: <code>pages_show_list</code>, <code>pages_read_engagement</code>, <code>read_insights</code>, <code>instagram_basic</code>, <code>instagram_manage_insights</code>.</li><li>In the explorer, request <code>me/accounts?fields=name,id,access_token,instagram_business_account</code>. Copy the PracticePlan Page\'s <code>id</code>, its <code>access_token</code>, and the <code>instagram_business_account.id</code>.</li><li>Exchange for a long-lived token: <a href="https://developers.facebook.com/tools/debug/accesstoken/" target="_blank" rel="noopener">Access Token Debugger</a> &rsaquo; paste the token &rsaquo; <b>Extend Access Token</b>. Page tokens derived this way do not expire.</li><li>In the Apps Script project: Project Settings &rsaquo; Script Properties &rsaquo; add <code>META_PAGE_TOKEN</code>, <code>META_PAGE_ID</code>, <code>IG_USER_ID</code>. Then come back here and click Sync now.</li></ol><p class="pp-toolbar-note">Read only. The token can be revoked any time from the app settings.</p></div></div>'; return; }
+      var st = social.stats || {}, rows = social.rows.filter(function(p) { return socialNet === 'all' || p.network === socialNet; }).sort(function(a, b) { return a.postedAt < b.postedAt ? 1 : -1; });
+      var today = ppTodayISO(), last30 = rows.filter(function(p) { return p.postedAt && ppDaysBetween(today, p.postedAt.slice(0, 10)) <= 30; });
+      var sum = function(k) { return last30.reduce(function(n, p) { return n + (+p[k] || 0); }, 0); };
+      var kpi = function(v, l, s, cls) { return '<div class="hq-kpi ' + (cls || '') + '" style="cursor:default"><div class="v">' + v + '</div><div class="l">' + l + '</div><div class="s">' + s + '</div></div>'; };
+      el.innerHTML = '<div class="hq-kpis mk-kpis">' + kpi(st.facebook ? st.facebook.followers.toLocaleString() : '-', 'Facebook followers', st.facebook ? ppEsc(st.facebook.name) : (st.facebookError ? 'error: ' + ppEsc(st.facebookError.slice(0, 40)) : 'not set'), '') + kpi(st.instagram ? st.instagram.followers.toLocaleString() : '-', 'Instagram followers', st.instagram ? '@' + ppEsc(st.instagram.name) : (st.instagramError ? 'error: ' + ppEsc(st.instagramError.slice(0, 40)) : 'not set'), '') + kpi(last30.length, 'Posts, last 30 days', socialNet === 'all' ? 'both networks' : socialNet, '') + kpi(sum('reach').toLocaleString(), 'Reach', 'last 30 days', '') + kpi(sum('engagements').toLocaleString(), 'Engagements', sum('reach') ? (sum('engagements') / sum('reach') * 100).toFixed(1) + '% of reach' : '', 'good') + '</div>'
+        + (rows.length ? '<div class="soc-grid">' + rows.slice(0, 24).map(function(p) { return '<a class="soc-card" href="' + ppEsc(p.permalink) + '" target="_blank" rel="noopener"><div class="soc-media">' + (p.mediaUrl ? '<img src="' + ppEsc(p.mediaUrl) + '" alt="" loading="lazy" onerror="this.parentNode.classList.add(\'nomedia\')">' : '') + '<span class="soc-net ' + p.network + '">' + (p.network === 'facebook' ? 'f' : 'ig') + '</span></div><div class="soc-body"><div class="soc-msg">' + ppEsc((p.message || '(no caption)').slice(0, 140)) + '</div><div class="soc-meta"><span>' + ppFmtDate(p.postedAt.slice(0, 10), { month: 'short', day: 'numeric' }) + '</span><span title="Reach">' + (+p.reach || 0).toLocaleString() + ' reach</span><span title="Likes / comments / shares">&#10084; ' + (p.likes || 0) + ' &middot; &#128172; ' + (p.comments || 0) + (p.shares ? ' &middot; &#8617; ' + p.shares : '') + '</span></div></div></a>'; }).join('') + '</div>' : '<div class="pp-empty">No posts synced yet. Click Sync now.</div>');
+    }
+    async function syncSocialNow(btn) { var o = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<svg class="pp-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></svg> Syncing with Meta...'; try { var r = await ppApi('syncSocial', {}, 120000); if (!r.success) throw new Error(r.error); await loadSocial(true); renderSocial(); var st = r.stats || {}; showToast(r.posts + ' posts synced' + (st.facebookError || st.instagramError ? ' (with errors, see the cards)' : ''), st.facebookError || st.instagramError ? 'error' : 'success'); } catch(e) { showToast(e.message, 'error'); } btn.disabled = false; btn.innerHTML = o; }
+
+    // ---- landing page liveness (badge + check button) ----
+    async function checkLandingPagesNow(btn) { var o = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<svg class="pp-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></svg> Checking...'; try { var r = await ppApi('checkLandingPages', {}, 120000); if (!r.success) throw new Error(r.error); await loadLandingPages(true); renderLandingPages(); showToast(r.live + ' of ' + r.checked + ' pages are live', r.live < r.checked ? 'error' : 'success'); } catch(e) { showToast(e.message, 'error'); } btn.disabled = false; btn.innerHTML = o; }
+    // =====================================================================
+    // ONBOARDING PLAYBOOK (from the District Onboarding Checklist document)
+    // Per-client state lives in the Checklists sheet under pb_* ids, so it follows the record everywhere.
+    // =====================================================================
+    var PB_OWNERS = { lead: { label: 'Onboarding Lead', cls: 'pb-o-lead' }, pp: { label: 'PracticePlan', cls: 'pb-o-pp' }, district: { label: 'District', cls: 'pb-o-district' } };
+    var PB_PHASES = [
+      { id: 'kickoff', num: 1, title: 'Kickoff & Discovery', stage: 'in-progress', milestone: 'kickoff', steps: [
+        { id: 'k1', task: 'Schedule kickoff call with district point of contact', owner: 'lead', customer: true },
+        { id: 'k2', task: 'Confirm district decision-makers and day-to-day contacts', owner: 'lead', customer: true },
+        { id: 'k3', task: 'Collect list of facilities, campuses, and bookable spaces', owner: 'district', customer: true },
+        { id: 'k4', task: 'Identify facility types and any special-use restrictions', owner: 'district', customer: true },
+        { id: 'k5', task: 'Confirm approval workflow and required approvers per facility', owner: 'lead', customer: true },
+        { id: 'k6', task: 'Set onboarding timeline and target go-live date', owner: 'lead', customer: true } ] },
+      { id: 'setup', num: 2, title: 'Facility & Asset Setup', stage: 'onboarding', steps: [
+        { id: 's1', task: 'Create campuses and facility records in PracticePlan', owner: 'pp' },
+        { id: 's2', task: 'Add bookable assets (gyms, fields, rooms, equipment) per campus', owner: 'pp' },
+        { id: 's3', task: 'Configure asset availability windows and blackout dates', owner: 'pp' },
+        { id: 's4', task: 'Map approver queues to the correct facilities and assets', owner: 'pp' },
+        { id: 's5', task: 'Load fee schedules and rental pricing tiers', owner: 'pp' },
+        { id: 's6', task: 'Confirm insurance / Certificate of Liability requirements', owner: 'district', customer: true } ] },
+      { id: 'agreements', num: 3, title: 'Agreements & Policy Updates', stage: 'onboarding', steps: [
+        { id: 'a1', task: 'Review district\'s Facility Use Agreement / Rental Agreement', owner: 'lead' },
+        { id: 'a2', task: 'Remove sections now handled in PracticePlan (request forms, fee schedules)', owner: 'lead' },
+        { id: 'a3', task: 'Update payment terms to reflect payment-at-approval process', owner: 'lead' },
+        { id: 'a4', task: 'Update cancellation / refund policy language', owner: 'lead' },
+        { id: 'a5', task: 'Circulate revised agreement for district sign-off', owner: 'district', customer: true },
+        { id: 'a6', task: 'Document change log summarizing all revisions', owner: 'lead' } ] },
+      { id: 'calendar', num: 4, title: 'Calendar & Systems Integration', stage: 'onboarding', steps: [
+        { id: 'c1', task: 'Set up master facility calendar per campus', owner: 'district', customer: true },
+        { id: 'c2', task: 'Connect asset-mapped sub-calendars (e.g., Outlook 365)', owner: 'district', customer: true },
+        { id: 'c3', task: 'Test event entry and sync between PracticePlan and calendar', owner: 'pp' },
+        { id: 'c4', task: 'Verify notification settings for reservation requests and approvals', owner: 'pp' } ] },
+      { id: 'training', num: 5, title: 'Training & Enablement', stage: 'published', steps: [
+        { id: 't1', task: 'Deliver admin training (facility setup, approvals, reporting)', owner: 'lead', customer: true },
+        { id: 't2', task: 'Deliver requester training (first-time login, submitting a reservation)', owner: 'lead', customer: true },
+        { id: 't3', task: 'Share branded quick-reference guide / training deck', owner: 'lead', customer: true },
+        { id: 't4', task: 'Confirm district staff can log in and submit a test reservation', owner: 'district', customer: true },
+        { id: 't5', task: 'Answer open questions from training sessions', owner: 'lead' } ] },
+      { id: 'golive', num: 6, title: 'Go-Live & Post-Launch', stage: 'launched', milestone: 'golive_call', steps: [
+        { id: 'g1', task: 'Confirm all facilities and assets are live and bookable', owner: 'pp' },
+        { id: 'g2', task: 'Send go-live announcement to district staff', owner: 'district', customer: true },
+        { id: 'g3', task: 'Monitor first reservation cycle for issues', owner: 'lead' },
+        { id: 'g4', task: 'Schedule 30-day check-in with district contact', owner: 'lead', customer: true },
+        { id: 'g5', task: 'Collect feedback and close out onboarding', owner: 'lead' } ] }
+    ];
+    var PB_STAGE_ORDER = ['new', 'in-progress', 'review', 'complete', 'onboarding', 'published', 'launched'];
+    var pbClient = '', pbDistrictView = false, pbCollapsed = {};
+    function pbCustom(email, phaseId) { try { return JSON.parse(getChecklist(email)['pb_custom_' + phaseId + '_field'] || '[]'); } catch(e) { return []; } }
+    function pbSteps(email, phase) { return phase.steps.concat(pbCustom(email, phase.id).map(function(c) { c._custom = true; return c; })); }
+    function pbDone(email, stepId) { var v = getChecklist(email)['pb_' + stepId]; return v === true || v === 'true'; }
+    function pbProgress(email) { var t = 0, d = 0; PB_PHASES.forEach(function(ph) { pbSteps(email, ph).forEach(function(s) { t++; if (pbDone(email, s.id)) d++; }); }); return { done: d, total: t, pct: t ? Math.round(d / t * 100) : 0 }; }
+    function pbPhaseProgress(email, ph) { var steps = pbSteps(email, ph), d = steps.filter(function(s) { return pbDone(email, s.id); }).length; return { done: d, total: steps.length }; }
+    function pbCurrentPhase(email) { for (var i = 0; i < PB_PHASES.length; i++) { var p = pbPhaseProgress(email, PB_PHASES[i]); if (p.done < p.total) return PB_PHASES[i]; } return null; }
+    function pbClients() { return allData.filter(function(d) { return ['on-hold'].indexOf(d.pipelineStatus) < 0; }).sort(function(a, b) { return (b.updatedDate || 0) - (a.updatedDate || 0); }); }
+    function renderPlaybook() {
+      var side = document.getElementById('pbClients'), main = document.getElementById('pbMain'); if (!side) return;
+      var clients = pbClients();
+      if (!pbClient || !clients.some(function(c) { return c.email === pbClient; })) pbClient = (clients.find(function(c) { return ['in-progress', 'onboarding', 'review', 'complete'].indexOf(c.pipelineStatus) >= 0; }) || clients[0] || {}).email || '';
+      var q = ((document.getElementById('pbSearch') || {}).value || '').toLowerCase();
+      side.innerHTML = clients.filter(function(c) { return !q || (c.organization || '').toLowerCase().indexOf(q) >= 0; }).map(function(c) { var p = pbProgress(c.email), cur = pbCurrentPhase(c.email); return '<div class="pb-client' + (c.email === pbClient ? ' on' : '') + '" onclick="pbClient=\'' + ppEsc(c.email) + '\';renderPlaybook()">' + ppAvatar(c.organization, c.email, 30) + '<div class="pb-client-main"><b>' + ppEsc(c.organization || 'Unknown') + '</b><span>' + (PP_STATUS_LABELS[c.pipelineStatus] || c.pipelineStatus) + (cur ? ' &middot; ' + cur.num + '. ' + cur.title : ' &middot; complete') + '</span><div class="sub-bar" style="margin-top:4px"><div class="sub-bar-track"><i style="width:' + p.pct + '%;background:' + (p.pct === 100 ? 'var(--pp-green)' : 'var(--pp-blue)') + '"></i></div><span>' + p.pct + '%</span></div></div></div>'; }).join('') || '<div class="pp-up-empty">No onboardings match.</div>';
+      var d = clients.find(function(c) { return c.email === pbClient; });
+      if (!d) { main.innerHTML = '<div class="pp-empty"><strong>No onboarding selected</strong>Pick a district on the left. Records come from the form or a workbook import.</div>'; return; }
+      var email = d.email, prog = pbProgress(email), cur = pbCurrentPhase(email);
+      var head = '<div class="pb-head">' + ppAvatar(d.organization, email, 48) + '<div class="pb-head-main"><div class="pb-title">' + ppEsc(d.organization) + '</div><div class="pp-toolbar-note">' + ppEsc(d.contact || '') + (d.email ? ' &middot; ' + ppEsc(d.email) : '') + (d.accountRep ? ' &middot; ' + ppEsc(ppRepName(d.accountRep)) : '') + (d.goLiveDate ? ' &middot; go-live ' + ppFmtDate(d.goLiveDate) : '') + '</div></div><div class="pb-head-right"><span class="pp-chip" style="background:' + HQ_STATUS_COLORS[d.pipelineStatus] + '22;color:' + HQ_STATUS_COLORS[d.pipelineStatus] + '">' + (PP_STATUS_LABELS[d.pipelineStatus] || d.pipelineStatus) + '</span><label class="pb-toggle" title="Show only the steps the district will see"><input type="checkbox"' + (pbDistrictView ? ' checked' : '') + ' onchange="pbDistrictView=this.checked;renderPlaybook()"> District view</label><button class="pp-mini-btn" title="Open record" onclick="viewDetails(allData.find(function(x){return x.email===\'' + ppEsc(email) + '\'}))">' + ppSvg('expand') + '</button></div></div>'
+        + '<div class="pb-overall"><div class="pb-ring" style="--p:' + prog.pct + '"><b>' + prog.pct + '%</b></div><div><div class="pb-overall-t">' + prog.done + ' of ' + prog.total + ' steps done' + (cur ? ' &middot; now in <b>' + cur.num + '. ' + cur.title + '</b>' : ' &middot; <b>onboarding complete</b>') + '</div><div class="pb-phase-strip">' + PB_PHASES.map(function(ph) { var p = pbPhaseProgress(email, ph); return '<span class="pb-strip' + (p.done === p.total ? ' done' : cur && cur.id === ph.id ? ' now' : '') + '" title="' + ph.title + ': ' + p.done + '/' + p.total + '" onclick="pbCollapsed[\'' + ph.id + '\']=false;renderPlaybook();document.getElementById(\'pbph_' + ph.id + '\').scrollIntoView({behavior:\'smooth\',block:\'start\'})">' + ph.num + '</span>'; }).join('') + '</div></div><div class="pb-legend">' + Object.keys(PB_OWNERS).map(function(k) { return '<span class="pb-owner ' + PB_OWNERS[k].cls + '">' + PB_OWNERS[k].label + '</span>'; }).join('') + '<span class="pp-toolbar-note">&#128065; marks steps the district will see once the customer view ships</span></div></div>';
+      var phases = PB_PHASES.map(function(ph) {
+        var steps = pbSteps(email, ph).filter(function(s) { return !pbDistrictView || s.customer; }), p = pbPhaseProgress(email, ph), complete = p.done === p.total && p.total > 0, isNow = cur && cur.id === ph.id;
+        var collapsed = pbCollapsed[ph.id] === undefined ? (complete && !pbDistrictView) : pbCollapsed[ph.id];
+        var stageIdx = PB_STAGE_ORDER.indexOf(d.pipelineStatus), targetIdx = PB_STAGE_ORDER.indexOf(ph.stage);
+        var advance = complete && targetIdx > stageIdx ? '<button class="pp-btn primary pb-advance" onclick="event.stopPropagation();changePipelineStatus(\'' + d.sheetType + '\',' + d.rowIndex + ',\'' + ph.stage + '\',\'' + ppEsc(email) + '\')">Move to ' + (PP_STATUS_LABELS[ph.stage] || ph.stage) + '</button>' : '';
+        var rows = steps.map(function(s) {
+          var done = pbDone(email, s.id), cl = getChecklist(email), note = cl['pb_' + s.id + '_note_field'] || '', by = cl['pb_' + s.id + '_done_field'] || '', ownerKey = cl['pb_' + s.id + '_owner_field'] || s.owner, o = PB_OWNERS[ownerKey] || PB_OWNERS.lead;
+          return '<div class="pb-step' + (done ? ' done' : '') + '"><button type="button" class="pb-check' + (done ? ' on' : '') + '" onclick="pbToggle(\'' + ppEsc(email) + '\',\'' + s.id + '\',' + (!done) + ')" title="' + (done ? 'Mark not done' : 'Mark done') + '">' + (done ? '&#10003;' : '') + '</button><div class="pb-step-main"><div class="pb-task">' + ppEsc(s.task) + (s.customer ? ' <span class="pb-eye" title="District will see this step">&#128065;</span>' : '') + (s._custom ? ' <span class="ca-sub">custom</span>' : '') + '</div><div class="pb-meta">' + (by ? '<span class="ca-sub">done ' + ppEsc(String(by).split('|')[0]) + (String(by).split('|')[1] ? ' by ' + ppEsc(ppRepName(String(by).split('|')[1])) : '') + '</span>' : '') + '<span class="pb-note' + (note ? '' : ' empty') + '" onclick="pbNote(\'' + ppEsc(email) + '\',\'' + s.id + '\',this)">' + (note ? ppEsc(note) : 'Add a note') + '</span></div></div><button type="button" class="pb-owner ' + o.cls + '" onclick="pbOwner(\'' + ppEsc(email) + '\',\'' + s.id + '\',this)" title="Who drives this step">' + o.label + '<i class="caret" style="display:inline-block;width:0;height:0;border-left:3px solid transparent;border-right:3px solid transparent;border-top:4px solid currentColor;margin-left:5px;opacity:.6"></i></button>' + (s._custom ? '<button type="button" class="pp-mini-btn danger" title="Remove step" onclick="pbRemoveCustom(\'' + ppEsc(email) + '\',\'' + ph.id + '\',\'' + s.id + '\')">&#10005;</button>' : '') + '</div>';
+        }).join('');
+        return '<div class="pb-phase' + (collapsed ? ' collapsed' : '') + (complete ? ' complete' : '') + (isNow ? ' now' : '') + '" id="pbph_' + ph.id + '"><div class="pb-phase-h" onclick="pbCollapsed[\'' + ph.id + '\']=!this.parentNode.classList.contains(\'collapsed\');this.parentNode.classList.toggle(\'collapsed\')"><span class="pb-num">' + ph.num + '</span><div class="pb-phase-t"><b>' + ph.title + '</b><span>' + p.done + ' of ' + p.total + (isNow ? ' &middot; in progress' : complete ? ' &middot; complete' : '') + '</span></div><div class="pb-phase-bar"><i style="width:' + Math.round(p.done / Math.max(1, p.total) * 100) + '%"></i></div>' + advance + '<span class="ts-caret">&#x25BC;</span></div><div class="pb-phase-body">' + rows + (pbDistrictView ? '' : '<div class="pb-add"><input placeholder="+ Add a step to this phase for ' + ppEsc(d.organization) + '" onkeydown="if(event.key===\'Enter\'){event.preventDefault();pbAddCustom(\'' + ppEsc(email) + '\',\'' + ph.id + '\',this)}"></div>') + '</div></div>';
+      }).join('');
+      main.innerHTML = head + phases;
+    }
+    function pbToggle(email, stepId, on) {
+      setChecklist(email, 'pb_' + stepId, on);
+      setChecklist(email, 'pb_' + stepId + '_done_field', on ? ppTodayISO() + '|' + (currentUser?.email || '') : '');
+      var step = null, phase = null; PB_PHASES.forEach(function(ph) { pbSteps(email, ph).forEach(function(s) { if (s.id === stepId) { step = s; phase = ph; } }); });
+      var d = allData.find(function(x) { return x.email === email; });
+      logActivityToServer((on ? 'completed' : 'reopened') + ' onboarding step for', d ? d.organization : email, step ? step.task : stepId, 'checklist');
+      // phase complete -> tick the matching milestone so the pipeline dots and dashboard agree
+      if (phase && phase.milestone && on) { var pp = pbPhaseProgress(email, phase); if (pp.done === pp.total && !(getChecklist(email)[phase.milestone] === true || getChecklist(email)[phase.milestone] === 'true')) { setChecklist(email, phase.milestone, true); showToast(phase.title + ' complete. ' + ((CHECKLIST_ITEMS.find(function(i) { return i.id === phase.milestone; }) || {}).label || 'Milestone') + ' ticked.', 'success'); } }
+      renderPlaybook(); updateStats(); renderTable(); renderPipeline();
+    }
+    function pbNote(email, stepId, el) { ppInlineEdit(el, { value: getChecklist(email)['pb_' + stepId + '_note_field'] || '', placeholder: 'Dates, links, details', onSave: function(v) { setChecklist(email, 'pb_' + stepId + '_note_field', v); renderPlaybook(); } }); }
+    function pbOwner(email, stepId, el) { ppStatusPicker(el, Object.keys(PB_OWNERS).map(function(k) { return { val: k, label: PB_OWNERS[k].label, cls: k === 'district' ? 'aud-supers' : k === 'pp' ? 'booked' : 'aud-ads' }; }), getChecklist(email)['pb_' + stepId + '_owner_field'] || '', function(v) { setChecklist(email, 'pb_' + stepId + '_owner_field', v); renderPlaybook(); }); }
+    function pbAddCustom(email, phaseId, input) { var t = input.value.trim(); if (!t) return; var list = pbCustom(email, phaseId); list.push({ id: 'x' + Date.now().toString(36), task: t, owner: 'lead', customer: false }); setChecklist(email, 'pb_custom_' + phaseId + '_field', JSON.stringify(list)); renderPlaybook(); }
+    function pbRemoveCustom(email, phaseId, stepId) { var list = pbCustom(email, phaseId).filter(function(s) { return s.id !== stepId; }); setChecklist(email, 'pb_custom_' + phaseId + '_field', JSON.stringify(list)); setChecklist(email, 'pb_' + stepId, false); renderPlaybook(); }
+    function openPlaybookFor(email) { pbClient = email; switchView('playbook'); }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
     document.addEventListener('touchmove', function(e) {
