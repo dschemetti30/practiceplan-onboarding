@@ -1967,6 +1967,19 @@
     .cp-type{font-weight:700;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
     .cpi-type{grid-column:1/-1;padding:7px 9px;border:1px solid var(--border);border-radius:8px;background:var(--bg);font:inherit;font-size:12px;color:var(--text)}
     .cpi-conf.strong{color:var(--pp-green)}.cpi-conf.likely{color:#0891b2}.cpi-conf.weak{color:#b45309}.cpi-conf.none{color:#b91c1c}
+    /* ---- outreach v3.1 ---- */
+    .out-cust{display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:50px;background:rgba(0,168,79,0.10);color:var(--pp-green);margin-left:6px}
+    .out-cust.warn{background:#fef3c7;color:#b45309}
+    .out-seg.click{cursor:pointer;border-radius:10px;padding:6px 6px;margin:0 -6px}
+    .out-seg.click:hover{background:rgba(0,118,187,0.05)}
+    .out-fold{margin-bottom:14px}
+    .out-fold .stat-card{margin-top:10px}
+    .out-drill-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0 12px}
+    .out-drill-kpis div{background:var(--bg);border-radius:12px;padding:10px 12px}
+    .out-drill-kpis b{display:block;font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--text)}
+    .out-drill-kpis span{font-size:10.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+    tr.out-replied td:first-child .pp-org-name{color:var(--pp-green)}
+    @media(max-width:768px){.out-drill-kpis{grid-template-columns:1fr 1fr}}
   </style>
 </head>
 <body>
@@ -2348,7 +2361,7 @@
 
       <!-- ===== Marketing: Outreach ===== -->
       <div class="view-content" id="outreachView">
-        <div class="controls-row"><div><div class="section-title">Outreach from Close</div><div class="pp-toolbar-note" id="outreachHead"></div></div><div class="controls-right"><div class="controls-group filters-group"><div class="styled-select"><select id="outRepFilter" onchange="outRep=this.value;renderOutreach()"><option value="all">Everyone</option></select></div></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="syncOutreachNow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Sync now</button></div></div></div>
+        <div class="controls-row"><div><div class="section-title">Outreach from Close</div><div class="pp-toolbar-note" id="outreachHead"></div></div><div class="controls-right"><div class="controls-group filters-group"><div class="styled-select"><select id="outRepFilter" onchange="outRep=this.value;renderOutreach()"><option value="all">Everyone</option></select></div></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="backfillOutreachNow(this)" title="Pull email history from the start of Close usage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Load history</button><button class="text-action-btn" onclick="syncOutreachNow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Sync now</button></div></div></div>
         <div id="outreachBody"><div class="pp-empty">Loading...</div></div>
       </div>
 
@@ -7256,6 +7269,52 @@
       var card = document.createElement('div'); card.className = 'stat-card out-card'; card.innerHTML = '<h3>By post type' + (best ? '<span class="n">' + ppEsc(best) + ' performs best</span>' : '') + '</h3>' + rows.map(function(t) { var o = byType[t]; return '<div class="out-src"><div class="t"><b><i class="soc-dot" style="background:' + (CP_TYPE_COLORS[t] || '#94a3b8') + '"></i>' + ppEsc(t) + '</b><span>' + o.n + ' post' + (o.n === 1 ? '' : 's') + (o.reach ? ' &middot; ' + outFmt(o.reach) + ' reach &middot; ' + (o.eng / o.reach * 100).toFixed(1) + '%' : '') + '</span></div><div class="bar"><i style="width:' + Math.round(o.n / byType[rows[0]].n * 100) + '%;background:' + (CP_TYPE_COLORS[t] || '#94a3b8') + '"></i></div></div>'; }).join('') + (byType.Untagged ? '<div class="pp-toolbar-note">' + byType.Untagged.n + ' post' + (byType.Untagged.n === 1 ? '' : 's') + ' without a type. Open them and pick one; the tool suggests from the copy.</div>' : '');
       var grid = el.querySelector('.mk-grid'); if (grid) grid.appendChild(card); else el.appendChild(card);
     };
+    // =====================================================================
+    // OUTREACH v3.1: history windows, customer emails set aside, drill-down, sequences folded
+    // =====================================================================
+    outPeriod = 12;
+    var OUT_WINDOWS = [[4, '4 weeks'], [12, '12 weeks'], [26, '26 weeks'], [0, 'All time']];
+    function outWinKey() { return outPeriod === 0 ? '0' : String(outPeriod); }
+    outSegRows = function(dim) { var w = outWinKey(); return ((outreach && outreach.segments) || []).filter(function(s) { return s.dimension === dim && String(s.window === undefined ? '12' : s.window) === w; }).map(function(s) { return { value: s.value, sent: +s.sent || 0, opened: +s.opened || 0, replies: +s.replies || 0, leads: +s.leads || 0 }; }); };
+    outWeeks = function() { var ws = {}; ((outreach && outreach.weekly) || []).forEach(function(w) { ws[w.week] = true; }); ((outreach && outreach.sources) || []).forEach(function(s) { ws[s.week] = true; }); var all = Object.keys(ws).sort(); return outPeriod === 0 ? all : all.slice(-(outPeriod * 2)); };
+    var _renderOutreachV3 = renderOutreach;
+    renderOutreach = function() {
+      _renderOutreachV3();
+      var el = document.getElementById('outreachBody'); if (!el || !outreachLoaded || !outreach.keyPresent) return;
+      var cov = outreach.coverage || {}, cust = (cov.customerEmails || {})[outWinKey()] || 0;
+      // period toggle: replace the 4/8/12 buttons with the history windows
+      var tog = el.querySelector('.out-head .pp-view-toggle'); if (tog) tog.innerHTML = OUT_WINDOWS.map(function(w) { return '<button class="' + (outPeriod === w[0] ? 'on' : '') + '" onclick="outSetPeriod(' + w[0] + ')">' + w[1] + '</button>'; }).join('');
+      var note = el.querySelector('.out-head .pp-toolbar-note'); if (note) note.innerHTML = (outPeriod === 0 ? 'Everything since ' + (cov.since ? ppFmtDate(cov.since, { month: 'long', year: 'numeric' }) : 'the start') : 'Last ' + outPeriod + ' weeks vs the ' + outPeriod + ' before') + '. ' + (outRep === 'all' ? 'Everyone' : ppRepName(outRep)) + '.' + (cust ? ' <span class="out-cust" title="Emails to leads whose Close status is Won, Yes, or a customer status. Kept out of open, reply and segment numbers.">' + cust.toLocaleString() + ' emails to customers set aside</span>' : '') + (cov.backfillDone === false || (cov.backfillCursor && !cov.backfillDone) ? ' <span class="out-cust warn">History still loading' + (cov.backfillCursor ? ' (at ' + ppFmtDate(cov.backfillCursor, { month: 'short', day: 'numeric' }) + ')' : '') + '</span>' : '');
+      if (outPeriod === 0) { el.querySelectorAll('.out-delta').forEach(function(d) { d.style.display = 'none'; }); }
+      // segments become clickable drill-downs
+      el.querySelectorAll('.out-seg').forEach(function(s) { var b = s.querySelector('.out-seg-t b'); if (!b) return; s.classList.add('click'); s.title = 'See the leads in this group'; s.onclick = function() { outDrill(outDim, b.textContent); }; });
+      // sequences: fold into a disclosure at the bottom
+      var seqCard = [].slice.call(el.querySelectorAll('.stat-card')).find(function(c) { return /^Sequences/.test((c.querySelector('h3') || {}).textContent || ''); });
+      if (seqCard) { var running = (outreach.sequences || []).filter(function(s) { return +s.active; }).length; var wrap = document.createElement('div'); wrap.className = 'out-fold' + (window._outSeqOpen ? ' open' : ''); wrap.innerHTML = '<div class="dh-bar" onclick="window._outSeqOpen=!window._outSeqOpen;renderOutreach()"><span class="dh-dot"></span><b>Sequences</b>&nbsp;' + (outreach.sequences || []).length + ' in Close, ' + running + ' running. Not a big part of the motion yet.<span class="dh-caret">' + (window._outSeqOpen ? '&#x25B2;' : '&#x25BC;') + '</span></div>'; seqCard.parentNode.insertBefore(wrap, seqCard); if (window._outSeqOpen) wrap.appendChild(seqCard); else seqCard.remove(); }
+    };
+    var outDrillSort = 'replies';
+    async function outDrill(dim, value) {
+      var lbl = (OUT_DIMS.find(function(d) { return d[0] === dim; }) || ['', dim])[1].replace('By ', '');
+      ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + ppEsc(value) + '</h2><div class="modal-subtitle">' + ppEsc(lbl) + ' &middot; ' + (outPeriod === 0 ? 'all time' : 'last ' + outPeriod + ' weeks') + '</div></div><div class="modal-body"><div id="outDrillBody" class="pp-empty">Loading leads...</div></div>');
+      try {
+        var r = await ppApi('getOutreachLeads', { dimension: dim, value: value, window: outWinKey() }, 60000); if (!r.success) throw new Error(r.error || 'Could not load');
+        window._outDrillRows = r.rows || []; window._outDrillTotal = r.total || 0; window._outDrillLabel = value; outDrillRender();
+      } catch(e) { var b = document.getElementById('outDrillBody'); if (b) b.innerHTML = '<div class="pp-empty">' + ppEsc(e.message) + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v21)' : '') + '</div>'; }
+    }
+    function outDrillRender() {
+      var rows = (window._outDrillRows || []).slice(), b = document.getElementById('outDrillBody'); if (!b) return;
+      rows.sort(function(a, c) { if (outDrillSort === 'org') return (a.org || '').localeCompare(c.org || ''); if (outDrillSort === 'last') return (c.lastSent || '') < (a.lastSent || '') ? -1 : 1; return (c[outDrillSort] || 0) - (a[outDrillSort] || 0) || (c.sent || 0) - (a.sent || 0); });
+      var sent = rows.reduce(function(n, r) { return n + r.sent; }, 0), opened = rows.reduce(function(n, r) { return n + r.opened; }, 0), rep = rows.reduce(function(n, r) { return n + r.replies; }, 0), replied = rows.filter(function(r) { return r.replies; }).length;
+      var th = function(k, l) { return '<th class="ca-th' + (outDrillSort === k ? ' on' : '') + '" onclick="outDrillSort=\'' + k + '\';outDrillRender()">' + l + '<span class="sort-arrow">' + (outDrillSort === k ? '&#x25BC;' : '&#x25B4;') + '</span></th>'; };
+      b.className = '';
+      b.innerHTML = '<div class="out-drill-kpis"><div><b>' + rows.length.toLocaleString() + '</b><span>leads' + (window._outDrillTotal > rows.length ? ' (top ' + rows.length + ' of ' + window._outDrillTotal + ')' : '') + '</span></div><div><b>' + sent.toLocaleString() + '</b><span>emails</span></div><div><b>' + (sent ? Math.round(opened / sent * 100) : 0) + '%</b><span>open rate</span></div><div><b>' + replied.toLocaleString() + '</b><span>leads replied (' + rep + ' replies)</span></div></div>'
+        + '<div class="table-wrapper" style="border-radius:12px"><table class="pp-table" style="min-width:760px"><thead><tr>' + th('org', 'Lead') + '<th>Where / who</th>' + th('sent', 'Emails') + th('opened', 'Opened') + th('replies', 'Replies') + th('last', 'Last email') + '<th></th></tr></thead><tbody>' + rows.slice(0, 200).map(function(r) { return '<tr' + (r.replies ? ' class="out-replied"' : '') + '><td><div class="pp-org-name">' + ppEsc(r.org || r.leadId) + '</div><div class="pp-org-sub">' + ppEsc(r.status || '') + '</div></td><td style="font-size:11.5px;color:var(--text2)">' + ppEsc([r.state, r.leadType, r.size].filter(Boolean).join(' &middot; ').replace(/&amp;middot;/g, '&middot;')) + (r.roles ? '<div class="ca-sub">' + ppEsc(r.roles) + '</div>' : '') + '</td><td><b>' + r.sent + '</b></td><td>' + r.opened + (r.sent ? ' <span class="ca-sub" style="display:inline">(' + Math.round(r.opened / r.sent * 100) + '%)</span>' : '') + '</td><td>' + (r.replies ? '<span class="pp-chip booked">' + r.replies + '</span>' : '<span class="pp-placeholder">0</span>') + '</td><td class="time-ago">' + (r.lastSent ? ppFmtDate(String(r.lastSent).slice(0, 10), { month: 'short', day: 'numeric', year: 'numeric' }) : '-') + '</td><td><a class="pp-mini-btn ts-link" href="' + ppEsc(r.url) + '" target="_blank" rel="noopener" title="Open in Close">' + ppSvg('link') + '</a></td></tr>'; }).join('') + '</tbody></table></div>' + (rows.length > 200 ? '<div class="pp-toolbar-note" style="padding:8px 4px">Showing 200. Export coming if you need the full list.</div>' : '');
+    }
+    async function backfillOutreachNow(btn) {
+      var o = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<svg class="pp-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></svg> Loading history (a few minutes per run)...';
+      try { var r = await ppApi('backfillOutreach', {}, 300000); if (!r.success) throw new Error(r.error); showToast(r.done ? 'History complete.' : 'History loaded to ' + ppFmtDate(r.cursor, { month: 'short', day: 'numeric' }) + '; it keeps going every 10 minutes on its own.', 'success'); await loadOutreach(true); renderOutreach(); } catch(e) { showToast(e.message, 'error'); }
+      btn.disabled = false; btn.innerHTML = o;
+    }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
     document.addEventListener('touchmove', function(e) {
