@@ -1774,6 +1774,114 @@
     .ts-col-add input,.ts-col-add select{padding:9px 11px;border:1px solid var(--border);border-radius:9px;background:var(--bg);font:inherit;font-size:13px;color:var(--text)}
     .ts-col-chip{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:50px;background:rgba(124,58,237,0.12);color:#6d28d9;vertical-align:middle;margin-left:4px;cursor:pointer}
     @media(max-width:768px){.ts-col-add{grid-template-columns:1fr}}
+    /* ---- content import ---- */
+    .cpi-tabs{display:flex;gap:6px;margin-bottom:4px}
+    .cpi-tabs button{font:inherit;font-size:12px;font-weight:600;padding:7px 12px;border-radius:50px;border:1px solid var(--border);background:var(--card);color:var(--text2);cursor:pointer}
+    .cpi-tabs button.on{border-color:var(--pp-blue);color:var(--pp-blue);background:rgba(0,118,187,0.08)}
+    .cpi-text{width:100%;min-height:220px;padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--bg);font:inherit;font-size:13px;color:var(--text);resize:vertical}
+    .cpi-text:focus{outline:none;border-color:var(--pp-blue);box-shadow:0 0 0 3px var(--ring)}
+    .cpi-rows{display:flex;flex-direction:column;gap:10px;max-height:52vh;overflow-y:auto;padding-right:4px}
+    .cpi-row{display:flex;gap:12px;align-items:flex-start;padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--card)}
+    .cpi-img{width:96px;height:96px;border-radius:10px;background:var(--bg);border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;overflow:hidden;font-size:11px;color:var(--text3)}
+    .cpi-img:hover{border-color:var(--pp-blue);color:var(--pp-blue)}
+    .cpi-img img{width:100%;height:100%;object-fit:cover}
+    .cpi-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+    .cpi-fields{display:grid;grid-template-columns:150px 130px 1fr;gap:6px}
+    .cpi-fields input,.cpi-fields select,.cpi-title{padding:7px 9px;border:1px solid var(--border);border-radius:8px;background:var(--bg);font:inherit;font-size:12px;color:var(--text);min-width:0}
+    .cpi-title{font-weight:600}
+    .cpi-main textarea{min-height:64px;padding:8px 9px;border:1px solid var(--border);border-radius:8px;background:var(--bg);font:inherit;font-size:12px;color:var(--text);resize:vertical}
+    .cpi-social{display:flex;flex-direction:column;gap:6px;max-height:52vh;overflow-y:auto}
+    .cpi-soc{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--border);border-radius:12px;background:var(--card);cursor:pointer}
+    .cpi-soc img,.cpi-noimg{width:52px;height:52px;border-radius:8px;object-fit:cover;background:var(--bg);flex-shrink:0}
+    .cpi-soc-main{display:flex;flex-direction:column;min-width:0}
+    .cpi-soc-main b{font-size:12.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .cpi-soc-main span{font-size:11px;color:var(--text3)}
+    .cp-thumb{width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--bg)}
+    .cp-post-cell{display:flex;align-items:center;gap:10px;min-width:0}
+    #cp_asset_preview{display:none;max-width:220px;max-height:140px;border-radius:10px;margin-top:8px;border:1px solid var(--border)}
+    @media(max-width:768px){.cpi-fields{grid-template-columns:1fr 1fr}.cpi-row{flex-wrap:wrap}}
+    /* ---- outreach v2 + social v2 ---- */
+    .out-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+    .out-kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:14px}
+    .out-kpi{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px 12px;box-shadow:var(--sh-sm);min-width:0;display:flex;flex-direction:column;gap:8px;animation:ppCardIn .5s var(--ease) both}
+    .out-kpi-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+    .out-kpi .v{font-family:var(--font-display);font-size:26px;font-weight:800;color:var(--text);line-height:1.1;letter-spacing:-0.02em}
+    .out-kpi .l{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin-top:4px}
+    .out-kpi-foot{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden}
+    .out-kpi-foot span{overflow:hidden;text-overflow:ellipsis}
+    .out-spark{width:120px;height:32px;flex-shrink:0}
+    .out-delta{font-size:11px;font-weight:700;padding:2px 7px;border-radius:50px;background:var(--bg);color:var(--text2);flex-shrink:0}
+    .out-delta.up{background:rgba(0,168,79,0.12);color:var(--pp-green)}.out-delta.down{background:#fee2e2;color:#b91c1c}.out-delta.new{background:rgba(0,118,187,0.1);color:var(--pp-blue)}
+    .out-insights{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-bottom:14px}
+    .out-ins{padding:11px 14px;border-radius:12px;border-left:4px solid var(--border);background:var(--card);box-shadow:var(--sh-xs);display:flex;flex-direction:column;gap:2px}
+    .out-ins b{font-size:13px;color:var(--text)}.out-ins span{font-size:11.5px;color:var(--text3)}
+    .out-ins.good{border-left-color:var(--pp-green)}.out-ins.warn{border-left-color:#f59e0b}.out-ins.info{border-left-color:var(--pp-blue)}
+    .out-card{display:block;margin-bottom:14px}
+    .out-card h3{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .out-legend{margin-left:auto;font-size:11px;font-weight:500;text-transform:none;letter-spacing:0;color:var(--text3);display:inline-flex;align-items:center;gap:5px}
+    .out-legend i{width:10px;height:10px;border-radius:3px;display:inline-block;margin-left:8px}
+    .out-chart{width:100%;height:auto;display:block}
+    .out-grid{stroke:var(--border);stroke-width:1}
+    .out-axis{font-size:11px;fill:var(--text3)}
+    .out-b-sent{fill:var(--pp-blue);opacity:0.9}
+    .out-b-open{fill:var(--pp-green)}
+    .out-bar:hover .out-b-sent{opacity:1;filter:brightness(1.1)}
+    .out-line{fill:none;stroke:#7c3aed;stroke-width:2.5;stroke-linejoin:round}
+    .out-dot{fill:#7c3aed;stroke:var(--card);stroke-width:2}
+    .out-board{display:flex;flex-direction:column;gap:6px}
+    .out-rep{display:grid;grid-template-columns:28px 34px 1.4fr 1fr 1fr 120px;align-items:center;gap:12px;padding:9px 10px;border-radius:12px;background:var(--bg)}
+    .out-rep .rank{width:24px;height:24px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--text2)}
+    .rank.gold{background:#fef3c7;border-color:#f59e0b;color:#b45309}
+    .out-rep img,.out-rep>.pp-avatar-text{border-radius:50%}
+    .out-rep-main{min-width:0}
+    .out-rep-main b{display:block;font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .out-rep-main span{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px}
+    .out-rep-stat{min-width:0}
+    .out-rep-stat .l{font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)}
+    .out-rep-stat .bar{height:7px;border-radius:5px;background:var(--card);overflow:hidden;margin:3px 0}
+    .out-rep-stat .bar i{display:block;height:100%;border-radius:5px}
+    .out-rep-stat .v{font-size:12px;font-weight:700;color:var(--text)}
+    .out-src{margin-bottom:9px}
+    .out-src .t{display:flex;justify-content:space-between;gap:8px;font-size:12px;margin-bottom:3px}
+    .out-src .t b{color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px}
+    .out-src .t span{color:var(--text3);white-space:nowrap}
+    .out-src .bar{height:8px;border-radius:5px;background:var(--bg);overflow:hidden}
+    .out-src .bar i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--pp-blue),var(--pp-green))}
+    .out-seqs{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+    .out-seq{padding:12px 14px;border-radius:14px;border:1px solid var(--border);background:var(--bg)}
+    .out-seq.paused{opacity:0.7}
+    .out-seq-h{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+    .out-seq-t{min-width:0}.out-seq-t b{display:block;font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.out-seq-t span{font-size:11px;color:var(--text3)}
+    .out-ring{width:44px;height:44px;flex-shrink:0;transform:rotate(-90deg)}
+    .out-ring circle{fill:none;stroke-width:5;stroke-linecap:round}
+    .out-ring circle.bg{stroke:var(--card)}
+    .out-ring text{transform:rotate(90deg);transform-origin:20px 20px;font-size:10px;font-weight:800;fill:var(--text)}
+    .out-fun{display:grid;grid-template-columns:90px 1fr 36px;align-items:center;gap:8px;font-size:11px;color:var(--text2);margin:4px 0}
+    .out-fun .bar{height:7px;border-radius:5px;background:var(--card);overflow:hidden}
+    .out-fun .bar i{display:block;height:100%;border-radius:5px}
+    .out-fun .v{text-align:right;font-weight:700;color:var(--text)}
+    .soc-cadence{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px;height:170px;align-items:end}
+    .soc-wk{display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;gap:3px;min-width:0}
+    .soc-wk-bar{width:60%;max-width:26px;height:120px;display:flex;flex-direction:column-reverse;justify-content:flex-start;border-radius:6px;overflow:hidden;background:var(--bg)}
+    .soc-wk-bar i{display:block;width:100%}
+    .soc-wk span{font-size:9px;color:var(--text3)}.soc-wk b{font-size:10px;color:var(--text2)}
+    .soc-dot{width:9px;height:9px;border-radius:3px;display:inline-block}
+    .soc-top{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+    .soc-top-card{display:flex;align-items:center;gap:10px;padding:9px;border-radius:12px;background:var(--bg);cursor:pointer;transition:transform var(--t-fast)}
+    .soc-top-card:hover{transform:translateY(-1px)}
+    .soc-top-card img,.soc-top-noimg{width:56px;height:56px;border-radius:9px;object-fit:cover;flex-shrink:0;display:block}
+    .soc-top-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+    .soc-top-main b{font-size:12.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .soc-top-main span{font-size:11px;color:var(--text3)}
+    .soc-top-nums b{color:var(--text)}
+    .soc-days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;height:120px;align-items:end}
+    .soc-day{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:3px}
+    .soc-day .bar{width:60%;height:70px;background:var(--bg);border-radius:6px;display:flex;align-items:flex-end;overflow:hidden}
+    .soc-day .bar i{display:block;width:100%;background:var(--pp-blue);border-radius:6px 6px 0 0}
+    .soc-day.best .bar i{background:var(--pp-green)}
+    .soc-day span{font-size:10px;color:var(--text3)}.soc-day b{font-size:10px;color:var(--text2)}
+    @media(max-width:1400px){.out-kpis{grid-template-columns:repeat(3,1fr)}.out-rep{grid-template-columns:28px 34px 1.4fr 1fr 1fr}.out-rep .out-spark{display:none}}
+    @media(max-width:768px){.out-kpis{grid-template-columns:1fr 1fr}.out-rep{grid-template-columns:28px 34px 1fr;row-gap:6px}.out-rep-stat{grid-column:span 3}}
   </style>
 </head>
 <body>
@@ -2162,14 +2270,14 @@
       <div class="view-content" id="contentView">
         <div class="pp-stat-strip" id="cpStats"></div>
         <div class="table-section">
-          <div class="controls-row"><div class="section-title">Content Calendar</div><div class="controls-right"><div class="controls-group filters-group"><div class="styled-select"><select onchange="cpFilter=this.value;renderContent()"><option value="upcoming">Upcoming and in progress</option><option value="published">Published</option><option value="ideas">Ideas</option><option value="all">Everything</option></select></div></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="openContentModal(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> New Post</button></div></div></div>
+          <div class="controls-row"><div class="section-title">Content Calendar</div><div class="controls-right"><div class="controls-group filters-group"><div class="styled-select"><select onchange="cpFilter=this.value;renderContent()"><option value="upcoming">Upcoming and in progress</option><option value="published">Published</option><option value="ideas">Ideas</option><option value="all">Everything</option></select></div></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="startContentImport()" title="Bring already-published posts onto the calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import posts</button><button class="text-action-btn" onclick="openContentModal(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> New Post</button></div></div></div>
           <div class="table-wrapper"><table class="pp-table" id="cpTable"><thead><tr><th>When</th><th>Post</th><th>Channel</th><th>Status</th><th>Owner</th><th>Campaign</th><th>Links</th><th>Results</th><th></th></tr></thead><tbody id="cpTableBody"><tr><td colspan="9" class="pp-empty">Loading...</td></tr></tbody></table></div>
         </div>
       </div>
 
       <!-- ===== Marketing: Social ===== -->
       <div class="view-content" id="socialView">
-        <div class="controls-row"><div><div class="section-title">Facebook &amp; Instagram</div><div class="pp-toolbar-note" id="socialHead"></div></div><div class="controls-right"><div class="controls-group filters-group"><div class="styled-select"><select onchange="socialNet=this.value;renderSocial()"><option value="all">Both networks</option><option value="facebook">Facebook</option><option value="instagram">Instagram</option></select></div></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="syncSocialNow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Sync now</button></div></div></div>
+        <div class="controls-row"><div><div class="section-title">Social Performance</div><div class="pp-toolbar-note" id="socialHead"></div></div><div class="controls-right"><div class="controls-group filters-group"><div class="styled-select"><select onchange="socChannel=this.value;renderSocial()"><option value="all">All channels</option><option>LinkedIn</option><option>Facebook</option><option>Instagram</option><option>X</option><option>Email</option><option>Blog</option><option>Video</option></select></div></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="switchView('content')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Content Calendar</button><button class="text-action-btn" onclick="startContentImport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import posts</button></div></div></div>
         <div id="socialBody"><div class="pp-empty">Loading...</div></div>
       </div>
 
@@ -2458,7 +2566,7 @@
       if (view === 'outreach') { renderOutreach(); loadOutreach(false).then(function() { var s = document.getElementById('outRepFilter'); if (s && s.options.length <= 1) { s.innerHTML = '<option value="all">Everyone</option>' + TEAM_MEMBERS.map(function(m) { return '<option value="' + m.email + '">' + m.name + '</option>'; }).join(''); } var h = document.getElementById('outreachHead'); if (h && outreach) h.textContent = outreach.syncedAt ? 'Synced from Close ' + ppAgo(outreach.syncedAt) + '. Refreshes hourly.' : ''; renderOutreach(); }); }
       if (view === 'content') { renderContent(); loadContentPosts(false).then(function() { renderContent(); }); }
       if (view === 'playbook') { renderPlaybook(); }
-      if (view === 'social') { renderSocial(); loadSocial(false).then(function() { var h = document.getElementById('socialHead'); if (h && social) h.textContent = social.syncedAt ? 'Synced ' + ppAgo(social.syncedAt) + '. Refreshes every 6 hours.' : ''; renderSocial(); }); }
+      if (view === 'social') { renderSocial(); loadContentPosts(false).then(function() { renderSocial(); }); }
       if (view === 'customers') { renderCloseAccounts(); loadCloseAccounts(false).then(function() { renderCloseAccounts(); }); }
       ppSetHeaderTitle(view);
       if (typeof ppPopoverClose === 'function') ppPopoverClose();
@@ -5264,7 +5372,7 @@
       document.querySelectorAll('.view-tab.mk-soon').forEach(function(t) { t.style.display = locked && document.body.classList.contains('pp-sidebar') ? 'flex' : 'none'; });
       if (locked && PP_MARKETING_VIEWS.some(function(v) { var el = document.getElementById(v + 'View'); return el && el.classList.contains('active'); })) switchView('dashboard');
     }
-    var PP_VIEW_TITLES = { dashboard: ['HQ', 'Dashboard'], calendar: ['HQ', 'Calendar'], team: ['HQ', 'Team'], playbook: ['Onboarding', 'Playbook'], submissions: ['Onboarding', 'Submissions'], pipeline: ['Onboarding', 'Pipeline'], customers: ['Client Success', 'Client Overview'], credentials: ['Client Success', 'Client Credentials'], tradeshows: ['Sales', 'Trade Shows'], leads: ['Sales', 'Inbound Leads'], meetings: ['Sales', 'Meetings'], landing: ['Sales', 'Landing Pages'], outreach: ['Marketing', 'Outreach'], content: ['Marketing', 'Content Calendar'], social: ['Marketing', 'Facebook & Instagram'], resources: ['Workspace', 'Resources'], activity: ['Workspace', 'Activity'] };
+    var PP_VIEW_TITLES = { dashboard: ['HQ', 'Dashboard'], calendar: ['HQ', 'Calendar'], team: ['HQ', 'Team'], playbook: ['Onboarding', 'Playbook'], submissions: ['Onboarding', 'Submissions'], pipeline: ['Onboarding', 'Pipeline'], customers: ['Client Success', 'Client Overview'], credentials: ['Client Success', 'Client Credentials'], tradeshows: ['Sales', 'Trade Shows'], leads: ['Sales', 'Inbound Leads'], meetings: ['Sales', 'Meetings'], landing: ['Sales', 'Landing Pages'], outreach: ['Marketing', 'Outreach'], content: ['Marketing', 'Content Calendar'], social: ['Marketing', 'Social Performance'], resources: ['Workspace', 'Resources'], activity: ['Workspace', 'Activity'] };
     function ppSetHeaderTitle(view) { var t = document.getElementById('hdrTitle'); if (!t || !PP_VIEW_TITLES[view]) return; t.innerHTML = '<span class="crumb">' + PP_VIEW_TITLES[view][0] + '</span><b>' + PP_VIEW_TITLES[view][1] + '</b>'; }
     function ppLayoutInit() {
       var tabs = document.querySelector('.view-tabs'), dash = document.getElementById('dashboard'), main = document.querySelector('.main-content'); if (!tabs || !dash || !main) return;
@@ -6325,7 +6433,7 @@
 
     // ---- content calendar ----
     var CP_CHANNELS = ['LinkedIn', 'Facebook', 'Instagram', 'X', 'Email', 'Blog', 'Video', 'Other'], CP_STATUSES = [{ val: 'idea', label: 'Idea', cls: 'unset' }, { val: 'drafted', label: 'Drafted', cls: 'need-to-book' }, { val: 'scheduled', label: 'Scheduled', cls: 'aud-supers' }, { val: 'published', label: 'Published', cls: 'booked' }];
-    var CP_COLS = ['id', 'date', 'channel', 'status', 'title', 'copy', 'assetUrl', 'postUrl', 'owner', 'campaign', 'impressions', 'engagements', 'clicks', 'notes', 'updatedAt', 'updatedBy'];
+    var CP_COLS = ['id', 'date', 'channel', 'status', 'title', 'copy', 'assetUrl', 'postUrl', 'owner', 'campaign', 'impressions', 'engagements', 'clicks', 'notes', 'format', 'reach', 'likes', 'comments', 'shares', 'updatedAt', 'updatedBy'];
     var cpList = [], cpLoaded = false, cpError = '', cpFilter = 'upcoming';
     async function loadContentPosts(force) { if (cpLoaded && !force) return; try { var r = await ppApi('getContentPosts'); if (r.success) { cpList = (r.rows || []).map(function(x) { var o = {}; CP_COLS.forEach(function(c) { o[c] = x[c] === undefined ? '' : String(x[c]); }); return o; }); cpLoaded = true; cpError = ''; } else cpError = r.error || 'Unknown error'; } catch(e) { cpError = e.message; } }
     function cpRow(p) {
@@ -6333,13 +6441,13 @@
       var st = CP_STATUSES.find(function(s) { return s.val === p.status; }) || CP_STATUSES[0], d = p.date ? ppDaysBetween(p.date, ppTodayISO()) : null;
       return '<tr data-id="' + ppEsc(p.id) + '">'
         + cell('date', p.date ? '<div class="ts-date' + (d !== null && d >= 0 && d <= 3 ? ' soon' : '') + '">' + ppFmtDate(p.date, { weekday: 'short', month: 'short', day: 'numeric' }) + '<span class="sub">' + (d === null ? '' : d === 0 ? 'Today' : d > 0 ? 'in ' + d + 'd' : Math.abs(d) + 'd ago') + '</span></div>' : '<span class="pp-placeholder">Set date</span>')
-        + cell('title', '<div class="pp-org-name">' + ppEsc(p.title || '(untitled)') + '</div><div class="pp-org-sub">' + ppEsc((p.copy || '').slice(0, 90)) + (p.copy && p.copy.length > 90 ? '...' : '') + '</div>')
+        + cell('title', '<div class="cp-post-cell">' + (cpThumb(p.assetUrl) ? '<img class="cp-thumb" src="' + ppEsc(cpThumb(p.assetUrl)) + '" alt="" loading="lazy" onerror="this.remove()">' : '') + '<div style="min-width:0"><div class="pp-org-name">' + ppEsc(p.title || '(untitled)') + '</div><div class="pp-org-sub">' + ppEsc((p.copy || '').slice(0, 90)) + (p.copy && p.copy.length > 90 ? '...' : '') + '</div></div></div>')
         + cell('channel', '<span class="pp-chip pick cp-' + (p.channel || 'other').toLowerCase() + '">' + ppEsc(p.channel || 'Channel?') + '<i class="caret"></i></span>')
         + cell('status', '<span class="pp-chip pick ' + st.cls + '">' + st.label + '<i class="caret"></i></span>')
         + cell('owner', p.owner ? '<div style="display:flex;align-items:center;gap:6px">' + ppRepAvatars(p.owner, 22) + '<span style="font-size:11px;color:var(--text2)">' + ppEsc(ppRepName(p.owner)) + '</span></div>' : '<span class="pp-chip need-to-book">Owner<i class="caret"></i></span>')
         + cell('campaign', p.campaign ? '<span class="pp-chip aud-other">' + ppEsc(p.campaign) + '</span>' : '<span class="pp-placeholder">Campaign</span>')
         + '<td>' + (p.postUrl ? '<a class="pp-mini-btn ts-link" href="' + ppEsc(p.postUrl) + '" target="_blank" rel="noopener" title="Open the post" onclick="event.stopPropagation()">' + ppSvg('link') + '</a>' : '') + (p.assetUrl ? ' <a class="pp-mini-btn" href="' + ppEsc(p.assetUrl) + '" target="_blank" rel="noopener" title="Asset" onclick="event.stopPropagation()">&#128444;</a>' : '') + '</td>'
-        + cell('metrics', p.status === 'published' ? '<span class="cp-metrics">' + (p.impressions ? '<b>' + ppEsc(p.impressions) + '</b> impr' : '') + (p.engagements ? ' &middot; <b>' + ppEsc(p.engagements) + '</b> eng' : '') + (p.clicks ? ' &middot; <b>' + ppEsc(p.clicks) + '</b> clicks' : '') + (!p.impressions && !p.engagements && !p.clicks ? '<span class="pp-placeholder">Add results</span>' : '') + '</span>' : '<span class="pp-placeholder">-</span>')
+        + cell('metrics', p.status === 'published' ? '<span class="cp-metrics">' + (p.reach || p.impressions ? '<b>' + (+p.reach || +p.impressions).toLocaleString() + '</b> ' + (p.reach ? 'reach' : 'impr') : '') + (p.engagements ? ' &middot; <b>' + (+p.engagements).toLocaleString() + '</b> eng' + ((+p.reach || +p.impressions) ? ' <span style="color:var(--text3)">(' + ((+p.engagements) / (+p.reach || +p.impressions) * 100).toFixed(1) + '%)</span>' : '') : '') + (!p.reach && !p.impressions && !p.engagements && !p.clicks ? '<span class="pp-placeholder">Add results</span>' : '') + '</span>' : '<span class="pp-placeholder">-</span>')
         + '<td style="text-align:right;white-space:nowrap"><button class="pp-mini-btn" title="Open" onclick="event.stopPropagation();openContentModal(\'' + ppEsc(p.id) + '\')">' + ppSvg('expand') + '</button></td></tr>';
     }
     function renderContent() {
@@ -6364,17 +6472,18 @@
         case 'status': ppStatusPicker(cell, CP_STATUSES, p.status, function(v) { save({ status: v }); }); break;
         case 'owner': ppStatusPicker(cell, TEAM_MEMBERS.map(function(m) { return { val: m.email, label: m.name, cls: p.owner === m.email ? 'active' : 'unset' }; }).concat([{ val: '', label: 'Nobody yet', cls: 'inactive' }]), p.owner, function(v) { save({ owner: v }); }); break;
         case 'campaign': ppInlineEdit(cell, { value: p.campaign, placeholder: 'Campaign name', onSave: function(v) { save({ campaign: v }); } }); break;
-        case 'metrics': ppFormPopover(cell, [{ key: 'impressions', label: 'Impressions', type: 'number', value: p.impressions }, { key: 'engagements', label: 'Engagements', type: 'number', value: p.engagements }, { key: 'clicks', label: 'Clicks', type: 'number', value: p.clicks }], function(v) { save(v); }, { title: 'Results', inline: true }); break;
+        case 'metrics': ppFormPopover(cell, [{ key: 'reach', label: 'Reach', type: 'number', value: p.reach }, { key: 'impressions', label: 'Impressions', type: 'number', value: p.impressions }, { key: 'likes', label: 'Likes / reactions', type: 'number', value: p.likes }, { key: 'comments', label: 'Comments', type: 'number', value: p.comments }, { key: 'shares', label: 'Shares / reposts', type: 'number', value: p.shares }, { key: 'clicks', label: 'Link clicks', type: 'number', value: p.clicks }], function(v) { v.engagements = String((+v.likes || 0) + (+v.comments || 0) + (+v.shares || 0) + (+v.clicks || 0) || (+p.engagements || '')); save(v); }, { title: 'Results from the platform' }); break;
       }
     }
     function openContentModal(id) {
       var p = id ? cpList.find(function(x) { return x.id === id; }) : null; var isNew = !p; p = p || { id: '', title: '', date: '', channel: '', status: 'idea', owner: currentUser?.email || '', copy: '', assetUrl: '', postUrl: '', campaign: '', impressions: '', engagements: '', clicks: '', notes: '' };
       ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + (isNew ? 'New Post' : ppEsc(p.title || 'Post')) + '</h2><div class="modal-subtitle">Content calendar</div></div><div class="modal-body"><div class="detail-section" style="margin-top:20px"><div class="pp-form">'
-        + '<div class="full"><label>Title</label><input id="cp_title" value="' + ppEsc(p.title) + '" autofocus></div><div><label>Date</label><input id="cp_date" type="date" value="' + ppEsc(p.date) + '"></div><div><label>Channel</label><select id="cp_channel"><option value="">Pick one</option>' + CP_CHANNELS.map(function(c) { return '<option' + (p.channel === c ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select></div><div><label>Status</label><select id="cp_status">' + CP_STATUSES.map(function(s) { return '<option value="' + s.val + '"' + (p.status === s.val ? ' selected' : '') + '>' + s.label + '</option>'; }).join('') + '</select></div><div><label>Owner</label><select id="cp_owner"><option value="">Nobody yet</option>' + TEAM_MEMBERS.map(function(m) { return '<option value="' + ppEsc(m.email) + '"' + (p.owner === m.email ? ' selected' : '') + '>' + ppEsc(m.name) + '</option>'; }).join('') + '</select></div><div><label>Campaign</label><input id="cp_campaign" value="' + ppEsc(p.campaign) + '" placeholder="e.g. Texas supts fall push"></div><div class="full"><label>Copy</label><textarea id="cp_copy" style="min-height:120px">' + ppEsc(p.copy) + '</textarea></div><div><label>Asset link</label><input id="cp_asset" type="url" value="' + ppEsc(p.assetUrl) + '" placeholder="Drive, Canva..."></div><div><label>Published post link</label><input id="cp_post" type="url" value="' + ppEsc(p.postUrl) + '"></div><div><label>Impressions</label><input id="cp_impr" type="number" value="' + ppEsc(p.impressions) + '"></div><div><label>Engagements</label><input id="cp_eng" type="number" value="' + ppEsc(p.engagements) + '"></div><div><label>Clicks</label><input id="cp_clicks" type="number" value="' + ppEsc(p.clicks) + '"></div><div class="full"><label>Notes</label><textarea id="cp_notes">' + ppEsc(p.notes) + '</textarea></div></div></div>'
+        + '<div class="full"><label>Title</label><input id="cp_title" value="' + ppEsc(p.title) + '" autofocus></div><div><label>Date</label><input id="cp_date" type="date" value="' + ppEsc(p.date) + '"></div><div><label>Channel</label><select id="cp_channel"><option value="">Pick one</option>' + CP_CHANNELS.map(function(c) { return '<option' + (p.channel === c ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select></div><div><label>Status</label><select id="cp_status">' + CP_STATUSES.map(function(s) { return '<option value="' + s.val + '"' + (p.status === s.val ? ' selected' : '') + '>' + s.label + '</option>'; }).join('') + '</select></div><div><label>Owner</label><select id="cp_owner"><option value="">Nobody yet</option>' + TEAM_MEMBERS.map(function(m) { return '<option value="' + ppEsc(m.email) + '"' + (p.owner === m.email ? ' selected' : '') + '>' + ppEsc(m.name) + '</option>'; }).join('') + '</select></div><div><label>Campaign</label><input id="cp_campaign" value="' + ppEsc(p.campaign) + '" placeholder="e.g. Texas supts fall push"></div><div class="full"><label>Copy</label><textarea id="cp_copy" style="min-height:120px">' + ppEsc(p.copy) + '</textarea></div><div><label>Image / asset</label><input id="cp_asset" type="url" value="' + ppEsc(p.assetUrl) + '" placeholder="Paste a link, or upload"><div style="margin-top:6px;display:flex;gap:8px;align-items:center"><button type="button" class="pp-btn" style="padding:6px 10px;font-size:11px" onclick="document.getElementById(\'cp_upload\').click()"><span id="cp_upload_lbl">Upload image</span></button><input type="file" id="cp_upload" accept="image/*" style="display:none" onchange="cpModalUpload(this)"></div><img id="cp_asset_preview" src="' + ppEsc(cpThumb(p.assetUrl)) + '" alt=""' + (cpThumb(p.assetUrl) ? ' style="display:block"' : '') + '></div><div><label>Published post link</label><input id="cp_post" type="url" value="' + ppEsc(p.postUrl) + '"></div><div><label>Format</label><select id="cp_format"><option value="">Pick one</option>' + ['Image', 'Carousel', 'Video', 'Reel', 'Text', 'Link', 'Story'].map(function(f) { return '<option' + (p.format === f ? ' selected' : '') + '>' + f + '</option>'; }).join('') + '</select></div><div><label>Reach</label><input id="cp_reach" type="number" value="' + ppEsc(p.reach) + '"></div><div><label>Impressions</label><input id="cp_impr" type="number" value="' + ppEsc(p.impressions) + '"></div><div><label>Likes / reactions</label><input id="cp_likes" type="number" value="' + ppEsc(p.likes) + '"></div><div><label>Comments</label><input id="cp_comments" type="number" value="' + ppEsc(p.comments) + '"></div><div><label>Shares / reposts</label><input id="cp_shares" type="number" value="' + ppEsc(p.shares) + '"></div><div><label>Link clicks</label><input id="cp_clicks" type="number" value="' + ppEsc(p.clicks) + '"></div><div><label>Engagements (auto)</label><input id="cp_eng" type="number" value="' + ppEsc(p.engagements) + '" placeholder="likes + comments + shares + clicks"></div><div class="full"><label>Notes</label><textarea id="cp_notes">' + ppEsc(p.notes) + '</textarea></div></div></div>'
         + '<div class="pp-modal-actions">' + (isNew ? '<span></span>' : '<button class="pp-btn danger" onclick="deleteContentPost(\'' + ppEsc(p.id) + '\')">Delete</button>') + '<div class="right"><button class="pp-btn" onclick="closeModal()">Cancel</button><button class="pp-btn primary" onclick="saveContentModal(\'' + ppEsc(p.id) + '\')">' + (isNew ? 'Add' : 'Save') + '</button></div></div></div>');
     }
     async function saveContentModal(id) {
-      var g = function(i) { return document.getElementById(i).value.trim(); }; var row = { id: id, title: g('cp_title'), date: g('cp_date'), channel: g('cp_channel'), status: g('cp_status'), owner: g('cp_owner'), campaign: g('cp_campaign'), copy: g('cp_copy'), assetUrl: g('cp_asset'), postUrl: g('cp_post'), impressions: g('cp_impr'), engagements: g('cp_eng'), clicks: g('cp_clicks'), notes: g('cp_notes') };
+      var g = function(i) { return document.getElementById(i).value.trim(); }; var row = { id: id, title: g('cp_title'), date: g('cp_date'), channel: g('cp_channel'), status: g('cp_status'), owner: g('cp_owner'), campaign: g('cp_campaign'), copy: g('cp_copy'), assetUrl: g('cp_asset'), postUrl: g('cp_post'), impressions: g('cp_impr'), clicks: g('cp_clicks'), notes: g('cp_notes'), format: g('cp_format'), reach: g('cp_reach'), likes: g('cp_likes'), comments: g('cp_comments'), shares: g('cp_shares') };
+      row.engagements = g('cp_eng') || String((+row.likes || 0) + (+row.comments || 0) + (+row.shares || 0) + (+row.clicks || 0) || '');
       if (!row.title) { showToast('Give the post a title', 'error'); return; }
       try { var r = await ppApi('saveContentPost', { row: row }); if (!r.success) throw new Error(r.error); row.id = r.id; var i = cpList.findIndex(function(x) { return x.id === row.id; }); if (i >= 0) cpList[i] = Object.assign(cpList[i], row); else cpList.push(row); closeModal(); renderContent(); showToast('Saved', 'success'); } catch(e) { showToast('Could not save: ' + e.message, 'error'); }
     }
@@ -6491,6 +6600,197 @@
     function pbAddCustom(email, phaseId, input) { var t = input.value.trim(); if (!t) return; var list = pbCustom(email, phaseId); list.push({ id: 'x' + Date.now().toString(36), task: t, owner: 'lead', customer: false }); setChecklist(email, 'pb_custom_' + phaseId + '_field', JSON.stringify(list)); renderPlaybook(); }
     function pbRemoveCustom(email, phaseId, stepId) { var list = pbCustom(email, phaseId).filter(function(s) { return s.id !== stepId; }); setChecklist(email, 'pb_custom_' + phaseId + '_field', JSON.stringify(list)); setChecklist(email, 'pb_' + stepId, false); renderPlaybook(); }
     function openPlaybookFor(email) { pbClient = email; switchView('playbook'); }
+    // =====================================================================
+    // CONTENT IMPORT: paste published posts, upload their images, or pull from synced social
+    // =====================================================================
+    var MONTHS = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, sept: 9, oct: 10, nov: 11, dec: 12 };
+    function cpDetectDate(text, defaultYear) {
+      // "September 12", "Sept 12, 2026", "Sep 12 at 3:40 PM", "12 September 2026", "9/12/2026", "2026-09-12", "3d", "2 days ago", "Yesterday"
+      var t = String(text || ''), y = defaultYear || new Date().getFullYear(), m;
+      var pad = function(n) { return String(n).padStart(2, '0'); }, mk = function(yy, mm, dd) { return yy + '-' + pad(mm) + '-' + pad(dd); };
+      if ((m = t.match(/\b(20\d{2})-(\d{1,2})-(\d{1,2})\b/))) return mk(m[1], m[2], m[3]);
+      if ((m = t.match(/\b(\d{1,2})\/(\d{1,2})\/(20\d{2}|\d{2})\b/))) return mk(m[3].length === 2 ? '20' + m[3] : m[3], m[1], m[2]);
+      if ((m = t.match(/\b(\d{1,2})(?:st|nd|rd|th)?\s+(jan|feb|mar|apr|may|jun|jul|aug|sept|sep|oct|nov|dec)[a-z]*\.?(?:,?\s+(20\d{2}))?/i))) return mk(m[3] || y, MONTHS[m[2].toLowerCase()], m[1]);
+      if ((m = t.match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sept|sep|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})(?!\d)(?:st|nd|rd|th)?(?:,?\s+(20\d{2}))?/i))) return mk(m[3] || y, MONTHS[m[1].toLowerCase()], m[2]);
+      if ((m = t.match(/\b(\d{1,2})\s*(d|days?)\s*(ago)?\b/i))) { var d = new Date(); d.setDate(d.getDate() - parseInt(m[1])); return d.toISOString().slice(0, 10); }
+      if ((m = t.match(/\b(\d{1,2})\s*(w|weeks?)\s*(ago)?\b/i))) { var d2 = new Date(); d2.setDate(d2.getDate() - 7 * parseInt(m[1])); return d2.toISOString().slice(0, 10); }
+      if (/\byesterday\b/i.test(t)) { var d3 = new Date(); d3.setDate(d3.getDate() - 1); return d3.toISOString().slice(0, 10); }
+      return '';
+    }
+    function cpParsePaste(text, channel, defaultYear) {
+      var blocks = String(text || '').replace(/\r/g, '').split(/\n\s*(?:-{3,}|={3,}|\*{3,})\s*\n|\n{3,}|\n\s*\n(?=\S)/).map(function(b) { return b.trim(); }).filter(Boolean);
+      return blocks.map(function(b) {
+        var lines = b.split('\n').map(function(l) { return l.trim(); }).filter(Boolean);
+        var date = '', dateIdx = -1, url = '';
+        lines.forEach(function(l, i) { if (!date) { var dd = cpDetectDate(l, defaultYear); if (dd && (l.length < 60 || /^(posted|published|shared)/i.test(l))) { date = dd; dateIdx = i; } } var u = l.match(/https?:\/\/(?:www\.)?(?:facebook|instagram|fb)\.com\/\S+/i); if (u && !url) url = u[0]; });
+        var body = lines.filter(function(l, i) { return i !== dateIdx && !/^(like|comment|share|send|likes?|comments?|shares?|\d+ likes?|\d+ comments?|see more|see translation|edited)$/i.test(l) && !/^https?:\/\//.test(l) && !/^\d+\s*(likes?|comments?|shares?)$/i.test(l); });
+        var copy = body.join('\n'), first = (body[0] || '').replace(/[#@]\S+/g, '').trim();
+        return { date: date, channel: channel, status: 'published', title: (first || 'Post').slice(0, 70), copy: copy, postUrl: url, assetUrl: '', owner: '', campaign: '', impressions: '', engagements: '', clicks: '', notes: 'Imported by paste' };
+      }).filter(function(p) { return p.copy; });
+    }
+    var cpImportRows = [];
+    function startContentImport() {
+      document.querySelector('.import-title').textContent = 'Import Published Posts';
+      document.getElementById('importBody').innerHTML = '<div id="cpiBody"></div>';
+      cpImportMode('paste');
+      document.getElementById('importOverlay').classList.add('active');
+    }
+    function cpImportMode(mode, btn) {
+      document.querySelectorAll('.cpi-tabs button').forEach(function(b) { b.classList.toggle('on', b === btn || (!btn && b.textContent.indexOf('Paste') === 0)); });
+      var el = document.getElementById('cpiBody');
+      if (mode === 'paste') {
+        el.innerHTML = '<p style="font-size:13px;color:var(--text2);margin:10px 0">Open the post on Facebook or Instagram, select the caption and date, copy, and paste below. Paste several at once by leaving a blank line (or a line of dashes) between posts. Dates like "September 12", "Sep 12 at 3:40 PM", "9/12/2026" or "3d" are picked up from the text; anything missing can be fixed in the preview.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"><div class="styled-select"><select id="cpiChannel"><option>Facebook</option><option>Instagram</option><option>LinkedIn</option><option>X</option><option>Other</option></select></div><div class="styled-select"><select id="cpiYear">' + [0, 1, 2].map(function(n) { var y = new Date().getFullYear() - n; return '<option value="' + y + '">Year for dates without one: ' + y + '</option>'; }).join('') + '</select></div></div><textarea id="cpiText" class="cpi-text" placeholder="September 12&#10;Huge week at THSADA. Thanks to everyone who stopped by the booth...&#10;&#10;---&#10;&#10;Sep 3&#10;Eustace ISD is live on PracticePlan!"></textarea><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px"><button class="import-btn secondary" onclick="closeImport()">Cancel</button><button class="import-btn" onclick="cpPreviewPaste()">Preview posts</button></div>';
+      } else {
+        if (!(socialLoaded && social && social.connected)) { el.innerHTML = '<div class="pp-empty"><strong>Facebook and Instagram are not connected yet</strong>Set them up on the Social tab, sync once, and every synced post can be pulled into the calendar from here with its date, caption, image and reach.</div>'; return; }
+        var have = {}; cpList.forEach(function(p) { if (p.postUrl) have[p.postUrl] = true; });
+        var rows = (social.rows || []).filter(function(s) { return s.permalink && !have[s.permalink]; }).sort(function(a, b) { return a.postedAt < b.postedAt ? 1 : -1; });
+        el.innerHTML = '<p style="font-size:13px;color:var(--text2);margin:10px 0">' + rows.length + ' synced post' + (rows.length === 1 ? '' : 's') + ' not in the calendar yet. Each comes in as Published with its date, caption, image, reach and engagement.</p>' + (rows.length ? '<div class="cpi-social">' + rows.map(function(s) { return '<label class="cpi-soc"><input type="checkbox" value="' + ppEsc(s.id) + '" checked>' + (s.mediaUrl ? '<img src="' + ppEsc(s.mediaUrl) + '" alt="" onerror="this.style.display=\'none\'">' : '<span class="cpi-noimg"></span>') + '<span class="cpi-soc-main"><b>' + ppEsc(String(s.message || '(no caption)').slice(0, 90)) + '</b><span>' + (s.network === 'instagram' ? 'Instagram' : 'Facebook') + ' &middot; ' + ppFmtDate(String(s.postedAt).slice(0, 10), { month: 'short', day: 'numeric', year: 'numeric' }) + ' &middot; ' + (+s.reach || 0).toLocaleString() + ' reach</span></span></label>'; }).join('') + '</div><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px"><button class="import-btn secondary" onclick="closeImport()">Cancel</button><button class="import-btn" onclick="cpImportSocial()">Import selected</button></div>' : '<div class="pp-empty">Everything synced is already on the calendar.</div>');
+      }
+    }
+    function cpPreviewPaste() {
+      var text = document.getElementById('cpiText').value, channel = document.getElementById('cpiChannel').value, year = document.getElementById('cpiYear').value;
+      cpImportRows = cpParsePaste(text, channel, year);
+      if (!cpImportRows.length) { showToast('No posts found in the pasted text', 'error'); return; }
+      cpRenderPreview();
+    }
+    function cpRenderPreview() {
+      document.getElementById('cpiBody').innerHTML = '<p style="font-size:13px;color:var(--text2);margin:10px 0">' + cpImportRows.length + ' post' + (cpImportRows.length === 1 ? '' : 's') + ' found. Fix dates, add the image that went out with each one, then import.</p><div class="cpi-rows">' + cpImportRows.map(function(p, i) {
+        return '<div class="cpi-row"><div class="cpi-img" onclick="document.getElementById(\'cpiFile' + i + '\').click()">' + (p.assetUrl ? '<img src="' + ppEsc(p.thumb || p.assetUrl) + '" alt="">' : '<span>+ image</span>') + '<input type="file" id="cpiFile' + i + '" accept="image/*" style="display:none" onchange="cpUploadFor(' + i + ',this.files[0]);this.value=\'\'"></div><div class="cpi-main"><div class="cpi-fields"><input type="date" value="' + ppEsc(p.date) + '" onchange="cpImportRows[' + i + '].date=this.value"><select onchange="cpImportRows[' + i + '].channel=this.value">' + CP_CHANNELS.map(function(c) { return '<option' + (c === p.channel ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select><input placeholder="Post link (optional)" value="' + ppEsc(p.postUrl) + '" onchange="cpImportRows[' + i + '].postUrl=this.value"></div><input class="cpi-title" value="' + ppEsc(p.title) + '" onchange="cpImportRows[' + i + '].title=this.value"><textarea onchange="cpImportRows[' + i + '].copy=this.value">' + ppEsc(p.copy) + '</textarea></div><button class="pp-mini-btn danger" title="Leave this one out" onclick="cpImportRows.splice(' + i + ',1);cpRenderPreview()">&#10005;</button></div>';
+      }).join('') + '</div><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px"><button class="import-btn secondary" onclick="cpImportMode(\'paste\')">Back</button><button class="import-btn" id="cpiRun" onclick="cpRunImport()">Import ' + cpImportRows.length + '</button></div>';
+    }
+    async function cpUploadAsset(file) {
+      if (!file) return null;
+      if (file.size > 8 * 1024 * 1024) { showToast('Keep images under 8 MB', 'error'); return null; }
+      var dataUrl = await new Promise(function(res, rej) { var r = new FileReader(); r.onload = function() { res(r.result); }; r.onerror = rej; r.readAsDataURL(file); });
+      var m = /^data:([^;]+);base64,(.*)$/.exec(dataUrl); if (!m) throw new Error('Unsupported file');
+      var res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ pp: true, action: 'uploadAsset', email: currentUser?.email || '', name: file.name, mediaType: m[1], data: m[2] }) });
+      var r = await res.json(); if (!r.success) throw new Error(r.error || 'Upload failed');
+      return r;
+    }
+    async function cpUploadFor(i, file) {
+      if (!file) return;
+      var img = document.querySelectorAll('.cpi-img')[i]; if (img) img.innerHTML = '<span>uploading...</span>';
+      try { var r = await cpUploadAsset(file); if (!r) { cpRenderPreview(); return; } cpImportRows[i].assetUrl = r.url; cpImportRows[i].thumb = r.thumb; cpRenderPreview(); } catch(e) { showToast(e.message + (/Unknown post action/.test(e.message) ? ' (Extras v16 needed)' : ''), 'error'); cpRenderPreview(); }
+    }
+    async function cpRunImport() {
+      var btn = document.getElementById('cpiRun'); btn.disabled = true; btn.textContent = 'Importing...';
+      var rows = cpImportRows.map(function(p) { var o = {}; CP_COLS.forEach(function(c) { o[c] = p[c] === undefined ? '' : p[c]; }); o.status = 'published'; return o; });
+      try { var ok = 0; for (var i = 0; i < rows.length; i += 10) { var r = await ppApi('bulkSaveContentPosts', { rows: rows.slice(i, i + 10) }, 90000); if (r.success) ok += r.saved || 0; } closeImport(); await loadContentPosts(true); cpFilter = 'published'; var sel = document.querySelector('#contentView select'); if (sel) sel.value = 'published'; renderContent(); showToast('Imported ' + ok + ' post' + (ok === 1 ? '' : 's'), 'success'); }
+      catch(e) { btn.disabled = false; btn.textContent = 'Import'; showToast('Could not import: ' + e.message, 'error'); }
+    }
+    async function cpImportSocial() {
+      var ids = [].slice.call(document.querySelectorAll('.cpi-soc input:checked')).map(function(i) { return i.value; }); if (!ids.length) return;
+      try { var r = await ppApi('importSocialToContent', { ids: ids }, 90000); if (!r.success) throw new Error(r.error); closeImport(); await loadContentPosts(true); cpFilter = 'published'; var sel = document.querySelector('#contentView select'); if (sel) sel.value = 'published'; renderContent(); showToast('Brought ' + r.saved + ' post' + (r.saved === 1 ? '' : 's') + ' into the calendar', 'success'); } catch(e) { showToast(e.message, 'error'); }
+    }
+    // post modal: upload button next to the asset link
+    async function cpModalUpload(input) {
+      var f = input.files[0]; if (!f) return; var lab = document.getElementById('cp_upload_lbl'); if (lab) lab.textContent = 'Uploading...';
+      try { var r = await cpUploadAsset(f); if (r) { document.getElementById('cp_asset').value = r.url; var pv = document.getElementById('cp_asset_preview'); if (pv) { pv.src = r.thumb; pv.style.display = 'block'; } showToast('Image uploaded to Drive', 'success'); } } catch(e) { showToast(e.message, 'error'); }
+      if (lab) lab.textContent = 'Upload image'; input.value = '';
+    }
+    function cpThumb(url) { var m = String(url || '').match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([A-Za-z0-9_-]{10,})/); if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w400'; if (/\.(png|jpe?g|gif|webp)(\?|$)/i.test(url) || /scontent|cdninstagram|fbcdn/.test(url)) return url; return ''; }
+    // =====================================================================
+    // OUTREACH v2: designed report over the Close outreach data
+    // =====================================================================
+    var outPeriod = 4;
+    function outSetPeriod(n) { outPeriod = n; renderOutreach(); }
+    function outFmt(n) { n = +n || 0; return n >= 10000 ? (n / 1000).toFixed(1) + 'k' : n.toLocaleString(); }
+    function outSpark(vals, color) {
+      var w = 120, h = 32, max = Math.max(1, Math.max.apply(null, vals)), n = vals.length; if (n < 2) return '';
+      var pts = vals.map(function(v, i) { return (i / (n - 1) * (w - 4) + 2).toFixed(1) + ',' + (h - 2 - v / max * (h - 6)).toFixed(1); });
+      return '<svg class="out-spark" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none"><polyline points="' + pts.join(' ') + '" fill="none" stroke="' + color + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="' + pts[n - 1].split(',')[0] + '" cy="' + pts[n - 1].split(',')[1] + '" r="2.5" fill="' + color + '"/></svg>';
+    }
+    function outDelta(cur, prev) { if (!prev) return cur ? '<span class="out-delta new">new</span>' : ''; var d = Math.round((cur - prev) / prev * 100); return '<span class="out-delta ' + (d > 0 ? 'up' : d < 0 ? 'down' : 'flat') + '">' + (d > 0 ? '&#9650; ' : d < 0 ? '&#9660; ' : '') + Math.abs(d) + '%</span>'; }
+    function outChart(weeks, byWeek) {
+      var W = 900, H = 240, padL = 36, padR = 40, padT = 14, padB = 30, n = weeks.length; if (!n) return '<div class="pp-empty">No weeks with data yet.</div>';
+      var maxSent = Math.max(1, Math.max.apply(null, weeks.map(function(w) { return byWeek[w].sent; }))), innerW = W - padL - padR, innerH = H - padT - padB, slot = innerW / n, bw = Math.min(28, slot * 0.42);
+      var y = function(v) { return padT + innerH - v / maxSent * innerH; }, x = function(i) { return padL + i * slot + slot / 2; };
+      var grid = [0, 0.25, 0.5, 0.75, 1].map(function(f) { var yy = padT + innerH - f * innerH; return '<line x1="' + padL + '" x2="' + (W - padR) + '" y1="' + yy.toFixed(1) + '" y2="' + yy.toFixed(1) + '" class="out-grid"/><text x="' + (padL - 6) + '" y="' + (yy + 4).toFixed(1) + '" class="out-axis" text-anchor="end">' + Math.round(maxSent * f) + '</text>'; }).join('');
+      var bars = weeks.map(function(w, i) { var b = byWeek[w], cx = x(i), t = 'Week of ' + ppFmtDate(w, { month: 'short', day: 'numeric' }) + ': ' + b.sent + ' sent, ' + b.opened + ' opened (' + (b.sent ? Math.round(b.opened / b.sent * 100) : 0) + '%), ' + b.replies + ' replies (' + (b.sent ? Math.round(b.replies / b.sent * 100) : 0) + '%)'; return '<g class="out-bar"><title>' + ppEsc(t) + '</title><rect x="' + (cx - bw / 2).toFixed(1) + '" y="' + y(b.sent).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + (padT + innerH - y(b.sent)).toFixed(1) + '" rx="4" class="out-b-sent"/><rect x="' + (cx - bw / 2 + 2).toFixed(1) + '" y="' + y(b.opened).toFixed(1) + '" width="' + (bw - 4).toFixed(1) + '" height="' + (padT + innerH - y(b.opened)).toFixed(1) + '" rx="3" class="out-b-open"/><text x="' + cx.toFixed(1) + '" y="' + (H - 10) + '" class="out-axis" text-anchor="middle">' + ppFmtDate(w, { month: 'numeric', day: 'numeric' }) + '</text></g>'; }).join('');
+      var rateY = function(r) { return padT + innerH - Math.min(1, r / 0.25) * innerH; };
+      var pts = weeks.map(function(w, i) { var b = byWeek[w]; return x(i).toFixed(1) + ',' + rateY(b.sent ? b.replies / b.sent : 0).toFixed(1); });
+      var line = '<polyline points="' + pts.join(' ') + '" class="out-line"/>' + weeks.map(function(w, i) { var b = byWeek[w]; return '<circle cx="' + x(i).toFixed(1) + '" cy="' + rateY(b.sent ? b.replies / b.sent : 0).toFixed(1) + '" r="3.5" class="out-dot"><title>Reply rate ' + (b.sent ? (b.replies / b.sent * 100).toFixed(1) : 0) + '%</title></circle>'; }).join('');
+      var rAxis = [0, 0.05, 0.1, 0.15, 0.2, 0.25].map(function(r) { return '<text x="' + (W - padR + 8) + '" y="' + (rateY(r) + 4).toFixed(1) + '" class="out-axis out-axis-r">' + Math.round(r * 100) + '%</text>'; }).join('');
+      return '<svg class="out-chart" viewBox="0 0 ' + W + ' ' + H + '">' + grid + bars + line + rAxis + '</svg>';
+    }
+    function outRing(pct, color) { var r = 16, c = 2 * Math.PI * r; return '<svg class="out-ring" viewBox="0 0 40 40"><circle cx="20" cy="20" r="' + r + '" class="bg"/><circle cx="20" cy="20" r="' + r + '" style="stroke:' + color + ';stroke-dasharray:' + (c * Math.min(1, pct)).toFixed(1) + ' ' + c.toFixed(1) + '"/><text x="20" y="24" text-anchor="middle">' + Math.round(pct * 100) + '%</text></svg>'; }
+    function renderOutreach() {
+      var el = document.getElementById('outreachBody'); if (!el) return;
+      if (!outreachLoaded) { el.innerHTML = outreachError ? ppSetupEmpty('Outreach', outreachError) : '<div class="pp-empty">Loading Close outreach data...</div>'; return; }
+      if (!outreach.keyPresent) { el.innerHTML = '<div class="pp-empty"><strong>Close is not connected</strong>Add CLOSE_API_KEY, then run ppSetupMarketingTriggers.</div>'; return; }
+      var weeks = outWeeks(), weekly = outreach.weekly.filter(function(w) { return outRep === 'all' || w.rep === outRep; });
+      var byWeek = {}; weeks.forEach(function(w) { byWeek[w] = { sent: 0, opened: 0, replies: 0, bulk: 0, seq: 0 }; }); weekly.forEach(function(w) { var b = byWeek[w.week]; if (!b) return; b.sent += +w.sent || 0; b.opened += +w.opened || 0; b.replies += +w.replies || 0; b.bulk += +w.bulk || 0; b.seq += +w.sequenceSends || 0; });
+      var cur = weeks.slice(-outPeriod), prev = weeks.slice(-outPeriod * 2, -outPeriod), sum = function(list, k) { return list.reduce(function(n, w) { return n + (byWeek[w] ? byWeek[w][k] : 0); }, 0); };
+      var sentC = sum(cur, 'sent'), openC = sum(cur, 'opened'), repC = sum(cur, 'replies'), bulkC = sum(cur, 'bulk'), seqC = sum(cur, 'seq'), sentP = sum(prev, 'sent'), openP = sum(prev, 'opened'), repP = sum(prev, 'replies');
+      var openRate = sentC ? openC / sentC : 0, openRateP = sentP ? openP / sentP : 0, repRate = sentC ? repC / sentC : 0, repRateP = sentP ? repP / sentP : 0;
+      var sparks = { sent: weeks.map(function(w) { return byWeek[w].sent; }), open: weeks.map(function(w) { return byWeek[w].sent ? byWeek[w].opened / byWeek[w].sent * 100 : 0; }), rep: weeks.map(function(w) { return byWeek[w].replies; }), rate: weeks.map(function(w) { return byWeek[w].sent ? byWeek[w].replies / byWeek[w].sent * 100 : 0; }) };
+      var seqs = outreach.sequences.slice().sort(function(a, b) { return (+b.active || 0) - (+a.active || 0); }), activeSubs = seqs.reduce(function(n, s) { return n + (+s.active || 0); }, 0);
+      var srcAgg = {}; outreach.sources.forEach(function(s) { if (cur.indexOf(s.week) < 0) return; srcAgg[s.source] = (srcAgg[s.source] || 0) + (+s.count || 0); }); var srcRows = Object.keys(srcAgg).sort(function(a, b) { return srcAgg[b] - srcAgg[a]; }), srcTotal = srcRows.reduce(function(n, s) { return n + srcAgg[s]; }, 0), srcPrev = outreach.sources.filter(function(s) { return prev.indexOf(s.week) >= 0; }).reduce(function(n, s) { return n + (+s.count || 0); }, 0);
+      var repRows = {}; outreach.weekly.forEach(function(w) { var inCur = cur.indexOf(w.week) >= 0, inPrev = prev.indexOf(w.week) >= 0; if (!inCur && !inPrev) return; var r = repRows[w.rep] = repRows[w.rep] || { rep: w.rep, name: w.repName, sent: 0, opened: 0, replies: 0, pSent: 0, weeks: {} }; if (inCur) { r.sent += +w.sent || 0; r.opened += +w.opened || 0; r.replies += +w.replies || 0; r.weeks[w.week] = (r.weeks[w.week] || 0) + (+w.sent || 0); } else r.pSent += +w.sent || 0; });
+      var reps = Object.keys(repRows).map(function(k) { return repRows[k]; }).filter(function(r) { return r.sent || r.pSent; }).sort(function(a, b) { return b.sent - a.sent; });
+      var teamRep = sentC ? repC / sentC : 0;
+      // insights
+      var ins = [];
+      if (sentP) ins.push({ cls: sentC >= sentP ? 'good' : 'warn', t: 'Volume ' + (sentC >= sentP ? 'up' : 'down') + ' ' + Math.abs(Math.round((sentC - sentP) / sentP * 100)) + '% vs the prior ' + outPeriod + ' weeks', s: sentC.toLocaleString() + ' vs ' + sentP.toLocaleString() + ' emails' });
+      if (reps.length > 1 && sentC) { var best = reps.filter(function(r) { return r.sent >= 20; }).sort(function(a, b) { return (b.replies / b.sent) - (a.replies / a.sent); })[0]; if (best && best.replies / best.sent > teamRep * 1.3) ins.push({ cls: 'good', t: ppRepName(best.rep) + ' gets ' + (best.replies / best.sent * 100).toFixed(1) + '% replies', s: 'vs ' + (teamRep * 100).toFixed(1) + '% for the team; worth copying what they send' }); }
+      var bestSeq = seqs.filter(function(s) { return (+s.total || 0) >= 20; }).sort(function(a, b) { return (+b.replied / +b.total) - (+a.replied / +a.total); })[0]; if (bestSeq) ins.push({ cls: 'info', t: 'Best sequence: ' + bestSeq.name, s: Math.round(+bestSeq.replied / +bestSeq.total * 100) + '% of ' + bestSeq.total + ' enrolled replied' });
+      if (srcRows.length) ins.push({ cls: 'info', t: srcRows[0] + ' is the top lead source', s: srcAgg[srcRows[0]] + ' of ' + srcTotal + ' new Close leads in the last ' + outPeriod + ' weeks' });
+      var idle = TEAM_MEMBERS.filter(function(m) { return !reps.some(function(r) { return r.rep === m.email && r.sent; }); }); if (idle.length && idle.length < TEAM_MEMBERS.length) ins.push({ cls: 'warn', t: idle.map(function(m) { return m.name.split(' ')[0]; }).join(', ') + ' sent no email in this period', s: 'from Close, that is; calls and meetings are not counted here' });
+      var kpi = function(v, l, spark, delta, sub) { return '<div class="out-kpi"><div class="out-kpi-top"><div><div class="v">' + v + '</div><div class="l">' + l + '</div></div>' + spark + '</div><div class="out-kpi-foot">' + delta + '<span>' + sub + '</span></div></div>'; };
+      var periodBtns = [4, 8, 12].map(function(n) { return '<button class="' + (outPeriod === n ? 'on' : '') + '" onclick="outSetPeriod(' + n + ')">' + n + ' weeks</button>'; }).join('');
+      el.innerHTML = '<div class="out-head"><div class="pp-view-toggle">' + periodBtns + '</div><div class="pp-toolbar-note">Comparing the last ' + outPeriod + ' weeks with the ' + outPeriod + ' before. ' + (outRep === 'all' ? 'Everyone' : ppRepName(outRep)) + '.</div></div>'
+        + '<div class="out-kpis">' + kpi(outFmt(sentC), 'Emails sent', outSpark(sparks.sent, 'var(--pp-blue)'), outDelta(sentC, sentP), bulkC + ' bulk &middot; ' + seqC + ' from sequences') + kpi((openRate * 100).toFixed(0) + '%', 'Open rate', outSpark(sparks.open, 'var(--pp-green)'), outDelta(openRate, openRateP), outFmt(openC) + ' opened') + kpi(outFmt(repC), 'Replies', outSpark(sparks.rep, '#7c3aed'), outDelta(repC, repP), 'from ' + outFmt(sentC) + ' emails') + kpi((repRate * 100).toFixed(1) + '%', 'Reply rate', outSpark(sparks.rate, '#7c3aed'), outDelta(repRate, repRateP), 'purple line on the chart') + kpi(outFmt(activeSubs), 'In sequences', '', '', seqs.filter(function(s) { return +s.active; }).length + ' sequences running') + kpi(outFmt(srcTotal), 'New Close leads', '', outDelta(srcTotal, srcPrev), 'by source below') + '</div>'
+        + (ins.length ? '<div class="out-insights">' + ins.slice(0, 4).map(function(i) { return '<div class="out-ins ' + i.cls + '"><b>' + ppEsc(i.t) + '</b><span>' + ppEsc(i.s) + '</span></div>'; }).join('') + '</div>' : '')
+        + '<div class="stat-card out-card"><h3>Emails by week<span class="out-legend"><i style="background:var(--pp-blue)"></i>Sent <i style="background:var(--pp-green)"></i>Opened <i style="background:#7c3aed;border-radius:50%"></i>Reply rate (right axis)</span></h3>' + outChart(weeks, byWeek) + '</div>'
+        + '<div class="mk-grid"><div class="stat-card out-card mk-span2"><h3>Rep leaderboard<span class="n">last ' + outPeriod + ' weeks</span></h3>' + (reps.length ? '<div class="out-board">' + reps.map(function(r, i) { var or = r.sent ? r.opened / r.sent : 0, rr = r.sent ? r.replies / r.sent : 0; return '<div class="out-rep"><span class="rank' + (i === 0 ? ' gold' : '') + '">' + (i + 1) + '</span>' + (TEAM_MEMBERS.some(function(m) { return m.email === r.rep; }) ? getTeamPhoto(r.rep, 34) : '<span class="pp-avatar-text">' + ppEsc((r.name || r.rep).charAt(0)) + '</span>') + '<div class="out-rep-main"><b>' + ppEsc(ppRepFull(r.rep) || r.name || r.rep) + '</b><span>' + outFmt(r.sent) + ' sent ' + outDelta(r.sent, r.pSent) + '</span></div><div class="out-rep-stat"><div class="l">Open</div><div class="bar"><i style="width:' + Math.round(or * 100) + '%;background:var(--pp-green)"></i></div><div class="v">' + Math.round(or * 100) + '%</div></div><div class="out-rep-stat"><div class="l">Reply</div><div class="bar"><i style="width:' + Math.min(100, Math.round(rr * 400)) + '%;background:#7c3aed"></i></div><div class="v">' + (rr * 100).toFixed(1) + '% <span style="color:var(--text3);font-weight:500">(' + r.replies + ')</span></div></div>' + outSpark(cur.map(function(w) { return r.weeks[w] || 0; }), 'var(--pp-blue)') + '</div>'; }).join('') + '</div>' : '<div class="pp-up-empty">No emails in this period.</div>') + '</div>'
+        + '<div class="stat-card out-card"><h3>New leads by source<span class="n">' + srcTotal + '</span></h3>' + (srcRows.length ? srcRows.slice(0, 8).map(function(s) { return '<div class="out-src"><div class="t"><b>' + ppEsc(s) + '</b><span>' + srcAgg[s] + ' &middot; ' + Math.round(srcAgg[s] / srcTotal * 100) + '%</span></div><div class="bar"><i style="width:' + Math.round(srcAgg[s] / srcAgg[srcRows[0]] * 100) + '%"></i></div></div>'; }).join('') + (srcRows.length > 8 ? '<div class="pp-toolbar-note">+' + (srcRows.length - 8) + ' more sources</div>' : '') : '<div class="pp-up-empty">No leads created in Close in this period.</div>') + '</div></div>'
+        + '<div class="stat-card out-card"><h3>Sequences<span class="n">' + seqs.length + '</span></h3>' + (seqs.length ? '<div class="out-seqs">' + seqs.map(function(s) { var t = +s.total || 0, a = +s.active || 0, f = +s.finished || 0, rp = +s.replied || 0, u = +s.unsubscribed || 0, b = +s.bounced || 0, rate = t ? rp / t : 0; return '<div class="out-seq' + (s.status === 'active' ? '' : ' paused') + '"><div class="out-seq-h">' + outRing(rate, rate >= 0.1 ? 'var(--pp-green)' : rate >= 0.03 ? '#f59e0b' : '#94a3b8') + '<div class="out-seq-t"><b>' + ppEsc(s.name) + '</b><span>' + ppEsc(s.status || '') + ' &middot; ' + t + ' enrolled</span></div></div><div class="out-funnel">' + [['Active', a, 'var(--pp-blue)'], ['Finished', f, '#94a3b8'], ['Replied', rp, '#7c3aed'], ['Unsub / bounce', u + b, '#ef4444']].map(function(x) { return '<div class="out-fun"><span class="l">' + x[0] + '</span><span class="bar"><i style="width:' + (t ? Math.round(x[1] / t * 100) : 0) + '%;background:' + x[2] + '"></i></span><span class="v">' + x[1] + '</span></div>'; }).join('') + '</div></div>'; }).join('') + '</div>' : '<div class="pp-up-empty">No sequences in Close yet.</div>') + '</div>';
+    }
+    // =====================================================================
+    // SOCIAL v2: reporting over the Content Calendar (manual results, no platform connection)
+    // =====================================================================
+    var socPeriod = 90, socChannel = 'all';
+    function socSetPeriod(n) { socPeriod = n; renderSocial(); }
+    var SOC_COLORS = { LinkedIn: '#1d4ed8', Facebook: '#3730a3', Instagram: '#be185d', X: '#111827', Email: '#b45309', Blog: '#065f46', Video: '#6d28d9', Other: '#64748b' };
+    function socNum(p, k) { return +String(p[k] || '').replace(/[^0-9.]/g, '') || 0; }
+    function socReach(p) { return socNum(p, 'reach') || socNum(p, 'impressions'); }
+    function socEng(p) { return socNum(p, 'engagements') || (socNum(p, 'likes') + socNum(p, 'comments') + socNum(p, 'shares') + socNum(p, 'clicks')); }
+    function renderSocial() {
+      var el = document.getElementById('socialBody'); if (!el) return;
+      var head = document.getElementById('socialHead'); if (head) head.textContent = 'Built from the Content Calendar. Enter results on each published post and this fills in.';
+      if (!cpLoaded) { el.innerHTML = cpError ? ppSetupEmpty('Content', cpError) : '<div class="pp-empty">Loading...</div>'; loadContentPosts(false).then(function() { if (cpLoaded) renderSocial(); }); return; }
+      var today = ppTodayISO(), since = new Date(); since.setDate(since.getDate() - socPeriod); var sinceIso = since.toISOString().slice(0, 10), prevSince = new Date(since); prevSince.setDate(prevSince.getDate() - socPeriod); var prevIso = prevSince.toISOString().slice(0, 10);
+      var all = cpList.filter(function(p) { return p.status === 'published' && p.date && (socChannel === 'all' || p.channel === socChannel); });
+      var cur = all.filter(function(p) { return p.date >= sinceIso && p.date <= today; }), prev = all.filter(function(p) { return p.date >= prevIso && p.date < sinceIso; });
+      var sumR = function(l) { return l.reduce(function(n, p) { return n + socReach(p); }, 0); }, sumE = function(l) { return l.reduce(function(n, p) { return n + socEng(p); }, 0); };
+      var reach = sumR(cur), eng = sumE(cur), withData = cur.filter(function(p) { return socReach(p) || socEng(p); }), missing = cur.filter(function(p) { return !socReach(p) && !socEng(p); });
+      var rate = reach ? eng / reach : 0, prevRate = sumR(prev) ? sumE(prev) / sumR(prev) : 0;
+      var kpi = function(v, l, s, delta, cls) { return '<div class="out-kpi ' + (cls || '') + '"><div class="out-kpi-top"><div><div class="v">' + v + '</div><div class="l">' + l + '</div></div></div><div class="out-kpi-foot">' + (delta || '') + '<span>' + s + '</span></div></div>'; };
+      // cadence by week, stacked by channel
+      var weeks = []; for (var i = Math.ceil(socPeriod / 7) - 1; i >= 0; i--) { var d = new Date(); d.setDate(d.getDate() - i * 7); var dow = (d.getDay() + 6) % 7; d.setDate(d.getDate() - dow); weeks.push(d.toISOString().slice(0, 10)); }
+      var wk = function(iso) { var d = new Date(iso + 'T12:00:00'); var dow = (d.getDay() + 6) % 7; d.setDate(d.getDate() - dow); return d.toISOString().slice(0, 10); };
+      var byWeek = {}; weeks.forEach(function(w) { byWeek[w] = {}; }); cur.forEach(function(p) { var w = wk(p.date); if (byWeek[w]) byWeek[w][p.channel || 'Other'] = (byWeek[w][p.channel || 'Other'] || 0) + 1; });
+      var maxW = Math.max(1, Math.max.apply(null, weeks.map(function(w) { return Object.keys(byWeek[w]).reduce(function(n, c) { return n + byWeek[w][c]; }, 0); })));
+      var cadence = '<div class="soc-cadence">' + weeks.map(function(w) { var chans = Object.keys(byWeek[w]), total = chans.reduce(function(n, c) { return n + byWeek[w][c]; }, 0); return '<div class="soc-wk" title="Week of ' + ppFmtDate(w, { month: 'short', day: 'numeric' }) + ': ' + total + ' post' + (total === 1 ? '' : 's') + (chans.length ? ' (' + chans.map(function(c) { return byWeek[w][c] + ' ' + c; }).join(', ') + ')' : '') + '"><div class="soc-wk-bar">' + chans.map(function(c) { return '<i style="height:' + (byWeek[w][c] / maxW * 100) + '%;background:' + (SOC_COLORS[c] || SOC_COLORS.Other) + '"></i>'; }).join('') + '</div><span>' + ppFmtDate(w, { month: 'numeric', day: 'numeric' }) + '</span><b>' + (total || '') + '</b></div>'; }).join('') + '</div>';
+      // channel mix
+      var chans = {}; cur.forEach(function(p) { var c = p.channel || 'Other'; var o = chans[c] = chans[c] || { n: 0, reach: 0, eng: 0 }; o.n++; o.reach += socReach(p); o.eng += socEng(p); }); var chanRows = Object.keys(chans).sort(function(a, b) { return chans[b].n - chans[a].n; });
+      // best weekday
+      var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], byDay = days.map(function() { return { n: 0, eng: 0, reach: 0 }; }); withData.forEach(function(p) { var d = new Date(p.date + 'T12:00:00').getDay(); byDay[d].n++; byDay[d].eng += socEng(p); byDay[d].reach += socReach(p); }); var dayRates = byDay.map(function(d) { return d.reach ? d.eng / d.reach : 0; }), bestDay = dayRates.indexOf(Math.max.apply(null, dayRates)), maxDayN = Math.max(1, Math.max.apply(null, byDay.map(function(d) { return d.n; })));
+      // top posts
+      var top = withData.slice().sort(function(a, b) { return socEng(b) - socEng(a); }).slice(0, 6);
+      // campaigns
+      var camps = {}; cur.forEach(function(p) { if (!p.campaign) return; var o = camps[p.campaign] = camps[p.campaign] || { n: 0, reach: 0, eng: 0 }; o.n++; o.reach += socReach(p); o.eng += socEng(p); }); var campRows = Object.keys(camps).sort(function(a, b) { return camps[b].eng - camps[a].eng; });
+      // formats
+      var fmts = {}; withData.forEach(function(p) { var f = p.format || 'Unspecified'; var o = fmts[f] = fmts[f] || { n: 0, reach: 0, eng: 0 }; o.n++; o.reach += socReach(p); o.eng += socEng(p); }); var fmtRows = Object.keys(fmts).filter(function(f) { return f !== 'Unspecified'; }).sort(function(a, b) { return (fmts[b].reach ? fmts[b].eng / fmts[b].reach : 0) - (fmts[a].reach ? fmts[a].eng / fmts[a].reach : 0); });
+      var periodBtns = [30, 90, 180, 365].map(function(n) { return '<button class="' + (socPeriod === n ? 'on' : '') + '" onclick="socSetPeriod(' + n + ')">' + (n === 365 ? '12 months' : n + ' days') + '</button>'; }).join('');
+      el.innerHTML = '<div class="out-head"><div class="pp-view-toggle">' + periodBtns + '</div><div class="pp-toolbar-note">' + cur.length + ' published post' + (cur.length === 1 ? '' : 's') + ' in the period' + (socChannel !== 'all' ? ' on ' + socChannel : '') + '.' + (missing.length ? ' <b style="color:#b45309">' + missing.length + ' without results yet.</b>' : '') + '</div></div>'
+        + '<div class="out-kpis"><div class="out-kpi"><div class="out-kpi-top"><div><div class="v">' + cur.length + '</div><div class="l">Posts published</div></div></div><div class="out-kpi-foot">' + outDelta(cur.length, prev.length) + '<span>' + (cur.length / Math.max(1, socPeriod / 7)).toFixed(1) + ' per week</span></div></div>' + kpi(outFmt(reach), 'Reach', withData.length + ' posts with results', outDelta(reach, sumR(prev))) + kpi(outFmt(eng), 'Engagements', 'likes, comments, shares, clicks', outDelta(eng, sumE(prev))) + kpi((rate * 100).toFixed(1) + '%', 'Engagement rate', 'engagements over reach', outDelta(rate, prevRate)) + kpi(withData.length ? outFmt(Math.round(reach / withData.length)) : '-', 'Avg reach per post', withData.length ? outFmt(Math.round(eng / withData.length)) + ' avg engagements' : 'add results to posts', '') + kpi(chanRows.length ? chanRows[0] : '-', 'Most used channel', chanRows.length ? chans[chanRows[0]].n + ' posts' : '', '') + '</div>'
+        + (missing.length ? '<div class="out-insights"><div class="out-ins warn"><b>' + missing.length + ' post' + (missing.length === 1 ? '' : 's') + ' missing results</b><span>Open each post and enter reach, likes, comments and shares from the platform so the numbers here are real.</span></div>' + (bestDay >= 0 && byDay[bestDay].n >= 2 ? '<div class="out-ins good"><b>' + days[bestDay] + ' posts perform best</b><span>' + (dayRates[bestDay] * 100).toFixed(1) + '% engagement rate across ' + byDay[bestDay].n + ' posts</span></div>' : '') + (fmtRows.length ? '<div class="out-ins info"><b>' + fmtRows[0] + ' format leads</b><span>' + (fmts[fmtRows[0]].reach ? (fmts[fmtRows[0]].eng / fmts[fmtRows[0]].reach * 100).toFixed(1) : 0) + '% engagement rate on ' + fmts[fmtRows[0]].n + ' posts</span></div>' : '') + '</div>' : (bestDay >= 0 && byDay[bestDay].n >= 2 ? '<div class="out-insights"><div class="out-ins good"><b>' + days[bestDay] + ' posts perform best</b><span>' + (dayRates[bestDay] * 100).toFixed(1) + '% engagement rate across ' + byDay[bestDay].n + ' posts</span></div></div>' : ''))
+        + '<div class="mk-grid"><div class="stat-card out-card mk-span2"><h3>Posting cadence<span class="out-legend">' + Object.keys(SOC_COLORS).filter(function(c) { return chans[c]; }).map(function(c) { return '<i style="background:' + SOC_COLORS[c] + '"></i>' + c + ' '; }).join('') + '</span></h3>' + cadence + '</div>'
+        + '<div class="stat-card out-card"><h3>By channel</h3>' + (chanRows.length ? chanRows.map(function(c) { var o = chans[c]; return '<div class="out-src"><div class="t"><b><i class="soc-dot" style="background:' + (SOC_COLORS[c] || SOC_COLORS.Other) + '"></i>' + ppEsc(c) + '</b><span>' + o.n + ' post' + (o.n === 1 ? '' : 's') + (o.reach ? ' &middot; ' + outFmt(o.reach) + ' reach &middot; ' + (o.eng / o.reach * 100).toFixed(1) + '%' : '') + '</span></div><div class="bar"><i style="width:' + Math.round(o.n / chans[chanRows[0]].n * 100) + '%;background:' + (SOC_COLORS[c] || SOC_COLORS.Other) + '"></i></div></div>'; }).join('') : '<div class="pp-up-empty">No published posts in this period.</div>') + '</div></div>'
+        + '<div class="mk-grid"><div class="stat-card out-card mk-span2"><h3>Top posts<span class="n">by engagement</span></h3>' + (top.length ? '<div class="soc-top">' + top.map(function(p, i) { var th = cpThumb(p.assetUrl); return '<div class="soc-top-card" onclick="openContentModal(\'' + ppEsc(p.id) + '\')"><span class="rank' + (i === 0 ? ' gold' : '') + '">' + (i + 1) + '</span>' + (th ? '<img src="' + ppEsc(th) + '" alt="" loading="lazy" onerror="this.remove()">' : '<span class="soc-top-noimg" style="background:' + (SOC_COLORS[p.channel] || SOC_COLORS.Other) + '22"></span>') + '<div class="soc-top-main"><b>' + ppEsc(p.title) + '</b><span>' + ppEsc(p.channel || '') + ' &middot; ' + ppFmtDate(p.date, { month: 'short', day: 'numeric' }) + (p.format ? ' &middot; ' + ppEsc(p.format) : '') + '</span><span class="soc-top-nums"><b>' + outFmt(socEng(p)) + '</b> eng &middot; ' + outFmt(socReach(p)) + ' reach' + (socReach(p) ? ' &middot; ' + (socEng(p) / socReach(p) * 100).toFixed(1) + '%' : '') + '</span></div>' + (p.postUrl ? '<a class="pp-mini-btn ts-link" href="' + ppEsc(p.postUrl) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + ppSvg('link') + '</a>' : '') + '</div>'; }).join('') + '</div>' : '<div class="pp-up-empty">Enter results on published posts to see what worked.</div>') + '</div>'
+        + '<div class="stat-card out-card"><h3>Best days to post</h3><div class="soc-days">' + days.map(function(d, i) { var o = byDay[i]; return '<div class="soc-day' + (i === bestDay && o.n >= 2 ? ' best' : '') + '" title="' + o.n + ' posts, ' + (dayRates[i] * 100).toFixed(1) + '% engagement"><div class="bar"><i style="height:' + Math.round(o.n / maxDayN * 100) + '%"></i></div><span>' + d + '</span><b>' + (o.n ? (dayRates[i] * 100).toFixed(0) + '%' : '') + '</b></div>'; }).join('') + '</div><div class="pp-toolbar-note" style="margin-top:8px">Bar height is how often you post that day; the number is the engagement rate.</div>' + (campRows.length ? '<h3 style="margin-top:16px">Campaigns</h3>' + campRows.slice(0, 6).map(function(c) { var o = camps[c]; return '<div class="out-src"><div class="t"><b>' + ppEsc(c) + '</b><span>' + o.n + ' post' + (o.n === 1 ? '' : 's') + ' &middot; ' + outFmt(o.eng) + ' eng' + (o.reach ? ' &middot; ' + (o.eng / o.reach * 100).toFixed(1) + '%' : '') + '</span></div><div class="bar"><i style="width:' + Math.round(o.eng / Math.max(1, camps[campRows[0]].eng) * 100) + '%"></i></div></div>'; }).join('') : '') + '</div></div>';
+    }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
     document.addEventListener('touchmove', function(e) {
