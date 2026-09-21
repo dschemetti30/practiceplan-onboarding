@@ -1959,6 +1959,14 @@
     .fol-log-row input{padding:8px 10px;border:1px solid var(--border);border-radius:9px;background:var(--bg);font:inherit;font-size:13px;color:var(--text);width:120px}
     .fol-log-row input[type=date]{width:150px}
     @media(max-width:768px){.cp-res-row{grid-template-columns:1fr 1fr;} .cp-res-row .cp-res-p{grid-column:span 2}}
+    /* ---- content v4 ---- */
+    .cp-card-media.sq{aspect-ratio:1/1}
+    .cp-card-media.sq img{object-fit:cover}
+    .cp-card-top{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:6px;min-height:20px}
+    .cp-card-top .cp-icons .cp-ic{box-shadow:none}
+    .cp-type{font-weight:700;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
+    .cpi-type{grid-column:1/-1;padding:7px 9px;border:1px solid var(--border);border-radius:8px;background:var(--bg);font:inherit;font-size:12px;color:var(--text)}
+    .cpi-conf.strong{color:var(--pp-green)}.cpi-conf.likely{color:#0891b2}.cpi-conf.weak{color:#b45309}.cpi-conf.none{color:#b91c1c}
   </style>
 </head>
 <body>
@@ -2348,7 +2356,7 @@
       <div class="view-content" id="contentView">
         <div class="pp-stat-strip" id="cpStats"></div>
         <div class="table-section">
-          <div class="controls-row"><div class="cp-toolbar-left"><div class="section-title">Content Calendar</div><div class="pp-view-toggle" id="cpViewToggle"></div></div><div class="controls-right"><div class="controls-group filters-group"><div class="styled-select"><select onchange="cpFilter=this.value;renderContent()"><option value="all">Everything</option><option value="published">Published</option><option value="scheduled">Scheduled and drafted</option><option value="ideas">Ideas</option><option value="upcoming">Upcoming and in progress</option><option value="ch:LinkedIn">LinkedIn</option><option value="ch:Facebook">Facebook</option><option value="ch:Instagram">Instagram</option><option value="ch:X">X</option><option value="ch:Email">Email</option></select></div><div class="styled-select"><select onchange="cpSort=this.value;renderContent()"><option value="recent">Most recent first</option><option value="oldest">Oldest first</option><option value="engagement">Most engagement</option><option value="reach">Most reach</option><option value="channel">By channel</option></select></div></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="startContentImport()" title="Bring already-published posts onto the calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import posts</button><button class="text-action-btn" onclick="openContentModal(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> New Post</button></div></div></div>
+          <div class="controls-row"><div class="cp-toolbar-left"><div class="section-title">Content Calendar</div><div class="pp-view-toggle" id="cpViewToggle"></div></div><div class="controls-right"><div class="controls-group filters-group"><div class="styled-select"><select onchange="cpFilter=this.value;renderContent()"><option value="all">Everything</option><option value="published">Published</option><option value="scheduled">Scheduled and drafted</option><option value="ideas">Ideas</option><option value="upcoming">Upcoming and in progress</option><option value="ch:LinkedIn">LinkedIn</option><option value="ch:Facebook">Facebook</option><option value="ch:Instagram">Instagram</option><option value="ch:X">X</option><option value="ch:Email">Email</option><optgroup label="By type"><option value="ty:Partner Announcement">Partner Announcement</option><option value="ty:Trade Show">Trade Show</option><option value="ty:Testimonial">Testimonial</option><option value="ty:Go-Live">Go-Live</option><option value="ty:Product Update">Product Update</option><option value="ty:Tip / How-to">Tip / How-to</option><option value="ty:Event Recap">Event Recap</option><option value="ty:Company News">Company News</option><option value="ty:Hiring">Hiring</option><option value="ty:Other">Other</option></optgroup></select></div><div class="styled-select"><select onchange="cpSort=this.value;renderContent()"><option value="recent">Most recent first</option><option value="oldest">Oldest first</option><option value="engagement">Most engagement</option><option value="reach">Most reach</option><option value="channel">By channel</option></select></div></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="startImageImport()" title="Upload many images at once and attach each to its post"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Add images</button><button class="text-action-btn" onclick="startContentImport()" title="Bring already-published posts onto the calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import posts</button><button class="text-action-btn" onclick="openContentModal(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> New Post</button></div></div></div>
           <div id="cpGallery"></div>
           <div class="table-wrapper"><table class="pp-table" id="cpTable"><thead><tr><th>When</th><th>Post</th><th>Channel</th><th>Status</th><th>Owner</th><th>Campaign</th><th>Links</th><th>Results</th><th></th></tr></thead><tbody id="cpTableBody"><tr><td colspan="9" class="pp-empty">Loading...</td></tr></tbody></table></div>
         </div>
@@ -6512,7 +6520,7 @@
 
     // ---- content calendar ----
     var CP_CHANNELS = ['LinkedIn', 'Facebook', 'Instagram', 'X', 'Email', 'Blog', 'Video', 'Other'], CP_STATUSES = [{ val: 'idea', label: 'Idea', cls: 'unset' }, { val: 'drafted', label: 'Drafted', cls: 'need-to-book' }, { val: 'scheduled', label: 'Scheduled', cls: 'aud-supers' }, { val: 'published', label: 'Published', cls: 'booked' }];
-    var CP_COLS = ['id', 'date', 'channel', 'status', 'title', 'copy', 'assetUrl', 'postUrl', 'owner', 'campaign', 'impressions', 'engagements', 'clicks', 'notes', 'format', 'reach', 'likes', 'comments', 'shares', 'results', 'updatedAt', 'updatedBy'];
+    var CP_COLS = ['id', 'date', 'channel', 'status', 'title', 'copy', 'assetUrl', 'postUrl', 'owner', 'campaign', 'impressions', 'engagements', 'clicks', 'notes', 'format', 'reach', 'likes', 'comments', 'shares', 'results', 'type', 'updatedAt', 'updatedBy'];
     var cpList = [], cpLoaded = false, cpError = '', cpFilter = 'upcoming';
     async function loadContentPosts(force) { if (cpLoaded && !force) return; try { var r = await ppApi('getContentPosts'); if (r.success) { cpList = (r.rows || []).map(function(x) { var o = {}; CP_COLS.forEach(function(c) { o[c] = x[c] === undefined ? '' : String(x[c]); }); return o; }); cpLoaded = true; cpError = ''; } else cpError = r.error || 'Unknown error'; } catch(e) { cpError = e.message; } }
     function cpRow(p) {
@@ -7124,6 +7132,130 @@
     }
     var _renderSocialV2 = renderSocial;
     renderSocial = function() { _renderSocialV2(); var el = document.getElementById('socialBody'); if (!el || !cpLoaded) return; var host = document.createElement('div'); host.id = 'folPanel'; el.insertBefore(host, el.firstChild); renderFollowers(); loadFollowers(false).then(renderFollowers); };
+    // =====================================================================
+    // CONTENT v4: post types, square gallery media, icons off the image, bulk image matcher
+    // =====================================================================
+    var CP_TYPES = ['Partner Announcement', 'Trade Show', 'Testimonial', 'Go-Live', 'Product Update', 'Tip / How-to', 'Event Recap', 'Company News', 'Hiring', 'Other'];
+    var CP_TYPE_COLORS = { 'Partner Announcement': '#0076bb', 'Trade Show': '#ea580c', 'Testimonial': '#7c3aed', 'Go-Live': '#00a84f', 'Product Update': '#0891b2', 'Tip / How-to': '#ca8a04', 'Event Recap': '#db2777', 'Company News': '#475569', 'Hiring': '#4f46e5', 'Other': '#94a3b8' };
+    function cpGuessType(p) {
+      var t = ((p.title || '') + ' ' + (p.copy || '')).toLowerCase();
+      if (/welcome|partner|partnership|joins|joined|excited to announce|now (live|available) (at|in|for)|signed with/.test(t) && !/booth/.test(t)) return /is live on practiceplan|goes live|went live|now live/.test(t) ? 'Go-Live' : 'Partner Announcement';
+      if (/is live|go-live|went live|now live|now bookable|goes live/.test(t)) return 'Go-Live';
+      if (/booth|conference|trade show|thsada|tasa|tasbo|aasa|nrpa|asbo|txedcon|expo|summit|come see us|stop by/.test(t)) return /recap|thanks to everyone|great week|wrap/.test(t) ? 'Event Recap' : 'Trade Show';
+      if (/["“”].{20,}["“”]|testimonial|said it best|in their words|hear from|- [a-z]+ isd|according to/.test(t)) return 'Testimonial';
+      if (/new feature|update|release|introducing|now you can|just shipped|improved/.test(t)) return 'Product Update';
+      if (/tip|how to|how-to|did you know|pro tip|quick tip|reminder/.test(t)) return 'Tip / How-to';
+      if (/hiring|join our team|we're hiring|open role/.test(t)) return 'Hiring';
+      return '';
+    }
+    function cpTypeChip(p, small) { var ty = p.type || ''; if (!ty) return ''; return '<span class="pp-chip cp-type" style="background:' + (CP_TYPE_COLORS[ty] || CP_TYPE_COLORS.Other) + '22;color:' + (CP_TYPE_COLORS[ty] || CP_TYPE_COLORS.Other) + (small ? ';font-size:9px;padding:2px 7px' : '') + '">' + ppEsc(ty) + '</span>'; }
+    // ---- gallery card: square media, icons and type in the body, not over the image ----
+    cpCard = function(p) {
+      var th = cpThumb(p.assetUrl), st = CP_STATUSES.find(function(s) { return s.val === p.status; }) || CP_STATUSES[0], d = p.date ? ppParseISO(p.date) : null, today = ppTodayISO(), days = p.date ? ppDaysBetween(p.date, today) : null;
+      var when = d ? '<div class="cp-when' + (days !== null && days >= 0 && days <= 7 && p.status !== 'published' ? ' soon' : '') + '"><b>' + d.getDate() + '</b><span>' + d.toLocaleDateString('en-US', { month: 'short' }) + '</span></div>' : '<div class="cp-when"><b>?</b><span>date</span></div>';
+      var whenText = !p.date ? 'No date yet' : p.status === 'published' ? 'Published ' + ppFmtDate(p.date, { weekday: 'short', month: 'short', day: 'numeric' }) : days === 0 ? 'Today' : days > 0 ? 'In ' + days + ' day' + (days === 1 ? '' : 's') : Math.abs(days) + 'd ago, not marked published';
+      var t = cpTotals(p), eng = socEng(p);
+      return '<div class="cp-card' + (p.status === 'published' ? '' : ' draft') + '" onclick="openContentModal(\'' + ppEsc(p.id) + '\')"><div class="cp-card-media sq">' + (th ? '<img src="' + ppEsc(th) + '" alt="" loading="lazy" onerror="this.remove()">' : '<div class="cp-noimg">' + ppEsc((p.copy || '').slice(0, 170) || 'No image or copy yet') + '</div>') + when + '</div><div class="cp-card-body"><div class="cp-card-top">' + cpPlatformIcons(p, 20) + cpTypeChip(p, true) + '</div><div class="cp-card-title">' + ppEsc(p.title || '(untitled)') + '</div><div class="cp-card-stats">' + (p.status === 'published' ? (t.reach || eng ? '<b>' + outFmt(eng) + '</b> eng &middot; ' + outFmt(t.reach) + ' reach' + (t.reach ? ' &middot; ' + (eng / t.reach * 100).toFixed(1) + '%' : '') : '<span class="pp-placeholder">no results yet</span>') : '') + '</div><div class="cp-card-meta"><span>' + whenText + '</span><span class="pp-chip ' + st.cls + '">' + st.label + '</span>' + (p.owner ? ppRepAvatars(p.owner, 18) : '') + (p.postUrl ? '<a class="pp-mini-btn ts-link" href="' + ppEsc(p.postUrl) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Open the post" style="margin-left:auto">' + ppSvg('link') + '</a>' : '') + '</div></div></div>';
+    };
+    // ---- modal: type select (with a guess) ----
+    var _openContentModalV3 = openContentModal;
+    openContentModal = function(id) {
+      _openContentModalV3(id);
+      var p = id ? cpList.find(function(x) { return x.id === id; }) : null;
+      setTimeout(function() {
+        var camp = document.getElementById('cp_campaign'); if (!camp || document.getElementById('cp_type')) return;
+        var guess = p ? (p.type || cpGuessType(p)) : '';
+        var wrap = document.createElement('div'); wrap.innerHTML = '<label>Post type</label><select id="cp_type"><option value="">Pick one</option>' + CP_TYPES.map(function(t) { return '<option' + (guess === t ? ' selected' : '') + '>' + t + '</option>'; }).join('') + '</select>' + (p && !p.type && guess ? '<div class="pp-toolbar-note" style="margin-top:3px">Suggested from the copy; save to keep it.</div>' : '');
+        camp.parentNode.parentNode.insertBefore(wrap, camp.parentNode.nextSibling);
+      }, 5);
+    };
+    var _saveContentModalV3 = saveContentModal;
+    saveContentModal = async function(id) {
+      var sel = document.getElementById('cp_type'), ty = sel ? sel.value : '';
+      var _api = ppApi; ppApi = function(action, params, t) { if (action === 'saveContentPost' && params && params.row) params.row.type = ty; return _api(action, params, t); };
+      try { await _saveContentModalV3(id); } finally { ppApi = _api; }
+      var p = cpList.find(function(x) { return x.id === id || (!id && x.title === ((document.getElementById('cp_title') || {}).value || '').trim()); }); if (p) p.type = ty;
+    };
+    // ---- filters: by type ----
+    var _cpFilteredV2 = cpFiltered;
+    cpFiltered = function() { var rows = _cpFilteredV2(); if (/^ty:/.test(cpFilter)) { var ty = cpFilter.slice(3); rows = cpSorted(cpList.filter(function(p) { return (p.type || '') === ty; })); } return rows; };
+    // list row: type in the campaign cell
+    var _cpRowV3 = cpRow;
+    cpRow = function(p) { var html = _cpRowV3(p); return html.replace(/(<td class="pp-cell" data-edit="campaign"[^>]*>)/, '$1' + (p.type ? cpTypeChip(p, true) + ' ' : '')); };
+    // importer: guess the type for pasted posts
+    var _cpRenderPreviewV3 = cpRenderPreview;
+    cpRenderPreview = function() { cpImportRows.forEach(function(p) { if (!p.type) p.type = cpGuessType(p); }); _cpRenderPreviewV3(); document.querySelectorAll('.cpi-row').forEach(function(row, i) { var p = cpImportRows[i]; if (!p) return; var sel = document.createElement('select'); sel.className = 'cpi-type'; sel.innerHTML = '<option value="">Post type...</option>' + CP_TYPES.map(function(t) { return '<option' + (p.type === t ? ' selected' : '') + '>' + t + '</option>'; }).join(''); sel.onchange = function() { cpImportRows[i].type = sel.value; }; var f = row.querySelector('.cpi-fields'); if (f) f.appendChild(sel); }); };
+
+    // ---- bulk image matcher ----
+    var cpImgQueue = [];
+    function cpFileDate(file) {
+      var n = file.name, m;
+      if ((m = n.match(/(20\d{2})[-_.]?(\d{2})[-_.]?(\d{2})/))) return m[1] + '-' + m[2] + '-' + m[3];
+      if ((m = n.match(/(\d{1,2})[-_.](\d{1,2})[-_.](20\d{2})/))) return m[3] + '-' + String(m[1]).padStart(2, '0') + '-' + String(m[2]).padStart(2, '0');
+      var d = cpDetectDate(n.replace(/[-_]+/g, ' '), new Date().getFullYear()); if (d) return d;
+      return file.lastModified ? new Date(file.lastModified).toISOString().slice(0, 10) : '';
+    }
+    function cpFileWords(name) { return name.replace(/\.[^.]+$/, '').toLowerCase().replace(/(img|image|screenshot|photo|pxl|dsc|final|post|social|copy)[-_ ]?/g, ' ').replace(/[\d_\-.]+/g, ' ').split(/\s+/).filter(function(w) { return w.length > 2; }); }
+    function cpMatchImage(file) {
+      var fd = cpFileDate(file), words = cpFileWords(file.name), dateFromName = /(20\d{2}|\d{1,2}[-_.]\d{1,2}[-_.]20\d{2}|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i.test(file.name);
+      var scored = cpList.filter(function(p) { return p.date; }).map(function(p) {
+        var dd = fd ? Math.abs(ppDaysBetween(p.date, fd)) : 99, s = 0;
+        if (dd === 0) s += dateFromName ? 6 : 3; else if (dd === 1) s += dateFromName ? 4 : 2; else if (dd <= 3) s += 1;
+        var tw = ((p.title || '') + ' ' + (p.copy || '').slice(0, 120)).toLowerCase(); words.forEach(function(w) { if (tw.indexOf(w) >= 0) s += 2; });
+        if (p.assetUrl) s -= 2;
+        return { p: p, s: s, dd: dd };
+      }).filter(function(x) { return x.s > 0; }).sort(function(a, b) { return b.s - a.s; });
+      return { date: fd, best: scored[0] || null, options: scored.slice(0, 6) };
+    }
+    function startImageImport() {
+      document.querySelector('.import-title').textContent = 'Add Images to Posts';
+      document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2);margin:10px 0">Pick all the images at once. Each one is matched to a post by the date in the file name (or the file\'s own date) and by words in the name that appear in a post\'s title. Check the match, change it where needed, or make a new post, then upload.</p><button class="import-btn" onclick="document.getElementById(\'cpBulkImg\').click()">Choose images</button><input type="file" id="cpBulkImg" accept="image/*" multiple style="display:none" onchange="cpQueueImages(this.files);this.value=\'\'">';
+      document.getElementById('importOverlay').classList.add('active');
+    }
+    function cpQueueImages(files) {
+      cpImgQueue = [].slice.call(files || []).map(function(f) { var m = cpMatchImage(f); return { file: f, url: URL.createObjectURL(f), date: m.date, choice: m.best && m.best.s >= 3 ? m.best.p.id : (m.best ? m.best.p.id : '__new'), options: m.options, conf: m.best ? (m.best.s >= 6 ? 'strong' : m.best.s >= 3 ? 'likely' : 'weak') : 'none', status: '' }; });
+      cpRenderImageQueue();
+    }
+    function cpRenderImageQueue() {
+      var el = document.getElementById('importBody');
+      if (!cpImgQueue.length) { el.innerHTML = '<div class="pp-empty">No images selected.</div>'; return; }
+      var strong = cpImgQueue.filter(function(q) { return q.conf === 'strong' || q.conf === 'likely'; }).length;
+      el.innerHTML = '<p style="font-size:13px;color:var(--text2);margin:10px 0">' + cpImgQueue.length + ' image' + (cpImgQueue.length === 1 ? '' : 's') + ', ' + strong + ' matched with confidence. Anything marked weak or none needs a look.</p><div class="cpi-rows">' + cpImgQueue.map(function(q, i) {
+        var opts = '<option value="__new">New post on ' + (q.date ? ppFmtDate(q.date, { month: 'short', day: 'numeric' }) : 'this date') + '</option><option value="__skip">Skip this image</option>' + q.options.map(function(o) { return '<option value="' + ppEsc(o.p.id) + '"' + (q.choice === o.p.id ? ' selected' : '') + '>' + ppEsc(o.p.title || '(untitled)') + ' (' + ppFmtDate(o.p.date, { month: 'short', day: 'numeric' }) + (o.p.assetUrl ? ', has image' : '') + ')</option>'; }).join('');
+        var seen = {}; q.options.forEach(function(o) { seen[o.p.id] = true; });
+        var others = cpList.filter(function(p) { return !seen[p.id]; }).sort(function(a, b) { return (b.date || '') < (a.date || '') ? -1 : 1; }).slice(0, 40).map(function(p) { return '<option value="' + ppEsc(p.id) + '"' + (q.choice === p.id ? ' selected' : '') + '>' + ppEsc(p.title || '(untitled)') + (p.date ? ' (' + ppFmtDate(p.date, { month: 'short', day: 'numeric' }) + ')' : '') + '</option>'; }).join('');
+        return '<div class="cpi-row"><div class="cpi-img" style="cursor:default"><img src="' + q.url + '" alt=""></div><div class="cpi-main"><div class="cpi-fields" style="grid-template-columns:1fr"><select onchange="cpImgQueue[' + i + '].choice=this.value"><optgroup label="Suggested">' + opts + '</optgroup>' + (others ? '<optgroup label="Other posts">' + others + '</optgroup>' : '') + '</select></div><div class="pp-toolbar-note">' + ppEsc(q.file.name) + ' &middot; ' + (q.date ? 'dated ' + ppFmtDate(q.date, { month: 'short', day: 'numeric', year: 'numeric' }) : 'no date found') + ' &middot; <b class="cpi-conf ' + q.conf + '">' + (q.conf === 'strong' ? 'strong match' : q.conf === 'likely' ? 'likely match' : q.conf === 'weak' ? 'weak match' : 'no match') + '</b>' + (q.status ? ' &middot; ' + q.status : '') + '</div></div><button class="pp-mini-btn danger" onclick="cpImgQueue.splice(' + i + ',1);cpRenderImageQueue()">&#10005;</button></div>';
+      }).join('') + '</div><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px"><button class="import-btn secondary" onclick="closeImport()">Cancel</button><button class="import-btn" id="cpImgRun" onclick="cpRunImageImport()">Upload and attach ' + cpImgQueue.filter(function(q) { return q.choice !== '__skip'; }).length + '</button></div>';
+    }
+    async function cpRunImageImport() {
+      var btn = document.getElementById('cpImgRun'); btn.disabled = true; var done = 0, failed = 0;
+      for (var i = 0; i < cpImgQueue.length; i++) {
+        var q = cpImgQueue[i]; if (q.choice === '__skip') continue; btn.textContent = 'Uploading ' + (i + 1) + ' of ' + cpImgQueue.length + '...';
+        try {
+          var r = await cpUploadAsset(q.file); if (!r) { failed++; continue; }
+          var row;
+          if (q.choice === '__new') row = { id: '', title: q.file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').replace(/\b(20\d{2}|\d{2}[-.]\d{2})\b/g, '').trim() || 'Post', date: q.date, status: 'published', channel: '', owner: currentUser?.email || '', copy: '', assetUrl: r.url, postUrl: '', campaign: '', notes: 'Created from an image upload', format: 'Image', results: '{}', type: '' };
+          else { var p = cpList.find(function(x) { return x.id === q.choice; }); if (!p) { failed++; continue; } row = Object.assign({}, p, { assetUrl: r.url }); if (!row.format) row.format = 'Image'; }
+          var o = {}; CP_COLS.forEach(function(c) { o[c] = row[c] === undefined ? '' : row[c]; });
+          var s = await ppApi('saveContentPost', { row: o }); if (!s.success) throw new Error(s.error || 'Save failed');
+          q.status = 'attached'; done++;
+        } catch(e) { q.status = 'failed: ' + e.message; failed++; }
+      }
+      closeImport(); await loadContentPosts(true); renderContent(); showToast(done + ' image' + (done === 1 ? '' : 's') + ' attached' + (failed ? ', ' + failed + ' failed' : ''), failed ? 'error' : 'success');
+    }
+    // social report: performance by post type
+    var _renderSocialV3 = renderSocial;
+    renderSocial = function() {
+      _renderSocialV3();
+      var el = document.getElementById('socialBody'); if (!el || !cpLoaded) return;
+      var today = ppTodayISO(), since = new Date(); since.setDate(since.getDate() - socPeriod); var sinceIso = since.toISOString().slice(0, 10);
+      var cur = cpList.filter(function(p) { return p.status === 'published' && p.date && p.date >= sinceIso && p.date <= today && (socChannel === 'all' || cpChannels(p).indexOf(socChannel) >= 0); });
+      var byType = {}; cur.forEach(function(p) { var ty = p.type || 'Untagged'; var o = byType[ty] = byType[ty] || { n: 0, reach: 0, eng: 0 }; o.n++; o.reach += socReach(p); o.eng += socEng(p); });
+      var rows = Object.keys(byType).sort(function(a, b) { return byType[b].n - byType[a].n; }); if (!rows.length) return;
+      var best = rows.filter(function(t) { return t !== 'Untagged' && byType[t].reach; }).sort(function(a, b) { return (byType[b].eng / byType[b].reach) - (byType[a].eng / byType[a].reach); })[0];
+      var card = document.createElement('div'); card.className = 'stat-card out-card'; card.innerHTML = '<h3>By post type' + (best ? '<span class="n">' + ppEsc(best) + ' performs best</span>' : '') + '</h3>' + rows.map(function(t) { var o = byType[t]; return '<div class="out-src"><div class="t"><b><i class="soc-dot" style="background:' + (CP_TYPE_COLORS[t] || '#94a3b8') + '"></i>' + ppEsc(t) + '</b><span>' + o.n + ' post' + (o.n === 1 ? '' : 's') + (o.reach ? ' &middot; ' + outFmt(o.reach) + ' reach &middot; ' + (o.eng / o.reach * 100).toFixed(1) + '%' : '') + '</span></div><div class="bar"><i style="width:' + Math.round(o.n / byType[rows[0]].n * 100) + '%;background:' + (CP_TYPE_COLORS[t] || '#94a3b8') + '"></i></div></div>'; }).join('') + (byType.Untagged ? '<div class="pp-toolbar-note">' + byType.Untagged.n + ' post' + (byType.Untagged.n === 1 ? '' : 's') + ' without a type. Open them and pick one; the tool suggests from the copy.</div>' : '');
+      var grid = el.querySelector('.mk-grid'); if (grid) grid.appendChild(card); else el.appendChild(card);
+    };
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
     document.addEventListener('touchmove', function(e) {
