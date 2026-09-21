@@ -1929,6 +1929,36 @@
     .cp-card.draft .cp-card-media{background:repeating-linear-gradient(45deg,var(--bg),var(--bg) 8px,var(--card) 8px,var(--card) 16px)}
     .cp-toolbar-left{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
     @media(max-width:768px){.cp-gallery{grid-template-columns:1fr 1fr;gap:10px}}
+    /* ---- content v3: platforms, results, followers ---- */
+    .cp-icons{display:inline-flex;gap:3px;align-items:center}
+    .cp-ic{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;color:#fff;font-size:9px;font-weight:800;font-style:normal;letter-spacing:0;flex-shrink:0}
+    .cp-chan-picks{display:flex;gap:6px;flex-wrap:wrap}
+    .cp-chan-pick{display:inline-flex;align-items:center;gap:6px;padding:5px 10px 5px 6px;border-radius:50px;border:1px solid var(--border);background:var(--bg);font-size:12px;color:var(--text2);cursor:pointer;text-transform:none;letter-spacing:0}
+    .cp-chan-pick input{display:none}
+    .cp-chan-pick.on{border-color:var(--pp-blue);background:rgba(0,118,187,0.08);color:var(--text);font-weight:600}
+    .cp-res{display:flex;flex-direction:column;gap:6px}
+    .cp-res-row{display:grid;grid-template-columns:120px 2fr repeat(5,1fr);gap:6px;align-items:center}
+    .cp-res-row input{padding:7px 8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);font:inherit;font-size:12px;color:var(--text);min-width:0;text-transform:none;letter-spacing:0}
+    .cp-res-p{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text);text-transform:none;letter-spacing:0}
+    .cp-card .cp-chan{display:none}
+    .cp-card-plat{position:absolute;top:10px;right:10px;display:flex;gap:3px}
+    .cp-card-plat .cp-ic{box-shadow:0 1px 3px rgba(0,0,0,0.25)}
+    .fol-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:14px}
+    .fol-card{background:var(--bg);border-radius:14px;padding:12px 14px;min-width:0}
+    .fol-h{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text)}
+    .fol-h b{flex:1}
+    .fol-date{font-size:10.5px;color:var(--text3)}
+    .fol-n{font-family:var(--font-display);font-size:26px;font-weight:800;color:var(--text);margin:6px 0 2px;letter-spacing:-0.02em}
+    .fol-d{display:flex;align-items:center;gap:8px;font-size:11px;min-height:20px;margin-bottom:6px}
+    .fol-svg{width:100%;height:60px;display:block}
+    .fol-flat{font-size:11px;color:var(--text3);height:60px;display:flex;align-items:center}
+    .fol-log{border-top:1px solid var(--border);padding-top:12px}
+    .fol-log>b{font-size:12px;color:var(--text);display:block;margin-bottom:8px}
+    .fol-log-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+    .fol-log-row label{display:flex;flex-direction:column;gap:3px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text3)}
+    .fol-log-row input{padding:8px 10px;border:1px solid var(--border);border-radius:9px;background:var(--bg);font:inherit;font-size:13px;color:var(--text);width:120px}
+    .fol-log-row input[type=date]{width:150px}
+    @media(max-width:768px){.cp-res-row{grid-template-columns:1fr 1fr;} .cp-res-row .cp-res-p{grid-column:span 2}}
   </style>
 </head>
 <body>
@@ -2284,6 +2314,7 @@
         <div id="resList"></div>
         <div class="res-drive"><div id="driveBrowser"></div></div>
         <div class="res-drive" id="signedDocs"></div>
+        <div class="res-drive"><div class="drive-connect" style="border-style:solid"><div style="flex:1"><b>Image uploads</b><div class="pp-toolbar-note">Content Calendar images upload to Drive through the Apps Script POST route. If an upload fails, test it here and the message says exactly what is missing.</div><div class="pp-toolbar-note" id="uploadTestResult" style="margin-top:6px"></div></div><button class="text-action-btn" onclick="cpTestUpload(this)">Test upload</button></div></div>
       </div>
 
       <!-- ===== Meetings view (Close) ===== -->
@@ -6481,7 +6512,7 @@
 
     // ---- content calendar ----
     var CP_CHANNELS = ['LinkedIn', 'Facebook', 'Instagram', 'X', 'Email', 'Blog', 'Video', 'Other'], CP_STATUSES = [{ val: 'idea', label: 'Idea', cls: 'unset' }, { val: 'drafted', label: 'Drafted', cls: 'need-to-book' }, { val: 'scheduled', label: 'Scheduled', cls: 'aud-supers' }, { val: 'published', label: 'Published', cls: 'booked' }];
-    var CP_COLS = ['id', 'date', 'channel', 'status', 'title', 'copy', 'assetUrl', 'postUrl', 'owner', 'campaign', 'impressions', 'engagements', 'clicks', 'notes', 'format', 'reach', 'likes', 'comments', 'shares', 'updatedAt', 'updatedBy'];
+    var CP_COLS = ['id', 'date', 'channel', 'status', 'title', 'copy', 'assetUrl', 'postUrl', 'owner', 'campaign', 'impressions', 'engagements', 'clicks', 'notes', 'format', 'reach', 'likes', 'comments', 'shares', 'results', 'updatedAt', 'updatedBy'];
     var cpList = [], cpLoaded = false, cpError = '', cpFilter = 'upcoming';
     async function loadContentPosts(force) { if (cpLoaded && !force) return; try { var r = await ppApi('getContentPosts'); if (r.success) { cpList = (r.rows || []).map(function(x) { var o = {}; CP_COLS.forEach(function(c) { o[c] = x[c] === undefined ? '' : String(x[c]); }); return o; }); cpLoaded = true; cpError = ''; } else cpError = r.error || 'Unknown error'; } catch(e) { cpError = e.message; } }
     function cpRow(p) {
@@ -6490,7 +6521,7 @@
       return '<tr data-id="' + ppEsc(p.id) + '">'
         + cell('date', p.date ? '<div class="ts-date' + (d !== null && d >= 0 && d <= 3 ? ' soon' : '') + '">' + ppFmtDate(p.date, { weekday: 'short', month: 'short', day: 'numeric' }) + '<span class="sub">' + (d === null ? '' : d === 0 ? 'Today' : d > 0 ? 'in ' + d + 'd' : Math.abs(d) + 'd ago') + '</span></div>' : '<span class="pp-placeholder">Set date</span>')
         + cell('title', '<div class="cp-post-cell">' + (cpThumb(p.assetUrl) ? '<img class="cp-thumb" src="' + ppEsc(cpThumb(p.assetUrl)) + '" alt="" loading="lazy" onerror="this.remove()">' : '') + '<div style="min-width:0"><div class="pp-org-name">' + ppEsc(p.title || '(untitled)') + '</div><div class="pp-org-sub">' + ppEsc((p.copy || '').slice(0, 90)) + (p.copy && p.copy.length > 90 ? '...' : '') + '</div></div></div>')
-        + cell('channel', '<span class="pp-chip pick cp-' + (p.channel || 'other').toLowerCase() + '">' + ppEsc(p.channel || 'Channel?') + '<i class="caret"></i></span>')
+        + cell('channel', (typeof cpPlatformIcons === 'function') ? cpPlatformIcons(p, 22) : '<span class="pp-chip pick">' + ppEsc(p.channel || 'Channel?') + '</span>')
         + cell('status', '<span class="pp-chip pick ' + st.cls + '">' + st.label + '<i class="caret"></i></span>')
         + cell('owner', p.owner ? '<div style="display:flex;align-items:center;gap:6px">' + ppRepAvatars(p.owner, 22) + '<span style="font-size:11px;color:var(--text2)">' + ppEsc(ppRepName(p.owner)) + '</span></div>' : '<span class="pp-chip need-to-book">Owner<i class="caret"></i></span>')
         + cell('campaign', p.campaign ? '<span class="pp-chip aud-other">' + ppEsc(p.campaign) + '</span>' : '<span class="pp-placeholder">Campaign</span>')
@@ -6823,7 +6854,7 @@
       var head = document.getElementById('socialHead'); if (head) head.textContent = 'Built from the Content Calendar. Enter results on each published post and this fills in.';
       if (!cpLoaded) { el.innerHTML = cpError ? ppSetupEmpty('Content', cpError) : '<div class="pp-empty">Loading...</div>'; loadContentPosts(false).then(function() { if (cpLoaded) renderSocial(); }); return; }
       var today = ppTodayISO(), since = new Date(); since.setDate(since.getDate() - socPeriod); var sinceIso = since.toISOString().slice(0, 10), prevSince = new Date(since); prevSince.setDate(prevSince.getDate() - socPeriod); var prevIso = prevSince.toISOString().slice(0, 10);
-      var all = cpList.filter(function(p) { return p.status === 'published' && p.date && (socChannel === 'all' || p.channel === socChannel); });
+      var all = cpList.filter(function(p) { return p.status === 'published' && p.date && (socChannel === 'all' || (typeof cpChannels === 'function' ? cpChannels(p).indexOf(socChannel) >= 0 : p.channel === socChannel)); });
       var cur = all.filter(function(p) { return p.date >= sinceIso && p.date <= today; }), prev = all.filter(function(p) { return p.date >= prevIso && p.date < sinceIso; });
       var sumR = function(l) { return l.reduce(function(n, p) { return n + socReach(p); }, 0); }, sumE = function(l) { return l.reduce(function(n, p) { return n + socEng(p); }, 0); };
       var reach = sumR(cur), eng = sumE(cur), withData = cur.filter(function(p) { return socReach(p) || socEng(p); }), missing = cur.filter(function(p) { return !socReach(p) && !socEng(p); });
@@ -6836,7 +6867,7 @@
       var maxW = Math.max(1, Math.max.apply(null, weeks.map(function(w) { return Object.keys(byWeek[w]).reduce(function(n, c) { return n + byWeek[w][c]; }, 0); })));
       var cadence = '<div class="soc-cadence">' + weeks.map(function(w) { var chans = Object.keys(byWeek[w]), total = chans.reduce(function(n, c) { return n + byWeek[w][c]; }, 0); return '<div class="soc-wk" title="Week of ' + ppFmtDate(w, { month: 'short', day: 'numeric' }) + ': ' + total + ' post' + (total === 1 ? '' : 's') + (chans.length ? ' (' + chans.map(function(c) { return byWeek[w][c] + ' ' + c; }).join(', ') + ')' : '') + '"><div class="soc-wk-bar">' + chans.map(function(c) { return '<i style="height:' + (byWeek[w][c] / maxW * 100) + '%;background:' + (SOC_COLORS[c] || SOC_COLORS.Other) + '"></i>'; }).join('') + '</div><span>' + ppFmtDate(w, { month: 'numeric', day: 'numeric' }) + '</span><b>' + (total || '') + '</b></div>'; }).join('') + '</div>';
       // channel mix
-      var chans = {}; cur.forEach(function(p) { var c = p.channel || 'Other'; var o = chans[c] = chans[c] || { n: 0, reach: 0, eng: 0 }; o.n++; o.reach += socReach(p); o.eng += socEng(p); }); var chanRows = Object.keys(chans).sort(function(a, b) { return chans[b].n - chans[a].n; });
+      var chans = {}; cur.forEach(function(p) { var res = (typeof cpResults === 'function') ? cpResults(p) : {}, list = (typeof cpChannels === 'function') ? cpChannels(p) : [p.channel || 'Other']; if (!list.length) list = ['Other']; list.forEach(function(c) { var o = chans[c] = chans[c] || { n: 0, reach: 0, eng: 0 }; o.n++; var r = res[c]; if (r) { o.reach += +String(r.reach || '').replace(/[^0-9.]/g, '') || 0; o.eng += ['likes', 'comments', 'shares', 'clicks'].reduce(function(s, f) { return s + (+String(r[f] || '').replace(/[^0-9.]/g, '') || 0); }, 0); } else if (list.length === 1) { o.reach += socReach(p); o.eng += socEng(p); } }); }); var chanRows = Object.keys(chans).sort(function(a, b) { return chans[b].n - chans[a].n; });
       // best weekday
       var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], byDay = days.map(function() { return { n: 0, eng: 0, reach: 0 }; }); withData.forEach(function(p) { var d = new Date(p.date + 'T12:00:00').getDay(); byDay[d].n++; byDay[d].eng += socEng(p); byDay[d].reach += socReach(p); }); var dayRates = byDay.map(function(d) { return d.reach ? d.eng / d.reach : 0; }), bestDay = dayRates.indexOf(Math.max.apply(null, dayRates)), maxDayN = Math.max(1, Math.max.apply(null, byDay.map(function(d) { return d.n; })));
       // top posts
@@ -6851,7 +6882,7 @@
         + (missing.length ? '<div class="out-insights"><div class="out-ins warn"><b>' + missing.length + ' post' + (missing.length === 1 ? '' : 's') + ' missing results</b><span>Open each post and enter reach, likes, comments and shares from the platform so the numbers here are real.</span></div>' + (bestDay >= 0 && byDay[bestDay].n >= 2 ? '<div class="out-ins good"><b>' + days[bestDay] + ' posts perform best</b><span>' + (dayRates[bestDay] * 100).toFixed(1) + '% engagement rate across ' + byDay[bestDay].n + ' posts</span></div>' : '') + (fmtRows.length ? '<div class="out-ins info"><b>' + fmtRows[0] + ' format leads</b><span>' + (fmts[fmtRows[0]].reach ? (fmts[fmtRows[0]].eng / fmts[fmtRows[0]].reach * 100).toFixed(1) : 0) + '% engagement rate on ' + fmts[fmtRows[0]].n + ' posts</span></div>' : '') + '</div>' : (bestDay >= 0 && byDay[bestDay].n >= 2 ? '<div class="out-insights"><div class="out-ins good"><b>' + days[bestDay] + ' posts perform best</b><span>' + (dayRates[bestDay] * 100).toFixed(1) + '% engagement rate across ' + byDay[bestDay].n + ' posts</span></div></div>' : ''))
         + '<div class="mk-grid"><div class="stat-card out-card mk-span2"><h3>Posting cadence<span class="out-legend">' + Object.keys(SOC_COLORS).filter(function(c) { return chans[c]; }).map(function(c) { return '<i style="background:' + SOC_COLORS[c] + '"></i>' + c + ' '; }).join('') + '</span></h3>' + cadence + '</div>'
         + '<div class="stat-card out-card"><h3>By channel</h3>' + (chanRows.length ? chanRows.map(function(c) { var o = chans[c]; return '<div class="out-src"><div class="t"><b><i class="soc-dot" style="background:' + (SOC_COLORS[c] || SOC_COLORS.Other) + '"></i>' + ppEsc(c) + '</b><span>' + o.n + ' post' + (o.n === 1 ? '' : 's') + (o.reach ? ' &middot; ' + outFmt(o.reach) + ' reach &middot; ' + (o.eng / o.reach * 100).toFixed(1) + '%' : '') + '</span></div><div class="bar"><i style="width:' + Math.round(o.n / chans[chanRows[0]].n * 100) + '%;background:' + (SOC_COLORS[c] || SOC_COLORS.Other) + '"></i></div></div>'; }).join('') : '<div class="pp-up-empty">No published posts in this period.</div>') + '</div></div>'
-        + '<div class="mk-grid"><div class="stat-card out-card mk-span2"><h3>Top posts<span class="n">by engagement</span></h3>' + (top.length ? '<div class="soc-top">' + top.map(function(p, i) { var th = cpThumb(p.assetUrl); return '<div class="soc-top-card" onclick="openContentModal(\'' + ppEsc(p.id) + '\')"><span class="rank' + (i === 0 ? ' gold' : '') + '">' + (i + 1) + '</span>' + (th ? '<img src="' + ppEsc(th) + '" alt="" loading="lazy" onerror="this.remove()">' : '<span class="soc-top-noimg" style="background:' + (SOC_COLORS[p.channel] || SOC_COLORS.Other) + '22"></span>') + '<div class="soc-top-main"><b>' + ppEsc(p.title) + '</b><span>' + ppEsc(p.channel || '') + ' &middot; ' + ppFmtDate(p.date, { month: 'short', day: 'numeric' }) + (p.format ? ' &middot; ' + ppEsc(p.format) : '') + '</span><span class="soc-top-nums"><b>' + outFmt(socEng(p)) + '</b> eng &middot; ' + outFmt(socReach(p)) + ' reach' + (socReach(p) ? ' &middot; ' + (socEng(p) / socReach(p) * 100).toFixed(1) + '%' : '') + '</span></div>' + (p.postUrl ? '<a class="pp-mini-btn ts-link" href="' + ppEsc(p.postUrl) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + ppSvg('link') + '</a>' : '') + '</div>'; }).join('') + '</div>' : '<div class="pp-up-empty">Enter results on published posts to see what worked.</div>') + '</div>'
+        + '<div class="mk-grid"><div class="stat-card out-card mk-span2"><h3>Top posts<span class="n">by engagement</span></h3>' + (top.length ? '<div class="soc-top">' + top.map(function(p, i) { var th = cpThumb(p.assetUrl); return '<div class="soc-top-card" onclick="openContentModal(\'' + ppEsc(p.id) + '\')"><span class="rank' + (i === 0 ? ' gold' : '') + '">' + (i + 1) + '</span>' + (th ? '<img src="' + ppEsc(th) + '" alt="" loading="lazy" onerror="this.remove()">' : '<span class="soc-top-noimg" style="background:' + (SOC_COLORS[p.channel] || SOC_COLORS.Other) + '22"></span>') + '<div class="soc-top-main"><b>' + ppEsc(p.title) + '</b><span>' + ppEsc(String(p.channel || '')) + ' &middot; ' + ppFmtDate(p.date, { month: 'short', day: 'numeric' }) + (p.format ? ' &middot; ' + ppEsc(p.format) : '') + '</span><span class="soc-top-nums"><b>' + outFmt(socEng(p)) + '</b> eng &middot; ' + outFmt(socReach(p)) + ' reach' + (socReach(p) ? ' &middot; ' + (socEng(p) / socReach(p) * 100).toFixed(1) + '%' : '') + '</span></div>' + (p.postUrl ? '<a class="pp-mini-btn ts-link" href="' + ppEsc(p.postUrl) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + ppSvg('link') + '</a>' : '') + '</div>'; }).join('') + '</div>' : '<div class="pp-up-empty">Enter results on published posts to see what worked.</div>') + '</div>'
         + '<div class="stat-card out-card"><h3>Best days to post</h3><div class="soc-days">' + days.map(function(d, i) { var o = byDay[i]; return '<div class="soc-day' + (i === bestDay && o.n >= 2 ? ' best' : '') + '" title="' + o.n + ' posts, ' + (dayRates[i] * 100).toFixed(1) + '% engagement"><div class="bar"><i style="height:' + Math.round(o.n / maxDayN * 100) + '%"></i></div><span>' + d + '</span><b>' + (o.n ? (dayRates[i] * 100).toFixed(0) + '%' : '') + '</b></div>'; }).join('') + '</div><div class="pp-toolbar-note" style="margin-top:8px">Bar height is how often you post that day; the number is the engagement rate.</div>' + (campRows.length ? '<h3 style="margin-top:16px">Campaigns</h3>' + campRows.slice(0, 6).map(function(c) { var o = camps[c]; return '<div class="out-src"><div class="t"><b>' + ppEsc(c) + '</b><span>' + o.n + ' post' + (o.n === 1 ? '' : 's') + ' &middot; ' + outFmt(o.eng) + ' eng' + (o.reach ? ' &middot; ' + (o.eng / o.reach * 100).toFixed(1) + '%' : '') + '</span></div><div class="bar"><i style="width:' + Math.round(o.eng / Math.max(1, camps[campRows[0]].eng) * 100) + '%"></i></div></div>'; }).join('') : '') + '</div></div>';
     }
     // =====================================================================
@@ -6870,13 +6901,13 @@
     }
     function cpFiltered() {
       var today = ppTodayISO();
-      return cpSorted(cpList.filter(function(p) { if (cpFilter === 'upcoming') return p.status !== 'published' || (p.date && p.date >= today); if (cpFilter === 'published') return p.status === 'published'; if (cpFilter === 'ideas') return p.status === 'idea'; if (cpFilter === 'scheduled') return p.status === 'scheduled' || p.status === 'drafted'; if (/^ch:/.test(cpFilter)) return (p.channel || '') === cpFilter.slice(3); return true; }));
+      return cpSorted(cpList.filter(function(p) { if (cpFilter === 'upcoming') return p.status !== 'published' || (p.date && p.date >= today); if (cpFilter === 'published') return p.status === 'published'; if (cpFilter === 'ideas') return p.status === 'idea'; if (cpFilter === 'scheduled') return p.status === 'scheduled' || p.status === 'drafted'; if (/^ch:/.test(cpFilter)) return String(p.channel || '').split(/\s*,\s*/).indexOf(cpFilter.slice(3)) >= 0; return true; }));
     }
     function cpCard(p) {
       var th = cpThumb(p.assetUrl), st = CP_STATUSES.find(function(s) { return s.val === p.status; }) || CP_STATUSES[0], d = p.date ? ppParseISO(p.date) : null, today = ppTodayISO(), days = p.date ? ppDaysBetween(p.date, today) : null;
       var when = d ? '<div class="cp-when' + (days !== null && days >= 0 && days <= 7 && p.status !== 'published' ? ' soon' : '') + '"><b>' + d.getDate() + '</b><span>' + d.toLocaleDateString('en-US', { month: 'short' }) + '</span></div>' : '<div class="cp-when"><b>?</b><span>date</span></div>';
       var whenText = !p.date ? 'No date yet' : p.status === 'published' ? 'Published ' + ppFmtDate(p.date, { weekday: 'short', month: 'short', day: 'numeric' }) : days === 0 ? 'Today' : days > 0 ? 'In ' + days + ' day' + (days === 1 ? '' : 's') : Math.abs(days) + 'd ago, not marked published';
-      return '<div class="cp-card' + (p.status === 'published' ? '' : ' draft') + '" onclick="openContentModal(\'' + ppEsc(p.id) + '\')"><div class="cp-card-media">' + (th ? '<img src="' + ppEsc(th) + '" alt="" loading="lazy" onerror="this.remove()">' : '<div class="cp-noimg">' + ppEsc((p.copy || '').slice(0, 160) || 'No image or copy yet') + '</div>') + when + (p.channel ? '<span class="cp-chan" style="background:' + (SOC_COLORS[p.channel] || SOC_COLORS.Other) + '">' + ppEsc(p.channel) + '</span>' : '') + '</div><div class="cp-card-body"><div class="cp-card-title">' + ppEsc(p.title || '(untitled)') + '</div><div class="cp-card-stats">' + (p.status === 'published' ? (socReach(p) || socEng(p) ? '<b>' + outFmt(socEng(p)) + '</b> eng &middot; ' + outFmt(socReach(p)) + ' reach' + (socReach(p) ? ' &middot; ' + (socEng(p) / socReach(p) * 100).toFixed(1) + '%' : '') : '<span class="pp-placeholder">no results yet</span>') : '') + '</div><div class="cp-card-meta"><span>' + whenText + '</span><span class="pp-chip ' + st.cls + '">' + st.label + '</span>' + (p.owner ? ppRepAvatars(p.owner, 18) : '') + (p.postUrl ? '<a class="pp-mini-btn ts-link" href="' + ppEsc(p.postUrl) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Open the post" style="margin-left:auto">' + ppSvg('link') + '</a>' : '') + '</div></div></div>';
+      return '<div class="cp-card' + (p.status === 'published' ? '' : ' draft') + '" onclick="openContentModal(\'' + ppEsc(p.id) + '\')"><div class="cp-card-media">' + (th ? '<img src="' + ppEsc(th) + '" alt="" loading="lazy" onerror="this.remove()">' : '<div class="cp-noimg">' + ppEsc((p.copy || '').slice(0, 160) || 'No image or copy yet') + '</div>') + when + (typeof cpPlatformIcons === 'function' && cpChannels(p).length ? '<div class="cp-card-plat">' + cpChannels(p).map(function(ch) { return '<i class="cp-ic" style="background:' + (SOC_COLORS[ch] || SOC_COLORS.Other) + '" title="' + ppEsc(ch) + '">' + (CP_ICON[ch] || ch.charAt(0)) + '</i>'; }).join('') + '</div>' : '') + '</div><div class="cp-card-body"><div class="cp-card-title">' + ppEsc(p.title || '(untitled)') + '</div><div class="cp-card-stats">' + (p.status === 'published' ? (socReach(p) || socEng(p) ? '<b>' + outFmt(socEng(p)) + '</b> eng &middot; ' + outFmt(socReach(p)) + ' reach' + (socReach(p) ? ' &middot; ' + (socEng(p) / socReach(p) * 100).toFixed(1) + '%' : '') : '<span class="pp-placeholder">no results yet</span>') : '') + '</div><div class="cp-card-meta"><span>' + whenText + '</span><span class="pp-chip ' + st.cls + '">' + st.label + '</span>' + (p.owner ? ppRepAvatars(p.owner, 18) : '') + (p.postUrl ? '<a class="pp-mini-btn ts-link" href="' + ppEsc(p.postUrl) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Open the post" style="margin-left:auto">' + ppSvg('link') + '</a>' : '') + '</div></div></div>';
     }
     var _renderContentList = renderContent;
     renderContent = function() {
@@ -6958,12 +6989,141 @@
       // one big paste with several posts from the same page: split where the page name starts a new post
       if (blocks.length === 1) { var lines = blocks[0].split('\n'), starts = []; lines.forEach(function(l, i) { var low = l.trim().toLowerCase(); if (i > 0 && (CP_PAGE_NAMES.indexOf(low) >= 0 || /^practiceplan\s*$/i.test(l))) starts.push(i); }); if (starts.length >= 1 && starts.length < 60) { var parts = [], prev = 0; starts.forEach(function(s) { parts.push(lines.slice(prev, s).join('\n')); prev = s; }); parts.push(lines.slice(prev).join('\n')); blocks = parts.map(function(b) { return b.trim(); }).filter(Boolean); } }
       return blocks.map(function(b) {
-        var c = cpCleanPost(b, platform, defaultYear);
+        var bp = cpDetectPlatform(b) || platform;
+        var c = cpCleanPost(b, bp, defaultYear);
         var first = (c.copy.split('\n')[0] || '').replace(/[#@]\S+/g, '').trim();
         var eng = (+c.likes || 0) + (+c.comments || 0) + (+c.shares || 0);
-        return { date: c.date, channel: platform === 'X' ? 'X' : (platform || channel), status: 'published', title: (first || 'Post').slice(0, 70), copy: c.copy, postUrl: c.postUrl, assetUrl: '', owner: '', campaign: '', impressions: '', engagements: eng ? String(eng) : '', clicks: '', likes: c.likes, comments: c.comments, shares: c.shares, reach: c.reach, format: '', notes: 'Imported by paste' + (platform ? ' from ' + platform : '') };
+        return { date: c.date, channel: bp === 'X' ? 'X' : (bp || channel), status: 'published', title: (first || 'Post').slice(0, 70), copy: c.copy, postUrl: c.postUrl, assetUrl: '', owner: '', campaign: '', impressions: '', engagements: eng ? String(eng) : '', clicks: '', likes: c.likes, comments: c.comments, shares: c.shares, reach: c.reach, format: '', notes: 'Imported by paste' + (platform ? ' from ' + platform : '') };
       }).filter(function(p) { return p.copy; });
     }
+    // =====================================================================
+    // CONTENT v3: one post, many platforms; per-platform results; upload that explains itself
+    // =====================================================================
+    var CP_PLATFORMS = ['LinkedIn', 'X', 'Facebook', 'Instagram', 'Email', 'Blog', 'Video', 'Other'];
+    var CP_ICON = { LinkedIn: 'in', X: 'X', Facebook: 'f', Instagram: 'ig', Email: '@', Blog: 'B', Video: '▶', Other: '•' };
+    function cpChannels(p) { return String(p.channel || '').split(/\s*,\s*/).filter(Boolean); }
+    function cpResults(p) { try { var r = JSON.parse(p.results || '{}'); return (r && typeof r === 'object') ? r : {}; } catch(e) { return {}; } }
+    function cpPlatformIcons(p, size) {
+      var chans = cpChannels(p); if (!chans.length) return '<span class="pp-placeholder">Channels?</span>';
+      var res = cpResults(p);
+      return '<span class="cp-icons">' + chans.map(function(c) { var r = res[c] || {}; var tip = c + (r.reach ? ': ' + (+r.reach).toLocaleString() + ' reach' : '') + (r.likes ? ', ' + r.likes + ' likes' : ''); return '<i class="cp-ic" style="background:' + (SOC_COLORS[c] || SOC_COLORS.Other) + ';width:' + (size || 22) + 'px;height:' + (size || 22) + 'px;font-size:' + Math.round((size || 22) * 0.42) + 'px" title="' + ppEsc(tip) + '">' + (CP_ICON[c] || c.charAt(0)) + '</i>'; }).join('') + '</span>';
+    }
+    function cpTotals(p) {
+      // per-platform results win when present; otherwise the flat fields
+      var res = cpResults(p), keys = Object.keys(res); if (!keys.length) return { reach: socNum(p, 'reach') || socNum(p, 'impressions'), likes: socNum(p, 'likes'), comments: socNum(p, 'comments'), shares: socNum(p, 'shares'), clicks: socNum(p, 'clicks') };
+      var t = { reach: 0, likes: 0, comments: 0, shares: 0, clicks: 0 }; keys.forEach(function(k) { ['reach', 'likes', 'comments', 'shares', 'clicks'].forEach(function(f) { t[f] += +String(res[k][f] || '').replace(/[^0-9.]/g, '') || 0; }); }); return t;
+    }
+    socReach = function(p) { return cpTotals(p).reach; };
+    socEng = function(p) { var t = cpTotals(p), e = t.likes + t.comments + t.shares + t.clicks; return e || socNum(p, 'engagements'); };
+    function cpSyncTotals(row) { var t = cpTotals(row); row.reach = String(t.reach || ''); row.likes = String(t.likes || ''); row.comments = String(t.comments || ''); row.shares = String(t.shares || ''); row.clicks = String(t.clicks || ''); row.engagements = String((t.likes + t.comments + t.shares + t.clicks) || ''); var res = cpResults(row); var urls = Object.keys(res).map(function(k) { return res[k].postUrl; }).filter(Boolean); if (!row.postUrl && urls.length) row.postUrl = urls[0]; return row; }
+    // ---- modal: channel checkboxes + per-platform results ----
+    function openContentModal(id) {
+      var p = id ? cpList.find(function(x) { return x.id === id; }) : null; var isNew = !p; p = p || { id: '', title: '', date: '', channel: '', status: 'idea', owner: currentUser?.email || '', copy: '', assetUrl: '', postUrl: '', campaign: '', notes: '', format: '', results: '{}' };
+      var chans = cpChannels(p), res = cpResults(p);
+      var resRows = function() { var sel = [].slice.call(document.querySelectorAll('.cp-chan-cb:checked')).map(function(c) { return c.value; }); return sel.map(function(c) { var r = res[c] || {}; return '<div class="cp-res-row" data-plat="' + ppEsc(c) + '"><span class="cp-res-p"><i class="cp-ic" style="background:' + (SOC_COLORS[c] || SOC_COLORS.Other) + '">' + (CP_ICON[c] || c.charAt(0)) + '</i>' + c + '</span><input type="url" data-f="postUrl" placeholder="Post link" value="' + ppEsc(r.postUrl || (chans.length === 1 && c === chans[0] ? p.postUrl : '') || '') + '"><input type="number" data-f="reach" placeholder="Reach" value="' + ppEsc(r.reach || (chans.length === 1 ? (p.reach || p.impressions) : '') || '') + '"><input type="number" data-f="likes" placeholder="Likes" value="' + ppEsc(r.likes || (chans.length === 1 ? p.likes : '') || '') + '"><input type="number" data-f="comments" placeholder="Comments" value="' + ppEsc(r.comments || (chans.length === 1 ? p.comments : '') || '') + '"><input type="number" data-f="shares" placeholder="Shares" value="' + ppEsc(r.shares || (chans.length === 1 ? p.shares : '') || '') + '"><input type="number" data-f="clicks" placeholder="Clicks" value="' + ppEsc(r.clicks || (chans.length === 1 ? p.clicks : '') || '') + '"></div>'; }).join('') || '<div class="pp-toolbar-note">Tick the platforms above to enter results for each.</div>'; };
+      window._cpResRows = resRows;
+      ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + (isNew ? 'New Post' : ppEsc(p.title || 'Post')) + '</h2><div class="modal-subtitle">One post, every platform it goes out on</div></div><div class="modal-body"><div class="detail-section" style="margin-top:20px"><div class="pp-form">'
+        + '<div class="full"><label>Title</label><input id="cp_title" value="' + ppEsc(p.title) + '" autofocus></div>'
+        + '<div class="full"><label>Platforms</label><div class="cp-chan-picks">' + CP_PLATFORMS.map(function(c) { return '<label class="cp-chan-pick' + (chans.indexOf(c) >= 0 ? ' on' : '') + '"><input type="checkbox" class="cp-chan-cb" value="' + c + '"' + (chans.indexOf(c) >= 0 ? ' checked' : '') + ' onchange="this.parentNode.classList.toggle(\'on\',this.checked);document.getElementById(\'cp_results\').innerHTML=window._cpResRows()"><i class="cp-ic" style="background:' + (SOC_COLORS[c] || SOC_COLORS.Other) + '">' + (CP_ICON[c] || c.charAt(0)) + '</i>' + c + '</label>'; }).join('') + '</div></div>'
+        + '<div><label>Date</label><input id="cp_date" type="date" value="' + ppEsc(p.date) + '"></div><div><label>Status</label><select id="cp_status">' + CP_STATUSES.map(function(s) { return '<option value="' + s.val + '"' + (p.status === s.val ? ' selected' : '') + '>' + s.label + '</option>'; }).join('') + '</select></div><div><label>Owner</label><select id="cp_owner"><option value="">Nobody yet</option>' + TEAM_MEMBERS.map(function(m) { return '<option value="' + ppEsc(m.email) + '"' + (p.owner === m.email ? ' selected' : '') + '>' + ppEsc(m.name) + '</option>'; }).join('') + '</select></div><div><label>Campaign</label><input id="cp_campaign" value="' + ppEsc(p.campaign) + '" placeholder="e.g. Texas supts fall push"></div><div><label>Format</label><select id="cp_format"><option value="">Pick one</option>' + ['Image', 'Carousel', 'Video', 'Reel', 'Text', 'Link', 'Story'].map(function(f) { return '<option' + (p.format === f ? ' selected' : '') + '>' + f + '</option>'; }).join('') + '</select></div>'
+        + '<div class="full"><label>Copy</label><textarea id="cp_copy" style="min-height:120px">' + ppEsc(p.copy) + '</textarea></div>'
+        + '<div class="full"><label>Image / asset</label><input id="cp_asset" type="url" value="' + ppEsc(p.assetUrl) + '" placeholder="Paste a link, or upload"><div style="margin-top:6px;display:flex;gap:8px;align-items:center"><button type="button" class="pp-btn" style="padding:6px 10px;font-size:11px" onclick="document.getElementById(\'cp_upload\').click()"><span id="cp_upload_lbl">Upload image</span></button><input type="file" id="cp_upload" accept="image/*" style="display:none" onchange="cpModalUpload(this)"><span class="pp-toolbar-note" id="cp_upload_note"></span></div><img id="cp_asset_preview" src="' + ppEsc(cpThumb(p.assetUrl)) + '" alt=""' + (cpThumb(p.assetUrl) ? ' style="display:block"' : '') + '></div>'
+        + '<div class="full"><label>Results by platform</label><div id="cp_results" class="cp-res"></div><div class="pp-toolbar-note" style="margin-top:4px">Reach, likes, comments, shares and link clicks from each platform. Totals roll up automatically.</div></div>'
+        + '<div class="full"><label>Notes</label><textarea id="cp_notes">' + ppEsc(p.notes) + '</textarea></div></div></div>'
+        + '<div class="pp-modal-actions">' + (isNew ? '<span></span>' : '<button class="pp-btn danger" onclick="deleteContentPost(\'' + ppEsc(p.id) + '\')">Delete</button>') + '<div class="right"><button class="pp-btn" onclick="closeModal()">Cancel</button><button class="pp-btn primary" onclick="saveContentModal(\'' + ppEsc(p.id) + '\')">' + (isNew ? 'Add' : 'Save') + '</button></div></div></div>');
+      setTimeout(function() { var r = document.getElementById('cp_results'); if (r) r.innerHTML = resRows(); }, 0);
+    }
+    async function saveContentModal(id) {
+      var g = function(i) { return (document.getElementById(i) || { value: '' }).value.trim(); };
+      var chans = [].slice.call(document.querySelectorAll('.cp-chan-cb:checked')).map(function(c) { return c.value; });
+      var res = {}; document.querySelectorAll('#cp_results .cp-res-row').forEach(function(rw) { var o = {}; rw.querySelectorAll('input').forEach(function(inp) { if (inp.value.trim()) o[inp.getAttribute('data-f')] = inp.value.trim(); }); if (Object.keys(o).length) res[rw.getAttribute('data-plat')] = o; });
+      var row = { id: id, title: g('cp_title'), date: g('cp_date'), channel: chans.join(', '), status: g('cp_status'), owner: g('cp_owner'), campaign: g('cp_campaign'), copy: g('cp_copy'), assetUrl: g('cp_asset'), postUrl: '', notes: g('cp_notes'), format: g('cp_format'), results: JSON.stringify(res), impressions: '' };
+      cpSyncTotals(row);
+      if (!row.title) { showToast('Give the post a title', 'error'); return; }
+      try { var r = await ppApi('saveContentPost', { row: row }); if (!r.success) throw new Error(r.error); row.id = r.id; var i = cpList.findIndex(function(x) { return x.id === row.id; }); if (i >= 0) cpList[i] = Object.assign(cpList[i], row); else cpList.push(row); closeModal(); renderContent(); if (document.getElementById('socialView').classList.contains('active')) renderSocial(); showToast('Saved', 'success'); } catch(e) { showToast('Could not save: ' + e.message, 'error'); }
+    }
+    // list + gallery cells use icons and totals
+    cpCellEdit = (function(orig) { return function(id, field, cell) { if (field === 'channel' || field === 'metrics') { openContentModal(id); return; } orig(id, field, cell); }; })(cpCellEdit);
+    // ---- upload: resize first, then POST, and explain any failure ----
+    function cpShrinkImage(file) {
+      return new Promise(function(res) {
+        if (!/^image\//.test(file.type) || file.size < 350 * 1024 || /gif/.test(file.type)) { res(file); return; }
+        var img = new Image(), url = URL.createObjectURL(file);
+        img.onload = function() { var max = 1800, w = img.width, h = img.height, s = Math.min(1, max / Math.max(w, h)); var c = document.createElement('canvas'); c.width = Math.round(w * s); c.height = Math.round(h * s); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); c.toBlob(function(b) { URL.revokeObjectURL(url); res(b ? new File([b], file.name.replace(/\.[^.]+$/, '') + '.jpg', { type: 'image/jpeg' }) : file); }, 'image/jpeg', 0.85); };
+        img.onerror = function() { URL.revokeObjectURL(url); res(file); };
+        img.src = url;
+      });
+    }
+    async function cpUploadAsset(file) {
+      if (!file) return null;
+      var f = await cpShrinkImage(file);
+      if (f.size > 12 * 1024 * 1024) { showToast('That file is over 12 MB even after resizing; use a smaller export', 'error'); return null; }
+      var dataUrl = await new Promise(function(res, rej) { var r = new FileReader(); r.onload = function() { res(r.result); }; r.onerror = rej; r.readAsDataURL(f); });
+      var m = /^data:([^;]+);base64,(.*)$/.exec(dataUrl); if (!m) throw new Error('Unsupported file');
+      var res; try { res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ pp: true, action: 'uploadAsset', email: currentUser?.email || '', name: f.name, mediaType: m[1], data: m[2] }) }); }
+      catch(e) { throw new Error('The upload never reached Apps Script (network or CORS). Use Test upload on the Resources tab to see the exact failure.'); }
+      var text = await res.text(), r; try { r = JSON.parse(text); } catch(e) { throw new Error(/<html/i.test(text) ? 'Apps Script answered with a page instead of JSON, which means the doPost hook line from Extras v5 is not in Code.gs (or the deployment is not current).' : 'Unexpected reply: ' + text.slice(0, 120)); }
+      if (!r.success) throw new Error((r.error || 'Upload failed') + (/Unknown post action/.test(r.error || '') ? ' (Extras v16 or later needs to be deployed)' : ''));
+      return r;
+    }
+    async function cpTestUpload(btn) {
+      var o = btn.innerHTML; btn.disabled = true; btn.innerHTML = 'Testing...'; var out = document.getElementById('uploadTestResult');
+      try {
+        var res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ pp: true, action: 'uploadPing', email: currentUser?.email || '', data: 'x'.repeat(2000) }) });
+        var text = await res.text(), r; try { r = JSON.parse(text); } catch(e) { throw new Error(/<html/i.test(text) ? 'Apps Script returned a page, not JSON: the doPost hook line from Extras v5 is missing from Code.gs, or the live deployment is an older version.' : 'Unexpected reply: ' + text.slice(0, 160)); }
+        if (!r.success) throw new Error(r.error || 'Ping failed');
+        if (!r.pong) throw new Error('The POST reached Apps Script but hit an older Extras; deploy v19.');
+        out.innerHTML = '<span style="color:var(--pp-green);font-weight:700">Uploads work.</span> POST reaches Extras v' + r.version + ' as ' + ppEsc(r.user) + '; images will land in the Drive folder "' + ppEsc(r.folder) + '".';
+      } catch(e) { out.innerHTML = '<span style="color:#b91c1c;font-weight:700">Uploads are blocked.</span> ' + ppEsc(e.message); }
+      btn.disabled = false; btn.innerHTML = o;
+    }
+    // ---- importer: merge the same post from several platforms into one card ----
+    function cpNormCopy(s) { return String(s || '').toLowerCase().replace(/https?:\/\/\S+/g, '').replace(/[#@]\S+/g, '').replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80); }
+    function cpFindSame(p, list) { var n = cpNormCopy(p.copy); if (n.length < 20) return null; return list.find(function(x) { var d = (x.date && p.date) ? Math.abs(ppDaysBetween(x.date, p.date)) : 0; return d <= 3 && cpNormCopy(x.copy) === n; }) || null; }
+    var _cpRenderPreviewV2 = cpRenderPreview;
+    cpRenderPreview = function() {
+      // collapse duplicates inside the paste and mark merges into existing posts
+      var merged = []; cpImportRows.forEach(function(p) { var same = cpFindSame(p, merged); if (same) { same._platforms = (same._platforms || cpChannels(same)).concat(p.channel ? [p.channel] : []); same._results = same._results || {}; if (p.channel) same._results[p.channel] = { reach: p.reach, likes: p.likes, comments: p.comments, shares: p.shares, clicks: p.clicks, postUrl: p.postUrl }; if (!same.assetUrl && p.assetUrl) same.assetUrl = p.assetUrl; return; } p._platforms = p.channel ? [p.channel] : []; p._results = {}; if (p.channel) p._results[p.channel] = { reach: p.reach, likes: p.likes, comments: p.comments, shares: p.shares, clicks: p.clicks, postUrl: p.postUrl }; p._existing = cpFindSame(p, cpList); merged.push(p); });
+      cpImportRows = merged;
+      _cpRenderPreviewV2();
+      document.querySelectorAll('.cpi-row').forEach(function(row, i) { var p = cpImportRows[i]; if (!p) return; var note = document.createElement('div'); note.className = 'pp-toolbar-note'; note.innerHTML = (p._platforms.length > 1 ? 'Same post on ' + p._platforms.join(', ') + ': imported as one card with results per platform. ' : '') + (p._existing ? '<b>Adds ' + p._platforms.join(', ') + ' to the existing post "' + ppEsc(p._existing.title) + '"</b> instead of creating a duplicate.' : ''); if (note.innerHTML) row.querySelector('.cpi-main').appendChild(note); });
+    };
+    cpRunImport = async function() {
+      var btn = document.getElementById('cpiRun'); btn.disabled = true; btn.textContent = 'Importing...';
+      var rows = cpImportRows.map(function(p) { var base = p._existing ? Object.assign({}, p._existing) : { id: '', title: p.title, date: p.date, status: 'published', owner: p.owner || '', campaign: p.campaign || '', copy: p.copy, assetUrl: p.assetUrl || '', notes: p.notes || '', format: p.format || '', impressions: '' }; var chans = cpChannels(base).concat(p._platforms || []).filter(function(c, i, a) { return c && a.indexOf(c) === i; }); var res = cpResults(base); Object.keys(p._results || {}).forEach(function(k) { var r = p._results[k], o = {}; Object.keys(r).forEach(function(f) { if (r[f]) o[f] = r[f]; }); res[k] = Object.assign(res[k] || {}, o); }); base.channel = chans.join(', '); base.results = JSON.stringify(res); if (!base.assetUrl && p.assetUrl) base.assetUrl = p.assetUrl; base.postUrl = ''; cpSyncTotals(base); var o = {}; CP_COLS.forEach(function(c) { o[c] = base[c] === undefined ? '' : base[c]; }); return o; });
+      try { var ok = 0; for (var i = 0; i < rows.length; i += 10) { var r = await ppApi('bulkSaveContentPosts', { rows: rows.slice(i, i + 10) }, 90000); if (r.success) ok += r.saved || 0; } closeImport(); await loadContentPosts(true); cpFilter = 'all'; renderContent(); showToast('Imported ' + ok + ' post' + (ok === 1 ? '' : 's'), 'success'); }
+      catch(e) { btn.disabled = false; btn.textContent = 'Import'; showToast('Could not import: ' + e.message, 'error'); }
+    };
+
+    // =====================================================================
+    // FOLLOWER TRACKER (manual counts, trended)
+    // =====================================================================
+    var FOL_PLATFORMS = ['LinkedIn', 'X', 'Facebook', 'Instagram'], folRows = [], folLoaded = false;
+    async function loadFollowers(force) { if (folLoaded && !force) return; try { var r = await ppApi('getFollowers'); if (r.success) { folRows = (r.rows || []).map(function(x) { return { id: x.id, date: String(x.date || '').slice(0, 10), platform: x.platform, followers: +String(x.followers || '').replace(/[^0-9]/g, '') || 0, notes: x.notes || '' }; }).filter(function(x) { return x.date && x.platform; }); folLoaded = true; } } catch(e) {} }
+    function folSeries(pl) { return folRows.filter(function(r) { return r.platform === pl; }).sort(function(a, b) { return a.date < b.date ? -1 : 1; }); }
+    function folLine(series, color) {
+      if (series.length < 2) return '<div class="fol-flat">' + (series.length ? 'One reading so far. Log another to see the trend.' : 'No readings yet.') + '</div>';
+      var W = 260, H = 60, vals = series.map(function(s) { return s.followers; }), min = Math.min.apply(null, vals), max = Math.max.apply(null, vals), t0 = new Date(series[0].date).getTime(), t1 = new Date(series[series.length - 1].date).getTime() || t0 + 1;
+      var pts = series.map(function(s) { var x = 4 + (new Date(s.date).getTime() - t0) / Math.max(1, t1 - t0) * (W - 8), y = H - 6 - (max === min ? 0.5 : (s.followers - min) / (max - min)) * (H - 12); return x.toFixed(1) + ',' + y.toFixed(1); });
+      return '<svg class="fol-svg" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none"><polyline points="' + pts.join(' ') + '" fill="none" stroke="' + color + '" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>' + pts.map(function(p, i) { return '<circle cx="' + p.split(',')[0] + '" cy="' + p.split(',')[1] + '" r="3" fill="' + color + '"><title>' + series[i].date + ': ' + series[i].followers.toLocaleString() + '</title></circle>'; }).join('') + '</svg>';
+    }
+    function renderFollowers() {
+      var el = document.getElementById('folPanel'); if (!el) return;
+      if (!folLoaded) { el.innerHTML = '<div class="pp-empty">Loading followers...</div>'; return; }
+      var today = ppTodayISO();
+      var cards = FOL_PLATFORMS.map(function(pl) { var s = folSeries(pl), last = s[s.length - 1], prev = s[s.length - 2], ago30 = s.filter(function(r) { return ppDaysBetween(today, r.date) >= 28; }).pop(); var d30 = last && ago30 && ago30 !== last ? last.followers - ago30.followers : null, dPrev = last && prev ? last.followers - prev.followers : null; return '<div class="fol-card"><div class="fol-h"><i class="cp-ic" style="background:' + (SOC_COLORS[pl] || SOC_COLORS.Other) + '">' + CP_ICON[pl] + '</i><b>' + pl + '</b>' + (last ? '<span class="fol-date">' + ppFmtDate(last.date, { month: 'short', day: 'numeric' }) + '</span>' : '') + '</div><div class="fol-n">' + (last ? last.followers.toLocaleString() : '<span class="pp-placeholder">no reading</span>') + '</div><div class="fol-d">' + (d30 !== null ? '<span class="out-delta ' + (d30 > 0 ? 'up' : d30 < 0 ? 'down' : 'flat') + '">' + (d30 > 0 ? '+' : '') + d30.toLocaleString() + ' in 30d</span>' : dPrev !== null ? '<span class="out-delta ' + (dPrev > 0 ? 'up' : dPrev < 0 ? 'down' : 'flat') + '">' + (dPrev > 0 ? '+' : '') + dPrev.toLocaleString() + ' since last</span>' : '') + (last && d30 !== null && ago30 ? '<span class="pp-toolbar-note">' + (d30 / Math.max(1, ago30.followers) * 100).toFixed(1) + '% growth</span>' : '') + '</div>' + folLine(s, SOC_COLORS[pl] || SOC_COLORS.Other) + '</div>'; }).join('');
+      var total = FOL_PLATFORMS.reduce(function(n, pl) { var s = folSeries(pl); return n + (s.length ? s[s.length - 1].followers : 0); }, 0);
+      var lastLog = folRows.slice().sort(function(a, b) { return a.date < b.date ? 1 : -1; })[0];
+      el.innerHTML = '<div class="stat-card out-card"><h3>Followers<span class="n">' + total.toLocaleString() + ' across platforms</span><span class="out-legend">' + (lastLog ? 'last logged ' + ppFmtDate(lastLog.date, { month: 'short', day: 'numeric' }) : 'never logged') + '</span></h3><div class="fol-grid">' + cards + '</div><div class="fol-log"><b>Log today\'s counts</b><div class="fol-log-row"><input type="date" id="fol_date" value="' + today + '">' + FOL_PLATFORMS.map(function(pl) { return '<label><span>' + pl + '</span><input type="number" id="fol_' + pl + '" placeholder="' + (folSeries(pl).length ? folSeries(pl)[folSeries(pl).length - 1].followers : 'count') + '"></label>'; }).join('') + '<button class="pp-btn primary" onclick="saveFollowersNow(this)">Save</button></div><div class="pp-toolbar-note">Open each profile, copy the follower count, enter it here. Once a week is plenty; the trend builds from there. Leave a platform blank to skip it.</div></div></div>';
+    }
+    async function saveFollowersNow(btn) {
+      var date = document.getElementById('fol_date').value; if (!date) { showToast('Pick a date', 'error'); return; }
+      var rows = FOL_PLATFORMS.map(function(pl) { var v = document.getElementById('fol_' + pl).value.trim(); return v ? { date: date, platform: pl, followers: v.replace(/[^0-9]/g, ''), notes: '' } : null; }).filter(Boolean);
+      if (!rows.length) { showToast('Enter at least one count', 'error'); return; }
+      btn.disabled = true; try { var r = await ppApi('saveFollowers', { rows: rows }); if (!r.success) throw new Error(r.error); await loadFollowers(true); renderFollowers(); showToast('Logged ' + r.saved + ' count' + (r.saved === 1 ? '' : 's'), 'success'); logActivityToServer('logged follower counts', rows.map(function(x) { return x.platform + ' ' + x.followers; }).join(', '), date, 'other'); } catch(e) { showToast('Could not save: ' + e.message, 'error'); } btn.disabled = false;
+    }
+    var _renderSocialV2 = renderSocial;
+    renderSocial = function() { _renderSocialV2(); var el = document.getElementById('socialBody'); if (!el || !cpLoaded) return; var host = document.createElement('div'); host.id = 'folPanel'; el.insertBefore(host, el.firstChild); renderFollowers(); loadFollowers(false).then(renderFollowers); };
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
     document.addEventListener('touchmove', function(e) {
