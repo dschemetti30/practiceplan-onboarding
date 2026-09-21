@@ -1882,6 +1882,53 @@
     .soc-day span{font-size:10px;color:var(--text3)}.soc-day b{font-size:10px;color:var(--text2)}
     @media(max-width:1400px){.out-kpis{grid-template-columns:repeat(3,1fr)}.out-rep{grid-template-columns:28px 34px 1.4fr 1fr 1fr}.out-rep .out-spark{display:none}}
     @media(max-width:768px){.out-kpis{grid-template-columns:1fr 1fr}.out-rep{grid-template-columns:28px 34px 1fr;row-gap:6px}.out-rep-stat{grid-column:span 3}}
+    /* ---- outreach demographics ---- */
+    .out-mixes{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:14px}
+    .out-mix{background:var(--bg);border-radius:12px;padding:10px 12px}
+    .out-mix-t{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
+    .out-mix-bar{display:flex;height:12px;border-radius:6px;overflow:hidden;background:var(--card)}
+    .out-mix-bar i{display:block;height:100%;min-width:2px}
+    .out-mix-l{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:6px;font-size:10.5px;color:var(--text2)}
+    .out-mix-l i{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:4px}
+    .out-dims button{font-size:12px}
+    .out-segs{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px 18px}
+    .out-seg{padding:6px 0}
+    .out-seg-t{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;margin-bottom:4px}
+    .out-seg-t b{color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .out-seg-t span{color:var(--text3);white-space:nowrap;font-size:11.5px}
+    .out-seg-bar{position:relative;height:10px;border-radius:5px;background:var(--bg);overflow:hidden}
+    .out-seg-bar i{position:absolute;left:0;top:0;height:100%;background:var(--pp-blue);border-radius:5px}
+    .out-seg-bar em{position:absolute;left:0;top:0;height:100%;background:var(--pp-green);border-radius:5px}
+    .out-seg-s{display:flex;gap:12px;font-size:11px;color:var(--text3);margin-top:4px}
+    .out-seg-s .hi{color:var(--pp-green);font-weight:700}.out-seg-s .lo{color:#b91c1c;font-weight:700}
+    .out-subjs{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px 18px}
+    .out-subj-t{font-size:12.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
+    .out-subj-b{height:8px;border-radius:5px;background:var(--bg);overflow:hidden}
+    .out-subj-b i{display:block;height:100%;background:var(--pp-green);border-radius:5px}
+    .out-subj-s{font-size:11px;color:var(--text3);margin-top:3px}
+    .out-subj-s b{color:var(--text)}
+    /* ---- content gallery ---- */
+    .cp-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+    .cp-month{grid-column:1/-1;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);padding:8px 0 0}
+    .cp-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--sh-xs);cursor:pointer;transition:transform var(--t-fast),box-shadow var(--t-base);display:flex;flex-direction:column}
+    .cp-card:hover{transform:translateY(-2px);box-shadow:var(--sh-md)}
+    .cp-card-media{position:relative;aspect-ratio:4/3;background:var(--bg);overflow:hidden}
+    .cp-card-media img{width:100%;height:100%;object-fit:cover;display:block}
+    .cp-card-media .cp-noimg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:18px;font-size:13px;line-height:1.35;color:var(--text2);text-align:left;overflow:hidden}
+    .cp-when{position:absolute;top:10px;left:10px;background:var(--card);border-radius:10px;padding:5px 8px;box-shadow:var(--sh-sm);text-align:center;min-width:44px}
+    .cp-when b{display:block;font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--text);line-height:1}
+    .cp-when span{display:block;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+    .cp-when.soon b{color:var(--pp-blue)}
+    .cp-chan{position:absolute;top:10px;right:10px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:50px;color:#fff}
+    .cp-card-body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
+    .cp-card-title{font-size:13px;font-weight:700;color:var(--text);line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+    .cp-card-meta{font-size:11px;color:var(--text3);display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:auto}
+    .cp-card-meta .pp-chip{font-size:9px;padding:2px 7px}
+    .cp-card-stats{font-size:11px;color:var(--text2)}
+    .cp-card-stats b{color:var(--text)}
+    .cp-card.draft .cp-card-media{background:repeating-linear-gradient(45deg,var(--bg),var(--bg) 8px,var(--card) 8px,var(--card) 16px)}
+    .cp-toolbar-left{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    @media(max-width:768px){.cp-gallery{grid-template-columns:1fr 1fr;gap:10px}}
   </style>
 </head>
 <body>
@@ -2270,7 +2317,8 @@
       <div class="view-content" id="contentView">
         <div class="pp-stat-strip" id="cpStats"></div>
         <div class="table-section">
-          <div class="controls-row"><div class="section-title">Content Calendar</div><div class="controls-right"><div class="controls-group filters-group"><div class="styled-select"><select onchange="cpFilter=this.value;renderContent()"><option value="upcoming">Upcoming and in progress</option><option value="published">Published</option><option value="ideas">Ideas</option><option value="all">Everything</option></select></div></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="startContentImport()" title="Bring already-published posts onto the calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import posts</button><button class="text-action-btn" onclick="openContentModal(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> New Post</button></div></div></div>
+          <div class="controls-row"><div class="cp-toolbar-left"><div class="section-title">Content Calendar</div><div class="pp-view-toggle" id="cpViewToggle"></div></div><div class="controls-right"><div class="controls-group filters-group"><div class="styled-select"><select onchange="cpFilter=this.value;renderContent()"><option value="all">Everything</option><option value="published">Published</option><option value="scheduled">Scheduled and drafted</option><option value="ideas">Ideas</option><option value="upcoming">Upcoming and in progress</option><option value="ch:LinkedIn">LinkedIn</option><option value="ch:Facebook">Facebook</option><option value="ch:Instagram">Instagram</option><option value="ch:X">X</option><option value="ch:Email">Email</option></select></div><div class="styled-select"><select onchange="cpSort=this.value;renderContent()"><option value="recent">Most recent first</option><option value="oldest">Oldest first</option><option value="engagement">Most engagement</option><option value="reach">Most reach</option><option value="channel">By channel</option></select></div></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="startContentImport()" title="Bring already-published posts onto the calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import posts</button><button class="text-action-btn" onclick="openContentModal(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> New Post</button></div></div></div>
+          <div id="cpGallery"></div>
           <div class="table-wrapper"><table class="pp-table" id="cpTable"><thead><tr><th>When</th><th>Post</th><th>Channel</th><th>Status</th><th>Owner</th><th>Campaign</th><th>Links</th><th>Results</th><th></th></tr></thead><tbody id="cpTableBody"><tr><td colspan="9" class="pp-empty">Loading...</td></tr></tbody></table></div>
         </div>
       </div>
@@ -6454,7 +6502,7 @@
       var body = document.getElementById('cpTableBody'), stats = document.getElementById('cpStats'); if (!body) return;
       if (!cpLoaded) { body.innerHTML = '<tr><td colspan="9">' + (cpError ? ppSetupEmpty('Content', cpError) : '<div class="pp-empty">Loading...</div>') + '</td></tr>'; return; }
       var today = ppTodayISO(), week = new Date(); week.setDate(week.getDate() - 7);
-      var rows = cpList.filter(function(p) { if (cpFilter === 'upcoming') return p.status !== 'published' || (p.date && p.date >= today); if (cpFilter === 'published') return p.status === 'published'; if (cpFilter === 'ideas') return p.status === 'idea'; return true; }).sort(function(a, b) { return (a.date || '9999') < (b.date || '9999') ? -1 : 1; });
+      var rows = (typeof cpFiltered === 'function') ? cpFiltered() : cpList.slice().sort(function(a, b) { return (b.date || '') < (a.date || '') ? -1 : 1; });
       var thisWeek = cpList.filter(function(p) { return p.date && ppDaysBetween(p.date, today) !== null && ppDaysBetween(p.date, today) >= 0 && ppDaysBetween(p.date, today) <= 7 && p.status !== 'published'; }).length, pub30 = cpList.filter(function(p) { return p.status === 'published' && p.date && ppDaysBetween(today, p.date) <= 30; }).length, noOwner = cpList.filter(function(p) { return !p.owner && p.status !== 'published'; }).length;
       var byChan = {}; cpList.filter(function(p) { return p.status === 'published' && p.date && ppDaysBetween(today, p.date) <= 30; }).forEach(function(p) { byChan[p.channel || 'Other'] = (byChan[p.channel || 'Other'] || 0) + 1; });
       if (stats) stats.innerHTML = '<div class="pp-stat" style="cursor:default"><div class="v">' + thisWeek + '</div><div class="l">Going out this week</div></div><div class="pp-stat" style="cursor:default"><div class="v">' + pub30 + '</div><div class="l">Published, last 30 days</div><div class="s">' + Object.keys(byChan).map(function(c) { return c + ' ' + byChan[c]; }).join(' &middot; ') + '</div></div><div class="pp-stat ' + (noOwner ? 'warn' : 'good') + '" style="cursor:default"><div class="v">' + noOwner + '</div><div class="l">Without an owner</div></div><div class="pp-stat" style="cursor:default"><div class="v">' + cpList.filter(function(p) { return p.status === 'idea'; }).length + '</div><div class="l">Ideas in the backlog</div></div>';
@@ -6617,17 +6665,6 @@
       if (/\byesterday\b/i.test(t)) { var d3 = new Date(); d3.setDate(d3.getDate() - 1); return d3.toISOString().slice(0, 10); }
       return '';
     }
-    function cpParsePaste(text, channel, defaultYear) {
-      var blocks = String(text || '').replace(/\r/g, '').split(/\n\s*(?:-{3,}|={3,}|\*{3,})\s*\n|\n{3,}|\n\s*\n(?=\S)/).map(function(b) { return b.trim(); }).filter(Boolean);
-      return blocks.map(function(b) {
-        var lines = b.split('\n').map(function(l) { return l.trim(); }).filter(Boolean);
-        var date = '', dateIdx = -1, url = '';
-        lines.forEach(function(l, i) { if (!date) { var dd = cpDetectDate(l, defaultYear); if (dd && (l.length < 60 || /^(posted|published|shared)/i.test(l))) { date = dd; dateIdx = i; } } var u = l.match(/https?:\/\/(?:www\.)?(?:facebook|instagram|fb)\.com\/\S+/i); if (u && !url) url = u[0]; });
-        var body = lines.filter(function(l, i) { return i !== dateIdx && !/^(like|comment|share|send|likes?|comments?|shares?|\d+ likes?|\d+ comments?|see more|see translation|edited)$/i.test(l) && !/^https?:\/\//.test(l) && !/^\d+\s*(likes?|comments?|shares?)$/i.test(l); });
-        var copy = body.join('\n'), first = (body[0] || '').replace(/[#@]\S+/g, '').trim();
-        return { date: date, channel: channel, status: 'published', title: (first || 'Post').slice(0, 70), copy: copy, postUrl: url, assetUrl: '', owner: '', campaign: '', impressions: '', engagements: '', clicks: '', notes: 'Imported by paste' };
-      }).filter(function(p) { return p.copy; });
-    }
     var cpImportRows = [];
     function startContentImport() {
       document.querySelector('.import-title').textContent = 'Import Published Posts';
@@ -6639,7 +6676,7 @@
       document.querySelectorAll('.cpi-tabs button').forEach(function(b) { b.classList.toggle('on', b === btn || (!btn && b.textContent.indexOf('Paste') === 0)); });
       var el = document.getElementById('cpiBody');
       if (mode === 'paste') {
-        el.innerHTML = '<p style="font-size:13px;color:var(--text2);margin:10px 0">Open the post on Facebook or Instagram, select the caption and date, copy, and paste below. Paste several at once by leaving a blank line (or a line of dashes) between posts. Dates like "September 12", "Sep 12 at 3:40 PM", "9/12/2026" or "3d" are picked up from the text; anything missing can be fixed in the preview.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"><div class="styled-select"><select id="cpiChannel"><option>Facebook</option><option>Instagram</option><option>LinkedIn</option><option>X</option><option>Other</option></select></div><div class="styled-select"><select id="cpiYear">' + [0, 1, 2].map(function(n) { var y = new Date().getFullYear() - n; return '<option value="' + y + '">Year for dates without one: ' + y + '</option>'; }).join('') + '</select></div></div><textarea id="cpiText" class="cpi-text" placeholder="September 12&#10;Huge week at THSADA. Thanks to everyone who stopped by the booth...&#10;&#10;---&#10;&#10;Sep 3&#10;Eustace ISD is live on PracticePlan!"></textarea><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px"><button class="import-btn secondary" onclick="closeImport()">Cancel</button><button class="import-btn" onclick="cpPreviewPaste()">Preview posts</button></div>';
+        el.innerHTML = '<p style="font-size:13px;color:var(--text2);margin:10px 0">Select the whole post on Facebook, Instagram, X or LinkedIn (page name, date, caption, the like and comment counts, all of it), copy, and paste here. The tool recognizes each platform\'s layout, keeps the caption, reads the date, and pulls likes, comments, shares and views into the results. Several posts in one paste are fine; leave a blank line between them or just paste them back to back.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"><div class="styled-select"><select id="cpiChannel"><option value="">Detect platform from the paste</option><option>Facebook</option><option>Instagram</option><option>LinkedIn</option><option>X</option><option>Other</option></select></div><div class="styled-select"><select id="cpiYear">' + [0, 1, 2].map(function(n) { var y = new Date().getFullYear() - n; return '<option value="' + y + '">Year for dates without one: ' + y + '</option>'; }).join('') + '</select></div></div><textarea id="cpiText" class="cpi-text" placeholder="September 12&#10;Huge week at THSADA. Thanks to everyone who stopped by the booth...&#10;&#10;---&#10;&#10;Sep 3&#10;Eustace ISD is live on PracticePlan!"></textarea><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px"><button class="import-btn secondary" onclick="closeImport()">Cancel</button><button class="import-btn" onclick="cpPreviewPaste()">Preview posts</button></div>';
       } else {
         if (!(socialLoaded && social && social.connected)) { el.innerHTML = '<div class="pp-empty"><strong>Facebook and Instagram are not connected yet</strong>Set them up on the Social tab, sync once, and every synced post can be pulled into the calendar from here with its date, caption, image and reach.</div>'; return; }
         var have = {}; cpList.forEach(function(p) { if (p.postUrl) have[p.postUrl] = true; });
@@ -6648,14 +6685,14 @@
       }
     }
     function cpPreviewPaste() {
-      var text = document.getElementById('cpiText').value, channel = document.getElementById('cpiChannel').value, year = document.getElementById('cpiYear').value;
+      var text = document.getElementById('cpiText').value, channel = document.getElementById('cpiChannel').value || cpDetectPlatform(text) || 'Other', year = document.getElementById('cpiYear').value;
       cpImportRows = cpParsePaste(text, channel, year);
       if (!cpImportRows.length) { showToast('No posts found in the pasted text', 'error'); return; }
       cpRenderPreview();
     }
     function cpRenderPreview() {
       document.getElementById('cpiBody').innerHTML = '<p style="font-size:13px;color:var(--text2);margin:10px 0">' + cpImportRows.length + ' post' + (cpImportRows.length === 1 ? '' : 's') + ' found. Fix dates, add the image that went out with each one, then import.</p><div class="cpi-rows">' + cpImportRows.map(function(p, i) {
-        return '<div class="cpi-row"><div class="cpi-img" onclick="document.getElementById(\'cpiFile' + i + '\').click()">' + (p.assetUrl ? '<img src="' + ppEsc(p.thumb || p.assetUrl) + '" alt="">' : '<span>+ image</span>') + '<input type="file" id="cpiFile' + i + '" accept="image/*" style="display:none" onchange="cpUploadFor(' + i + ',this.files[0]);this.value=\'\'"></div><div class="cpi-main"><div class="cpi-fields"><input type="date" value="' + ppEsc(p.date) + '" onchange="cpImportRows[' + i + '].date=this.value"><select onchange="cpImportRows[' + i + '].channel=this.value">' + CP_CHANNELS.map(function(c) { return '<option' + (c === p.channel ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select><input placeholder="Post link (optional)" value="' + ppEsc(p.postUrl) + '" onchange="cpImportRows[' + i + '].postUrl=this.value"></div><input class="cpi-title" value="' + ppEsc(p.title) + '" onchange="cpImportRows[' + i + '].title=this.value"><textarea onchange="cpImportRows[' + i + '].copy=this.value">' + ppEsc(p.copy) + '</textarea></div><button class="pp-mini-btn danger" title="Leave this one out" onclick="cpImportRows.splice(' + i + ',1);cpRenderPreview()">&#10005;</button></div>';
+        return '<div class="cpi-row"><div class="cpi-img" onclick="document.getElementById(\'cpiFile' + i + '\').click()">' + (p.assetUrl ? '<img src="' + ppEsc(p.thumb || p.assetUrl) + '" alt="">' : '<span>+ image</span>') + '<input type="file" id="cpiFile' + i + '" accept="image/*" style="display:none" onchange="cpUploadFor(' + i + ',this.files[0]);this.value=\'\'"></div><div class="cpi-main"><div class="cpi-fields"><input type="date" value="' + ppEsc(p.date) + '" onchange="cpImportRows[' + i + '].date=this.value"><select onchange="cpImportRows[' + i + '].channel=this.value">' + CP_CHANNELS.map(function(c) { return '<option' + (c === p.channel ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select><input placeholder="Post link (optional)" value="' + ppEsc(p.postUrl) + '" onchange="cpImportRows[' + i + '].postUrl=this.value"></div><input class="cpi-title" value="' + ppEsc(p.title) + '" onchange="cpImportRows[' + i + '].title=this.value">' + ((p.likes || p.comments || p.shares || p.reach) ? '<div class="pp-toolbar-note">Pulled from the paste: ' + [p.likes ? p.likes + ' likes' : '', p.comments ? p.comments + ' comments' : '', p.shares ? p.shares + ' shares' : '', p.reach ? p.reach + ' views' : ''].filter(Boolean).join(', ') + '</div>' : '') + '<textarea onchange="cpImportRows[' + i + '].copy=this.value">' + ppEsc(p.copy) + '</textarea></div><button class="pp-mini-btn danger" title="Leave this one out" onclick="cpImportRows.splice(' + i + ',1);cpRenderPreview()">&#10005;</button></div>';
       }).join('') + '</div><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px"><button class="import-btn secondary" onclick="cpImportMode(\'paste\')">Back</button><button class="import-btn" id="cpiRun" onclick="cpRunImport()">Import ' + cpImportRows.length + '</button></div>';
     }
     async function cpUploadAsset(file) {
@@ -6741,10 +6778,36 @@
       el.innerHTML = '<div class="out-head"><div class="pp-view-toggle">' + periodBtns + '</div><div class="pp-toolbar-note">Comparing the last ' + outPeriod + ' weeks with the ' + outPeriod + ' before. ' + (outRep === 'all' ? 'Everyone' : ppRepName(outRep)) + '.</div></div>'
         + '<div class="out-kpis">' + kpi(outFmt(sentC), 'Emails sent', outSpark(sparks.sent, 'var(--pp-blue)'), outDelta(sentC, sentP), bulkC + ' bulk &middot; ' + seqC + ' from sequences') + kpi((openRate * 100).toFixed(0) + '%', 'Open rate', outSpark(sparks.open, 'var(--pp-green)'), outDelta(openRate, openRateP), outFmt(openC) + ' opened') + kpi(outFmt(repC), 'Replies', outSpark(sparks.rep, '#7c3aed'), outDelta(repC, repP), 'from ' + outFmt(sentC) + ' emails') + kpi((repRate * 100).toFixed(1) + '%', 'Reply rate', outSpark(sparks.rate, '#7c3aed'), outDelta(repRate, repRateP), 'purple line on the chart') + kpi(outFmt(activeSubs), 'In sequences', '', '', seqs.filter(function(s) { return +s.active; }).length + ' sequences running') + kpi(outFmt(srcTotal), 'New Close leads', '', outDelta(srcTotal, srcPrev), 'by source below') + '</div>'
         + (ins.length ? '<div class="out-insights">' + ins.slice(0, 4).map(function(i) { return '<div class="out-ins ' + i.cls + '"><b>' + ppEsc(i.t) + '</b><span>' + ppEsc(i.s) + '</span></div>'; }).join('') + '</div>' : '')
-        + '<div class="stat-card out-card"><h3>Emails by week<span class="out-legend"><i style="background:var(--pp-blue)"></i>Sent <i style="background:var(--pp-green)"></i>Opened <i style="background:#7c3aed;border-radius:50%"></i>Reply rate (right axis)</span></h3>' + outChart(weeks, byWeek) + '</div>'
+        + outDemographics()
         + '<div class="mk-grid"><div class="stat-card out-card mk-span2"><h3>Rep leaderboard<span class="n">last ' + outPeriod + ' weeks</span></h3>' + (reps.length ? '<div class="out-board">' + reps.map(function(r, i) { var or = r.sent ? r.opened / r.sent : 0, rr = r.sent ? r.replies / r.sent : 0; return '<div class="out-rep"><span class="rank' + (i === 0 ? ' gold' : '') + '">' + (i + 1) + '</span>' + (TEAM_MEMBERS.some(function(m) { return m.email === r.rep; }) ? getTeamPhoto(r.rep, 34) : '<span class="pp-avatar-text">' + ppEsc((r.name || r.rep).charAt(0)) + '</span>') + '<div class="out-rep-main"><b>' + ppEsc(ppRepFull(r.rep) || r.name || r.rep) + '</b><span>' + outFmt(r.sent) + ' sent ' + outDelta(r.sent, r.pSent) + '</span></div><div class="out-rep-stat"><div class="l">Open</div><div class="bar"><i style="width:' + Math.round(or * 100) + '%;background:var(--pp-green)"></i></div><div class="v">' + Math.round(or * 100) + '%</div></div><div class="out-rep-stat"><div class="l">Reply</div><div class="bar"><i style="width:' + Math.min(100, Math.round(rr * 400)) + '%;background:#7c3aed"></i></div><div class="v">' + (rr * 100).toFixed(1) + '% <span style="color:var(--text3);font-weight:500">(' + r.replies + ')</span></div></div>' + outSpark(cur.map(function(w) { return r.weeks[w] || 0; }), 'var(--pp-blue)') + '</div>'; }).join('') + '</div>' : '<div class="pp-up-empty">No emails in this period.</div>') + '</div>'
         + '<div class="stat-card out-card"><h3>New leads by source<span class="n">' + srcTotal + '</span></h3>' + (srcRows.length ? srcRows.slice(0, 8).map(function(s) { return '<div class="out-src"><div class="t"><b>' + ppEsc(s) + '</b><span>' + srcAgg[s] + ' &middot; ' + Math.round(srcAgg[s] / srcTotal * 100) + '%</span></div><div class="bar"><i style="width:' + Math.round(srcAgg[s] / srcAgg[srcRows[0]] * 100) + '%"></i></div></div>'; }).join('') + (srcRows.length > 8 ? '<div class="pp-toolbar-note">+' + (srcRows.length - 8) + ' more sources</div>' : '') : '<div class="pp-up-empty">No leads created in Close in this period.</div>') + '</div></div>'
         + '<div class="stat-card out-card"><h3>Sequences<span class="n">' + seqs.length + '</span></h3>' + (seqs.length ? '<div class="out-seqs">' + seqs.map(function(s) { var t = +s.total || 0, a = +s.active || 0, f = +s.finished || 0, rp = +s.replied || 0, u = +s.unsubscribed || 0, b = +s.bounced || 0, rate = t ? rp / t : 0; return '<div class="out-seq' + (s.status === 'active' ? '' : ' paused') + '"><div class="out-seq-h">' + outRing(rate, rate >= 0.1 ? 'var(--pp-green)' : rate >= 0.03 ? '#f59e0b' : '#94a3b8') + '<div class="out-seq-t"><b>' + ppEsc(s.name) + '</b><span>' + ppEsc(s.status || '') + ' &middot; ' + t + ' enrolled</span></div></div><div class="out-funnel">' + [['Active', a, 'var(--pp-blue)'], ['Finished', f, '#94a3b8'], ['Replied', rp, '#7c3aed'], ['Unsub / bounce', u + b, '#ef4444']].map(function(x) { return '<div class="out-fun"><span class="l">' + x[0] + '</span><span class="bar"><i style="width:' + (t ? Math.round(x[1] / t * 100) : 0) + '%;background:' + x[2] + '"></i></span><span class="v">' + x[1] + '</span></div>'; }).join('') + '</div></div>'; }).join('') + '</div>' : '<div class="pp-up-empty">No sequences in Close yet.</div>') + '</div>';
+    }
+
+    // ---- who we're reaching (segments from the lead index) ----
+    var OUT_DIMS = [['role', 'By role', 'Who the emails went to, from the contact title in Close'], ['state', 'By state', 'From the lead address in Close'], ['leadType', 'By organization type', 'Lead Type field'], ['size', 'By district size', 'District Size field'], ['community', 'By community type', 'Community Type field'], ['status', 'By lead status', 'Where they sit in the Close pipeline']];
+    var outDim = 'role';
+    function outSegRows(dim) { return ((outreach && outreach.segments) || []).filter(function(s) { return s.dimension === dim; }).map(function(s) { return { value: s.value, sent: +s.sent || 0, opened: +s.opened || 0, replies: +s.replies || 0, leads: +s.leads || 0 }; }); }
+    function outDemographics() {
+      var cov = (outreach && outreach.coverage) || {}, segs = outreach && outreach.segments && outreach.segments.length;
+      if (!segs) return '<div class="stat-card out-card"><h3>Who we\'re reaching</h3><div class="pp-empty"><strong>Building the recipient index</strong>The next outreach sync starts recording who each email went to (role, state, organization type, district size, lead status). Give it an hour or click Sync now, then this section fills in.</div></div>';
+      var totalSent = outSegRows('role').reduce(function(n, r) { return n + r.sent; }, 0), unknownRole = (outSegRows('role').find(function(r) { return r.value === 'Unknown'; }) || { sent: 0 }).sent;
+      var covNote = cov.leads ? Math.round((cov.indexed || 0) / cov.leads * 100) + '% of the ' + cov.leads.toLocaleString() + ' leads emailed are indexed' + ((cov.indexed || 0) < cov.leads ? '; the rest fill in on the next syncs' : '') : '';
+      var tabs = OUT_DIMS.map(function(d) { return '<button class="' + (outDim === d[0] ? 'on' : '') + '" onclick="outDim=\'' + d[0] + '\';renderOutreach()">' + d[1].replace('By ', '') + '</button>'; }).join('');
+      var rows = outSegRows(outDim).filter(function(r) { return r.sent; }).sort(function(a, b) { return b.sent - a.sent; }), max = rows.length ? rows[0].sent : 1, teamRep = totalSent ? outSegRows('role').reduce(function(n, r) { return n + r.replies; }, 0) / totalSent : 0;
+      var known = rows.filter(function(r) { return r.value !== 'Unknown'; }), unknown = rows.find(function(r) { return r.value === 'Unknown'; });
+      var bars = known.slice(0, 12).map(function(r) { var rr = r.sent ? r.replies / r.sent : 0, orr = r.sent ? r.opened / r.sent : 0; return '<div class="out-seg"><div class="out-seg-t"><b>' + ppEsc(r.value) + '</b><span>' + outFmt(r.sent) + ' emails &middot; ' + Math.round(r.sent / Math.max(1, totalSent) * 100) + '%</span></div><div class="out-seg-bar"><i style="width:' + Math.round(r.sent / max * 100) + '%"></i><em style="width:' + Math.round(r.opened / max * 100) + '%"></em></div><div class="out-seg-s"><span title="Open rate">' + Math.round(orr * 100) + '% open</span><span class="' + (rr > teamRep * 1.2 ? 'hi' : rr < teamRep * 0.6 && r.sent >= 20 ? 'lo' : '') + '" title="Reply rate">' + (rr * 100).toFixed(1) + '% reply</span><span title="Distinct leads">' + outFmt(r.leads) + ' leads</span></div></div>'; }).join('');
+      var best = known.filter(function(r) { return r.sent >= 25; }).sort(function(a, b) { return (b.replies / b.sent) - (a.replies / a.sent); })[0], most = known[0];
+      var dim = OUT_DIMS.find(function(d) { return d[0] === outDim; });
+      var mix = OUT_DIMS.slice(0, 4).map(function(d) { var rs = outSegRows(d[0]).filter(function(r) { return r.value !== 'Unknown' && r.sent; }).sort(function(a, b) { return b.sent - a.sent; }); var tot = rs.reduce(function(n, r) { return n + r.sent; }, 0); if (!tot) return ''; var palette = ['var(--pp-blue)', 'var(--pp-green)', '#7c3aed', '#f59e0b', '#ef4444', '#0891b2', '#db2777', '#64748b']; return '<div class="out-mix"><div class="out-mix-t">' + d[1].replace('By ', '') + '</div><div class="out-mix-bar">' + rs.slice(0, 8).map(function(r, i) { return '<i style="width:' + (r.sent / tot * 100) + '%;background:' + palette[i % palette.length] + '" title="' + ppEsc(r.value) + ': ' + r.sent + ' (' + Math.round(r.sent / tot * 100) + '%)"></i>'; }).join('') + '</div><div class="out-mix-l">' + rs.slice(0, 4).map(function(r, i) { return '<span><i style="background:' + palette[i] + '"></i>' + ppEsc(r.value) + ' ' + Math.round(r.sent / tot * 100) + '%</span>'; }).join('') + '</div></div>'; }).join('');
+      var subjects = ((outreach && outreach.subjects) || []).map(function(s) { return { subject: s.subject, sent: +s.sent || 0, opened: +s.opened || 0, replies: +s.replies || 0, last: s.lastSent }; }).filter(function(s) { return s.sent >= 5; }).sort(function(a, b) { return (b.opened / b.sent) - (a.opened / a.sent); }).slice(0, 8);
+      return '<div class="stat-card out-card"><h3>Who we\'re reaching<span class="n">last 12 weeks</span><span class="out-legend"><i style="background:var(--pp-blue)"></i>Sent <i style="background:var(--pp-green)"></i>Opened</span></h3>' + (covNote ? '<div class="pp-toolbar-note" style="margin:-4px 0 10px">' + covNote + '.</div>' : '')
+        + '<div class="out-mixes">' + mix + '</div>'
+        + '<div class="pp-view-toggle out-dims">' + tabs + '</div><div class="pp-toolbar-note" style="margin:6px 0 10px">' + dim[2] + '.</div>'
+        + (rows.length ? '<div class="out-segs">' + bars + '</div>' + (unknown ? '<div class="pp-toolbar-note" style="margin-top:8px">' + outFmt(unknown.sent) + ' emails went to leads without this field filled in Close.</div>' : '') : '<div class="pp-up-empty">Nothing recorded for this view yet.</div>')
+        + (most || best ? '<div class="out-insights" style="margin-top:12px">' + (most ? '<div class="out-ins info"><b>Most emailed: ' + ppEsc(most.value) + '</b><span>' + Math.round(most.sent / Math.max(1, totalSent) * 100) + '% of everything sent</span></div>' : '') + (best ? '<div class="out-ins good"><b>Best response: ' + ppEsc(best.value) + '</b><span>' + (best.replies / best.sent * 100).toFixed(1) + '% reply rate on ' + best.sent + ' emails' + (teamRep ? ' vs ' + (teamRep * 100).toFixed(1) + '% overall' : '') + '</span></div>' : '') + '</div>' : '')
+        + '</div>'
+        + (subjects.length ? '<div class="stat-card out-card"><h3>Subject lines that get opened<span class="n">5+ sends</span></h3><div class="out-subjs">' + subjects.map(function(s) { return '<div class="out-subj"><div class="out-subj-t">' + ppEsc(s.subject) + '</div><div class="out-subj-b"><i style="width:' + Math.round(s.opened / s.sent * 100) + '%"></i></div><div class="out-subj-s"><b>' + Math.round(s.opened / s.sent * 100) + '%</b> open &middot; ' + s.sent + ' sent' + (s.replies ? ' &middot; ' + s.replies + ' repl' + (s.replies === 1 ? 'y' : 'ies') : '') + '</div></div>'; }).join('') + '</div></div>' : '');
     }
     // =====================================================================
     // SOCIAL v2: reporting over the Content Calendar (manual results, no platform connection)
@@ -6790,6 +6853,116 @@
         + '<div class="stat-card out-card"><h3>By channel</h3>' + (chanRows.length ? chanRows.map(function(c) { var o = chans[c]; return '<div class="out-src"><div class="t"><b><i class="soc-dot" style="background:' + (SOC_COLORS[c] || SOC_COLORS.Other) + '"></i>' + ppEsc(c) + '</b><span>' + o.n + ' post' + (o.n === 1 ? '' : 's') + (o.reach ? ' &middot; ' + outFmt(o.reach) + ' reach &middot; ' + (o.eng / o.reach * 100).toFixed(1) + '%' : '') + '</span></div><div class="bar"><i style="width:' + Math.round(o.n / chans[chanRows[0]].n * 100) + '%;background:' + (SOC_COLORS[c] || SOC_COLORS.Other) + '"></i></div></div>'; }).join('') : '<div class="pp-up-empty">No published posts in this period.</div>') + '</div></div>'
         + '<div class="mk-grid"><div class="stat-card out-card mk-span2"><h3>Top posts<span class="n">by engagement</span></h3>' + (top.length ? '<div class="soc-top">' + top.map(function(p, i) { var th = cpThumb(p.assetUrl); return '<div class="soc-top-card" onclick="openContentModal(\'' + ppEsc(p.id) + '\')"><span class="rank' + (i === 0 ? ' gold' : '') + '">' + (i + 1) + '</span>' + (th ? '<img src="' + ppEsc(th) + '" alt="" loading="lazy" onerror="this.remove()">' : '<span class="soc-top-noimg" style="background:' + (SOC_COLORS[p.channel] || SOC_COLORS.Other) + '22"></span>') + '<div class="soc-top-main"><b>' + ppEsc(p.title) + '</b><span>' + ppEsc(p.channel || '') + ' &middot; ' + ppFmtDate(p.date, { month: 'short', day: 'numeric' }) + (p.format ? ' &middot; ' + ppEsc(p.format) : '') + '</span><span class="soc-top-nums"><b>' + outFmt(socEng(p)) + '</b> eng &middot; ' + outFmt(socReach(p)) + ' reach' + (socReach(p) ? ' &middot; ' + (socEng(p) / socReach(p) * 100).toFixed(1) + '%' : '') + '</span></div>' + (p.postUrl ? '<a class="pp-mini-btn ts-link" href="' + ppEsc(p.postUrl) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + ppSvg('link') + '</a>' : '') + '</div>'; }).join('') + '</div>' : '<div class="pp-up-empty">Enter results on published posts to see what worked.</div>') + '</div>'
         + '<div class="stat-card out-card"><h3>Best days to post</h3><div class="soc-days">' + days.map(function(d, i) { var o = byDay[i]; return '<div class="soc-day' + (i === bestDay && o.n >= 2 ? ' best' : '') + '" title="' + o.n + ' posts, ' + (dayRates[i] * 100).toFixed(1) + '% engagement"><div class="bar"><i style="height:' + Math.round(o.n / maxDayN * 100) + '%"></i></div><span>' + d + '</span><b>' + (o.n ? (dayRates[i] * 100).toFixed(0) + '%' : '') + '</b></div>'; }).join('') + '</div><div class="pp-toolbar-note" style="margin-top:8px">Bar height is how often you post that day; the number is the engagement rate.</div>' + (campRows.length ? '<h3 style="margin-top:16px">Campaigns</h3>' + campRows.slice(0, 6).map(function(c) { var o = camps[c]; return '<div class="out-src"><div class="t"><b>' + ppEsc(c) + '</b><span>' + o.n + ' post' + (o.n === 1 ? '' : 's') + ' &middot; ' + outFmt(o.eng) + ' eng' + (o.reach ? ' &middot; ' + (o.eng / o.reach * 100).toFixed(1) + '%' : '') + '</span></div><div class="bar"><i style="width:' + Math.round(o.eng / Math.max(1, camps[campRows[0]].eng) * 100) + '%"></i></div></div>'; }).join('') : '') + '</div></div>';
+    }
+    // =====================================================================
+    // CONTENT CALENDAR v2: gallery by default, everything, newest first
+    // =====================================================================
+    var cpView = 'gallery', cpSort = 'recent';
+    cpFilter = 'all';
+    function cpSorted(list) {
+      var s = list.slice();
+      if (cpSort === 'recent') s.sort(function(a, b) { return (b.date || '0000') < (a.date || '0000') ? -1 : (b.date || '0000') > (a.date || '0000') ? 1 : 0; });
+      else if (cpSort === 'oldest') s.sort(function(a, b) { return (a.date || '9999') < (b.date || '9999') ? -1 : 1; });
+      else if (cpSort === 'engagement') s.sort(function(a, b) { return socEng(b) - socEng(a); });
+      else if (cpSort === 'reach') s.sort(function(a, b) { return socReach(b) - socReach(a); });
+      else if (cpSort === 'channel') s.sort(function(a, b) { return (a.channel || '').localeCompare(b.channel || '') || ((b.date || '') < (a.date || '') ? -1 : 1); });
+      return s;
+    }
+    function cpFiltered() {
+      var today = ppTodayISO();
+      return cpSorted(cpList.filter(function(p) { if (cpFilter === 'upcoming') return p.status !== 'published' || (p.date && p.date >= today); if (cpFilter === 'published') return p.status === 'published'; if (cpFilter === 'ideas') return p.status === 'idea'; if (cpFilter === 'scheduled') return p.status === 'scheduled' || p.status === 'drafted'; if (/^ch:/.test(cpFilter)) return (p.channel || '') === cpFilter.slice(3); return true; }));
+    }
+    function cpCard(p) {
+      var th = cpThumb(p.assetUrl), st = CP_STATUSES.find(function(s) { return s.val === p.status; }) || CP_STATUSES[0], d = p.date ? ppParseISO(p.date) : null, today = ppTodayISO(), days = p.date ? ppDaysBetween(p.date, today) : null;
+      var when = d ? '<div class="cp-when' + (days !== null && days >= 0 && days <= 7 && p.status !== 'published' ? ' soon' : '') + '"><b>' + d.getDate() + '</b><span>' + d.toLocaleDateString('en-US', { month: 'short' }) + '</span></div>' : '<div class="cp-when"><b>?</b><span>date</span></div>';
+      var whenText = !p.date ? 'No date yet' : p.status === 'published' ? 'Published ' + ppFmtDate(p.date, { weekday: 'short', month: 'short', day: 'numeric' }) : days === 0 ? 'Today' : days > 0 ? 'In ' + days + ' day' + (days === 1 ? '' : 's') : Math.abs(days) + 'd ago, not marked published';
+      return '<div class="cp-card' + (p.status === 'published' ? '' : ' draft') + '" onclick="openContentModal(\'' + ppEsc(p.id) + '\')"><div class="cp-card-media">' + (th ? '<img src="' + ppEsc(th) + '" alt="" loading="lazy" onerror="this.remove()">' : '<div class="cp-noimg">' + ppEsc((p.copy || '').slice(0, 160) || 'No image or copy yet') + '</div>') + when + (p.channel ? '<span class="cp-chan" style="background:' + (SOC_COLORS[p.channel] || SOC_COLORS.Other) + '">' + ppEsc(p.channel) + '</span>' : '') + '</div><div class="cp-card-body"><div class="cp-card-title">' + ppEsc(p.title || '(untitled)') + '</div><div class="cp-card-stats">' + (p.status === 'published' ? (socReach(p) || socEng(p) ? '<b>' + outFmt(socEng(p)) + '</b> eng &middot; ' + outFmt(socReach(p)) + ' reach' + (socReach(p) ? ' &middot; ' + (socEng(p) / socReach(p) * 100).toFixed(1) + '%' : '') : '<span class="pp-placeholder">no results yet</span>') : '') + '</div><div class="cp-card-meta"><span>' + whenText + '</span><span class="pp-chip ' + st.cls + '">' + st.label + '</span>' + (p.owner ? ppRepAvatars(p.owner, 18) : '') + (p.postUrl ? '<a class="pp-mini-btn ts-link" href="' + ppEsc(p.postUrl) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Open the post" style="margin-left:auto">' + ppSvg('link') + '</a>' : '') + '</div></div></div>';
+    }
+    var _renderContentList = renderContent;
+    renderContent = function() {
+      _renderContentList();
+      var gal = document.getElementById('cpGallery'), tbl = document.querySelector('#contentView .table-wrapper'), tog = document.getElementById('cpViewToggle'); if (!gal) return;
+      if (tog) tog.innerHTML = '<button class="' + (cpView === 'gallery' ? 'on' : '') + '" onclick="cpView=\'gallery\';renderContent()">Gallery</button><button class="' + (cpView === 'list' ? 'on' : '') + '" onclick="cpView=\'list\';renderContent()">List</button>';
+      if (cpView !== 'gallery') { gal.style.display = 'none'; if (tbl) tbl.style.display = ''; return; }
+      gal.style.display = ''; if (tbl) tbl.style.display = 'none';
+      if (!cpLoaded) { gal.innerHTML = '<div class="pp-empty">Loading...</div>'; return; }
+      var rows = cpFiltered();
+      if (!rows.length) { gal.innerHTML = '<div class="pp-empty"><strong>Nothing here yet</strong>Add a post, or use Import posts to bring in what already went out.</div>'; return; }
+      var html = '', lastMonth = '';
+      if (cpSort === 'recent' || cpSort === 'oldest') { rows.forEach(function(p) { var m = p.date ? ppParseISO(p.date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'No date'; if (m !== lastMonth) { html += '<div class="cp-month">' + m + '</div>'; lastMonth = m; } html += cpCard(p); }); }
+      else html = rows.map(cpCard).join('');
+      gal.innerHTML = '<div class="cp-gallery">' + html + '</div>';
+    };
+    // list view uses the same filter + sort
+    var _cpRowFilterPatched = true;
+
+    // =====================================================================
+    // PASTE PARSER v2: platform-aware cleanup for Facebook, Instagram, X, LinkedIn
+    // =====================================================================
+    var CP_PAGE_NAMES = ['practiceplan', 'practice plan', 'practiceplan.io', '@practiceplan'];
+    function cpDetectPlatform(t) {
+      var s = String(t || '');
+      if (/\b(reposts?|quotes?|bookmarks?)\b[\s\S]*\bviews\b|\d[\d.,]*[KM]?\s+views\b|·\s*\w{3}\s+\d{1,2},\s*20\d{2}|@\w+\s*·/i.test(s)) return 'X';
+      if (/\bfollowers\b[\s\S]{0,40}\b\d+(d|w|mo|h)\s*•|•\s*(edited|visible to anyone)|\bcelebrate\b|\bsupport\b.*\binsightful\b|\brepost\b/i.test(s)) return 'LinkedIn';
+      if (/view all \d+ comments|\d[\d,]* likes\b|add a comment|liked by .+ and others|original audio/i.test(s)) return 'Instagram';
+      if (/all reactions|shared with public|write a comment|most relevant|\bsee more\b|\bsee translation\b|\d+ shares?\b/i.test(s)) return 'Facebook';
+      return '';
+    }
+    function cpNum(s) { var m = String(s || '').replace(/,/g, '').match(/([\d.]+)\s*([KkMm])?/); if (!m) return 0; var n = parseFloat(m[1]); if (/k/i.test(m[2] || '')) n *= 1000; if (/m/i.test(m[2] || '')) n *= 1000000; return Math.round(n); }
+    var CP_NOISE = /^(like|comment|share|send|repost|reply|follow|following|see more|see translation|show more|translate post|edited|sponsored|public|shared with public|most relevant|all reactions:?|write a comment\.{0,3}|add a comment\.{0,3}|view all comments|original audio|more|\.{3}|…|•|·|reactions?|comments?|shares?|reposts?|quotes?|likes?|bookmarks?|views?|celebrate|support|love|insightful|funny|curious|visible to anyone on or off linkedin|\d+ (comments?|shares?|reposts?|likes?|reactions?|views?|quotes?|bookmarks?))$/i;
+    function cpCleanPost(block, platform, defaultYear) {
+      var lines = block.split('\n').map(function(l) { return l.replace(/\u00a0/g, ' ').trim(); }).filter(Boolean);
+      var out = { date: '', postUrl: '', likes: '', comments: '', shares: '', reach: '', clicks: '', copy: '' }, keep = [], skip = {};
+      lines.forEach(function(l, i) {
+        var nx = (lines[i + 1] || '').toLowerCase(), pv = (lines[i - 1] || '').toLowerCase();
+        if (/^[\d.,]+[KkMm]?$/.test(l) && /^(reposts?|quotes?|likes?|bookmarks?|views?|replies|comments?|shares?|reactions?)$/.test(nx)) { var n = String(cpNum(l)); if (/^likes?|^reactions?/.test(nx)) out.likes = n; else if (/^comments?|^replies/.test(nx)) out.comments = n; else if (/^reposts?|^shares?/.test(nx)) out.shares = n; else if (/^views?/.test(nx)) out.reach = n; skip[i] = true; skip[i + 1] = true; }
+        if (/^all reactions:?$/.test(pv) && /^[\d.,]+[KkMm]?$/.test(l)) { out.likes = String(cpNum(l)); skip[i] = true; }
+      });
+      lines.forEach(function(l, i) {
+        if (skip[i]) return;
+        CP_PAGE_NAMES.forEach(function(n) { if (l.toLowerCase().indexOf(n + ' ') === 0 && l.length > n.length + 8) l = l.slice(n.length + 1); });
+        var low = l.toLowerCase();
+        var u = l.match(/https?:\/\/(?:www\.)?(?:facebook|instagram|fb|x|twitter|linkedin|lnkd)\.[a-z]+\/\S+/i); if (u && !out.postUrl) out.postUrl = u[0];
+        // metrics
+        var m;
+        if ((m = l.match(/^([\d.,]+[KkMm]?)\s+likes?$/i)) || (m = l.match(/^likes?\s*[:·]?\s*([\d.,]+[KkMm]?)$/i))) { out.likes = String(cpNum(m[1])); return; }
+        if ((m = l.match(/^([\d.,]+[KkMm]?)\s+comments?$/i)) || (m = l.match(/^view all ([\d.,]+) comments$/i))) { out.comments = String(cpNum(m[1])); return; }
+        if ((m = l.match(/^([\d.,]+[KkMm]?)\s+(shares?|reposts?)$/i))) { out.shares = String(cpNum(m[1])); return; }
+        if ((m = l.match(/^([\d.,]+[KkMm]?)\s+views?$/i)) || (m = l.match(/·\s*([\d.,]+[KkMm]?)\s+views?/i))) { out.reach = String(cpNum(m[1])); }
+        if ((m = l.match(/^([\d.,]+[KkMm]?)\s*(?:reactions?|all reactions:?)$/i))) { out.likes = String(cpNum(m[1])); return; }
+        // "123 · 12 comments · 3 reposts" (LinkedIn) or "12 comments 3 shares" (Facebook)
+        if (/^\d[\d.,]*[KkMm]?(\s*[·•]\s*\d[\d.,]*[KkMm]?\s+(comments?|shares?|reposts?))+$/i.test(l) || /^\d[\d.,]*\s+(comments?|shares?)(\s+\d[\d.,]*\s+(comments?|shares?))*$/i.test(l)) { var parts = l.split(/\s*[·•]\s*|\s{2,}/); parts.forEach(function(pt) { var mm; if ((mm = pt.match(/([\d.,]+[KkMm]?)\s+comments?/i))) out.comments = String(cpNum(mm[1])); else if ((mm = pt.match(/([\d.,]+[KkMm]?)\s+(shares?|reposts?)/i))) out.shares = String(cpNum(mm[1])); else if (/^[\d.,]+[KkMm]?$/.test(pt.trim())) out.likes = String(cpNum(pt)); }); return; }
+        // X footer: "3:41 PM · Sep 12, 2026 · 1.2K Views"
+        if ((m = l.match(/(\d{1,2}:\d{2}\s*[AP]M)\s*·\s*(\w{3,9}\s+\d{1,2},?\s*20\d{2})(?:\s*·\s*([\d.,]+[KkMm]?)\s*views)?/i))) { out.date = cpDetectDate(m[2], defaultYear); if (m[3]) out.reach = String(cpNum(m[3])); return; }
+        // date-only lines and LinkedIn "2d •" / X "· Sep 12" / IG "September 12"
+        var dd = cpDetectDate(l, defaultYear);
+        if (dd && (l.length < 40 || /^(posted|published|shared)/i.test(l))) { if (!out.date) out.date = dd; if (l.length < 40) return; }
+        if ((m = l.match(/^(\d{1,2})\s*(h|d|w|mo)\b\s*[•·]?\s*(edited)?\s*$/i))) { var dt = new Date(); var n = parseInt(m[1]); if (/^h/i.test(m[2])) dt.setHours(dt.getHours() - n); else if (/^d/i.test(m[2])) dt.setDate(dt.getDate() - n); else if (/^w/i.test(m[2])) dt.setDate(dt.getDate() - 7 * n); else dt.setMonth(dt.getMonth() - n); if (!out.date) out.date = dt.toISOString().slice(0, 10); return; }
+        if ((m = l.match(/·\s*(\w{3}\s+\d{1,2})$/))) { if (!out.date) out.date = cpDetectDate(m[1], defaultYear); return; }
+        // noise
+        if (CP_NOISE.test(low)) return;
+        if (/^\d[\d.,]*[KkMm]?$/.test(l) && i > 0) return;                       // bare metric numbers
+        if (CP_PAGE_NAMES.indexOf(low) >= 0 || /^practiceplan\b.*\bfollowers?\b/i.test(l) || /^\d[\d,]* followers$/i.test(l)) return;   // author / follower lines
+        if (/^@\w+$/.test(l) || /^[\w .]{2,40}\s@\w+(\s*·.*)?$/.test(l)) { if (!out.date) { var d2 = cpDetectDate(l, defaultYear); if (d2) out.date = d2; } return; }  // X handle line
+        if (/^(liked by|and \d+ others)/i.test(l)) return;
+        if (/^https?:\/\//i.test(l)) return;
+        keep.push(l);
+      });
+      out.copy = keep.join('\n').replace(/\s*…\s*more$/i, '').replace(/\s*see more$/i, '').trim();
+      out.platform = platform;
+      return out;
+    }
+    function cpParsePaste(text, channel, defaultYear) {
+      var raw = String(text || '').replace(/\r/g, ''), platform = cpDetectPlatform(raw) || channel;
+      var blocks = raw.split(/\n\s*(?:-{3,}|={3,}|\*{3,})\s*\n|\n{3,}/).map(function(b) { return b.trim(); }).filter(Boolean);
+      // one big paste with several posts from the same page: split where the page name starts a new post
+      if (blocks.length === 1) { var lines = blocks[0].split('\n'), starts = []; lines.forEach(function(l, i) { var low = l.trim().toLowerCase(); if (i > 0 && (CP_PAGE_NAMES.indexOf(low) >= 0 || /^practiceplan\s*$/i.test(l))) starts.push(i); }); if (starts.length >= 1 && starts.length < 60) { var parts = [], prev = 0; starts.forEach(function(s) { parts.push(lines.slice(prev, s).join('\n')); prev = s; }); parts.push(lines.slice(prev).join('\n')); blocks = parts.map(function(b) { return b.trim(); }).filter(Boolean); } }
+      return blocks.map(function(b) {
+        var c = cpCleanPost(b, platform, defaultYear);
+        var first = (c.copy.split('\n')[0] || '').replace(/[#@]\S+/g, '').trim();
+        var eng = (+c.likes || 0) + (+c.comments || 0) + (+c.shares || 0);
+        return { date: c.date, channel: platform === 'X' ? 'X' : (platform || channel), status: 'published', title: (first || 'Post').slice(0, 70), copy: c.copy, postUrl: c.postUrl, assetUrl: '', owner: '', campaign: '', impressions: '', engagements: eng ? String(eng) : '', clicks: '', likes: c.likes, comments: c.comments, shares: c.shares, reach: c.reach, format: '', notes: 'Imported by paste' + (platform ? ' from ' + platform : '') };
+      }).filter(function(p) { return p.copy; });
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
