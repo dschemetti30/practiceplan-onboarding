@@ -2583,6 +2583,7 @@
       if (currentUser) { const name = currentUser.name.split(' ').map(n => n.charAt(0).toUpperCase() + n.slice(1).toLowerCase()).join(' '); document.getElementById('userName').textContent = name; var member = TEAM_MEMBERS.find(function(m) { return m.email === currentUser.email; }); if (member && member.photo) { document.getElementById('userAvatar').innerHTML = '<img src="' + member.photo + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">'; } else { document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase(); } }
       // Start animated loading sequence
       window._ppLoadStart = Date.now(); window._ppLoadFinished = false; window._ppCachedRender = false;
+      if (typeof ppSnapReady !== 'undefined' && !window._ppSnapWaited) { window._ppSnapWaited = true; Promise.resolve(ppSnapReady).then(function() { if (typeof ppPrimeFromSnapshot === 'function') ppPrimeFromSnapshot(); showDashboard(); }); return; }
       var cached = ppCacheRead();
       if (cached) {
         try { ppProcessAdminData(cached.data); updateStats(); renderTable(); renderPipeline(); renderCalendar(); window._ppCachedRender = true; var sc = document.getElementById('splashCached'); if (sc) sc.style.display = 'inline-flex'; finishLoading(allData, true); ppSyncPill(true, 'Syncing latest'); }
@@ -2620,7 +2621,7 @@
       animateCount('loadMetricOrgs', totalOrgs, 500); animateCount('loadMetricSpaces', totalSpaces, 600); animateCount('loadMetricComplete', totalComplete, 550);
       // Hold the finished state just long enough to read it (max ~0.9s), never longer than the data took
       var elapsed = Date.now() - (window._ppLoadStart || Date.now());
-      var hold = Math.max(0, 900 - elapsed);
+      var hold = Math.max(0, (fromCache ? 350 : 900) - elapsed);
       setTimeout(function() {
         var ov = document.getElementById('dataLoadingOverlay');
         if (ov) ov.classList.add('leaving');
@@ -2718,7 +2719,8 @@
           // Load shared data before rendering
           await sideLoads;
           updateStats(); renderTable(); renderPipeline(); renderCalendar(); finishLoading(allData); ppSyncPill(false); window._ppCachedRender = false;
-          setTimeout(function() { loadCredList(false).then(function() { if (document.getElementById('credentialsView').classList.contains('active')) renderCredentials(); renderUpcoming(); }); loadTradeShows(false).then(function() { if (document.getElementById('tradeshowsView').classList.contains('active')) renderTradeShows(); renderUpcoming(); }); loadLeads(false).then(function() { if (document.getElementById('leadsView').classList.contains('active')) renderLeads(); renderUpcoming(); }); loadCloseMeetings(false).then(function() { if (document.getElementById('calendarView').classList.contains('active')) renderCalendar(); renderUpcoming(); }); loadCloseAccounts(false).then(function() { if (document.getElementById('customersView').classList.contains('active')) renderCloseAccounts(); renderUpcoming(); }); loadActivity().then(function() { window._ppActivityLoaded = true; renderUpcoming(); }); loadLandingPages(false).then(function() { if (document.getElementById('tradeshowsView').classList.contains('active')) renderTradeShows(); }); loadSignedDocs(false).then(function() { renderDocsPanel(); }); }, 1500);
+          setTimeout(function() { (typeof ppBootstrapRefresh === 'function' ? ppBootstrapRefresh() : Promise.resolve()).then(function() { loadActivity().then(function() { window._ppActivityLoaded = true; renderUpcoming(); }); if (typeof loadSignedDocs === 'function') loadSignedDocs(false).then(function() { renderDocsPanel(); }); }); }, 50);
+          setTimeout(function() { if (window._ppBootstrapLegacy) { loadCredList(false).then(function() { if (document.getElementById('credentialsView').classList.contains('active')) renderCredentials(); renderUpcoming(); }); loadTradeShows(false).then(function() { if (document.getElementById('tradeshowsView').classList.contains('active')) renderTradeShows(); renderUpcoming(); }); loadLeads(false).then(function() { if (document.getElementById('leadsView').classList.contains('active')) renderLeads(); renderUpcoming(); }); loadCloseMeetings(false).then(function() { if (document.getElementById('calendarView').classList.contains('active')) renderCalendar(); renderUpcoming(); }); loadCloseAccounts(false).then(function() { if (document.getElementById('customersView').classList.contains('active')) renderCloseAccounts(); renderUpcoming(); }); loadActivity().then(function() { window._ppActivityLoaded = true; renderUpcoming(); }); loadLandingPages(false).then(function() { if (document.getElementById('tradeshowsView').classList.contains('active')) renderTradeShows(); }); loadSignedDocs(false).then(function() { renderDocsPanel(); }); } }, 1500);
           // Start auto-refresh every 60 seconds
           if (!window._refreshInterval) {
             window._refreshInterval = setInterval(async function() {
@@ -7315,6 +7317,64 @@
       try { var r = await ppApi('backfillOutreach', {}, 300000); if (!r.success) throw new Error(r.error); showToast(r.done ? 'History complete.' : 'History loaded to ' + ppFmtDate(r.cursor, { month: 'short', day: 'numeric' }) + '; it keeps going every 10 minutes on its own.', 'success'); await loadOutreach(true); renderOutreach(); } catch(e) { showToast(e.message, 'error'); }
       btn.disabled = false; btn.innerHTML = o;
     }
+    // =====================================================================
+    // PERFORMANCE: snapshot cache (IndexedDB) + one bootstrap round trip + background refresh
+    // ---------------------------------------------------------------------
+    // Startup used to be ten-plus Apps Script calls, each a second or more, with the splash waiting
+    // on the slowest. Now: paint from the last snapshot at once, then one bootstrap call refreshes
+    // everything and re-renders the open view. ppApi serves "get*" reads from the primed bundle.
+    // =====================================================================
+    var PP_PRIMED_ACTIONS = ['getTradeShows', 'getCredentialsList', 'getLandingPages', 'getLeads', 'getCloseAccounts', 'getCloseMeetings', 'getSignedDocs', 'getSignedDocsStatus', 'getResources', 'getContentPosts', 'getFollowers'];
+    var ppPrimed = {}, ppSnap = null, ppSnapReady = null;
+    function ppIdb() { return new Promise(function(res, rej) { try { var r = indexedDB.open('pp-admin-cache', 1); r.onupgradeneeded = function() { r.result.createObjectStore('kv'); }; r.onsuccess = function() { res(r.result); }; r.onerror = function() { rej(r.error); }; } catch(e) { rej(e); } }); }
+    function ppIdbGet(key) { return ppIdb().then(function(db) { return new Promise(function(res) { var tx = db.transaction('kv', 'readonly'), q = tx.objectStore('kv').get(key); q.onsuccess = function() { res(q.result || null); }; q.onerror = function() { res(null); }; }); }).catch(function() { return null; }); }
+    function ppIdbSet(key, val) { return ppIdb().then(function(db) { return new Promise(function(res) { var tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').put(val, key); tx.oncomplete = function() { res(true); }; tx.onerror = function() { res(false); }; }); }).catch(function() { return false; }); }
+    function ppIdbDel(key) { return ppIdb().then(function(db) { return new Promise(function(res) { var tx = db.transaction('kv', 'readwrite'); tx.objectStore('kv').delete(key); tx.oncomplete = function() { res(true); }; tx.onerror = function() { res(false); }; }); }).catch(function() { return false; }); }
+    ppSnapReady = ppIdbGet('snapshot').then(function(s) { ppSnap = s && s.email && (Date.now() - s.savedAt) < 3 * 86400000 ? s : null; return ppSnap; });
+    // the submissions cache moves from localStorage (5 MB cap, silently skipped when the payload outgrew it) to the snapshot
+    ppCacheRead = function() { if (!ppSnap || ppSnap.email !== (currentUser && currentUser.email) || !Array.isArray(ppSnap.adminData)) return null; return { data: ppSnap.adminData, savedAt: ppSnap.savedAt }; };
+    ppCacheWrite = function(data) { ppSnap = ppSnap || {}; ppSnap.email = currentUser && currentUser.email; ppSnap.adminData = data; ppSnap.savedAt = Date.now(); ppSnapSave(); };
+    ppCacheClear = function() { ppSnap = null; ppIdbDel('snapshot'); };
+    var ppSnapTimer = null;
+    function ppSnapSave() { clearTimeout(ppSnapTimer); ppSnapTimer = setTimeout(function() { if (ppSnap) ppIdbSet('snapshot', ppSnap); }, 400); }
+    // ppApi: serve primed reads without a round trip, and keep the snapshot current
+    var _ppApiNet = ppApi;
+    ppApi = function(action, params, timeoutMs) {
+      if (PP_PRIMED_ACTIONS.indexOf(action) >= 0 && ppPrimed[action] && !(params && Object.keys(params).length)) { var r = ppPrimed[action]; delete ppPrimed[action]; return Promise.resolve(r); }
+      var pr = _ppApiNet(action, params, timeoutMs);
+      if (PP_PRIMED_ACTIONS.indexOf(action) >= 0 && !(params && Object.keys(params).length)) pr.then(function(r) { if (r && r.success) { ppSnap = ppSnap || { email: currentUser && currentUser.email }; ppSnap.bundle = ppSnap.bundle || {}; ppSnap.bundle[action] = r; ppSnap.savedAt = Date.now(); ppSnapSave(); } }).catch(function() {});
+      return pr;
+    };
+    // Phase 1: prime from the snapshot (instant). Phase 2: one bootstrap call, then refresh what is on screen.
+    function ppPrimeFromSnapshot() {
+      if (!ppSnap || !ppSnap.bundle || ppSnap.email !== (currentUser && currentUser.email)) return false;
+      PP_PRIMED_ACTIONS.forEach(function(a) { if (ppSnap.bundle[a]) ppPrimed[a] = ppSnap.bundle[a]; });
+      // run the loaders now; they resolve from the primed bundle without touching the network, so the first paint has everything
+      setTimeout(function() { var jobs = []; ['loadTradeShows', 'loadCredList', 'loadLandingPages', 'loadLeads', 'loadCloseAccounts', 'loadCloseMeetings', 'loadSignedDocs', 'loadResources', 'loadContentPosts', 'loadFollowers'].forEach(function(n) { if (typeof window[n] === 'function') jobs.push(Promise.resolve(window[n](false)).catch(function() {})); }); Promise.all(jobs).then(function() { if (typeof renderUpcoming === 'function') renderUpcoming(); var active = document.querySelector('.view-content.active'); if (active) ppRerender(active.id.replace('View', '')); }); }, 0);
+      return true;
+    }
+    async function ppBootstrapRefresh() {
+      try {
+        var r = await _ppApiNet('bootstrap', {}, 60000); if (!r || !r.success) return false;
+        ppSnap = ppSnap || { email: currentUser && currentUser.email }; ppSnap.bundle = ppSnap.bundle || {};
+        PP_PRIMED_ACTIONS.forEach(function(a) { if (r[a] && r[a].success) { ppPrimed[a] = r[a]; ppSnap.bundle[a] = r[a]; } });
+        ppSnap.savedAt = Date.now(); ppSnapSave();
+        // re-run each loader; they hit the primed bundle, so this is CPU only
+        var jobs = [];
+        if (typeof loadTradeShows === 'function') jobs.push(loadTradeShows(true)); if (typeof loadCredList === 'function') jobs.push(loadCredList(true)); if (typeof loadLandingPages === 'function') jobs.push(loadLandingPages(true)); if (typeof loadLeads === 'function') jobs.push(loadLeads(true)); if (typeof loadCloseAccounts === 'function') jobs.push(loadCloseAccounts(true)); if (typeof loadCloseMeetings === 'function') jobs.push(loadCloseMeetings(true)); if (typeof loadSignedDocs === 'function') jobs.push(loadSignedDocs(true)); if (typeof loadResources === 'function') jobs.push(loadResources(true)); if (typeof loadContentPosts === 'function') jobs.push(loadContentPosts(true)); if (typeof loadFollowers === 'function') jobs.push(loadFollowers(true));
+        await Promise.all(jobs.map(function(j) { return Promise.resolve(j).catch(function() {}); }));
+        var active = document.querySelector('.view-content.active'); if (active) { var v = active.id.replace('View', ''); if (typeof ppRerender === 'function') ppRerender(v); }
+        if (typeof renderUpcoming === 'function') renderUpcoming();
+        return true;
+      } catch(e) { console.log('bootstrap refresh:', e.message); return false; }
+    }
+    function ppRerender(v) {
+      var map = { tradeshows: 'renderTradeShows', credentials: 'renderCredentials', landing: 'renderLandingPages', leads: 'renderLeads', customers: 'renderCloseAccounts', meetings: 'renderCloseMeetings', resources: 'renderResources', submissions: 'renderDocsPanel', dashboard: 'renderUpcoming', calendar: 'renderCalendar', team: 'renderTeam', content: 'renderContent', social: 'renderSocial', playbook: 'renderPlaybook' };
+      var fn = window[map[v]]; if (typeof fn === 'function') { try { fn(); } catch(e) {} }
+      if (v === 'submissions' && typeof renderSubBoard === 'function') renderSubBoard();
+    }
+    // Speed the auto-refresh that already runs in the background: bundle it too
+    setInterval(function() { if (currentUser && document.visibilityState === 'visible' && window._ppLoadFinished) ppBootstrapRefresh(); }, 10 * 60 * 1000);
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
     document.addEventListener('touchmove', function(e) {
