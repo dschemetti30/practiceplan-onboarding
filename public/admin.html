@@ -878,7 +878,7 @@
       --sh-lg:0 24px 64px -16px rgba(15,23,42,0.28),0 8px 24px -8px rgba(15,23,42,0.12);
       --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:22px;
       --ease:cubic-bezier(.22,1,.36,1);--spring:cubic-bezier(.34,1.45,.64,1);
-      --t-fast:140ms;--t-base:240ms;--t-slow:380ms;
+      --t-fast:160ms;--t-base:300ms;--t-slow:520ms;
       --font-ui:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
       --font-display:'Montserrat',var(--font-ui);
     }
@@ -932,7 +932,7 @@
     .view-content.active{animation:ppViewIn var(--t-slow) var(--ease) both}
     .table-wrapper tbody tr,.milestone-grid tbody tr,.ts-group tbody tr{animation:ppRowIn .42s var(--ease) both}
     tbody tr:nth-child(1){animation-delay:0ms}tbody tr:nth-child(2){animation-delay:22ms}tbody tr:nth-child(3){animation-delay:44ms}tbody tr:nth-child(4){animation-delay:66ms}tbody tr:nth-child(5){animation-delay:88ms}tbody tr:nth-child(6){animation-delay:110ms}tbody tr:nth-child(7){animation-delay:132ms}tbody tr:nth-child(8){animation-delay:154ms}tbody tr:nth-child(9){animation-delay:176ms}tbody tr:nth-child(10){animation-delay:198ms}tbody tr:nth-child(11){animation-delay:220ms}tbody tr:nth-child(12){animation-delay:242ms}tbody tr:nth-child(n+13){animation-delay:260ms}
-    .stat-card,.pp-stat,.ts-next-card,.pipeline-card,.pp-mcard,.mobile-card,.ts-group,.activity-item{animation:ppCardIn .5s var(--ease) both}
+    .stat-card,.pp-stat,.ts-next-card,.pipeline-card,.pp-mcard,.mobile-card,.ts-group,.activity-item{animation:ppCardIn .7s var(--ease) both}
     .stats-row>*:nth-child(1),.pp-stat-strip>*:nth-child(1),.ts-next>*:nth-child(1){animation-delay:0ms}
     .stats-row>*:nth-child(2),.pp-stat-strip>*:nth-child(2),.ts-next>*:nth-child(2){animation-delay:50ms}
     .stats-row>*:nth-child(3),.pp-stat-strip>*:nth-child(3),.ts-next>*:nth-child(3){animation-delay:100ms}
@@ -1003,8 +1003,10 @@
     .auth-info{border-radius:14px;font-size:12px}
 
     /* ---- splash (new markup) ---- */
-    .data-loading-overlay{background:var(--bg);transition:opacity .55s var(--ease),visibility .55s,transform .55s var(--ease)}
-    .data-loading-overlay.leaving{opacity:0;transform:scale(1.035)}
+    .data-loading-overlay{background:var(--bg);transition:opacity .9s var(--ease),visibility .9s,transform .9s var(--ease)}
+    .data-loading-overlay.leaving{opacity:0;transform:scale(1.03)}
+    .dashboard.active{animation:ppDashIn 1.1s var(--ease) both}
+    @keyframes ppDashIn{from{opacity:0;transform:translateY(10px)}40%{opacity:0}to{opacity:1;transform:none}}
     .splash-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
     .splash-bg .orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:0.55;animation:ppOrb 14s ease-in-out infinite alternate}
     .splash-bg .o1{width:520px;height:520px;background:#0076bb;left:-140px;top:-160px}
@@ -1987,7 +1989,7 @@
     #ppTopBar.on i{animation:ppTopGrow 8s cubic-bezier(.1,.7,.2,1) forwards}
     #ppTopBar.done i{animation:none;width:100%;transition:width .25s}
     @keyframes ppTopGrow{0%{width:0}15%{width:35%}40%{width:62%}70%{width:80%}100%{width:92%}}
-    .pp-loader{padding:18px 16px;border-radius:14px;background:var(--card);border:1px dashed var(--border);animation:ppViewIn .25s var(--ease) both}
+    .pp-loader{padding:18px 16px;border-radius:14px;background:var(--card);border:1px dashed var(--border);animation:ppViewIn .4s var(--ease) both}
     .pp-loader.compact{padding:12px}
     .pp-loader-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
     .pp-loader-ring{width:34px;height:34px;flex-shrink:0;animation:ppSpin 1.1s linear infinite}
@@ -2004,10 +2006,30 @@
     .pp-loader-row .a{width:24px;height:24px;border-radius:50%;flex-shrink:0}
     .pp-loader-row .c{margin-left:auto}
     @keyframes ppShimmer{0%{background-position:120% 0}100%{background-position:-100% 0}}
-    .pp-landed{animation:ppViewIn .32s var(--ease) both}
+    .pp-landed{animation:ppViewIn .55s var(--ease) both}
     tr.skeleton-row td{animation:none}
     .pp-empty.pp-loading-host{padding:0;border:none;background:transparent;text-align:left;display:block}
     .pp-empty.pp-loading-host .pp-loader{margin:0}
+    /* ---- import modal: never scroll sideways; wide mode for the workbook preview ---- */
+    .import-body{overflow-x:hidden}
+    .import-overlay.wide .import-box{max-width:1040px;width:calc(100vw - 48px)}
+    .ob-cols>div{min-width:0}
+    .ob-cols .import-preview-table{table-layout:fixed;width:100%;margin:8px 0 0}
+    .ob-cols .import-preview-table td{white-space:normal;word-break:break-word;vertical-align:top}
+    .ob-cols .import-preview-table td:first-child{width:38%;color:var(--text3)}
+    .ob-tree{max-height:46vh}
+    @media(max-width:1100px){.ob-cols{grid-template-columns:1fr}.ob-tree{max-height:300px}}
+    .ob-cols .import-preview-table,.import-body .import-preview-table{min-width:0}
+    .ob-check{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);text-transform:none;letter-spacing:0;font-weight:500;padding:12px 0;cursor:pointer}
+    .ob-check input{width:16px;height:16px;accent-color:var(--pp-blue)}
+    .hq-kpis .hq-kpi{animation:ppCardIn .7s var(--ease) both}
+    .hq-kpis .hq-kpi:nth-child(1){animation-delay:70ms}
+    .hq-kpis .hq-kpi:nth-child(2){animation-delay:140ms}
+    .hq-kpis .hq-kpi:nth-child(3){animation-delay:210ms}
+    .hq-kpis .hq-kpi:nth-child(4){animation-delay:280ms}
+    .hq-kpis .hq-kpi:nth-child(5){animation-delay:350ms}
+    .hq-kpis .hq-kpi:nth-child(6){animation-delay:420ms}
+    .stat-card:nth-child(2){animation-delay:80ms}.stat-card:nth-child(3){animation-delay:160ms}.stat-card:nth-child(4){animation-delay:240ms}
   </style>
 </head>
 <body>
@@ -2649,13 +2671,13 @@
       animateCount('loadMetricOrgs', totalOrgs, 500); animateCount('loadMetricSpaces', totalSpaces, 600); animateCount('loadMetricComplete', totalComplete, 550);
       // Hold the finished state just long enough to read it (max ~0.9s), never longer than the data took
       var elapsed = Date.now() - (window._ppLoadStart || Date.now());
-      var hold = Math.max(0, (fromCache ? 350 : 900) - elapsed);
+      var hold = Math.max(600, (fromCache ? 1100 : 1400) - elapsed);
       setTimeout(function() {
         var ov = document.getElementById('dataLoadingOverlay');
         if (ov) ov.classList.add('leaving');
         document.getElementById('dashboard').classList.add('active');
         requestAnimationFrame(function() { ppLayoutInit(); if (typeof ppApplyMarketingGate === 'function') ppApplyMarketingGate(); ppTabInk(); });
-        setTimeout(function() { if (ov) { ov.classList.add('hidden'); ov.classList.remove('leaving'); } }, 560);
+        setTimeout(function() { if (ov) { ov.classList.add('hidden'); ov.classList.remove('leaving'); } }, 950);
       }, hold);
     }
     function animateCount(elId, target, duration) {
@@ -3203,7 +3225,7 @@
       document.getElementById('importOverlay').classList.add('active');
     }
 
-    function closeImport() { document.getElementById('importOverlay').classList.remove('active'); importRows = []; }
+    function closeImport() { document.getElementById('importOverlay').classList.remove('active', 'wide'); importRows = []; }
 
     function downloadImportTemplate() {
       var csv = 'Organization,Contact Name,Email,Phone,Job Title,Go-Live Date,Pipeline Status,Account Rep Email\n"Sample ISD","Jane Smith","jane@sampleisd.org","(555) 123-4567","Athletic Director","2026-01-15","launched","donnie.schemetti@practiceplan.io"\n"Example Academy","Bob Jones","bjones@example.edu","","Facilities Manager","","onboarding",""';
@@ -6181,8 +6203,8 @@
     var obDraft = null;
     async function handleOnboardingWorkbook(file) {
       if (!file) return;
-      document.getElementById('importBody').innerHTML = '<div class="pp-empty"><strong>Reading the workbook...</strong></div>';
-      var sheets; try { sheets = await ppParseWorkbook(file, { keepEmpty: true }); } catch(e) { showToast(e.message, 'error'); return; }
+      document.getElementById('importBody').innerHTML = (typeof ppLoader === 'function') ? ppLoader('Reading the workbook', { sub: 'Opening every tab and picking out campuses, spaces, approvers and policies', rows: 5 }) : '<div class="pp-empty"><strong>Reading the workbook...</strong></div>';
+      var sheets; try { sheets = await ppParseWorkbook(file, { keepEmpty: true }); } catch(e) { showToast(e.message, 'error'); startOnboardingImport(); return; }
       var general = sheets.find(function(s) { return /general/i.test(s.name); }), campuses = sheets.filter(function(s) { return s !== general && s.rows.some(function(r) { return /^asset$/i.test(String(r[0] || '').trim()); }); });
       var gen = general ? obParseGeneral(general.rows) : { policies: {}, notes: [] };
       var locations = campuses.map(function(s) { return obParseCampus(s.name.trim(), s.rows); }).filter(function(l) { return l.assets.length; });
@@ -6199,7 +6221,7 @@
       var polRows = [['Cancellation window', fd.policies.cancellationDays ? fd.policies.cancellationDays + ' days' : ''], ['Weather refund', fd.policies.weatherRefund], ['Liability insurance', fd.policies.requireInsurance], ['Time increment', fd.policies.timeIncrement ? fd.policies.timeIncrement + ' min' : ''], ['Waivers', fd.policies.waiverText], ['Rental policy', fd.policies.facilityAgreement]];
       var opt = function(list, val) { return list.map(function(x) { return '<option value="' + ppEsc(x.val) + '"' + (x.val === val ? ' selected' : '') + '>' + ppEsc(x.label) + '</option>'; }).join(''); };
       document.getElementById('importBody').innerHTML = '<div class="ob-summary"><div class="ob-kpi"><b>' + fd.locations.length + '</b><span>campuses</span></div><div class="ob-kpi"><b>' + spaces + '</b><span>spaces</span></div><div class="ob-kpi"><b>' + d.contacts.length + '</b><span>contacts found</span></div><div class="ob-kpi ' + (warn.length ? 'warn' : '') + '"><b>' + warn.length + '</b><span>gaps</span></div></div>'
-        + '<div class="pp-form" style="margin-bottom:12px"><div><label>Organization</label><input id="ob_org" value="' + ppEsc(fd.contactInfo.organization) + '"></div><div><label>Contact name</label><input id="ob_name" value="' + ppEsc(fd.contactInfo.fullName) + '" list="obContacts"><datalist id="obContacts">' + d.contacts.map(function(c) { return '<option value="' + ppEsc(c.name) + '">'; }).join('') + '</datalist></div><div><label>Contact email (record key)</label><input id="ob_email" type="email" value="' + ppEsc(fd.contactInfo.email) + '" list="obEmails"><datalist id="obEmails">' + d.contacts.map(function(c) { return c.email ? '<option value="' + ppEsc(c.email) + '">' + ppEsc(c.name) + '</option>' : ''; }).join('') + '</datalist></div><div><label>Phone</label><input id="ob_phone" value="' + ppEsc(fd.contactInfo.phone) + '"></div><div><label>Account rep</label><select id="ob_rep"><option value="">Unassigned</option>' + TEAM_MEMBERS.map(function(m) { return '<option value="' + ppEsc(m.email) + '">' + ppEsc(m.name) + '</option>'; }).join('') + '</select></div><div><label>Pipeline stage</label><select id="ob_stage">' + opt([{ val: 'onboarding', label: 'Onboarding' }, { val: 'complete', label: 'Form Complete' }, { val: 'review', label: 'Review' }, { val: 'published', label: 'Published' }, { val: 'launched', label: 'Launched' }], 'onboarding') + '</select></div><div><label>Go-live date</label><input id="ob_golive" type="date"></div><div><label>&nbsp;</label><label class="rot-notify" style="padding:0"><input type="checkbox" id="ob_replace"> Replace an existing record with this email</label></div></div>'
+        + '<div class="pp-form" style="margin-bottom:12px"><div><label>Organization</label><input id="ob_org" value="' + ppEsc(fd.contactInfo.organization) + '"></div><div><label>Contact name</label><input id="ob_name" value="' + ppEsc(fd.contactInfo.fullName) + '" list="obContacts"><datalist id="obContacts">' + d.contacts.map(function(c) { return '<option value="' + ppEsc(c.name) + '">'; }).join('') + '</datalist></div><div><label>Contact email (record key)</label><input id="ob_email" type="email" value="' + ppEsc(fd.contactInfo.email) + '" list="obEmails"><datalist id="obEmails">' + d.contacts.map(function(c) { return c.email ? '<option value="' + ppEsc(c.email) + '">' + ppEsc(c.name) + '</option>' : ''; }).join('') + '</datalist></div><div><label>Phone</label><input id="ob_phone" value="' + ppEsc(fd.contactInfo.phone) + '"></div><div><label>Account rep</label><select id="ob_rep"><option value="">Unassigned</option>' + TEAM_MEMBERS.map(function(m) { return '<option value="' + ppEsc(m.email) + '">' + ppEsc(m.name) + '</option>'; }).join('') + '</select></div><div><label>Pipeline stage</label><select id="ob_stage">' + opt([{ val: 'onboarding', label: 'Onboarding' }, { val: 'complete', label: 'Form Complete' }, { val: 'review', label: 'Review' }, { val: 'published', label: 'Published' }, { val: 'launched', label: 'Launched' }], 'onboarding') + '</select></div><div><label>Go-live date</label><input id="ob_golive" type="date"></div><div style="display:flex;align-items:flex-end"><label class="ob-check"><input type="checkbox" id="ob_replace"><span>Replace an existing record with this email</span></label></div></div>'
         + '<div class="ob-cols"><div><div class="ob-h">Policies</div><table class="import-preview-table">' + polRows.map(function(r) { return '<tr><td style="color:var(--text3)">' + r[0] + '</td><td>' + (r[1] ? ppEsc(r[1]) : '<span class="pp-placeholder">not answered</span>') + '</td></tr>'; }).join('') + '</table>' + (fd.importNotes.length ? '<div class="ob-h" style="margin-top:10px">Notes found on the General tab</div><div class="ob-notes">' + fd.importNotes.map(function(n) { return '<span>' + ppEsc(n) + '</span>'; }).join('') + '</div>' : '') + '</div>'
         + '<div><div class="ob-h">Campuses and spaces</div><div class="ob-tree">' + fd.locations.map(function(l, li) { return '<div class="ob-loc"><div class="ob-loc-h"><b>' + ppEsc(l.name) + '</b><span>' + l.assets.length + ' space' + (l.assets.length === 1 ? '' : 's') + (l.contactName ? ' &middot; ' + ppEsc(l.contactName) : '') + (l.address ? '' : ' &middot; <i>no address</i>') + '</span></div>' + l.assets.map(function(a, ai) { return '<div class="ob-asset"><span class="n">' + ppEsc(a.name) + '</span><span class="m">' + (a.pricing ? '$' + a.pricing + '/hr' : '<i>no price</i>') + ' &middot; ' + a.approvers.length + ' approver' + (a.approvers.length === 1 ? '' : 's') + (a.amenities.length ? ' &middot; ' + a.amenities.length + ' amenit' + (a.amenities.length === 1 ? 'y' : 'ies') : '') + (a.weekdayAvailability.start ? ' &middot; ' + a.weekdayAvailability.start + '-' + a.weekdayAvailability.end : '') + (a.notes ? ' &middot; <i title="' + ppEsc(a.notes) + '">note</i>' : '') + '</span><button class="pp-mini-btn danger" title="Leave this space out" onclick="obDraft.formData.locations[' + li + '].assets.splice(' + ai + ',1);if(!obDraft.formData.locations[' + li + '].assets.length)obDraft.formData.locations.splice(' + li + ',1);renderOnboardingPreview()">&#10005;</button></div>'; }).join('') + '</div>'; }).join('') + '</div></div></div>'
         + (warn.length ? '<div class="ob-h" style="margin-top:12px">Gaps to fill in after import</div><div class="ob-notes warn">' + warn.slice(0, 12).map(function(w) { return '<span>' + ppEsc(w) + '</span>'; }).join('') + (warn.length > 12 ? '<span>+' + (warn.length - 12) + ' more</span>' : '') + '</div>' : '')
@@ -6226,7 +6248,7 @@
     function startOnboardingImport() {
       document.querySelector('.import-title').textContent = 'Import an Onboarding Workbook';
       document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2);margin-bottom:14px">Upload the district\'s completed onboarding workbook (.xlsx): the General Information tab plus one tab per campus. The importer reads policies, every campus, every space with availability, approvers, notification list, pricing and amenities, skips the sample block and blank placeholders, and shows you everything it found before anything is saved. The result behaves exactly like a form submission.</p><button class="import-btn" onclick="document.getElementById(\'obImportFile\').click()">Choose Workbook</button>';
-      document.getElementById('importOverlay').classList.add('active');
+      document.getElementById('importOverlay').classList.add('active', 'wide');
     }
     // =====================================================================
     // CLIENT OVERVIEW v2: sortable account table, expandable success rows, logos
@@ -6752,7 +6774,7 @@
       document.querySelector('.import-title').textContent = 'Import Published Posts';
       document.getElementById('importBody').innerHTML = '<div id="cpiBody"></div>';
       cpImportMode('paste');
-      document.getElementById('importOverlay').classList.add('active');
+      document.getElementById('importOverlay').classList.remove('wide'); document.getElementById('importOverlay').classList.add('active');
     }
     function cpImportMode(mode, btn) {
       document.querySelectorAll('.cpi-tabs button').forEach(function(b) { b.classList.toggle('on', b === btn || (!btn && b.textContent.indexOf('Paste') === 0)); });
@@ -7253,7 +7275,7 @@
     function startImageImport() {
       document.querySelector('.import-title').textContent = 'Add Images to Posts';
       document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2);margin:10px 0">Pick all the images at once. Each one is matched to a post by the date in the file name (or the file\'s own date) and by words in the name that appear in a post\'s title. Check the match, change it where needed, or make a new post, then upload.</p><button class="import-btn" onclick="document.getElementById(\'cpBulkImg\').click()">Choose images</button><input type="file" id="cpBulkImg" accept="image/*" multiple style="display:none" onchange="cpQueueImages(this.files);this.value=\'\'">';
-      document.getElementById('importOverlay').classList.add('active');
+      document.getElementById('importOverlay').classList.remove('wide'); document.getElementById('importOverlay').classList.add('active');
     }
     function cpQueueImages(files) {
       cpImgQueue = [].slice.call(files || []).map(function(f) { var m = cpMatchImage(f); return { file: f, url: URL.createObjectURL(f), date: m.date, choice: m.best && m.best.s >= 3 ? m.best.p.id : (m.best ? m.best.p.id : '__new'), options: m.options, conf: m.best ? (m.best.s >= 6 ? 'strong' : m.best.s >= 3 ? 'likely' : 'weak') : 'none', status: '' }; });
