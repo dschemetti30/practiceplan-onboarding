@@ -2793,6 +2793,7 @@
           if (!window._refreshInterval) {
             window._refreshInterval = setInterval(async function() {
               try {
+                if (document.visibilityState !== 'visible' || (document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) || document.querySelector('.modal-overlay.active, .pp-pop')) return;
                 var result = await jsonpRequest(API_URL + '?action=getAdminData&email=' + encodeURIComponent(currentUser?.email || ''));
                 if (result.success) {
                   ppProcessAdminData(result.data); ppCacheWrite(result.data);
@@ -2801,7 +2802,7 @@
                   console.log('Auto-refreshed at', new Date().toLocaleTimeString());
                 }
               } catch(e) { console.log('Auto-refresh skipped:', e.message); }
-            }, 60000);
+            }, 5 * 60000);
           }
         } else if (result.error === 'Unauthorized') logout();
         else if (window._ppCachedRender) { console.error('API returned error:', result); ppSyncPill(false); showToast('Could not refresh from Google Sheets. Showing your last saved data.', 'error'); }
@@ -7457,7 +7458,7 @@
       if (v === 'submissions' && typeof renderSubBoard === 'function') renderSubBoard();
     }
     // Speed the auto-refresh that already runs in the background: bundle it too
-    setInterval(function() { if (currentUser && document.visibilityState === 'visible' && window._ppLoadFinished) ppBootstrapRefresh(); }, 10 * 60 * 1000);
+    setInterval(function() { if (currentUser && document.visibilityState === 'visible' && window._ppLoadFinished) ppBootstrapRefresh(); }, 15 * 60 * 1000);
     // =====================================================================
     // TRANSPORT: big payloads go by POST (JSONP URLs cap out around 8 KB), with a JSONP fallback
     // =====================================================================
@@ -8851,5 +8852,32 @@
     .rv-check .ob-h{display:flex;align-items:center;gap:8px}
     .rv-check .ob-h .n{background:var(--bg);border-radius:50px;padding:1px 8px;font-size:10px;color:var(--text2)}
   </style>
+
+  <script>
+    // =====================================================================
+    // PERFORMANCE: memoized attribution, capped first paint on long tables, calmer background refresh
+    // =====================================================================
+    (function() {
+      // leadShowFor ran a regex sweep over every show for every lead on every render; cache by lead + source
+      var memo = {}, sig = '';
+      var _lsf = leadShowFor; leadShowFor = function(l) { if (!l) return null; var s = (typeof tsList !== 'undefined' ? tsList.length : 0) + ':' + (typeof lpList !== 'undefined' ? lpList.length : 0); if (s !== sig) { memo = {}; sig = s; } var k = (l.id || '') + '|' + (l.source || ''); if (k in memo) return memo[k]; return (memo[k] = _lsf(l)); };
+      var memo2 = {}; var _lso = lsSourceOf; lsSourceOf = function(l) { var s = (typeof tsList !== 'undefined' ? tsList.length : 0) + ':' + (typeof lpList !== 'undefined' ? lpList.length : 0); var k = s + '|' + (l.id || '') + '|' + (l.source || ''); if (k in memo2) return memo2[k]; return (memo2[k] = _lso(l)); };
+      // background refresh: every 15 minutes, only when the tab is visible, and never while the user is mid-edit
+      if (window._refreshInterval) clearInterval(window._refreshInterval);
+      var _br = typeof ppBootstrapRefresh === 'function' ? ppBootstrapRefresh : null;
+      if (_br) { ppBootstrapRefresh = function() { if (document.visibilityState !== 'visible' || document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) || document.querySelector('.modal-overlay.active, .pp-pop')) return; return _br(); }; }
+    })();
+    // long tables paint the first 120 rows, then the rest on request or when you scroll near the bottom
+    (function() {
+      function cap(tbodyId, rowsSel) {
+        var body = document.getElementById(tbodyId); if (!body) return; var rows = body.querySelectorAll(rowsSel); if (rows.length <= 140) return;
+        for (var i = 120; i < rows.length; i++) rows[i].style.display = 'none';
+        var tr = document.createElement('tr'); tr.className = 'pp-more-row'; tr.innerHTML = '<td colspan="20"><button class="pp-btn" type="button">Show ' + (rows.length - 120) + ' more</button></td>'; tr.querySelector('button').onclick = function() { for (var i = 120; i < rows.length; i++) rows[i].style.display = ''; tr.remove(); }; body.appendChild(tr);
+      }
+      var _rl = renderLeads; renderLeads = function() { _rl(); cap('leadTableBody', 'tr[data-id]'); };
+      if (typeof renderCredList === 'function') { var _rc = renderCredList; renderCredList = function() { _rc(); cap('credTableBody', 'tr[data-id]'); }; }
+    })();
+  </script>
+  <style>.pp-more-row td{text-align:center;padding:12px}</style>
 </body>
 </html>
