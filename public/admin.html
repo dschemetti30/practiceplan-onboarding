@@ -7874,5 +7874,219 @@
     body.pp-sidebar .pp-side.tight{padding-top:10px;padding-bottom:8px}
     body:not(.pp-sidebar) .view-tab{flex:0 0 auto}
   </style>
+
+  <div id="ppLateViews" style="display:none">
+    <div class="view-content" id="requestsView">
+      <div class="pp-stat-strip" id="rqStats"></div>
+      <div class="table-section">
+        <div class="controls-row"><div><div class="section-title">Creative Requests</div><div class="pp-toolbar-note">Ask marketing for a post, an announcement, a testimonial piece, a "We'll be there" for a show, or anything else. Donnie gets an email the moment it lands.</div></div><div class="controls-right"><div class="controls-group filters-group"><div class="styled-select"><select onchange="rqFilter=this.value;renderRequests()"><option value="open">Open</option><option value="mine">Mine</option><option value="done">Done</option><option value="all">Everything</option></select></div></div><div class="controls-group actions-group"><button class="text-action-btn" onclick="openRequestModal(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> New Request</button></div></div></div>
+        <div class="table-wrapper"><table class="pp-table" id="rqTable"><thead><tr><th>Request</th><th>Type</th><th>Requested by</th><th>Needed by</th><th>Priority</th><th>Status</th><th>Assignee</th><th></th></tr></thead><tbody id="rqTableBody"><tr><td colspan="8" class="pp-empty">Loading</td></tr></tbody></table></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // =====================================================================
+    // CREATIVE REQUESTS (Marketing > Requests): everyone can file, Donnie is notified by email
+    // =====================================================================
+    var RQ_TYPES = ['Partner Announcement', 'Testimonial', 'Trade Show (We\'ll be there!)', 'Go-Live', 'Event Recap', 'Product Update', 'One-pager / Flyer', 'Email', 'Other'];
+    var RQ_STATUSES = [{ val: 'New', label: 'New', cls: 'unset' }, { val: 'In progress', label: 'In progress', cls: 'aud-supers' }, { val: 'Ready for review', label: 'Ready for review', cls: 'need-to-book' }, { val: 'Done', label: 'Done', cls: 'booked' }, { val: 'Declined', label: 'Declined', cls: 'inactive' }];
+    var RQ_PRIORITY = [{ val: 'Normal', label: 'Normal', cls: 'unset' }, { val: 'High', label: 'High', cls: 'need-to-book' }, { val: 'Urgent', label: 'Urgent', cls: 'on-hold' }];
+    var RQ_COLS = ['id', 'createdAt', 'requestedBy', 'type', 'title', 'details', 'neededBy', 'related', 'links', 'priority', 'status', 'assignee', 'notes', 'postId', 'updatedAt', 'updatedBy'];
+    var rqList = [], rqLoaded = false, rqFilter = 'open';
+    async function loadRequests(force) { if (rqLoaded && !force) return; try { var r = await ppApi('getRequests'); if (r.success) { rqList = (r.rows || []).map(function(x) { var o = {}; RQ_COLS.forEach(function(c) { o[c] = x[c] === undefined ? '' : String(x[c]); }); return o; }); rqLoaded = true; } } catch(e) {} }
+    function rqRow(q) {
+      var st = RQ_STATUSES.find(function(s) { return s.val === q.status; }) || RQ_STATUSES[0], pr = RQ_PRIORITY.find(function(s) { return s.val === q.priority; }) || RQ_PRIORITY[0], today = ppTodayISO(), d = q.neededBy ? ppDaysBetween(q.neededBy, today) : null;
+      var cell = function(field, inner) { return '<td class="pp-cell" data-edit="' + field + '" data-id="' + ppEsc(q.id) + '" onclick="event.stopPropagation();rqCellEdit(\'' + ppEsc(q.id) + '\',\'' + field + '\',this)" title="Click to edit">' + inner + '</td>'; };
+      return '<tr data-id="' + ppEsc(q.id) + '" onclick="openRequestModal(\'' + ppEsc(q.id) + '\')">'
+        + '<td><div class="pp-org-name">' + ppEsc(q.title || '(untitled)') + '</div><div class="pp-org-sub">' + ppEsc((q.details || '').slice(0, 90)) + (q.details && q.details.length > 90 ? '...' : '') + (q.related ? ' &middot; ' + ppEsc(q.related) : '') + '</div></td>'
+        + cell('type', '<span class="pp-chip pick" style="background:' + ((typeof CP_TYPE_COLORS !== 'undefined' && CP_TYPE_COLORS[q.type.replace(/ \(.*\)$/, '')]) || '#94a3b8') + '22;color:' + ((typeof CP_TYPE_COLORS !== 'undefined' && CP_TYPE_COLORS[q.type.replace(/ \(.*\)$/, '')]) || '#475569') + '">' + ppEsc(q.type || 'Type?') + '<i class="caret"></i></span>')
+        + '<td><div style="display:flex;align-items:center;gap:6px">' + (q.requestedBy ? ppRepAvatars(q.requestedBy, 22) : '') + '<span style="font-size:12px">' + ppEsc(ppRepName(q.requestedBy) || q.requestedBy) + '</span></div><div class="pp-org-sub">' + (q.createdAt ? ppAgo(q.createdAt) : '') + '</div></td>'
+        + cell('neededBy', q.neededBy ? '<div class="ts-date' + (d !== null && d <= 3 && !/Done|Declined/.test(q.status) ? ' soon' : '') + '">' + ppFmtDate(q.neededBy, { month: 'short', day: 'numeric' }) + '<span class="sub">' + (d === null ? '' : d < 0 ? Math.abs(d) + 'd overdue' : d === 0 ? 'today' : 'in ' + d + 'd') + '</span></div>' : '<span class="pp-placeholder">Whenever</span>')
+        + cell('priority', '<span class="pp-chip pick ' + pr.cls + '">' + pr.label + '<i class="caret"></i></span>')
+        + cell('status', '<span class="pp-chip pick ' + st.cls + '">' + st.label + '<i class="caret"></i></span>')
+        + cell('assignee', q.assignee ? '<div style="display:flex;align-items:center;gap:6px">' + ppRepAvatars(q.assignee, 22) + '<span style="font-size:11px;color:var(--text2)">' + ppEsc(ppRepName(q.assignee)) + '</span></div>' : '<span class="pp-chip need-to-book">Assign<i class="caret"></i></span>')
+        + '<td style="text-align:right;white-space:nowrap">' + (q.postId ? '<button class="pp-mini-btn" title="Open the post" onclick="event.stopPropagation();switchView(\'content\');setTimeout(function(){openContentModal(\'' + ppEsc(q.postId) + '\')},300)">&#9741;</button> ' : (/Done|In progress|Ready/.test(q.status) && typeof cpList !== 'undefined' ? '<button class="pp-mini-btn" title="Create a Content Calendar post from this request" onclick="event.stopPropagation();rqToPost(\'' + ppEsc(q.id) + '\')">&#43;&#9741;</button> ' : '')) + '<button class="pp-mini-btn" title="Open" onclick="event.stopPropagation();openRequestModal(\'' + ppEsc(q.id) + '\')">' + ppSvg('expand') + '</button></td></tr>';
+    }
+    function renderRequests() {
+      var body = document.getElementById('rqTableBody'), stats = document.getElementById('rqStats'); if (!body) return;
+      if (!rqLoaded) { body.innerHTML = '<tr><td colspan="8"><div class="pp-empty">Loading requests</div></td></tr>'; return; }
+      var me = (currentUser?.email || '').toLowerCase();
+      var rows = rqList.filter(function(q) { if (rqFilter === 'open') return !/Done|Declined/.test(q.status); if (rqFilter === 'mine') return q.requestedBy === me || q.assignee === me; if (rqFilter === 'done') return /Done|Declined/.test(q.status); return true; }).sort(function(a, b) { var pa = a.priority === 'Urgent' ? 0 : a.priority === 'High' ? 1 : 2, pb = b.priority === 'Urgent' ? 0 : b.priority === 'High' ? 1 : 2; if (pa !== pb && rqFilter !== 'done') return pa - pb; return (a.neededBy || '9999') < (b.neededBy || '9999') ? -1 : (a.neededBy || '9999') > (b.neededBy || '9999') ? 1 : (b.createdAt || '') < (a.createdAt || '') ? -1 : 1; });
+      var open = rqList.filter(function(q) { return !/Done|Declined/.test(q.status); }), today = ppTodayISO(), due = open.filter(function(q) { return q.neededBy && ppDaysBetween(q.neededBy, today) <= 7; }), review = open.filter(function(q) { return q.status === 'Ready for review'; });
+      if (stats) stats.innerHTML = '<div class="pp-stat" style="cursor:default"><div class="v">' + open.length + '</div><div class="l">Open requests</div></div><div class="pp-stat ' + (due.length ? 'warn' : '') + '" style="cursor:default"><div class="v">' + due.length + '</div><div class="l">Due this week</div></div><div class="pp-stat" style="cursor:default"><div class="v">' + review.length + '</div><div class="l">Ready for review</div></div><div class="pp-stat good" style="cursor:default"><div class="v">' + rqList.filter(function(q) { return q.status === 'Done' && q.updatedAt && ppDaysBetween(today, q.updatedAt.slice(0, 10)) <= 30; }).length + '</div><div class="l">Done, last 30 days</div></div>';
+      body.innerHTML = (rows.length ? rows.map(rqRow).join('') : '<tr><td colspan="8"><div class="pp-empty"><strong>Nothing here</strong>' + (rqFilter === 'open' ? 'No open requests. Use New Request when you need something made.' : 'Nothing matches this filter.') + '</div></td></tr>') + '<tr class="ts-add-row"><td colspan="8"><input class="ts-add-input rq-add-input" placeholder="+ Type what you need and press Enter, e.g. We\'ll be there post for TASA" autocomplete="off" onkeydown="if(event.key===\'Enter\'){event.preventDefault();rqQuickAdd(this)}"></td></tr>';
+    }
+    async function rqQuickAdd(input) { var t = input.value.trim(); if (!t) return; input.disabled = true; var type = /testimonial|quote/i.test(t) ? 'Testimonial' : /partner|welcome|announce/i.test(t) ? 'Partner Announcement' : /be there|booth|show|conference|tasa|thsada|nrpa|asbo/i.test(t) ? 'Trade Show (We\'ll be there!)' : /go.?live|live on/i.test(t) ? 'Go-Live' : /recap/i.test(t) ? 'Event Recap' : /flyer|one.?pager|print/i.test(t) ? 'One-pager / Flyer' : /email/i.test(t) ? 'Email' : 'Other'; await rqSave({ id: '', title: t, type: type, details: '', neededBy: '', related: '', links: '', priority: 'Normal', status: 'New', assignee: 'donnie.schemetti@practiceplan.io', notes: '', postId: '', requestedBy: currentUser?.email || '' }, true); input.value = ''; input.disabled = false; }
+    async function rqSave(q, isNew) { try { var r = await ppApi('saveRequest', { row: q }); if (!r.success) throw new Error(r.error || 'Save failed'); q.id = r.id; if (isNew) { q.createdAt = new Date().toISOString(); q.status = q.status || 'New'; rqList.push(q); } renderRequests(); if (isNew) showToast('Request filed' + (r.notified ? '; ' + ppRepName(r.notified) + ' has been emailed' : ''), 'success'); return true; } catch(e) { showToast('Could not save: ' + e.message, 'error'); return false; } }
+    function rqCellEdit(id, field, cell) {
+      var q = rqList.find(function(x) { return x.id === id; }); if (!q) return;
+      var save = function(patch) { var prev = {}; Object.keys(patch).forEach(function(k) { prev[k] = q[k]; q[k] = patch[k]; }); renderRequests(); ppApi('saveRequest', { row: q }).then(function(r) { if (!r.success) throw new Error(r.error || 'Save failed'); }).catch(function(err) { Object.keys(prev).forEach(function(k) { q[k] = prev[k]; }); renderRequests(); showToast('Could not save: ' + err.message, 'error'); }); };
+      switch (field) {
+        case 'type': ppStatusPicker(cell, RQ_TYPES.map(function(t) { return { val: t, label: t, cls: 'unset' }; }), q.type, function(v) { save({ type: v }); }); break;
+        case 'neededBy': ppFormPopover(cell, [{ key: 'neededBy', label: 'Needed by', type: 'date', value: q.neededBy }], function(v) { save(v); }, { title: 'When' }); break;
+        case 'priority': ppStatusPicker(cell, RQ_PRIORITY, q.priority, function(v) { save({ priority: v }); }); break;
+        case 'status': ppStatusPicker(cell, RQ_STATUSES, q.status, function(v) { save({ status: v }); }); break;
+        case 'assignee': ppStatusPicker(cell, TEAM_MEMBERS.map(function(m) { return { val: m.email, label: m.name, cls: q.assignee === m.email ? 'active' : 'unset' }; }), q.assignee, function(v) { save({ assignee: v }); }); break;
+      }
+    }
+    function openRequestModal(id) {
+      var q = id ? rqList.find(function(x) { return x.id === id; }) : null; var isNew = !q; q = q || { id: '', title: '', type: '', details: '', neededBy: '', related: '', links: '', priority: 'Normal', status: 'New', assignee: 'donnie.schemetti@practiceplan.io', notes: '', postId: '', requestedBy: currentUser?.email || '' };
+      var related = [].concat((typeof tsList !== 'undefined' ? tsList.filter(function(s) { return !s.archived && !s._isPast; }).map(function(s) { return s.name; }) : []), (typeof allData !== 'undefined' ? allData.map(function(d) { return d.organization; }) : [])).filter(Boolean);
+      ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + (isNew ? 'New Creative Request' : ppEsc(q.title)) + '</h2><div class="modal-subtitle">' + (isNew ? 'Donnie gets an email when you save' : 'Requested by ' + ppEsc(ppRepName(q.requestedBy) || q.requestedBy) + (q.createdAt ? ' ' + ppAgo(q.createdAt) : '')) + '</div></div><div class="modal-body"><div class="detail-section" style="margin-top:20px"><div class="pp-form">'
+        + '<div class="full"><label>What do you need?</label><input id="rq_title" value="' + ppEsc(q.title) + '" placeholder="e.g. Welcome post for Denton ISD" autofocus></div><div><label>Type</label><select id="rq_type"><option value="">Pick one</option>' + RQ_TYPES.map(function(t) { return '<option' + (q.type === t ? ' selected' : '') + '>' + t + '</option>'; }).join('') + '</select></div><div><label>Needed by</label><input id="rq_needed" type="date" value="' + ppEsc(q.neededBy) + '"></div><div><label>Priority</label><select id="rq_priority">' + RQ_PRIORITY.map(function(p) { return '<option' + (q.priority === p.val ? ' selected' : '') + '>' + p.val + '</option>'; }).join('') + '</select></div><div><label>Related district or show</label><input id="rq_related" list="rq_related_list" value="' + ppEsc(q.related) + '" placeholder="Optional"><datalist id="rq_related_list">' + related.slice(0, 200).map(function(r) { return '<option value="' + ppEsc(r) + '">'; }).join('') + '</datalist></div>'
+        + '<div class="full"><label>Details</label><textarea id="rq_details" style="min-height:110px" placeholder="Who it is for, the angle, quotes to use, anything that must be included.">' + ppEsc(q.details) + '</textarea></div><div class="full"><label>Links (photos, docs, the announcement)</label><textarea id="rq_links" placeholder="One per line">' + ppEsc(q.links) + '</textarea></div>'
+        + (isNew ? '' : '<div><label>Status</label><select id="rq_status">' + RQ_STATUSES.map(function(s) { return '<option value="' + s.val + '"' + (q.status === s.val ? ' selected' : '') + '>' + s.label + '</option>'; }).join('') + '</select></div><div><label>Assignee</label><select id="rq_assignee">' + TEAM_MEMBERS.map(function(m) { return '<option value="' + ppEsc(m.email) + '"' + (q.assignee === m.email ? ' selected' : '') + '>' + ppEsc(m.name) + '</option>'; }).join('') + '</select></div><div class="full"><label>Marketing notes (the requester is emailed when this goes to Ready for review, Done or Declined)</label><textarea id="rq_notes">' + ppEsc(q.notes) + '</textarea></div>')
+        + '</div></div><div class="pp-modal-actions">' + (isNew ? '<span></span>' : '<div><button class="pp-btn danger" onclick="deleteRequest(\'' + ppEsc(q.id) + '\')">Delete</button>' + (!q.postId && typeof cpList !== 'undefined' ? ' <button class="pp-btn" onclick="closeModal();rqToPost(\'' + ppEsc(q.id) + '\')">Create post from this</button>' : '') + '</div>') + '<div class="right"><button class="pp-btn" onclick="closeModal()">Cancel</button><button class="pp-btn primary" onclick="saveRequestModal(\'' + ppEsc(q.id) + '\')">' + (isNew ? 'Send request' : 'Save') + '</button></div></div></div>');
+    }
+    async function saveRequestModal(id) {
+      var g = function(i) { return (document.getElementById(i) || { value: '' }).value.trim(); }; var q = rqList.find(function(x) { return x.id === id; }); var isNew = !q; q = q || { id: '', requestedBy: currentUser?.email || '', status: 'New', assignee: 'donnie.schemetti@practiceplan.io', notes: '', postId: '' };
+      Object.assign(q, { title: g('rq_title'), type: g('rq_type'), neededBy: g('rq_needed'), priority: g('rq_priority') || 'Normal', related: g('rq_related'), details: g('rq_details'), links: g('rq_links') });
+      if (!isNew) { q.status = g('rq_status') || q.status; q.assignee = g('rq_assignee') || q.assignee; q.notes = g('rq_notes'); }
+      if (!q.title) { showToast('Say what you need in the title', 'error'); return; }
+      if (await rqSave(q, isNew)) closeModal();
+    }
+    async function deleteRequest(id) { if (!confirm('Delete this request?')) return; try { var r = await ppApi('deleteRequest', { id: id }); if (!r.success) throw new Error(r.error); rqList = rqList.filter(function(x) { return x.id !== id; }); closeModal(); renderRequests(); } catch(e) { showToast(e.message, 'error'); } }
+    async function rqToPost(id) {
+      var q = rqList.find(function(x) { return x.id === id; }); if (!q || typeof loadContentPosts !== 'function') return;
+      await loadContentPosts(false);
+      var typeMap = { 'Trade Show (We\'ll be there!)': 'Trade Show', 'One-pager / Flyer': 'Other', 'Email': 'Other' };
+      var row = { id: '', title: q.title, date: q.neededBy || '', channel: 'LinkedIn, X, Facebook, Instagram', status: 'drafted', owner: q.assignee || currentUser?.email || '', campaign: q.related || '', copy: q.details || '', assetUrl: '', postUrl: '', notes: 'From creative request by ' + (ppRepName(q.requestedBy) || q.requestedBy) + (q.links ? '\nLinks:\n' + q.links : ''), format: '', results: '{}', type: typeMap[q.type] || (RQ_TYPES.indexOf(q.type) >= 0 && typeof CP_TYPES !== 'undefined' && CP_TYPES.indexOf(q.type) >= 0 ? q.type : 'Other'), impressions: '' };
+      try { var r = await ppApi('saveContentPost', { row: row }); if (!r.success) throw new Error(r.error); row.id = r.id; cpList.push(row); q.postId = row.id; if (q.status === 'New') q.status = 'In progress'; await ppApi('saveRequest', { row: q }); renderRequests(); showToast('Post created on the Content Calendar', 'success'); switchView('content'); setTimeout(function() { openContentModal(row.id); }, 300); } catch(e) { showToast('Could not create the post: ' + e.message, 'error'); }
+    }
+    // dashboard: open requests for the assignee
+    var _renderUpcomingRQ = renderUpcoming;
+    renderUpcoming = function() { _renderUpcomingRQ(); var attEl = document.getElementById('upAttention'); if (!attEl || !rqLoaded) return; var me = (currentUser?.email || '').toLowerCase(), today = ppTodayISO(); var mine = rqList.filter(function(q) { return q.assignee === me && !/Done|Declined/.test(q.status) && q.neededBy && ppDaysBetween(q.neededBy, today) <= 7; }); if (!mine.length) return; var empty = attEl.querySelector('.pp-up-empty'); if (empty) empty.remove(); attEl.insertAdjacentHTML('afterbegin', '<div class="pp-up-item" onclick="switchView(\'requests\')"><span class="up-dot amber"></span><div class="pp-up-main"><div class="pp-up-title">' + mine.length + ' creative request' + (mine.length === 1 ? '' : 's') + ' due this week</div><div class="pp-up-sub">' + ppEsc(mine.map(function(q) { return q.title; }).slice(0, 3).join(' &middot; ')) + '</div></div></div>'); };
+    // wire the tab (Marketing group, visible to everyone) and the view
+    (function() {
+      var late = document.getElementById('ppLateViews'); var host = document.getElementById('socialView'); if (late && host) { while (late.firstChild) host.parentNode.insertBefore(late.firstChild, host.nextSibling); late.remove(); }
+      var social = document.querySelector('.view-tab[onclick="switchView(\'social\')"]'); if (social && !document.querySelector('.view-tab[onclick="switchView(\'requests\')"]')) { var b = document.createElement('button'); b.className = 'view-tab'; b.setAttribute('onclick', "switchView('requests')"); b.setAttribute('data-short', 'Requests'); b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Requests'; social.parentNode.insertBefore(b, social.nextSibling); }
+      PP_VIEW_TITLES.requests = ['Marketing', 'Creative Requests'];
+      if (PP_PRIMED_ACTIONS.indexOf('getRequests') < 0) PP_PRIMED_ACTIONS.push('getRequests');
+      var _sv = switchView; switchView = function(v) { _sv(v); if (v === 'requests') { renderRequests(); loadRequests(false).then(renderRequests); } if (v === 'tradeshows' && typeof loadBoothKits === 'function' && !bkLoaded) loadBoothKits(false).then(function() { if (tsView === 'list') renderTradeShows(); }); };
+      // requests are not gated: hide/show is handled by the marketing gate only for the three marketing views, and 'requests' is not among them
+      setTimeout(function() { loadRequests(false).then(function() { if (typeof renderUpcoming === 'function') renderUpcoming(); }); }, 4000);
+    })();
+
+    // =====================================================================
+    // TRADE SHOWS: reconcile a Monday export against what is already in the tool
+    // =====================================================================
+    function tsKey(name) { return String(name || '').toLowerCase().replace(/\b(20\d{2})\b/g, '').replace(/[^a-z0-9]+/g, ' ').trim(); }
+    function tsReconcile(rows) {
+      var all = tsList.slice();
+      return rows.map(function(r) {
+        var k = tsKey(r.name), sameName = all.filter(function(s) { return tsKey(s.name) === k; });
+        var toks = k.split(' ').filter(function(t) { return t.length > 2; });
+        var close = sameName.length ? [] : all.filter(function(s) { var st = tsKey(s.name).split(' ').filter(function(t) { return t.length > 2; }); var overlap = toks.filter(function(t) { return st.indexOf(t) >= 0; }).length; return overlap >= 2 && overlap >= Math.ceil(toks.length * 0.7) && overlap >= Math.ceil(st.length * 0.7); });
+        var match = null, verdict = 'new';
+        if (sameName.length) {
+          match = sameName.find(function(s) { return r.eventDate && s._start && Math.abs(ppDaysBetween(r.eventDate, s._start)) <= 60; }) || sameName.find(function(s) { return !s._start && !r.eventDate; }) || null;
+          if (match) verdict = match.archived ? 'archived' : 'exists'; else { verdict = 'review'; match = sameName[0]; }
+        } else if (close.length) { verdict = 'review'; match = close[0]; }
+        return { row: r, verdict: verdict, match: match, pick: verdict === 'new' };
+      });
+    }
+    function tsFromMonday(sheetRows) {
+      var out = [], hdr = null, group = '';
+      sheetRows.forEach(function(r) {
+        var a = String(r[0] || '').trim();
+        if (a === 'Name' && String(r[2] || '').trim() === 'Audience') { hdr = r.map(function(c) { return String(c || '').trim(); }); return; }
+        if (!hdr) return;
+        if (a && r.slice(1).every(function(c) { return c === '' || c === null || c === undefined; })) { group = a; return; }
+        if (!a) return;
+        var d = {}; hdr.forEach(function(h, i) { d[h] = r[i]; });
+        var iso = function(v) { if (!v) return ''; if (v instanceof Date) return isNaN(v) ? '' : v.toISOString().slice(0, 10); var s = String(v).trim(); if (/^\d{5}(\.\d+)?$/.test(s) && +s > 30000 && +s < 80000) return new Date(Math.round((+s - 25569) * 86400000)).toISOString().slice(0, 10); var us = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/); if (us) return (us[3].length === 2 ? '20' + us[3] : us[3]) + '-' + us[1].padStart(2, '0') + '-' + us[2].padStart(2, '0'); var m = s.match(/(\d{4})-(\d{2})-(\d{2})/); if (m) return m[0]; var dt = new Date(s); return isNaN(dt) ? '' : dt.toISOString().slice(0, 10); };
+        var aud = String(d['Audience'] || '').toLowerCase(), audience = /super/.test(aud) ? 'supers' : /ad/.test(aud) ? 'ads' : /sbo|business/.test(aud) ? 'sbo' : /park|rec/.test(aud) ? 'parks' : 'other';
+        var reps = String(d['PP Rep Attending'] || '').split(/[,;]/).map(function(x) { x = x.trim().toLowerCase(); if (!x) return ''; if (x.indexOf('@') >= 0) return x; var m = TEAM_MEMBERS.find(function(t) { return (PP_FULL_NAMES[t.email] || t.name).toLowerCase() === x || t.name.toLowerCase().split(' ')[0] === x.split(' ')[0]; }); return m ? m.email : ''; }).filter(Boolean).join(', ');
+        var reg = String(d['Registration Paid'] || '').toLowerCase(), registration = /paid/.test(reg) && !/need/.test(reg) ? 'paid' : /need/.test(reg) ? 'need-to-pay' : /sold/.test(reg) ? 'skip' : '';
+        out.push({ name: a, audience: audience, reps: reps, eventDate: iso(d['Date(s)']) || iso(d['Exhibitor Days - Start']), exhibitStart: iso(d['Exhibitor Days - Start']), exhibitEnd: iso(d['Exhibitor Days - End']), location: String(d['Location 1'] || '').replace(/, USA$/, ''), link: String(d['Link'] || '').replace(/^Link - /, ''), registration: registration, cost: String(d['Event Cost'] || ''), boothSize: String(d['Booth Size'] || ''), plannedQuarter: /^Q[1-4]$/.test(group) ? (new Date().getFullYear() + (group === 'Q1' && new Date().getMonth() > 6 ? 1 : 0)) + '-' + group : '', notes: '' });
+      });
+      return out;
+    }
+    function startTsReconcile() {
+      document.querySelector('.import-title').textContent = 'Reconcile with the Monday export';
+      document.getElementById('importOverlay').classList.remove('wide');
+      document.getElementById('importBody').innerHTML = '<p style="font-size:13px;color:var(--text2);margin:10px 0">Upload the Trade Show Event Calendar export from Monday. Each row is checked against what is already here by name (year ignored) and date (within 60 days). Only rows marked <b>New</b> are added; matches are left alone, and anything close but not identical is flagged for you to decide.</p><button class="import-btn" onclick="document.getElementById(\'tsReconcileFile\').click()">Choose the export (.xlsx)</button><input type="file" id="tsReconcileFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="tsReconcileFile(this.files[0]);this.value=\'\'">';
+      document.getElementById('importOverlay').classList.add('active');
+    }
+    var tsRecon = [];
+    async function tsReconcileFile(file) {
+      if (!file) return; document.getElementById('importBody').innerHTML = ppLoader('Reading the export', { sub: 'Comparing every row with the shows already in the tool', rows: 4 });
+      try { var sheets = await ppParseWorkbook(file, { keepEmpty: true }); var first = (Array.isArray(sheets) ? sheets[0] : { rows: sheets[Object.keys(sheets)[0]] }) || {}; var rows = tsFromMonday(first.rows || []); if (!rows.length) throw new Error('No show rows found. Is this the Monday "Trade Show Event Calendar" export?'); tsRecon = tsReconcile(rows); tsReconRender(); } catch(e) { showToast(e.message, 'error'); startTsReconcile(); }
+    }
+    function tsReconRender() {
+      var groups = { new: [], review: [], exists: [], archived: [] }; tsRecon.forEach(function(x, i) { x.i = i; groups[x.verdict].push(x); });
+      var line = function(x) { var r = x.row; return '<div class="tsr-row ' + x.verdict + '"><label><input type="checkbox"' + (x.pick ? ' checked' : '') + ' onchange="tsRecon[' + x.i + '].pick=this.checked"><b>' + ppEsc(r.name) + '</b><span>' + (r.eventDate ? ppFmtDate(r.eventDate, { month: 'short', day: 'numeric', year: 'numeric' }) : 'no date') + (r.location ? ' &middot; ' + ppEsc(r.location) : '') + (r.reps ? ' &middot; ' + ppSplitReps(r.reps).map(ppRepName).join(', ') : '') + '</span></label>' + (x.match ? '<div class="tsr-match">' + (x.verdict === 'exists' ? 'Already here as ' : x.verdict === 'archived' ? 'Already here but archived: ' : 'Close to ') + '<b>' + ppEsc(x.match.name) + '</b>' + (x.match._start ? ' (' + ppFmtDate(x.match._start, { month: 'short', day: 'numeric', year: 'numeric' }) + ')' : ' (no date)') + (x.verdict === 'review' ? ' &middot; tick to add as a separate show, leave unticked to skip' : x.verdict === 'archived' ? ' &middot; tick to restore it, not duplicate it' : '') + '</div>' : '') + '</div>'; };
+      document.getElementById('importBody').innerHTML = '<div class="tsr-sum"><span><b>' + groups.new.length + '</b> new</span><span><b>' + groups.review.length + '</b> need a look</span><span><b>' + groups.exists.length + '</b> already here</span>' + (groups.archived.length ? '<span><b>' + groups.archived.length + '</b> archived here</span>' : '') + '</div>'
+        + (groups.new.length ? '<div class="ob-h">New: will be added</div>' + groups.new.map(line).join('') : '<div class="pp-toolbar-note" style="margin:8px 0">Nothing new in this export. Everything it lists is already in the tool.</div>')
+        + (groups.review.length ? '<div class="ob-h" style="margin-top:12px">Needs a look: same name, different or missing date</div>' + groups.review.map(line).join('') : '')
+        + (groups.archived.length ? '<div class="ob-h" style="margin-top:12px">Archived in the tool (' + groups.archived.length + '): tick any you want back</div>' + groups.archived.map(line).join('') : '')
+        + (groups.exists.length ? '<details style="margin-top:12px"><summary class="ob-h" style="cursor:pointer">Already here (' + groups.exists.length + ')</summary>' + groups.exists.map(line).join('') + '</details>' : '')
+        + '<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px"><button class="import-btn secondary" onclick="closeImport()">Cancel</button><button class="import-btn" onclick="tsReconRun()">Apply ' + tsRecon.filter(function(x) { return x.pick; }).length + ' selected</button></div>';
+    }
+    async function tsReconRun() {
+      var picks = tsRecon.filter(function(x) { return x.pick; }); if (!picks.length) { closeImport(); return; }
+      var ok = 0, restored = 0; for (var i = 0; i < picks.length; i++) { var x = picks[i], r = x.row; try { if (x.verdict === 'archived' && x.match) { x.match.archived = false; await tsSave(x.match, false); restored++; } else { var s = tsNormalize(Object.assign({ id: ppNewId('ts') }, r)); await tsSave(s, false); tsList.push(s); ok++; } } catch(e) {} }
+      closeImport(); renderTradeShows(); showToast(ok + ' show' + (ok === 1 ? '' : 's') + ' added' + (restored ? ', ' + restored + ' restored from archive' : ''), 'success'); logActivityToServer('reconciled trade shows from Monday export', ok + ' added', '', 'other');
+    }
+    // booth kit chip on show rows; reconcile button
+    (function() {
+      var _row = tsRow; tsRow = function(s) { var html = _row(s); if (s.boothKit && typeof bkList !== 'undefined') { var k = bkList.find(function(x) { return x.id === s.boothKit; }); if (k) html = html.replace('</div><div class="pp-org-sub">', ' <span class="ts-col-chip" title="Booth kit assigned" onclick="event.stopPropagation();setTsView(\'booths\')">&#9635; ' + ppEsc(k.name) + '</span></div><div class="pp-org-sub">'); } return html; };
+      var imp = document.querySelector('#tradeshowsView button[onclick*="startTsImport"], #tradeshowsView button[onclick*="Import"]');
+      var actions = document.querySelector('#tradeshowsView .actions-group'); if (actions && !document.getElementById('tsReconBtn')) { var b = document.createElement('button'); b.id = 'tsReconBtn'; b.className = 'text-action-btn'; b.title = 'Check the Monday export for shows not in the tool'; b.setAttribute('onclick', 'startTsReconcile()'); b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Reconcile with Monday'; actions.insertBefore(b, actions.firstChild); }
+    })();
+
+    // =====================================================================
+    // INBOUND LEADS: history attributed to conferences, with reporting
+    // =====================================================================
+    function leadShowFor(l) {
+      if (!l || !l.source) return null;
+      var pages = (typeof lpList !== 'undefined') ? lpList : [], src = l.source;
+      var page = pages.find(function(p) { return [p.sourceKey, p.url].some(function(c) { return c && lpSourceMatches(src, c); }); });
+      if (page && page.showId) { var s = tsList.find(function(x) { return x.id === page.showId; }); if (s) return s; }
+      var direct = tsList.filter(function(s) { return !s.archived && s.name && lpSourceMatches(src, s.name); });
+      if (!direct.length) return null;
+      // the same show name across years: pick the one closest to when the lead came in
+      var t = l.receivedAt ? String(l.receivedAt).slice(0, 10) : ''; return direct.sort(function(a, b) { var da = a._start && t ? Math.abs(ppDaysBetween(a._start, t)) : 9999, db = b._start && t ? Math.abs(ppDaysBetween(b._start, t)) : 9999; return da - db; })[0];
+    }
+    function renderLeadHistory() {
+      var host = document.getElementById('leadHistory'); if (!host) { var view = document.getElementById('leadsView'); if (!view) return; host = document.createElement('div'); host.id = 'leadHistory'; view.appendChild(host); }
+      if (!leadsLoaded) { host.innerHTML = ''; return; }
+      var hist = leadList.filter(function(l) { return l.origin === 'history'; }), all = leadList.slice();
+      if (!hist.length) { host.innerHTML = '<div class="stat-card out-card" style="margin-top:16px"><h3>Historical inbound leads</h3><div class="pp-empty"><strong>History not imported yet</strong>Click <b>Import history</b> above to bring in every form submission from before intake started. They come in as history, stay out of the Open queue, and get attributed to the conference they came from.</div></div>'; return; }
+      var groups = {}, unattributed = 0; all.forEach(function(l) { var s = leadShowFor(l); if (!s) { if (l.origin === 'history') unattributed++; return; } var g = groups[s.id] = groups[s.id] || { show: s, leads: [], hist: 0, won: 0, lost: 0, open: 0 }; g.leads.push(l); if (l.origin === 'history') g.hist++; if (l.status === 'won') g.won++; else if (l.status === 'lost') g.lost++; else g.open++; });
+      var rows = Object.keys(groups).map(function(k) { return groups[k]; }).sort(function(a, b) { return (b.show._start || '') < (a.show._start || '') ? -1 : 1; });
+      var max = Math.max(1, Math.max.apply(null, rows.map(function(g) { return g.leads.length; })));
+      var byMonth = {}; hist.forEach(function(l) { var m = String(l.receivedAt || '').slice(0, 7); if (m) byMonth[m] = (byMonth[m] || 0) + 1; }); var months = Object.keys(byMonth).sort(), maxM = Math.max(1, Math.max.apply(null, months.map(function(m) { return byMonth[m]; })));
+      var attributed = hist.length - unattributed;
+      host.innerHTML = '<div class="stat-card out-card" style="margin-top:16px"><h3>Historical inbound leads<span class="n">' + hist.length + '</span><span class="out-legend">' + attributed + ' tied to a conference &middot; ' + unattributed + ' not matched</span></h3>'
+        + '<div class="lh-months">' + months.map(function(m) { return '<div class="lh-m" title="' + m + ': ' + byMonth[m] + '"><i style="height:' + Math.round(byMonth[m] / maxM * 100) + '%"></i><span>' + ppFmtDate(m + '-01', { month: 'short' }) + (m.slice(5) === '01' || m === months[0] ? '<br>' + m.slice(2, 4) : '') + '</span><b>' + byMonth[m] + '</b></div>'; }).join('') + '</div>'
+        + '<div class="ob-h" style="margin-top:14px">By conference</div><div class="lh-shows">' + rows.map(function(g) { var s = g.show, reps = ppSplitReps(s.reps); return '<div class="lh-show" onclick="lhOpen(\'' + ppEsc(s.id) + '\')"><div class="lh-show-t"><b>' + ppEsc(s.name) + '</b><span>' + (s._start ? ppFmtDate(s._start, { month: 'short', year: 'numeric' }) : '') + (s.location ? ' &middot; ' + ppEsc(s.location) : '') + (reps.length ? ' &middot; ' + reps.map(ppRepName).join(', ') : '') + '</span></div><div class="lh-bar"><i style="width:' + Math.round(g.leads.length / max * 100) + '%"></i></div><div class="lh-n"><b>' + g.leads.length + '</b> lead' + (g.leads.length === 1 ? '' : 's') + (g.won ? ' &middot; <span style="color:var(--pp-green);font-weight:700">' + g.won + ' won</span>' : '') + (g.lost ? ' &middot; ' + g.lost + ' lost' : '') + (g.open ? ' &middot; ' + g.open + ' open' : '') + '</div></div>'; }).join('') + '</div>'
+        + (unattributed ? '<div class="pp-toolbar-note" style="margin-top:10px">' + unattributed + ' historical lead' + (unattributed === 1 ? '' : 's') + ' could not be tied to a conference from their Source value. Open them under the History filter and set the source, or add the page or show they came from.</div>' : '')
+        + '</div>';
+    }
+    function lhOpen(showId) {
+      var s = tsList.find(function(x) { return x.id === showId; }); if (!s) return; var leads = leadList.filter(function(l) { var m = leadShowFor(l); return m && m.id === showId; }).sort(function(a, b) { return (b.receivedAt || '') < (a.receivedAt || '') ? -1 : 1; });
+      ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + ppEsc(s.name) + '</h2><div class="modal-subtitle">' + leads.length + ' inbound lead' + (leads.length === 1 ? '' : 's') + (s._start ? ' &middot; ' + ppFmtDate(s._start, { month: 'long', day: 'numeric', year: 'numeric' }) : '') + '</div></div><div class="modal-body"><div class="table-wrapper" style="margin-top:16px;border-radius:12px"><table class="pp-table" style="min-width:640px"><thead><tr><th>Lead</th><th>Organization</th><th>Received</th><th>Source</th><th>Status</th><th>Rep</th></tr></thead><tbody>' + leads.map(function(l) { return '<tr><td><div class="pp-org-name">' + ppEsc(l.name || '(no name)') + '</div><div class="pp-org-sub">' + ppEsc(l.email || '') + '</div></td><td>' + ppEsc(l.org || '') + '</td><td class="time-ago">' + (l.receivedAt ? ppFmtDate(String(l.receivedAt).slice(0, 10), { month: 'short', day: 'numeric', year: 'numeric' }) : '') + (l.origin === 'history' ? ' <span class="ca-sub" style="display:inline">history</span>' : '') + '</td><td style="font-size:11.5px;color:var(--text2)">' + ppEsc(l.source || '') + '</td><td><span class="pp-chip ' + (l.status === 'won' ? 'booked' : l.status === 'lost' ? 'inactive' : 'unset') + '">' + ppEsc(l.status || 'new') + '</span></td><td>' + (l.assignedTo ? ppEsc(ppRepName(l.assignedTo)) : '<span class="pp-placeholder">-</span>') + '</td></tr>'; }).join('') + '</tbody></table></div>' + (leads.length ? '<div class="pp-toolbar-note" style="padding:8px 4px">Attribution comes from the lead\'s Source matching this show\'s name or its landing page.</div>' : '') + '</div>');
+    }
+    (function() { var _rl = renderLeads; renderLeads = function() { _rl(); try { renderLeadHistory(); } catch(e) {} }; var _rts = renderTradeShows; renderTradeShows = function() { _rts(); var lh = document.getElementById('leadHistory'); if (lh && document.getElementById('leadsView').classList.contains('active')) { try { renderLeadHistory(); } catch(e) {} } }; })();
+  </script>
+  <style>
+    .tsr-sum{display:flex;gap:14px;font-size:13px;color:var(--text2);margin:8px 0 12px}.tsr-sum b{color:var(--text)}
+    .tsr-row{padding:8px 10px;border:1px solid var(--border);border-radius:10px;margin-bottom:6px;background:var(--card)}
+    .tsr-row.new{border-color:rgba(0,168,79,0.4)}.tsr-row.review{border-color:#f59e0b}.tsr-row.exists{opacity:.7}
+    .tsr-row label{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;text-transform:none;letter-spacing:0}
+    .tsr-row label b{color:var(--text)}.tsr-row label span{font-size:11.5px;color:var(--text3)}
+    .tsr-match{font-size:11.5px;color:var(--text2);margin:4px 0 0 26px}
+    .lh-months{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:5px;height:120px;align-items:end;margin-top:4px}
+    .lh-m{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:2px}
+    .lh-m i{display:block;width:70%;max-width:26px;background:var(--pp-blue);border-radius:5px 5px 0 0;min-height:2px}
+    .lh-m span{font-size:9px;color:var(--text3);text-align:center;line-height:1.1}.lh-m b{font-size:10px;color:var(--text2)}
+    .lh-shows{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px 18px}
+    .lh-show{padding:6px 6px;border-radius:10px;cursor:pointer}.lh-show:hover{background:rgba(0,118,187,0.05)}
+    .lh-show-t b{display:block;font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lh-show-t span{font-size:11px;color:var(--text3)}
+    .lh-bar{height:8px;border-radius:5px;background:var(--bg);overflow:hidden;margin:4px 0}
+    .lh-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pp-blue),var(--pp-green));border-radius:5px}
+    .lh-n{font-size:11.5px;color:var(--text3)}.lh-n b{color:var(--text)}
+  </style>
 </body>
 </html>
