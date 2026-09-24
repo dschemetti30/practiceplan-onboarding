@@ -6109,7 +6109,7 @@
         case 'sourceKey': ppInlineEdit(cell, { value: p.sourceKey, placeholder: 'What the form sends as Source', onSave: function(v) { save({ sourceKey: v }); } }); break;
         case 'notes': ppInlineEdit(cell, { value: p.notes, placeholder: 'Note', onSave: function(v) { save({ notes: v }); } }); break;
         case 'reps': ppRepPicker(cell, ppSplitReps(p.reps), function(list) { save({ reps: list.join(', ') }); }); break;
-        case 'showId': { var opts = [{ val: '', label: 'Not linked (rotation)', cls: 'unset' }].concat(tsList.filter(function(s) { return !s.archived; }).sort(function(a, b) { return (b._start || '') < (a._start || '') ? -1 : 1; }).map(function(s) { return { val: s.id, label: s.name + (s._start ? ' (' + ppFmtDate(s._start, { month: 'short', year: 'numeric' }) + ')' : ''), cls: s._isPast ? 'inactive' : 'aud-' + (s.audience || 'other') }; })); ppStatusPicker(cell, opts, p.showId, function(v) { save({ showId: v }); }); break; }
+        case 'showId': { var opts = [{ val: '', label: 'Evergreen (not tied to a show)', cls: 'unset', sub: 'leads route to the rep on the page, or the rotation' }].concat(tsList.slice().sort(function(a, b) { return (a.name || '').localeCompare(b.name || ''); }).map(function(s) { return { val: s.id, label: s.name, sub: (s._start ? ppFmtDate(s._start, { month: 'short', day: 'numeric', year: 'numeric' }) : 'no date') + (s.location ? ' \u00b7 ' + s.location : '') + (s.archived ? ' \u00b7 archived' : s._isPast ? ' \u00b7 past' : ''), cls: s.archived ? 'inactive' : s._isPast ? 'unset' : 'aud-' + (s.audience || 'other') }; })); ppSearchPicker(cell, opts, p.showId, function(v) { save({ showId: v }); }, { placeholder: 'Type a show name...' }); break; }
       }
     }
     async function lpDelete(id) { var p = lpList.find(function(x) { return x.id === id; }); if (!p || !confirm('Remove this landing page from the list? The page itself is not affected.')) return; try { var r = await ppApi('deleteLandingPage', { id: id }); if (!r.success) throw new Error(r.error); lpList = lpList.filter(function(x) { return x.id !== id; }); renderLandingPages(); renderTradeShows(); } catch(e) { showToast('Could not remove: ' + e.message, 'error'); } }
@@ -8087,6 +8087,33 @@
     .lh-bar{height:8px;border-radius:5px;background:var(--bg);overflow:hidden;margin:4px 0}
     .lh-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pp-blue),var(--pp-green));border-radius:5px}
     .lh-n{font-size:11.5px;color:var(--text3)}.lh-n b{color:var(--text)}
+  </style>
+
+  <script>
+    // Searchable picker for long lists: type to filter, alphabetical, keyboard friendly. Long ppStatusPicker lists route here automatically.
+    function ppSearchPicker(anchor, options, current, onPick, opts) {
+      opts = opts || {};
+      var html = '<div class="pp-pop-search"><input type="text" class="pp-pop-search-in" placeholder="' + ppEsc(opts.placeholder || 'Type to search...') + '" autocomplete="off"></div><div class="pp-pop-list pp-pop-list-tall"></div>';
+      var p = ppPopoverOpen(anchor, html, { cls: 'pp-pop-status pp-pop-searchable', focus: false });
+      var input = p.querySelector('.pp-pop-search-in'), list = p.querySelector('.pp-pop-list'), active = 0;
+      function rows() { var q = input.value.trim().toLowerCase(); return options.filter(function(o) { return !q || (o.label + ' ' + (o.sub || '')).toLowerCase().indexOf(q) >= 0; }); }
+      function draw() { var rs = rows(); if (active >= rs.length) active = 0; list.innerHTML = rs.length ? rs.map(function(o, i) { return '<button type="button" class="pp-pop-opt' + (o.val === current ? ' on' : '') + (i === active ? ' hl' : '') + '" data-val="' + ppEsc(o.val) + '"><span class="pp-chip ' + ppEsc(o.cls || 'unset') + '">' + ppEsc(o.label) + '</span>' + (o.sub ? '<span class="pp-pop-sub">' + ppEsc(o.sub) + '</span>' : '') + (o.val === current ? '<span class="tick">&#10003;</span>' : '') + '</button>'; }).join('') : '<div class="pp-pop-empty">Nothing matches</div>'; list.querySelectorAll('.pp-pop-opt').forEach(function(b) { b.addEventListener('click', function() { var v = b.getAttribute('data-val'); ppPopoverClose('pick'); if (v !== current) onPick(v); }); }); var hl = list.querySelector('.pp-pop-opt.hl'); if (hl && hl.scrollIntoView) hl.scrollIntoView({ block: 'nearest' }); }
+      input.addEventListener('input', function() { active = 0; draw(); });
+      input.addEventListener('keydown', function(e) { var rs = rows(); if (e.key === 'ArrowDown') { active = Math.min(rs.length - 1, active + 1); draw(); e.preventDefault(); } else if (e.key === 'ArrowUp') { active = Math.max(0, active - 1); draw(); e.preventDefault(); } else if (e.key === 'Enter') { var o = rs[active]; if (o) { ppPopoverClose('pick'); if (o.val !== current) onPick(o.val); } e.preventDefault(); } else if (e.key === 'Escape') { ppPopoverClose('esc'); } });
+      draw(); setTimeout(function() { input.focus(); }, 20);
+    }
+    (function() { var _sp = ppStatusPicker; ppStatusPicker = function(anchor, options, current, onPick) { if (options && options.length > 12) return ppSearchPicker(anchor, options, current, onPick); return _sp(anchor, options, current, onPick); }; })();
+  </script>
+  <style>
+    .pp-pop-search{padding:8px 8px 6px}
+    .pp-pop-search-in{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:9px;background:var(--bg);font:inherit;font-size:13px;color:var(--text)}
+    .pp-pop-search-in:focus{outline:none;border-color:var(--pp-blue);box-shadow:0 0 0 3px var(--ring)}
+    .pp-pop-searchable{min-width:320px}
+    .pp-pop-list-tall{max-height:min(420px,60vh);overflow-y:auto}
+    .pp-pop-opt.hl{background:rgba(0,118,187,0.08)}
+    .pp-pop-sub{display:block;font-size:10.5px;color:var(--text3);margin:2px 0 0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px}
+    .pp-pop-searchable .pp-pop-opt{flex-wrap:wrap}
+    .pp-pop-empty{padding:12px;font-size:12px;color:var(--text3);text-align:center}
   </style>
 </body>
 </html>
