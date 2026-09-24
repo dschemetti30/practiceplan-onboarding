@@ -8501,5 +8501,149 @@
     .out-kpi .v{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
     .out-kpi .v.text{font-size:16px;line-height:1.3;white-space:normal;max-height:2.6em;overflow:hidden}
   </style>
+
+  <script>
+    // =====================================================================
+    // A. CALENDAR + MEETINGS: one HQ page. Calendar shows everything; Meetings is its list mode.
+    // =====================================================================
+    (function() {
+      var cal = document.getElementById('calendarView'), mtg = document.getElementById('meetingsView'); if (!cal || !mtg) return;
+      mtg.classList.remove('view-content', 'active'); mtg.classList.add('ob-pane'); mtg.style.display = 'none'; cal.appendChild(mtg);
+      var tab = document.querySelector('.view-tab[onclick="switchView(\'meetings\')"]'); if (tab) tab.remove();
+      window.calMode = 'calendar';
+      window.calSetMode = function(m) { calMode = m; var bar = document.getElementById('calModeBar'); if (bar) bar.querySelectorAll('button').forEach(function(b) { b.classList.toggle('on', b.getAttribute('data-m') === m); }); cal.querySelectorAll(':scope > *:not(.page-head):not(#calModeBar):not(#meetingsView)').forEach(function(el) { el.style.display = m === 'calendar' ? '' : 'none'; }); mtg.style.display = m === 'meetings' ? '' : 'none'; if (m === 'meetings' && typeof renderMeetings === 'function') renderMeetings(); };
+      var _sv = switchView; switchView = function(v) { if (v === 'meetings') { calMode = 'meetings'; v = 'calendar'; } _sv(v); if (v === 'calendar') { setTimeout(function() { var bar = document.getElementById('calModeBar'); if (!bar) { bar = document.createElement('div'); bar.id = 'calModeBar'; bar.className = 'ob-modes'; bar.innerHTML = '<button data-m="calendar" onclick="calSetMode(\'calendar\')">Calendar</button><button data-m="meetings" onclick="calSetMode(\'meetings\')">Meetings</button>'; var head = cal.querySelector(':scope > .page-head'); if (head) head.insertAdjacentElement('afterend', bar); else cal.insertBefore(bar, cal.firstChild); } calSetMode(calMode); }, 10); } };
+      PP_PAGE_META.calendar = ['HQ', 'Calendar', 'Go-lives, trade shows and Close meetings in one place. Switch to Meetings for the week by rep.'];
+      delete PP_PAGE_META.meetings;
+      var _ru = renderUpcoming; renderUpcoming = function() { _ru(); document.querySelectorAll('a[onclick*="switchView(\'meetings\')"], [onclick*="switchView(\'meetings\')"]').forEach(function(a) { a.setAttribute('onclick', "switchView('meetings')"); }); };
+    })();
+
+    // =====================================================================
+    // B. TOP BAR: the page carries its title; the bar becomes a quiet gradient band with the user.
+    //    Client Overview re-renders its own content, so its page head is re-applied after every render.
+    // =====================================================================
+    (function() {
+      document.body.classList.add('pp-quiet-header');
+      var _sv = switchView; switchView = function(v) { _sv(v); setTimeout(function() { var t = document.getElementById('hdrTitle'); if (t) t.innerHTML = ''; }, 5); };
+      if (typeof renderCloseAccounts === 'function') { var _rca = renderCloseAccounts; renderCloseAccounts = function() { _rca(); if (document.getElementById('customersView') && document.getElementById('customersView').classList.contains('active')) ppPageHead('customers'); }; }
+      var _ph = ppPageHead; ppPageHead = function(v) { _ph(v); var t = document.getElementById('hdrTitle'); if (t) t.innerHTML = ''; };
+    })();
+
+    // =====================================================================
+    // C. SOURCES: direct traffic is "direct", a page named after a show belongs to that show, and pages can be linked in one click
+    // =====================================================================
+    function lpShowByName(p) { if (!p) return null; var keys = [p.title, p.sourceKey, p.url ? p.url.split('/').pop() : ''].filter(Boolean); var best = null; tsList.forEach(function(s) { if (s.archived) return; keys.forEach(function(k) { if (lpSourceMatches(k, s.name) || lpSourceMatches(s.name, k)) { if (!best || (s._start && best._start && s._start > best._start)) best = s; } }); }); return best; }
+    function lsIsDirect(src) { return /practice-?plan\.(io|com)|^website$|^direct$|^web$|^site$|homepage|contact form|demo request/i.test(String(src || '').trim()); }
+    lsSourceOf = function(l) {
+      var s = (typeof leadShowFor === 'function') ? leadShowFor(l) : null; if (s) return { key: 'show:' + s.id, label: s.name, kind: 'conference', show: s };
+      var p = (typeof lpList !== 'undefined') ? lpList.find(function(p) { return [p.sourceKey, p.url].some(function(c) { return c && l.source && lpSourceMatches(l.source, c); }); }) : null;
+      if (p) { var byName = lpShowByName(p); if (byName) return { key: 'show:' + byName.id, label: byName.name, kind: 'conference', show: byName }; return { key: 'page:' + p.id, label: p.title, kind: 'evergreen page' }; }
+      if (lsIsDirect(l.source)) return { key: 'direct', label: 'PracticePlan.io (direct)', kind: 'direct' };
+      return { key: 'src:' + String(l.source || '').toLowerCase().trim(), label: l.source || 'Unknown', kind: l.source ? 'other source' : 'no source' };
+    };
+    (function() { var _lsf = leadShowFor; leadShowFor = function(l) { var s = _lsf(l); if (s) return s; if (!l || !l.source || typeof lpList === 'undefined') return null; var p = lpList.find(function(p) { return !p.showId && [p.sourceKey, p.url].some(function(c) { return c && lpSourceMatches(l.source, c); }); }); return p ? lpShowByName(p) : null; }; })();
+    async function lpLinkPagesToShows() {
+      var todo = lpList.filter(function(p) { return !p.showId; }).map(function(p) { return { p: p, s: lpShowByName(p) }; }).filter(function(x) { return x.s; });
+      if (!todo.length) { showToast('Every page that looks like a show is already linked', 'success'); return; }
+      if (!confirm('Link ' + todo.length + ' page' + (todo.length === 1 ? '' : 's') + ' to the show they are named after?\n\n' + todo.map(function(x) { return x.p.title + '  ->  ' + x.s.name; }).join('\n') + '\n\nLeads from those pages then count for the conference, and route to its reps.')) return;
+      var ok = 0; for (var i = 0; i < todo.length; i++) { try { todo[i].p.showId = todo[i].s.id; var r = await ppApi('saveLandingPage', { row: todo[i].p }); if (r.success) ok++; } catch(e) {} }
+      renderLandingPages(); if (typeof renderLeads === 'function') renderLeads(); showToast(ok + ' page' + (ok === 1 ? '' : 's') + ' linked', 'success');
+    }
+    (function() { var _rlp = renderLandingPages; renderLandingPages = function() { _rlp(); var actions = document.querySelector('#landingView .actions-group'); if (actions && !document.getElementById('lpLinkBtn')) { var b = document.createElement('button'); b.id = 'lpLinkBtn'; b.className = 'text-action-btn'; b.title = 'Tie unlinked pages to the shows they are named after (AASA page to AASA, BOSCA page to BOSCA)'; b.setAttribute('onclick', 'lpLinkPagesToShows()'); b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Link pages to shows'; actions.insertBefore(b, actions.firstChild); } var n = lpList.filter(function(p) { return !p.showId && lpShowByName(p); }).length; if (b = document.getElementById('lpLinkBtn')) b.innerHTML = b.innerHTML.replace(/ Link pages to shows.*$/, ' Link pages to shows' + (n ? ' <b style="margin-left:4px;background:#fef3c7;color:#b45309;border-radius:50px;padding:0 7px">' + n + '</b>' : '')); }; })();
+
+    // =====================================================================
+    // D. CLOSE LEADS BY SOURCE: every lead in Close, by the Lead Source (or Conference) set there
+    // =====================================================================
+    var clsData = null, clsLoaded = false;
+    async function loadCloseLeadSources(force) { if (clsLoaded && !force) return; try { var r = await ppApi('getCloseLeadSources'); if (r.success) { clsData = r; clsLoaded = true; } } catch(e) {} }
+    function renderCloseLeadSources() {
+      var host = document.getElementById('closeLeadSources'); if (!host) { var ls = document.getElementById('leadSources'); if (!ls) return; host = document.createElement('div'); host.id = 'closeLeadSources'; ls.insertAdjacentElement('afterend', host); }
+      host.style.display = lsView === 'sources' ? '' : 'none'; if (lsView !== 'sources') return;
+      if (!clsLoaded) { host.innerHTML = '<div class="stat-card out-card"><h3>Every lead in Close, by source</h3><div class="pp-empty">Loading from the Close index</div></div>'; loadCloseLeadSources(false).then(renderCloseLeadSources); return; }
+      var d = clsData || {}, src = d.sources || [];
+      if (!src.length) { host.innerHTML = '<div class="stat-card out-card"><h3>Every lead in Close, by source</h3><div class="pp-empty"><strong>No Close leads indexed yet</strong>Click Sync Close leads to sweep every lead in Close (source, status, owner, city, state, created). It then refreshes every two hours.<div style="margin-top:10px"><button class="pp-btn primary" onclick="syncCloseLeadsNow(this)">Sync Close leads</button></div></div></div>'; return; }
+      var months = Object.keys(d.byMonth || {}).sort().slice(-18), top = src.slice(0, 8).map(function(s) { return s.source; }), palette = ['#0076bb', '#00a84f', '#7c3aed', '#f59e0b', '#ef4444', '#0ea5e9', '#14b8a6', '#a855f7', '#94a3b8'];
+      var color = function(s) { var i = top.indexOf(s); return i >= 0 ? palette[i] : palette[8]; };
+      var maxM = Math.max(1, Math.max.apply(null, months.map(function(m) { return Object.keys(d.byMonth[m]).reduce(function(n, k) { return n + d.byMonth[m][k]; }, 0); })));
+      var statusOrder = Object.keys(d.byStatus || {}).sort(function(a, b) { return d.byStatus[b] - d.byStatus[a]; });
+      host.innerHTML = '<div class="stat-card out-card"><h3>Every lead in Close, by source<span class="n">' + (d.total || 0) + '</span><span class="out-legend">' + (d.syncedAt ? 'synced ' + ppAgo(d.syncedAt) : '') + ' <a onclick="syncCloseLeadsNow(this)" style="cursor:pointer;color:var(--pp-blue)">sync now</a></span></h3>'
+        + '<div class="ls-months" style="height:150px">' + months.map(function(m) { var row = d.byMonth[m], tot = Object.keys(row).reduce(function(n, k) { return n + row[k]; }, 0); return '<div class="ls-m" title="' + ppFmtDate(m + '-01', { month: 'long', year: 'numeric' }) + ': ' + tot + ' leads created"><div class="ls-m-bar" style="height:100px">' + Object.keys(row).sort(function(a, b) { return top.indexOf(a) - top.indexOf(b); }).map(function(k) { return '<i style="height:' + (row[k] / maxM * 100) + '%;background:' + color(k) + '"></i>'; }).join('') + '</div><span>' + ppFmtDate(m + '-01', { month: 'short' }) + (m.slice(5) === '01' || m === months[0] ? '<br>' + m.slice(0, 4) : '') + '</span><b>' + tot + '</b></div>'; }).join('') + '</div>'
+        + '<div class="out-legend" style="margin:8px 0 14px">' + top.map(function(s) { return '<i style="background:' + color(s) + '"></i>' + ppEsc(s) + ' '; }).join('') + (src.length > 8 ? '<i style="background:' + palette[8] + '"></i>everything else' : '') + '</div>'
+        + '<div class="table-wrapper" style="border-radius:12px"><table class="pp-table ls-table"><thead><tr><th>Source in Close</th><th>Leads</th><th>Statuses</th><th>First</th><th>Latest</th><th>Owners</th><th>Top states</th></tr></thead><tbody>' + src.map(function(s) { var stt = Object.keys(s.statuses).sort(function(a, b) { return s.statuses[b] - s.statuses[a]; }).slice(0, 4), owners = Object.keys(s.owners).sort(function(a, b) { return s.owners[b] - s.owners[a]; }), states = Object.keys(s.states).sort(function(a, b) { return s.states[b] - s.states[a]; }).slice(0, 4); return '<tr><td><div class="pp-org-name">' + ppEsc(s.source) + '</div></td><td><div class="ls-bar"><i style="width:' + Math.round(s.leads / src[0].leads * 100) + '%;background:' + color(s.source) + '"></i><b>' + s.leads + '</b></div></td><td>' + stt.map(function(k) { return '<span class="pp-chip ' + (/customer|won/i.test(k) ? 'booked' : /lost|unqual|not interest/i.test(k) ? 'inactive' : 'unset') + '" style="margin:1px 2px 1px 0">' + ppEsc(k) + ' ' + s.statuses[k] + '</span>'; }).join('') + '</td><td class="time-ago">' + (s.first ? ppFmtDate(s.first + '-01', { month: 'short', year: 'numeric' }) : '') + '</td><td class="time-ago">' + (s.last ? ppFmtDate(s.last + '-01', { month: 'short', year: 'numeric' }) : '') + '</td><td>' + (owners.length ? ppRepAvatars(owners.slice(0, 4).join(', '), 20) : '<span class="pp-placeholder">-</span>') + '</td><td style="font-size:11.5px;color:var(--text2)">' + states.map(function(k) { return ppEsc(k) + ' ' + s.states[k]; }).join(' &middot; ') + '</td></tr>'; }).join('') + '</tbody></table></div>'
+        + '<div class="pp-toolbar-note" style="margin-top:8px">Statuses across everything: ' + statusOrder.map(function(k) { return ppEsc(k) + ' ' + d.byStatus[k]; }).join(' &middot; ') + '</div></div>';
+    }
+    async function syncCloseLeadsNow(btn) { var o = btn.innerHTML; btn.innerHTML = 'Syncing...'; try { var r = await ppApi('syncCloseLeads', { pages: 15 }, 290000); if (!r.success) throw new Error(r.error); await loadCloseLeadSources(true); renderCloseLeadSources(); showToast(r.total + ' Close leads indexed' + (r.more ? '; more on the next pass' : ''), 'success'); } catch(e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v32)' : ''), 'error'); } btn.innerHTML = o; }
+    (function() { var _rls = renderLeadSources; renderLeadSources = function() { _rls(); renderCloseLeadSources(); }; })();
+
+    // =====================================================================
+    // E. MAP (HQ): customers, prospects and conferences on a real US map
+    // =====================================================================
+    var mapPoints = null, mapLoaded = false, mapFilter = { customer: true, prospect: true, show: true }, mapRep = 'all', mapReady = null;
+    function mapLibs() { if (mapReady) return mapReady; if (window.d3 && window.topojson && window._usTopo) { mapReady = Promise.resolve(); return mapReady; } mapReady = (async function() { await ppLoadScript('https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js'); await ppLoadScript('https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js'); var r = await fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json'); window._usTopo = await r.json(); })().catch(function(e) { mapReady = null; throw new Error('The map libraries could not load. Check your connection and try again.'); }); return mapReady; }
+    async function loadMapPoints(force) { if (mapLoaded && !force) return; try { var r = await ppApi('getMapPoints', {}, 170000); if (r.success) { mapPoints = r; mapLoaded = true; } } catch(e) { mapPoints = { error: e.message }; } }
+    function renderMap() {
+      var host = document.getElementById('mapHost'); if (!host) return;
+      if (!mapLoaded) { host.innerHTML = ppLoader('Placing everything on the map', { rows: 3 }); Promise.all([loadMapPoints(false), mapLibs()]).then(renderMap).catch(function(e) { host.innerHTML = '<div class="pp-empty">' + ppEsc(e.message) + '</div>'; }); return; }
+      if (!window._usTopo) { mapLibs().then(renderMap); return; }
+      if (mapPoints.error) { host.innerHTML = '<div class="pp-empty"><strong>Map points are not available</strong>' + ppEsc(mapPoints.error) + (/Unhandled|Unknown/.test(mapPoints.error) ? ' (needs Extras v32)' : '') + '</div>'; return; }
+      var pts = (mapPoints.points || []).filter(function(p) { return p.lat && mapFilter[p.kind] && (mapRep === 'all' || (p.owner === mapRep) || (p.reps || '').indexOf(mapRep) >= 0); });
+      var counts = { customer: 0, prospect: 0, show: 0 }; (mapPoints.points || []).forEach(function(p) { if (counts[p.kind] !== undefined) counts[p.kind]++; });
+      var W = Math.max(720, host.clientWidth - 2), H = Math.round(W * 0.62);
+      host.innerHTML = '<div class="map-bar"><div class="map-legend">' + [['customer', 'Customers', 'var(--pp-green)'], ['prospect', 'Prospects in Close', 'var(--pp-blue)'], ['show', 'Conferences', '#f59e0b']].map(function(k) { return '<button class="map-chip' + (mapFilter[k[0]] ? ' on' : '') + '" onclick="mapFilter[\'' + k[0] + '\']=!mapFilter[\'' + k[0] + '\'];renderMap()"><i style="background:' + k[2] + '"></i>' + k[1] + ' <b>' + counts[k[0]] + '</b></button>'; }).join('') + '</div><div class="styled-select"><select onchange="mapRep=this.value;renderMap()"><option value="all">Everyone</option>' + TEAM_MEMBERS.map(function(m) { return '<option value="' + m.email + '"' + (mapRep === m.email ? ' selected' : '') + '>' + m.name + '</option>'; }).join('') + '</select></div><span class="pp-toolbar-note">' + (mapPoints.pending ? mapPoints.pending + ' cities still geocoding; they appear as the cache fills.' : 'Every location placed.') + '</span><button class="text-action-btn" onclick="mapLoaded=false;renderMap()">Refresh</button></div><div class="map-stage"><svg id="usMap" viewBox="0 0 ' + W + ' ' + H + '"></svg><div class="map-tip" id="mapTip"></div></div>';
+      var svg = d3.select('#usMap'), proj = d3.geoAlbersUsa().fitExtent([[10, 10], [W - 10, H - 10]], topojson.feature(_usTopo, _usTopo.objects.states)), path = d3.geoPath(proj);
+      var states = topojson.feature(_usTopo, _usTopo.objects.states).features;
+      var byState = {}; pts.forEach(function(p) { if (p.kind === 'customer' && p.state) byState[p.state] = (byState[p.state] || 0) + 1; });
+      var fips = { '01': 'AL', '02': 'AK', '04': 'AZ', '05': 'AR', '06': 'CA', '08': 'CO', '09': 'CT', '10': 'DE', '11': 'DC', '12': 'FL', '13': 'GA', '15': 'HI', '16': 'ID', '17': 'IL', '18': 'IN', '19': 'IA', '20': 'KS', '21': 'KY', '22': 'LA', '23': 'ME', '24': 'MD', '25': 'MA', '26': 'MI', '27': 'MN', '28': 'MS', '29': 'MO', '30': 'MT', '31': 'NE', '32': 'NV', '33': 'NH', '34': 'NJ', '35': 'NM', '36': 'NY', '37': 'NC', '38': 'ND', '39': 'OH', '40': 'OK', '41': 'OR', '42': 'PA', '44': 'RI', '45': 'SC', '46': 'SD', '47': 'TN', '48': 'TX', '49': 'UT', '50': 'VT', '51': 'VA', '53': 'WA', '54': 'WV', '55': 'WI', '56': 'WY' };
+      var g = svg.append('g');
+      g.selectAll('path').data(states).enter().append('path').attr('d', path).attr('class', function(d) { return 'map-state' + (byState[fips[d.id]] ? ' has' : ''); }).style('fill-opacity', function(d) { var n = byState[fips[d.id]] || 0; return n ? Math.min(0.45, 0.12 + n * 0.06) : 1; }).append('title').text(function(d) { var st = fips[d.id]; return st + (byState[st] ? ': ' + byState[st] + ' customer' + (byState[st] === 1 ? '' : 's') : ''); });
+      g.append('path').datum(topojson.mesh(_usTopo, _usTopo.objects.states, function(a, b) { return a !== b; })).attr('class', 'map-mesh').attr('d', path);
+      var color = { customer: 'var(--pp-green)', prospect: 'var(--pp-blue)', show: '#f59e0b' }, order = { prospect: 0, show: 1, customer: 2 };
+      var tip = document.getElementById('mapTip');
+      var dots = g.selectAll('circle').data(pts.sort(function(a, b) { return order[a.kind] - order[b.kind]; }).map(function(p) { var xy = proj([p.lng, p.lat]); return xy ? Object.assign({ x: xy[0], y: xy[1] }, p) : null; }).filter(Boolean)).enter().append('circle')
+        .attr('cx', function(d) { return d.x; }).attr('cy', function(d) { return d.y; }).attr('r', function(d) { return d.kind === 'customer' ? 6 : d.kind === 'show' ? 6 : 4; }).attr('class', function(d) { return 'map-dot ' + d.kind; }).attr('fill', function(d) { return color[d.kind]; })
+        .on('mousemove', function(e, d) { tip.style.display = 'block'; tip.style.left = (e.offsetX + 14) + 'px'; tip.style.top = (e.offsetY + 14) + 'px'; tip.innerHTML = '<b>' + ppEsc(d.name) + '</b><span>' + ppEsc(d.q) + '</span>' + (d.kind === 'show' ? '<span>' + (d.date ? ppFmtDate(d.date, { month: 'short', day: 'numeric', year: 'numeric' }) : '') + (d.reps ? ' &middot; ' + ppSplitReps(d.reps).map(ppRepName).join(', ') : '') + '</span>' : '<span>' + ppEsc(d.status || '') + (d.owner ? ' &middot; ' + ppEsc(ppRepName(d.owner)) : '') + (d.source ? ' &middot; ' + ppEsc(d.source) : '') + '</span>'); })
+        .on('mouseleave', function() { tip.style.display = 'none'; })
+        .on('click', function(e, d) { if (d.kind === 'show') { switchView('tradeshows'); setTimeout(function() { openTsModal(d.id); }, 300); } else if (d.url) window.open(d.url, '_blank'); });
+      dots.append('title').text(function(d) { return d.name; });
+      // pins land with a little pop
+      dots.attr('r', 0).transition().delay(function(d, i) { return Math.min(900, i * 4); }).duration(400).attr('r', function(d) { return d.kind === 'customer' ? 6 : d.kind === 'show' ? 6 : 4; });
+    }
+    (function() {
+      var team = document.getElementById('teamView'); if (!team) return;
+      var v = document.createElement('div'); v.className = 'view-content'; v.id = 'mapView'; v.innerHTML = '<div id="mapHost" class="stat-card" style="padding:14px"></div>'; team.insertAdjacentElement('afterend', v);
+      var tTeam = document.querySelector('.view-tab[onclick="switchView(\'team\')"]'); if (tTeam && !document.querySelector('.view-tab[onclick="switchView(\'map\')"]')) { var b = document.createElement('button'); b.className = 'view-tab'; b.setAttribute('onclick', "switchView('map')"); b.setAttribute('data-short', 'Map'); b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg> Map'; tTeam.insertAdjacentElement('afterend', b); }
+      PP_VIEW_TITLES.map = ['HQ', 'Map']; PP_PAGE_META.map = ['HQ', 'Map', 'Where our customers, Close prospects and conferences are. Pins open the record.'];
+      var _sv = switchView; switchView = function(v2) { _sv(v2); if (v2 === 'map') setTimeout(renderMap, 30); };
+      window.addEventListener('resize', function() { clearTimeout(window._ppMapT); window._ppMapT = setTimeout(function() { if (document.getElementById('mapView').classList.contains('active') && mapLoaded && window._usTopo) renderMap(); }, 200); });
+    })();
+  </script>
+  <style>
+    /* quiet top bar: gradient band, no title */
+    body.pp-quiet-header .header{position:relative;overflow:hidden;background:linear-gradient(90deg,rgba(0,118,187,0.07),rgba(0,168,79,0.06) 45%,rgba(255,255,255,0) 80%)}
+    body.pp-quiet-header .header::before{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:linear-gradient(90deg,var(--pp-blue),var(--pp-green) 60%,transparent)}
+    body.pp-quiet-header .header::after{content:'';position:absolute;left:-40px;top:-60px;width:260px;height:180px;border-radius:50%;background:radial-gradient(closest-side,rgba(0,118,187,0.12),transparent);pointer-events:none}
+    [data-theme="dark"] body.pp-quiet-header .header{background:linear-gradient(90deg,rgba(0,118,187,0.18),rgba(0,168,79,0.12) 45%,transparent 80%)}
+    body.pp-quiet-header #hdrTitle{visibility:hidden;flex:1;min-width:10px}
+    /* map */
+    .map-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+    .map-legend{display:flex;gap:6px;flex-wrap:wrap}
+    .map-chip{height:32px;display:inline-flex;align-items:center;gap:7px;padding:0 12px;border-radius:50px;border:1px solid var(--border);background:var(--card);font:inherit;font-size:12px;color:var(--text3);cursor:pointer;transition:all var(--t-fast)}
+    .map-chip i{width:10px;height:10px;border-radius:50%;opacity:.35}.map-chip.on{color:var(--text)}.map-chip.on i{opacity:1}.map-chip b{color:var(--text)}
+    .map-stage{position:relative;border-radius:14px;background:var(--bg);overflow:hidden}
+    #usMap{width:100%;height:auto;display:block}
+    .map-state{fill:var(--pp-blue);stroke:none}
+    .map-state:not(.has){fill:var(--card)}
+    [data-theme="dark"] .map-state:not(.has){fill:#1e293b}
+    .map-mesh{fill:none;stroke:var(--border);stroke-width:.8;stroke-linejoin:round}
+    .map-dot{stroke:#fff;stroke-width:1.2;cursor:pointer;transition:r var(--t-fast)}
+    .map-dot.prospect{fill-opacity:.8;stroke-width:.8}
+    .map-dot:hover{stroke-width:2}
+    .map-tip{position:absolute;display:none;pointer-events:none;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:var(--sh-md);padding:8px 10px;font-size:12px;color:var(--text2);max-width:260px;z-index:3}
+    .map-tip b{display:block;color:var(--text);font-size:13px}.map-tip span{display:block;font-size:11px;color:var(--text3)}
+    #calModeBar{margin:-6px 0 16px}
+  </style>
+  <style>
+    #customersView>.page-head{display:block !important}
+  </style>
 </body>
 </html>
