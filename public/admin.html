@@ -1006,7 +1006,10 @@
     .data-loading-overlay{background:var(--bg);transition:opacity .9s var(--ease),visibility .9s,transform .9s var(--ease)}
     .data-loading-overlay.leaving{opacity:0;transform:scale(1.03)}
     .dashboard.active{animation:ppDashIn 1.1s var(--ease) both}
-    @keyframes ppDashIn{from{opacity:0;transform:translateY(10px)}40%{opacity:0}to{opacity:1;transform:none}}
+    @keyframes ppDashIn{from{opacity:0}40%{opacity:0}to{opacity:1}}
+    .dashboard.active .main-content{animation:ppMainIn 1.1s var(--ease) both}
+    @keyframes ppMainIn{from{transform:translateY(12px)}40%{transform:translateY(12px)}to{transform:none}}
+    body.pp-sidebar .pp-side{min-height:100vh}
     .splash-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
     .splash-bg .orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:0.55;animation:ppOrb 14s ease-in-out infinite alternate}
     .splash-bg .o1{width:520px;height:520px;background:#0076bb;left:-140px;top:-160px}
@@ -2030,6 +2033,22 @@
     .hq-kpis .hq-kpi:nth-child(5){animation-delay:350ms}
     .hq-kpis .hq-kpi:nth-child(6){animation-delay:420ms}
     .stat-card:nth-child(2){animation-delay:80ms}.stat-card:nth-child(3){animation-delay:160ms}.stat-card:nth-child(4){animation-delay:240ms}
+    /* ---- entrance: bars grow ---- */
+    .pp-grow-x{transform-origin:left center}
+    .pp-grow-y{transform-origin:center bottom}
+    .pp-grow-x.pp-grow-run{animation:ppGrowX .9s cubic-bezier(.2,.7,.2,1) both}
+    .pp-grow-y.pp-grow-run{animation:ppGrowY .9s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes ppGrowX{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+    @keyframes ppGrowY{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+    .out-spark polyline{stroke-dasharray:400;stroke-dashoffset:400;animation:ppDraw 1.1s ease-out forwards}
+    .fol-svg polyline{stroke-dasharray:600;stroke-dashoffset:600;animation:ppDraw 1.2s ease-out forwards}
+    @keyframes ppDraw{to{stroke-dashoffset:0}}
+    .pb-ring{transition:--p .9s}
+    /* ---- submissions actions ---- */
+    .sub-sel{margin-right:6px}
+    #subBoard tr.selected td{background:rgba(0,118,187,0.06)}
+    .sub-bulk{margin-bottom:10px}
+    #subArchChip{margin-right:6px}
   </style>
 </head>
 <body>
@@ -7118,6 +7137,10 @@
     // list + gallery cells use icons and totals
     cpCellEdit = (function(orig) { return function(id, field, cell) { if (field === 'channel' || field === 'metrics') { openContentModal(id); return; } orig(id, field, cell); }; })(cpCellEdit);
     // ---- upload: resize first, then POST, and explain any failure ----
+    function cpIsHeic(file) { return /heic|heif/i.test(file.type) || /\.(heic|heif)$/i.test(file.name); }
+    var _heicLib = null;
+    function cpLoadHeic() { if (window.heic2any) return Promise.resolve(); if (_heicLib) return _heicLib; _heicLib = new Promise(function(res, rej) { var s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js'; s.onload = res; s.onerror = function() { rej(new Error('Could not load the HEIC converter')); }; document.head.appendChild(s); }); return _heicLib; }
+    async function cpConvertHeic(file) { await cpLoadHeic(); var blob = await window.heic2any({ blob: file, toType: 'image/jpeg', quality: 0.86 }); if (Array.isArray(blob)) blob = blob[0]; return new File([blob], file.name.replace(/\.[^.]+$/, '') + '.jpg', { type: 'image/jpeg' }); }
     function cpShrinkImage(file) {
       return new Promise(function(res) {
         if (!/^image\//.test(file.type) || file.size < 350 * 1024 || /gif/.test(file.type)) { res(file); return; }
@@ -7129,7 +7152,9 @@
     }
     async function cpUploadAsset(file) {
       if (!file) return null;
-      var f = await cpShrinkImage(file);
+      var f = file;
+      if (cpIsHeic(f)) { try { f = await cpConvertHeic(f); } catch(e) { throw new Error('That is an iPhone HEIC photo and the converter could not load. Export it as JPEG (share it from Photos, or set Settings > Camera > Formats to Most Compatible) and try again.'); } }
+      f = await cpShrinkImage(f);
       if (f.size > 12 * 1024 * 1024) { showToast('That file is over 12 MB even after resizing; use a smaller export', 'error'); return null; }
       var dataUrl = await new Promise(function(res, rej) { var r = new FileReader(); r.onload = function() { res(r.result); }; r.onerror = rej; r.readAsDataURL(f); });
       var m = /^data:([^;]+);base64,(.*)$/.exec(dataUrl); if (!m) throw new Error('Unsupported file');
@@ -7287,26 +7312,34 @@
       var strong = cpImgQueue.filter(function(q) { return q.conf === 'strong' || q.conf === 'likely'; }).length;
       el.innerHTML = '<p style="font-size:13px;color:var(--text2);margin:10px 0">' + cpImgQueue.length + ' image' + (cpImgQueue.length === 1 ? '' : 's') + ', ' + strong + ' matched with confidence. Anything marked weak or none needs a look.</p><div class="cpi-rows">' + cpImgQueue.map(function(q, i) {
         var opts = '<option value="__new">New post on ' + (q.date ? ppFmtDate(q.date, { month: 'short', day: 'numeric' }) : 'this date') + '</option><option value="__skip">Skip this image</option>' + q.options.map(function(o) { return '<option value="' + ppEsc(o.p.id) + '"' + (q.choice === o.p.id ? ' selected' : '') + '>' + ppEsc(o.p.title || '(untitled)') + ' (' + ppFmtDate(o.p.date, { month: 'short', day: 'numeric' }) + (o.p.assetUrl ? ', has image' : '') + ')</option>'; }).join('');
-        var seen = {}; q.options.forEach(function(o) { seen[o.p.id] = true; });
+        var seen = {}; q.options.forEach(function(o) { seen[o.p.id] = true; }); var heic = (typeof cpIsHeic === 'function') && cpIsHeic(q.file);
         var others = cpList.filter(function(p) { return !seen[p.id]; }).sort(function(a, b) { return (b.date || '') < (a.date || '') ? -1 : 1; }).slice(0, 40).map(function(p) { return '<option value="' + ppEsc(p.id) + '"' + (q.choice === p.id ? ' selected' : '') + '>' + ppEsc(p.title || '(untitled)') + (p.date ? ' (' + ppFmtDate(p.date, { month: 'short', day: 'numeric' }) + ')' : '') + '</option>'; }).join('');
-        return '<div class="cpi-row"><div class="cpi-img" style="cursor:default"><img src="' + q.url + '" alt=""></div><div class="cpi-main"><div class="cpi-fields" style="grid-template-columns:1fr"><select onchange="cpImgQueue[' + i + '].choice=this.value"><optgroup label="Suggested">' + opts + '</optgroup>' + (others ? '<optgroup label="Other posts">' + others + '</optgroup>' : '') + '</select></div><div class="pp-toolbar-note">' + ppEsc(q.file.name) + ' &middot; ' + (q.date ? 'dated ' + ppFmtDate(q.date, { month: 'short', day: 'numeric', year: 'numeric' }) : 'no date found') + ' &middot; <b class="cpi-conf ' + q.conf + '">' + (q.conf === 'strong' ? 'strong match' : q.conf === 'likely' ? 'likely match' : q.conf === 'weak' ? 'weak match' : 'no match') + '</b>' + (q.status ? ' &middot; ' + q.status : '') + '</div></div><button class="pp-mini-btn danger" onclick="cpImgQueue.splice(' + i + ',1);cpRenderImageQueue()">&#10005;</button></div>';
+        return '<div class="cpi-row"><div class="cpi-img" style="cursor:default"><img src="' + q.url + '" alt=""></div><div class="cpi-main"><div class="cpi-fields" style="grid-template-columns:1fr"><select onchange="cpImgQueue[' + i + '].choice=this.value"><optgroup label="Suggested">' + opts + '</optgroup>' + (others ? '<optgroup label="Other posts">' + others + '</optgroup>' : '') + '</select></div><div class="pp-toolbar-note">' + ppEsc(q.file.name) + ' &middot; ' + (q.date ? 'dated ' + ppFmtDate(q.date, { month: 'short', day: 'numeric', year: 'numeric' }) : 'no date found') + ' &middot; <b class="cpi-conf ' + q.conf + '">' + (q.conf === 'strong' ? 'strong match' : q.conf === 'likely' ? 'likely match' : q.conf === 'weak' ? 'weak match' : 'no match') + '</b>' + (q.status ? ' &middot; ' + q.status : '') + (heic ? ' &middot; <b style="color:#b45309">iPhone HEIC, converts to JPEG on upload</b>' : '') + '</div></div><button class="pp-mini-btn danger" onclick="cpImgQueue.splice(' + i + ',1);cpRenderImageQueue()">&#10005;</button></div>';
       }).join('') + '</div><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px"><button class="import-btn secondary" onclick="closeImport()">Cancel</button><button class="import-btn" id="cpImgRun" onclick="cpRunImageImport()">Upload and attach ' + cpImgQueue.filter(function(q) { return q.choice !== '__skip'; }).length + '</button></div>';
     }
     async function cpRunImageImport() {
-      var btn = document.getElementById('cpImgRun'); btn.disabled = true; var done = 0, failed = 0;
-      for (var i = 0; i < cpImgQueue.length; i++) {
-        var q = cpImgQueue[i]; if (q.choice === '__skip') continue; btn.textContent = 'Uploading ' + (i + 1) + ' of ' + cpImgQueue.length + '...';
-        try {
-          var r = await cpUploadAsset(q.file); if (!r) { failed++; continue; }
-          var row;
-          if (q.choice === '__new') row = { id: '', title: q.file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').replace(/\b(20\d{2}|\d{2}[-.]\d{2})\b/g, '').trim() || 'Post', date: q.date, status: 'published', channel: '', owner: currentUser?.email || '', copy: '', assetUrl: r.url, postUrl: '', campaign: '', notes: 'Created from an image upload', format: 'Image', results: '{}', type: '' };
-          else { var p = cpList.find(function(x) { return x.id === q.choice; }); if (!p) { failed++; continue; } row = Object.assign({}, p, { assetUrl: r.url }); if (!row.format) row.format = 'Image'; }
-          var o = {}; CP_COLS.forEach(function(c) { o[c] = row[c] === undefined ? '' : row[c]; });
-          var s = await ppApi('saveContentPost', { row: o }); if (!s.success) throw new Error(s.error || 'Save failed');
-          q.status = 'attached'; done++;
-        } catch(e) { q.status = 'failed: ' + e.message; failed++; }
-      }
-      closeImport(); await loadContentPosts(true); renderContent(); showToast(done + ' image' + (done === 1 ? '' : 's') + ' attached' + (failed ? ', ' + failed + ' failed' : ''), failed ? 'error' : 'success');
+      var btn = document.getElementById('cpImgRun'); btn.disabled = true; var done = 0, failed = 0, todo = cpImgQueue.filter(function(q) { return q.choice !== '__skip'; }), started = 0;
+      var tick = function() { btn.textContent = 'Uploading ' + Math.min(todo.length, done + failed) + ' of ' + todo.length + '...'; };
+      tick();
+      var worker = async function() {
+        while (started < todo.length) {
+          var q = todo[started++];
+          try {
+            var r = await cpUploadAsset(q.file); if (!r) { failed++; tick(); continue; }
+            var row;
+            if (q.choice === '__new') row = { id: '', title: q.file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').replace(/\b(20\d{2}|\d{2}[-.]\d{2})\b/g, '').trim() || 'Post', date: q.date, status: 'published', channel: '', owner: currentUser?.email || '', copy: '', assetUrl: r.url, postUrl: '', campaign: '', notes: 'Created from an image upload', format: 'Image', results: '{}', type: '' };
+            else { var p = cpList.find(function(x) { return x.id === q.choice; }); if (!p) { failed++; tick(); continue; } row = Object.assign({}, p, { assetUrl: r.url }); if (!row.format) row.format = 'Image'; }
+            var o = {}; CP_COLS.forEach(function(c) { o[c] = row[c] === undefined ? '' : row[c]; });
+            var s = await ppApi('saveContentPost', { row: o }); if (!s.success) throw new Error(s.error || 'Save failed');
+            o.id = s.id || o.id; var i = cpList.findIndex(function(x) { return x.id === o.id; }); if (i >= 0) cpList[i] = Object.assign(cpList[i], o); else cpList.push(o);
+            q.status = 'attached'; done++;
+          } catch(e) { q.status = 'failed: ' + e.message; failed++; }
+          tick();
+        }
+      };
+      await Promise.all([worker(), worker(), worker()]);   // three at a time: Apps Script handles parallel POSTs fine, and it is 3x faster than one by one
+      closeImport(); renderContent(); showToast(done + ' image' + (done === 1 ? '' : 's') + ' attached' + (failed ? ', ' + failed + ' failed' : ''), failed ? 'error' : 'success');
+      if (failed) console.log('image import failures:', cpImgQueue.filter(function(q) { return /failed/.test(q.status); }).map(function(q) { return q.file.name + ': ' + q.status; }));
     }
     // social report: performance by post type
     var _renderSocialV3 = renderSocial;
@@ -7460,7 +7493,7 @@
     }
     function ppLoader(label, opts) {
       opts = opts || {}; var rows = opts.rows === undefined ? 4 : opts.rows;
-      return '<div class="pp-loader' + (opts.compact ? ' compact' : '') + '"><div class="pp-loader-head"><svg class="pp-loader-ring" viewBox="0 0 40 40"><circle class="track" cx="20" cy="20" r="16"/><circle class="arc" cx="20" cy="20" r="16"/></svg><div><div class="pp-loader-t">' + ppEsc(label || 'Loading') + '</div><div class="pp-loader-s">' + ppEsc(opts.sub || 'Pulling the latest from Google Sheets and Close') + '</div></div></div>' + (rows ? '<div class="pp-loader-rows">' + Array.apply(null, Array(rows)).map(function(_, i) { return '<div class="pp-loader-row" style="animation-delay:' + (i * 90) + 'ms"><span class="a"></span><span class="b" style="width:' + (32 + ((i * 23) % 40)) + '%"></span><span class="c" style="width:' + (12 + ((i * 17) % 22)) + '%"></span></div>'; }).join('') + '</div>' : '') + '</div>';
+      return '<div class="pp-loader' + (opts.compact ? ' compact' : '') + '"><div class="pp-loader-head"><svg class="pp-loader-ring" viewBox="0 0 40 40"><circle class="track" cx="20" cy="20" r="16"/><circle class="arc" cx="20" cy="20" r="16"/></svg><div><div class="pp-loader-t">' + ppEsc(label || 'Loading') + '</div>' + (opts.sub ? '<div class="pp-loader-s">' + ppEsc(opts.sub) + '</div>' : '') + '</div></div>' + (rows ? '<div class="pp-loader-rows">' + Array.apply(null, Array(rows)).map(function(_, i) { return '<div class="pp-loader-row" style="animation-delay:' + (i * 90) + 'ms"><span class="a"></span><span class="b" style="width:' + (32 + ((i * 23) % 40)) + '%"></span><span class="c" style="width:' + (12 + ((i * 17) % 22)) + '%"></span></div>'; }).join('') + '</div>' : '') + '</div>';
     }
     // Swap every plain "Loading..." block for the animated loader, at render time, without touching each renderer
     (function() {
@@ -7476,6 +7509,126 @@
       var start = function() { mo2.observe(document.body, { childList: true, subtree: true }); };
       if (document.readyState !== 'loading') start(); else document.addEventListener('DOMContentLoaded', start);
     })();
+    // =====================================================================
+    // ENTRANCE ANIMATION: numbers roll up, bars grow, when a view opens or its data lands
+    // =====================================================================
+    var PP_NUM_SEL = '.hq-kpi .v, .out-kpi .v, .pp-stat .v, .fol-n, .out-drill-kpis b, .ob-kpi b, .load-metric-value';
+    function ppCountUp(el) {
+      if (el.dataset.ppCounted) return; var raw = (el.textContent || '').trim();
+      var m = raw.match(/^([^\d-]*)(-?[\d,]*\.?\d+)\s*([kKmM%]?)(.*)$/); if (!m || el.children.length) { el.dataset.ppCounted = '1'; return; }
+      var prefix = m[1], numStr = m[2], suffix = m[3] + m[4], target = parseFloat(numStr.replace(/,/g, '')); if (isNaN(target)) { el.dataset.ppCounted = '1'; return; }
+      var decimals = (numStr.split('.')[1] || '').length, useCommas = numStr.indexOf(',') >= 0, dur = 900, t0 = performance.now();
+      el.dataset.ppCounted = '1'; el.style.fontVariantNumeric = 'tabular-nums';
+      var fmt = function(n) { var s = n.toFixed(decimals); if (useCommas) { var parts = s.split('.'); parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','); s = parts.join('.'); } return prefix + s + suffix; };
+      var step = function(now) { var p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3); el.textContent = fmt(target * e); if (p < 1) requestAnimationFrame(step); else el.textContent = raw; };
+      requestAnimationFrame(step);
+    }
+    function ppAnimateEntrance(root) {
+      if (!root) return;
+      root.querySelectorAll(PP_NUM_SEL).forEach(ppCountUp);
+      root.querySelectorAll('.pp-grow-x, .pp-grow-y').forEach(function(b) { if (b.dataset.ppGrown) return; b.dataset.ppGrown = '1'; b.classList.add('pp-grow-run'); });
+    }
+    // tag bars with grow classes as they are inserted, and animate any view that just came on screen
+    (function() {
+      var X = '.fill, .out-seg-bar i, .out-seg-bar em, .out-src .bar i, .out-subj-b i, .out-rep-stat .bar i, .out-fun .bar i, .pb-phase-bar i, .sub-bar-track i, .out-mix-bar i, .ts-bar .fill';
+      var Y = '.mk-col-bars i, .soc-wk-bar i, .soc-day .bar i';
+      var armedUntil = 0;
+      function arm() { armedUntil = Date.now() + 1500; }
+      var _sv = switchView; switchView = function(v) { arm(); _sv(v); var el = document.getElementById(v + 'View'); if (el) setTimeout(function() { ppAnimateEntrance(el); }, 30); };
+      var mo = new MutationObserver(function(muts) {
+        var live = Date.now() < armedUntil || !window._ppEntranceSeen;
+        muts.forEach(function(m) { m.addedNodes.forEach(function(n) { if (n.nodeType !== 1) return;
+          n.querySelectorAll && n.querySelectorAll(X).forEach(function(b) { b.classList.add('pp-grow-x'); });
+          n.querySelectorAll && n.querySelectorAll(Y).forEach(function(b) { b.classList.add('pp-grow-y'); });
+          if (n.matches && n.matches(X)) n.classList.add('pp-grow-x');
+          if (live) ppAnimateEntrance(n);
+        }); });
+      });
+      var start = function() { mo.observe(document.body, { childList: true, subtree: true }); };
+      if (document.readyState !== 'loading') start(); else document.addEventListener('DOMContentLoaded', start);
+      // the dashboard's first paint counts as an entrance
+      var _fl = finishLoading; finishLoading = function(d, c) { arm(); _fl(d, c); setTimeout(function() { window._ppEntranceSeen = true; ppAnimateEntrance(document.querySelector('.view-content.active')); }, 400); };
+      // data landing later (bootstrap refresh) also animates the open view
+      if (typeof ppRerender === 'function') { var _rr = ppRerender; ppRerender = function(v) { arm(); _rr(v); var el = document.getElementById(v + 'View'); if (el) setTimeout(function() { ppAnimateEntrance(el); }, 30); }; }
+    })();
+    // =====================================================================
+    // SUBMISSIONS: archive, restore, delete, bulk cleanup
+    // =====================================================================
+    var subSelected = {};
+    async function ppQuietRefreshAdmin() {
+      try { var result = await jsonpRequest(API_URL + '?action=getAdminData&email=' + encodeURIComponent(currentUser?.email || '')); if (result.success) { ppProcessAdminData(result.data); ppCacheWrite(result.data); await Promise.all([loadChecklists()]); updateStats(); renderTable(); renderPipeline(); if (typeof renderSubBoard === 'function') renderSubBoard(); if (typeof renderUpcoming === 'function') renderUpcoming(); } } catch(e) { console.log('quiet refresh:', e.message); }
+    }
+    function subFind(email) { return allData.concat(archivedData).find(function(x) { return x.email === email; }); }
+    async function subArchive(email, restore) {
+      var d = subFind(email); if (!d) return;
+      var action = restore ? 'restoreSubmission' : 'archiveSubmission';
+      try {
+        var r = await jsonpRequest(API_URL + '?action=' + action + '&email=' + encodeURIComponent(currentUser?.email || '') + '&sheetType=' + d.sheetType + '&rowIndex=' + d.rowIndex);
+        if (!r.success) throw new Error(r.error || 'Failed');
+        var from = restore ? archivedData : allData, to = restore ? allData : archivedData; var i = from.indexOf(d); if (i >= 0) from.splice(i, 1); d.status = restore ? 'Submitted' : 'Archived'; to.push(d);
+        logActivityToServer(restore ? 'restored from archive' : 'moved to archive', d.organization || email, '', 'archive');
+        updateStats(); renderTable(); renderPipeline(); renderSubBoard(); renderUpcoming();
+        showToast((d.organization || email) + (restore ? ' restored' : ' archived. Find it under the Archived filter.'), 'success');
+      } catch(e) { showToast('Could not ' + (restore ? 'restore' : 'archive') + ': ' + e.message, 'error'); }
+    }
+    async function subDelete(email) {
+      var d = subFind(email); if (!d) return;
+      if (!confirm('Delete ' + (d.organization || email) + ' for good? The row leaves the Google Sheet, along with its checklist and comments. Archive instead if you might want it back.')) return;
+      try {
+        var r = await ppApi('deleteSubmission', { sheetType: d.sheetType, rowIndex: d.rowIndex, targetEmail: email }, 60000); if (!r.success) throw new Error(r.error || 'Failed');
+        [allData, archivedData].forEach(function(arr) { var i = arr.indexOf(d); if (i >= 0) arr.splice(i, 1); });
+        delete subSelected[email]; updateStats(); renderTable(); renderPipeline(); renderSubBoard(); renderUpcoming();
+        showToast('Deleted ' + (d.organization || email), 'success');
+        ppQuietRefreshAdmin();   // row numbers shift after a delete; re-pull so later actions hit the right rows
+      } catch(e) { showToast('Could not delete: ' + e.message, 'error'); if (/sheet changed/i.test(e.message)) ppQuietRefreshAdmin(); }
+    }
+    function subRowActions(d, isArch) {
+      return '<button class="pp-mini-btn" title="' + (isArch ? 'Restore' : 'Archive') + '" onclick="event.stopPropagation();subArchive(\'' + ppEsc(d.email) + '\',' + (isArch ? 'true' : 'false') + ')">' + (isArch ? '&#8634;' : '&#128451;') + '</button> <button class="pp-mini-btn danger" title="Delete for good" onclick="event.stopPropagation();subDelete(\'' + ppEsc(d.email) + '\')">&#128465;</button>';
+    }
+    function subBulkBar() {
+      var keys = Object.keys(subSelected); if (!keys.length) return '';
+      var isArch = currentFilter === 'archived';
+      return '<div class="ca-merge-bar sub-bulk"><span><b>' + keys.length + ' selected.</b></span><button type="button" class="pp-btn" onclick="subBulk(\'' + (isArch ? 'restore' : 'archive') + '\')">' + (isArch ? 'Restore' : 'Archive') + ' selected</button><button type="button" class="pp-btn danger" onclick="subBulk(\'delete\')">Delete selected</button><button type="button" class="pp-btn" onclick="subSelected={};renderSubBoard()">Clear</button></div>';
+    }
+    async function subBulk(kind) {
+      var keys = Object.keys(subSelected); if (!keys.length) return;
+      if (kind === 'delete' && !confirm('Delete ' + keys.length + ' record' + (keys.length === 1 ? '' : 's') + ' for good? This cannot be undone.')) return;
+      var ok = 0, fail = 0;
+      // deletes must go one at a time from the bottom row up so earlier row numbers stay valid
+      var list = keys.map(subFind).filter(Boolean).sort(function(a, b) { return b.rowIndex - a.rowIndex; });
+      for (var i = 0; i < list.length; i++) { var d = list[i]; try {
+        if (kind === 'delete') { var r = await ppApi('deleteSubmission', { sheetType: d.sheetType, rowIndex: d.rowIndex, targetEmail: d.email }, 60000); if (!r.success) throw new Error(r.error); [allData, archivedData].forEach(function(arr) { var j = arr.indexOf(d); if (j >= 0) arr.splice(j, 1); }); list.forEach(function(o) { if (o.sheetType === d.sheetType && o.rowIndex > d.rowIndex) o.rowIndex--; }); }
+        else { var restore = kind === 'restore', r2 = await jsonpRequest(API_URL + '?action=' + (restore ? 'restoreSubmission' : 'archiveSubmission') + '&email=' + encodeURIComponent(currentUser?.email || '') + '&sheetType=' + d.sheetType + '&rowIndex=' + d.rowIndex); if (!r2.success) throw new Error(r2.error); var from = restore ? archivedData : allData, to = restore ? allData : archivedData; var k = from.indexOf(d); if (k >= 0) from.splice(k, 1); d.status = restore ? 'Submitted' : 'Archived'; to.push(d); }
+        ok++; } catch(e) { fail++; } }
+      subSelected = {}; updateStats(); renderTable(); renderPipeline(); renderSubBoard(); renderUpcoming();
+      showToast(ok + ' ' + (kind === 'delete' ? 'deleted' : kind === 'restore' ? 'restored' : 'archived') + (fail ? ', ' + fail + ' failed' : ''), fail ? 'error' : 'success');
+      logActivityToServer(kind === 'delete' ? 'deleted' : kind === 'restore' ? 'restored from archive' : 'moved to archive', ok + ' records', '', 'archive');
+      if (kind === 'delete') ppQuietRefreshAdmin();
+    }
+    // board: checkbox + archive/restore/delete on every row, bulk bar, archived chip
+    var _renderSubBoardV2 = renderSubBoard;
+    renderSubBoard = function() {
+      _renderSubBoardV2();
+      var el = document.getElementById('subBoard'); if (!el) return;
+      var isArch = currentFilter === 'archived';
+      el.querySelectorAll('tr[data-id]').forEach(function(tr) {
+        var email = tr.getAttribute('data-id'), d = subFind(email); if (!d) return;
+        var first = tr.querySelector('td'); if (first && !first.querySelector('.sub-sel')) { var cb = document.createElement('input'); cb.type = 'checkbox'; cb.className = 'ca-sel sub-sel'; cb.checked = !!subSelected[email]; cb.title = 'Select for archive or delete'; cb.onclick = function(e) { e.stopPropagation(); if (cb.checked) subSelected[email] = true; else delete subSelected[email]; renderSubBoard(); }; var cell = first.querySelector('.pp-org-cell') || first; cell.insertBefore(cb, cell.firstChild); }
+        var last = tr.querySelector('td:last-child'); if (last && !last.querySelector('.pp-mini-btn.danger')) last.insertAdjacentHTML('beforeend', ' ' + subRowActions(d, isArch));
+        if (subSelected[email]) tr.classList.add('selected');
+      });
+      var bar = subBulkBar(); var old = el.querySelector('.sub-bulk'); if (old) old.remove(); if (bar) el.insertAdjacentHTML('afterbegin', bar);
+      // archived chip next to the filters
+      var chip = document.getElementById('subArchChip'); if (!chip) { var row = document.querySelector('#submissionsView .controls-row .controls-right, #submissionsView .controls-right'); if (row) { chip = document.createElement('button'); chip.id = 'subArchChip'; chip.className = 'dh-chip'; chip.type = 'button'; row.insertBefore(chip, row.firstChild); } }
+      if (chip) { chip.className = 'dh-chip' + (isArch ? ' on' : ''); chip.innerHTML = (isArch ? 'Back to active' : 'Archived <b>' + archivedData.length + '</b>'); chip.onclick = function() { var sel = document.getElementById('statusFilter'); if (sel) sel.value = isArch ? 'all' : 'archived'; setFilter(isArch ? 'all' : 'archived'); }; }
+      if (isArch && !el.querySelector('.sub-arch-note')) el.insertAdjacentHTML('afterbegin', '<div class="dh-bar sub-arch-note" style="margin-bottom:10px"><span class="dh-dot"></span>Archived records. They stay in the Google Sheet with status Archived and are left out of every count. Restore brings one back; delete removes it for good.</div>');
+    };
+    // detail modal: archive + delete in the footer
+    var _viewDetailsV2 = viewDetails;
+    viewDetails = function(item) {
+      _viewDetailsV2(item);
+      setTimeout(function() { var mc = document.getElementById('modalContent'); var foot = mc && mc.querySelector('.pp-modal-actions, .modal-actions, .modal-footer'); var body = mc && mc.querySelector('.modal-body'); if (!body || !item || document.getElementById('subDetailActions')) return; var isArch = item.status === 'Archived'; var bar = document.createElement('div'); bar.id = 'subDetailActions'; bar.className = 'pp-modal-actions'; bar.innerHTML = '<div><button class="pp-btn" onclick="closeModal();subArchive(\'' + ppEsc(item.email) + '\',' + (isArch ? 'true' : 'false') + ')">' + (isArch ? 'Restore from archive' : 'Archive') + '</button> <button class="pp-btn danger" onclick="closeModal();subDelete(\'' + ppEsc(item.email) + '\')">Delete for good</button></div><div class="right"><button class="pp-btn" onclick="closeModal()">Close</button></div>'; (foot || body).appendChild(bar); }, 30);
+    };
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     // Prevent background scroll when touching modal overlay on iOS
     document.addEventListener('touchmove', function(e) {
@@ -7489,5 +7642,196 @@
       if (!isInModalBody) { e.preventDefault(); }
     }, { passive: false });
   </script>
+
+  <script>
+    // =====================================================================
+    // ONBOARDING HANDOFF: one named point of contact at every moment
+    // ---------------------------------------------------------------------
+    // Onboarding Lead (Jessica by default) owns the district until handoff. The Account Rep owns it after.
+    // The handoff is a short checklist + summary, and a Complete Handoff action that flips the point of contact,
+    // emails the rep the summary, and gives you a district-facing intro email to send.
+    // =====================================================================
+    var PP_ONBOARDING_LEAD = 'jessica.difiore@practiceplan.io';
+    var PP_FULL_NAMES = { 'donnie.schemetti@practiceplan.io': 'Donnie Schemetti', 'john.brochu@practiceplan.io': 'John Brochu', 'jessica.difiore@practiceplan.io': 'Jessica DiFiore', 'kevin.parker@practiceplan.io': 'Kevin Parker', 'leslie.slovak@practiceplan.io': 'Leslie Slovak' };
+    function hoFullName(email) { return PP_FULL_NAMES[String(email || '').toLowerCase()] || ppRepFull(email) || email || ''; }
+    function hoLeadEmail() { return (typeof ppSettings !== 'undefined' && ppSettings['onboarding.lead']) || PP_ONBOARDING_LEAD; }
+    function hoLeadFor(d) { return (getChecklist(d.email).ho_lead_field || hoLeadEmail()).toLowerCase(); }
+    function hoDone(d) { var v = getChecklist(d.email).ho_done_field; return !!v; }
+    function hoSummary(d) { try { return JSON.parse(getChecklist(d.email).ho_summary_field || '{}'); } catch(e) { return {}; } }
+    function hoRepFor(d) { return String(d.accountRep || '').toLowerCase(); }
+    // Point of contact: onboarding lead until handoff, account rep after
+    function hoPoc(d) { if (!d) return { email: '', role: '' }; if (hoDone(d)) return { email: hoRepFor(d), role: 'pp rep' }; return { email: hoLeadFor(d), role: 'onboarding' }; }
+    function hoPocChip(d, small) { var p = hoPoc(d); if (!p.email) return ''; return '<span class="ho-poc' + (p.role === 'onboarding' ? ' ob' : ' cs') + (small ? ' sm' : '') + '" title="Point of contact at PracticePlan right now">' + (typeof getTeamPhoto === 'function' ? getTeamPhoto(p.email, small ? 16 : 20) : '') + '<b>' + ppEsc(ppRepName(p.email) || p.email) + '</b><span>' + (p.role === 'onboarding' ? 'onboarding lead' : 'PP rep') + '</span></span>'; }
+    var HO_STEPS = [
+      { id: 'ho_rep', task: 'PracticePlan rep is named on the record', auto: function(d) { return !!hoRepFor(d); } },
+      { id: 'ho_summary', task: 'Handoff summary written (what is live, open items, next touch)', auto: function(d) { var s = hoSummary(d); return !!(s.live || s.open || s.next); } },
+      { id: 'ho_intro', task: 'Intro email sent to the district introducing the rep' },
+      { id: 'ho_checkin', task: '30-day check-in on the rep\'s calendar' },
+      { id: 'ho_ack', task: 'Rep has reviewed the record and confirmed' }
+    ];
+    function hoReady(d) { var pp = pbPhaseProgress(d.email, PB_PHASES[PB_PHASES.length - 1]); return pp.done === pp.total && !hoDone(d); }
+    function hoStepDone(d, s) { return (s.auto && s.auto(d)) || getChecklist(d.email)[s.id] === true || getChecklist(d.email)[s.id] === 'true'; }
+    function hoSection(d) {
+      var done = hoDone(d), s = hoSummary(d), rep = hoRepFor(d), lead = hoLeadFor(d), steps = HO_STEPS, doneN = steps.filter(function(x) { return hoStepDone(d, x); }).length, ready = hoReady(d);
+      var f = function(k, ph) { return '<textarea class="ho-f" data-k="' + k + '" placeholder="' + ph + '" onchange="hoSaveSummary(\'' + ppEsc(d.email) + '\')">' + ppEsc(s[k] || '') + '</textarea>'; };
+      return '<div class="pb-phase ho' + (done ? ' complete' : ready ? ' now' : '') + '" id="pbph_handoff"><div class="pb-phase-h" onclick="this.parentNode.classList.toggle(\'collapsed\')"><span class="pb-num">&#8594;</span><div class="pb-phase-t"><b>Handoff to ' + (rep ? ppEsc(hoFullName(rep)) : 'PracticePlan rep') + '</b><span>' + (done ? 'Handed to ' + ppEsc(ppRepName(rep)) + ' on ' + ppFmtDate(String(getChecklist(d.email).ho_done_field).slice(0, 10)) : doneN + ' of ' + steps.length + (ready ? ' &middot; go-live is complete, ready to hand off' : ' &middot; after Go-Live & Post-Launch')) + '</span></div><div class="pb-phase-bar"><i style="width:' + Math.round(doneN / steps.length * 100) + '%"></i></div><span class="ts-caret">&#x25BC;</span></div><div class="pb-phase-body">'
+        + '<div class="ho-who"><div class="ho-who-card"><span>Onboarding lead</span>' + (typeof getTeamPhoto === 'function' ? getTeamPhoto(lead, 30) : '') + '<b>' + ppEsc(ppRepFull(lead) || lead) + '</b><a onclick="hoPickLead(\'' + ppEsc(d.email) + '\',this)">change</a></div><div class="ho-arrow">&#8594;</div><div class="ho-who-card' + (rep ? '' : ' missing') + '"><span>PP rep</span>' + (rep ? (typeof getTeamPhoto === 'function' ? getTeamPhoto(rep, 30) : '') + '<b>' + ppEsc(ppRepFull(rep)) + '</b>' : '<b>Not named yet</b>') + '<a onclick="hoPickRep(\'' + ppEsc(d.email) + '\',this)">' + (rep ? 'change' : 'assign') + '</a></div><div class="ho-poc-now">Point of contact right now: ' + hoPocChip(d) + '</div></div>'
+        + steps.map(function(st) { var ok = hoStepDone(d, st); return '<div class="pb-step' + (ok ? ' done' : '') + '"><button type="button" class="pb-check' + (ok ? ' on' : '') + (st.auto ? ' auto' : '') + '" ' + (st.auto ? 'title="Checked automatically"' : 'onclick="hoToggle(\'' + ppEsc(d.email) + '\',\'' + st.id + '\',' + (!ok) + ')"') + '>' + (ok ? '&#10003;' : '') + '</button><div class="pb-step-main"><div class="pb-task">' + ppEsc(st.task) + (st.auto ? ' <span class="ca-sub">auto</span>' : '') + '</div></div></div>'; }).join('')
+        + '<div class="ho-summary"><div><label>What is live</label>' + f('live', 'Campuses, spaces, approvers, calendar sync. What the district can do today.') + '</div><div><label>Open items and watch-outs</label>' + f('open', 'Anything unfinished, promised, or quirky about this district.') + '</div><div><label>Next touch</label>' + f('next', 'Date and purpose of the next contact, e.g. 30-day check-in on Oct 28.') + '</div><div><label>District contacts</label>' + f('contacts', 'Who to call for what: approvers, business office, IT.') + '</div></div>'
+        + '<div class="ho-actions">' + (done ? '<span class="pp-toolbar-note">Handoff complete. ' + ppEsc(hoFullName(rep)) + ' is the district\'s PracticePlan rep and point of contact; the onboarding lead can still open the record any time.</span><button class="pp-btn" onclick="hoUndo(\'' + ppEsc(d.email) + '\')">Undo handoff</button>' : '<button class="pp-btn" onclick="hoIntroEmail(\'' + ppEsc(d.email) + '\')" title="Copy a district-facing email introducing the rep">Draft intro email</button><button class="pp-btn primary" onclick="hoComplete(\'' + ppEsc(d.email) + '\')">Complete handoff</button>') + '</div>'
+        + '</div></div>';
+    }
+    function hoSaveSummary(email) { var s = {}; document.querySelectorAll('#pbph_handoff .ho-f').forEach(function(t) { if (t.value.trim()) s[t.getAttribute('data-k')] = t.value.trim(); }); setChecklist(email, 'ho_summary_field', JSON.stringify(s)); }
+    function hoToggle(email, id, on) { setChecklist(email, id, on); renderPlaybook(); }
+    function hoPickLead(email, el) { ppStatusPicker(el, TEAM_MEMBERS.map(function(m) { return { val: m.email, label: m.name, cls: m.email === hoLeadEmail() ? 'active' : 'unset' }; }), getChecklist(email).ho_lead_field || hoLeadEmail(), function(v) { setChecklist(email, 'ho_lead_field', v); renderPlaybook(); renderSubBoard(); }); }
+    function hoPickRep(email, el) { var d = allData.find(function(x) { return x.email === email; }); if (!d) return; ppStatusPicker(el, TEAM_MEMBERS.map(function(m) { return { val: m.email, label: m.name, cls: m.email === hoRepFor(d) ? 'active' : 'unset' }; }), hoRepFor(d), function(v) { assignRep(d.sheetType, d.rowIndex, v, email); setTimeout(renderPlaybook, 200); }); }
+    function hoIntroText(d) {
+      var rep = hoRepFor(d), lead = hoLeadFor(d), s = hoSummary(d), repName = hoFullName(rep) || 'your account rep', first = (d.contact || '').split(' ')[0] || 'there';
+      return 'Subject: Your PracticePlan team going forward\n\nHi ' + first + ',\n\nWith ' + (d.organization || 'your district') + ' live on PracticePlan, I\'m handing you over to ' + repName + ', who will be your main contact from here. ' + (repName.split(' ')[0]) + ' will check in over the next few weeks and is your first call for anything the platform needs.\n\n' + (s.next ? 'Next up: ' + s.next + '\n\n' : '') + 'I\'m not going anywhere; if something from onboarding comes up, loop me in any time.\n\nThanks for a smooth launch,\n' + (hoFullName(lead) || 'Jessica') + '\nPracticePlan\n\n' + (rep ? 'cc: ' + rep : '');
+    }
+    function hoIntroEmail(email) { var d = allData.find(function(x) { return x.email === email; }); if (!d) return; if (!hoRepFor(d)) { showToast('Name the PracticePlan rep first', 'error'); return; } var txt = hoIntroText(d); ppCopy(txt, 'Intro email'); if (d.email) window.open('mailto:' + encodeURIComponent(d.email) + '?cc=' + encodeURIComponent(hoRepFor(d)) + '&subject=' + encodeURIComponent('Your PracticePlan team going forward') + '&body=' + encodeURIComponent(txt.replace(/^Subject:.*\n\n/, '')), '_blank'); setChecklist(email, 'ho_intro', true); renderPlaybook(); }
+    async function hoComplete(email) {
+      var d = allData.find(function(x) { return x.email === email; }); if (!d) return;
+      var rep = hoRepFor(d), lead = hoLeadFor(d); if (!rep) { showToast('Name the PracticePlan rep before handing off', 'error'); return; }
+      var missing = HO_STEPS.filter(function(s) { return !hoStepDone(d, s); }).map(function(s) { return s.task; });
+      if (!confirm('Hand ' + (d.organization || email) + ' to ' + hoFullName(rep) + '?' + (missing.length ? '\n\nStill unchecked:\n- ' + missing.join('\n- ') + '\n\nHand off anyway?' : '') + '\n\nThe rep gets the summary by email and becomes the point of contact.')) return;
+      var s = hoSummary(d), body = 'Handoff: ' + (d.organization || email) + '\n\nFrom: ' + hoFullName(lead) + '\nTo: ' + hoFullName(rep) + '\nDistrict contact: ' + (d.contact || '') + ' ' + (d.email || '') + (d.phone ? ' ' + d.phone : '') + '\nGo-live: ' + (d.goLiveDate ? ppFmtDate(d.goLiveDate) : 'n/a') + '\n\nWhat is live:\n' + (s.live || '-') + '\n\nOpen items and watch-outs:\n' + (s.open || '-') + '\n\nNext touch:\n' + (s.next || '-') + '\n\nDistrict contacts:\n' + (s.contacts || '-') + '\n\nOpen the record: https://onboarding.practice-plan.com/admin.html';
+      try { var r = await ppApi('sendHandoffEmail', { to: rep, cc: lead, subject: 'Handoff: ' + (d.organization || email) + ' is yours, from ' + hoFullName(lead), body: body, org: d.organization || email }, 60000); if (!r.success) throw new Error(r.error || 'Email failed'); } catch(e) { if (!confirm('The summary email could not be sent (' + e.message + '). Complete the handoff anyway?')) return; }
+      setChecklist(email, 'ho_done_field', new Date().toISOString() + '|' + (currentUser?.email || ''));
+      if (['launched'].indexOf(d.pipelineStatus) < 0) changePipelineStatus(d.sheetType, d.rowIndex, 'launched', email);
+      logActivityToServer('handed off', d.organization || email, 'to ' + hoFullName(rep), 'rep');
+      renderPlaybook(); renderSubBoard(); renderUpcoming(); if (typeof renderCloseAccounts === 'function') renderCloseAccounts();
+      showToast(hoFullName(rep) + ' now owns ' + (d.organization || email), 'success');
+    }
+    function hoUndo(email) { if (!confirm('Undo the handoff? The onboarding lead becomes the point of contact again.')) return; setChecklist(email, 'ho_done_field', ''); renderPlaybook(); renderSubBoard(); renderUpcoming(); }
+    // playbook: handoff section after phase 6, POC in the header
+    var _renderPlaybookHO = renderPlaybook;
+    renderPlaybook = function() {
+      _renderPlaybookHO();
+      var main = document.getElementById('pbMain'), d = allData.find(function(c) { return c.email === pbClient; }); if (!main || !d || document.getElementById('pbph_handoff')) return;
+      main.insertAdjacentHTML('beforeend', hoSection(d));
+      var hr = main.querySelector('.pb-head-right'); if (hr && !hr.querySelector('.ho-poc')) hr.insertAdjacentHTML('afterbegin', hoPocChip(d));
+      if (!hoReady(d) && !hoDone(d)) document.getElementById('pbph_handoff').classList.add('collapsed');
+    };
+    // submissions board: POC under the rep
+    var _renderSubBoardHO = renderSubBoard;
+    renderSubBoard = function() { _renderSubBoardHO(); document.querySelectorAll('#subBoard tr[data-id]').forEach(function(tr) { var d = subFind(tr.getAttribute('data-id')); var cell = tr.querySelector('td[data-edit="rep"], td[data-edit="accountRep"]'); if (!d || !cell || cell.querySelector('.ho-poc')) return; cell.insertAdjacentHTML('beforeend', '<div style="margin-top:4px">' + hoPocChip(d, true) + '</div>'); }); };
+    // dashboard: ready-for-handoff items
+    var _renderUpcomingHO = renderUpcoming;
+    renderUpcoming = function() {
+      _renderUpcomingHO();
+      var attEl = document.getElementById('upAttention'); if (!attEl) return;
+      var ready = allData.filter(hoReady), noRep = allData.filter(function(d) { return hoReady(d) && !hoRepFor(d); });
+      if (!ready.length) return;
+      var html = ready.slice(0, 3).map(function(d) { return '<div class="pp-up-item" onclick="openPlaybookFor(\'' + ppEsc(d.email) + '\')"><span class="up-dot green"></span><div class="pp-up-main"><div class="pp-up-title">' + ppEsc(d.organization) + ' is ready to hand off' + (!hoRepFor(d) ? ' and has no rep' : '') + '</div><div class="pp-up-sub">' + (hoRepFor(d) ? 'From ' + ppEsc(ppRepName(hoLeadFor(d))) + ' to ' + ppEsc(ppRepName(hoRepFor(d))) : 'Name the PracticePlan rep on the Playbook') + '</div></div></div>'; }).join('');
+      var empty = attEl.querySelector('.pp-up-empty'); if (empty) empty.remove();
+      attEl.insertAdjacentHTML('afterbegin', html);
+    };
+
+    // =====================================================================
+    // BOOTH KITS: the three booth setups, who has them, where they go next
+    // =====================================================================
+    var bkList = [], bkLoaded = false;
+    async function loadBoothKits(force) { if (bkLoaded && !force) return; try { var r = await ppApi('getBoothKits'); if (r.success) { bkList = (r.rows || []).map(function(x) { var o = {}; ['id', 'name', 'description', 'contents', 'photoUrl', 'holder', 'location', 'condition', 'notes', 'updatedAt'].forEach(function(c) { o[c] = x[c] === undefined ? '' : String(x[c]); }); o.holder = o.holder.toLowerCase(); return o; }); bkLoaded = true; } } catch(e) {} }
+    function bkShows(kitId) { return tsList.filter(function(s) { return !s.archived && s.boothKit === kitId && s._start; }).sort(function(a, b) { return a._start < b._start ? -1 : 1; }); }
+    function bkLogistics(s) { try { return JSON.parse(s.boothLogistics || '{}'); } catch(e) { return {}; } }
+    function bkConflicts(kitId) { var list = bkShows(kitId).filter(function(s) { return !s._isPast; }), out = []; for (var i = 0; i < list.length; i++) for (var j = i + 1; j < list.length; j++) { var a = list[i], b = list[j]; if (a._end >= b._start && b._end >= a._start) out.push([a, b]); else if (ppDaysBetween(b._start, a._end) < 4) out.push([a, b, 'tight']); } return out; }
+    function renderBoothKits() {
+      var el = document.getElementById('tsBoothView'); if (!el) return;
+      if (!bkLoaded) { el.innerHTML = '<div class="pp-empty">Loading booth kits</div>'; loadBoothKits(false).then(renderBoothKits); return; }
+      var today = ppTodayISO();
+      el.innerHTML = '<div class="bk-grid">' + bkList.map(function(k) {
+        var shows = bkShows(k.id), up = shows.filter(function(s) { return !s._isPast; }), past = shows.filter(function(s) { return s._isPast; }).reverse(), next = up[0], conf = bkConflicts(k.id);
+        var holderRep = k.holder && TEAM_MEMBERS.some(function(m) { return m.email === k.holder; }) ? k.holder : '';
+        var sched = up.length ? up.map(function(s, i) { var reps = ppSplitReps(s.reps), lg = bkLogistics(s), prev = up[i - 1], from = prev ? ppSplitReps(prev.reps)[0] : holderRep, to = reps[0], move = from && to && from !== to; var travel = lg.mode === 'shipped' ? 'Shipped' + (lg.carrier ? ' via ' + ppEsc(lg.carrier) : '') + (lg.tracking ? ' &middot; ' + ppEsc(lg.tracking) : '') + (lg.shipDate ? ' &middot; ship by ' + ppFmtDate(lg.shipDate) : '') : lg.mode === 'driving' ? 'Driving it' : lg.mode === 'checked' ? 'Checked bag with ' + ppEsc(ppRepName(to) || 'the rep') : 'Carry-on with ' + ppEsc(ppRepName(to) || 'the rep'); return '<div class="bk-stop"><div class="bk-stop-date">' + ppDateBox(s._start, s._daysUntil <= 14) + '</div><div class="bk-stop-main"><b onclick="openTsModal(\'' + ppEsc(s.id) + '\')">' + ppEsc(s.name) + '</b><span>' + ppEsc(s.location || '') + (reps.length ? ' &middot; ' + reps.map(ppRepName).join(', ') : ' &middot; no rep yet') + '</span>' + (move ? '<span class="bk-move">' + ppEsc(ppRepName(to)) + ' needs it from ' + ppEsc(ppRepName(from)) + (prev ? ' after ' + ppEsc(prev.name) : '') + '</span>' : '') + '<span class="ca-sub">' + travel + (lg.returnTo ? ' &middot; then to ' + ppEsc(lg.returnTo) : '') + '</span></div></div>'; }).join('') : '<div class="pp-up-empty">No upcoming shows assigned. Pick this kit in a show\'s editor.</div>';
+        return '<div class="bk-card' + (conf.length ? ' warn' : '') + '"><div class="bk-media">' + (k.photoUrl ? '<img src="' + ppEsc(cpThumb(k.photoUrl) || k.photoUrl) + '" alt="" onerror="this.remove()">' : '<span class="bk-noimg">' + ppEsc(k.name) + '</span>') + '</div><div class="bk-body"><div class="bk-title"><b>' + ppEsc(k.name) + '</b><span class="pp-chip ' + (k.condition === 'Needs repair' ? 'need-to-book' : k.condition === 'Retire' ? 'inactive' : 'booked') + '">' + ppEsc(k.condition || 'Good') + '</span><button class="pp-mini-btn" title="Edit kit" onclick="openBoothKit(\'' + ppEsc(k.id) + '\')">' + ppSvg('expand') + '</button></div>' + (k.description ? '<div class="bk-desc">' + ppEsc(k.description) + '</div>' : '')
+          + '<div class="bk-holder"><span>With</span>' + (holderRep ? '<div class="bk-holder-rep">' + getTeamPhoto(holderRep, 26) + '<b>' + ppEsc(ppRepFull(holderRep)) + '</b></div>' : '<b class="pp-placeholder">' + ppEsc(k.holder || 'nobody recorded') + '</b>') + (k.location ? '<span class="ca-sub">' + ppEsc(k.location) + '</span>' : '') + '<a onclick="bkPickHolder(\'' + ppEsc(k.id) + '\',this)">update</a></div>'
+          + '<div class="bk-next">' + (next ? '<span>Next</span><b>' + ppEsc(next.name) + '</b><span class="ca-sub">' + ppInDays(next._daysUntil) + ' &middot; ' + ppEsc(next.location || '') + '</span>' : '<span>Next</span><b class="pp-placeholder">unassigned</b>') + '</div>'
+          + (conf.length ? '<div class="bk-conf">' + conf.map(function(c) { return (c[2] ? 'Tight turnaround' : 'Double booked') + ': ' + ppEsc(c[0].name) + ' and ' + ppEsc(c[1].name); }).join('<br>') + '</div>' : '')
+          + '<div class="bk-sec">Schedule</div><div class="bk-stops">' + sched + '</div>'
+          + '<div class="bk-sec">History<span class="n">' + past.length + '</span></div>' + (past.length ? '<div class="bk-hist">' + past.slice(0, 8).map(function(s) { return '<div onclick="openTsModal(\'' + ppEsc(s.id) + '\')"><span>' + ppFmtDate(s._start, { month: 'short', year: 'numeric' }) + '</span><b>' + ppEsc(s.name) + '</b><span class="ca-sub">' + ppEsc(s.location || '') + (ppSplitReps(s.reps).length ? ' &middot; ' + ppSplitReps(s.reps).map(ppRepName).join(', ') : '') + '</span></div>'; }).join('') + (past.length > 8 ? '<div class="pp-toolbar-note">+' + (past.length - 8) + ' earlier</div>' : '') + '</div>' : '<div class="pp-up-empty">No past shows recorded with this kit. Set the kit on past shows to build the history.</div>')
+          + '</div></div>';
+      }).join('') + '<div class="bk-card add" onclick="openBoothKit(null)"><div class="bk-noimg" style="font-size:28px">+</div><div class="bk-body" style="text-align:center"><b>Add a kit</b><div class="pp-toolbar-note">When the new booths arrive, add them here and retire the old ones.</div></div></div></div>';
+    }
+    function bkPickHolder(id, el) { var k = bkList.find(function(x) { return x.id === id; }); if (!k) return; ppStatusPicker(el, TEAM_MEMBERS.map(function(m) { return { val: m.email, label: m.name, cls: m.email === k.holder ? 'active' : 'unset' }; }).concat([{ val: 'office', label: 'PracticePlan office', cls: 'aud-other' }, { val: 'shipping', label: 'In transit', cls: 'need-to-book' }, { val: '', label: 'Unknown', cls: 'inactive' }]), k.holder, function(v) { k.holder = v; bkSave(k, 'Now with ' + (ppRepName(v) || v || 'nobody')); }); }
+    async function bkSave(k, msg) { try { var r = await ppApi('saveBoothKit', { row: k }); if (!r.success) throw new Error(r.error); k.id = r.id || k.id; if (!bkList.some(function(x) { return x.id === k.id; })) bkList.push(k); renderBoothKits(); if (msg) showToast(msg, 'success'); logActivityToServer('updated booth kit', k.name, msg || '', 'other'); } catch(e) { showToast('Could not save: ' + e.message, 'error'); } }
+    function openBoothKit(id) {
+      var k = id ? bkList.find(function(x) { return x.id === id; }) : null; var isNew = !k; k = k || { id: '', name: '', description: '', contents: '', photoUrl: '', holder: '', location: '', condition: 'Good', notes: '' };
+      ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + (isNew ? 'New Booth Kit' : ppEsc(k.name)) + '</h2><div class="modal-subtitle">Booth inventory</div></div><div class="modal-body"><div class="detail-section" style="margin-top:20px"><div class="pp-form"><div><label>Name</label><input id="bk_name" value="' + ppEsc(k.name) + '" placeholder="e.g. 10x10 backdrop kit"></div><div><label>Condition</label><select id="bk_cond">' + ['Good', 'Worn', 'Needs repair', 'Retire'].map(function(c) { return '<option' + (k.condition === c ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select></div><div class="full"><label>Description</label><input id="bk_desc" value="' + ppEsc(k.description) + '" placeholder="Size, look, what it is best for"></div><div class="full"><label>Contents (one per line)</label><textarea id="bk_contents" style="min-height:110px" placeholder="Backdrop and frame&#10;Counter&#10;Monitor + stand&#10;Tablecloth, banner stand, giveaways bin">' + ppEsc(k.contents) + '</textarea></div><div><label>Photo link</label><input id="bk_photo" type="url" value="' + ppEsc(k.photoUrl) + '" placeholder="Drive link"></div><div><label>Where it is stored when idle</label><input id="bk_loc" value="' + ppEsc(k.location) + '" placeholder="Kevin\'s garage, office closet..."></div><div class="full"><label>Notes</label><textarea id="bk_notes">' + ppEsc(k.notes) + '</textarea></div></div></div><div class="pp-modal-actions"><span></span><div class="right"><button class="pp-btn" onclick="closeModal()">Cancel</button><button class="pp-btn primary" onclick="saveBoothKitModal(\'' + ppEsc(k.id) + '\')">' + (isNew ? 'Add' : 'Save') + '</button></div></div></div>');
+    }
+    async function saveBoothKitModal(id) { var g = function(i) { return (document.getElementById(i) || { value: '' }).value.trim(); }; var k = bkList.find(function(x) { return x.id === id; }) || { id: '', holder: '' }; Object.assign(k, { name: g('bk_name'), condition: g('bk_cond'), description: g('bk_desc'), contents: g('bk_contents'), photoUrl: g('bk_photo'), location: g('bk_loc'), notes: g('bk_notes') }); if (!k.name) { showToast('Give the kit a name', 'error'); return; } closeModal(); await bkSave(k, 'Saved'); }
+    // show editor: kit + logistics
+    var _tsCollateralBK = tsCollateralSection;
+    tsCollateralSection = function(s) {
+      var lg = bkLogistics(s), kits = bkLoaded ? bkList : [];
+      var opts = '<option value="">No kit assigned</option>' + kits.map(function(k) { var busy = bkShows(k.id).filter(function(o) { return o.id !== s.id && !o._isPast && s._start && s._end && o._end >= s._start && o._start <= s._end; }); return '<option value="' + ppEsc(k.id) + '"' + (s.boothKit === k.id ? ' selected' : '') + '>' + ppEsc(k.name) + (k.holder ? ' (with ' + ppEsc(ppRepName(k.holder) || k.holder) + ')' : '') + (busy.length ? ' - double booked: ' + ppEsc(busy[0].name) : '') + '</option>'; }).join('');
+      var mode = lg.mode || (lg.carrier || lg.tracking ? 'shipped' : 'carry');
+      return '<div class="detail-section"><h3>Booth</h3><div class="pp-form"><div><label>Booth kit</label><select id="tf_boothKit" onchange="tsSetKit(\'' + ppEsc(s.id) + '\',this.value)">' + opts + '</select></div><div><label>How it travels</label><select id="tf_bk_mode" onchange="tsSetLogistics(\'' + ppEsc(s.id) + '\');tsToggleShip()">' + [['carry', 'Carry-on with the rep'], ['checked', 'Checked bag with the rep'], ['driving', 'Driving it'], ['shipped', 'Shipped']].map(function(m) { return '<option value="' + m[0] + '"' + (mode === m[0] ? ' selected' : '') + '>' + m[1] + '</option>'; }).join('') + '</select></div><div><label>After the show it goes to</label><input id="tf_bk_return" value="' + ppEsc(lg.returnTo || '') + '" placeholder="Next rep, or the office" onchange="tsSetLogistics(\'' + ppEsc(s.id) + '\')"></div><div class="tf-ship" style="' + (mode === 'shipped' ? '' : 'display:none') + '"><label>Carrier</label><input id="tf_bk_carrier" value="' + ppEsc(lg.carrier || '') + '" placeholder="FedEx, UPS" onchange="tsSetLogistics(\'' + ppEsc(s.id) + '\')"></div><div class="tf-ship" style="' + (mode === 'shipped' ? '' : 'display:none') + '"><label>Tracking</label><input id="tf_bk_tracking" value="' + ppEsc(lg.tracking || '') + '" onchange="tsSetLogistics(\'' + ppEsc(s.id) + '\')"></div><div class="tf-ship" style="' + (mode === 'shipped' ? '' : 'display:none') + '"><label>Ship by</label><input id="tf_bk_ship" type="date" value="' + ppEsc(lg.shipDate || '') + '" onchange="tsSetLogistics(\'' + ppEsc(s.id) + '\')"></div></div>' + (bkLoaded ? '' : '<div class="pp-toolbar-note">Booth kits are loading; reopen the show in a moment.</div>') + '</div>' + _tsCollateralBK(s);
+    };
+    async function tsSetKit(showId, kitId) { var s = tsList.find(function(x) { return x.id === showId; }); if (!s) return; s.boothKit = kitId; try { await tsSave(s, false); renderTradeShows(); if (tsView === 'booths') renderBoothKits(); showToast(kitId ? 'Kit assigned' : 'Kit removed', 'success'); } catch(e) { showToast(e.message, 'error'); } }
+    function tsToggleShip() { var m = (document.getElementById('tf_bk_mode') || {}).value; document.querySelectorAll('.tf-ship').forEach(function(el) { el.style.display = m === 'shipped' ? '' : 'none'; }); }
+    async function tsSetLogistics(showId) { var s = tsList.find(function(x) { return x.id === showId; }); if (!s) return; var g = function(i) { return (document.getElementById(i) || { value: '' }).value.trim(); }; s.boothLogistics = JSON.stringify({ mode: g('tf_bk_mode') || 'carry', carrier: g('tf_bk_carrier'), tracking: g('tf_bk_tracking'), shipDate: g('tf_bk_ship'), returnTo: g('tf_bk_return') }); try { await tsSave(s, false); } catch(e) { showToast(e.message, 'error'); } }
+    // trade shows: Booths view
+    (function() {
+      TS_COLS.push('boothKit', 'boothLogistics');
+      if (PP_PRIMED_ACTIONS.indexOf('getBoothKits') < 0) PP_PRIMED_ACTIONS.push('getBoothKits');
+      var tog = document.querySelector('#tsViewIns'); if (tog && !document.getElementById('tsViewBooth')) tog.insertAdjacentHTML('afterend', '<button id="tsViewBooth" onclick="setTsView(\'booths\')">Booths</button>');
+      var ins = document.getElementById('tsInsView'); if (ins && !document.getElementById('tsBoothView')) ins.insertAdjacentHTML('afterend', '<div id="tsBoothView" style="display:none"></div>');
+      var _setTsView = setTsView; setTsView = function(v) { _setTsView(v === 'booths' ? 'insights' : v); tsView = v; var b = document.getElementById('tsViewBooth'), p = document.getElementById('tsBoothView'), ip = document.getElementById('tsInsView'), ib = document.getElementById('tsViewIns'); if (b) b.classList.toggle('on', v === 'booths'); if (ib && v === 'booths') ib.classList.remove('on'); if (p) p.style.display = v === 'booths' ? '' : 'none'; if (ip && v === 'booths') ip.style.display = 'none'; if (v === 'booths') renderBoothKits(); };
+      var _renderTS = renderTradeShows; renderTradeShows = function() { if (tsView === 'booths') { renderTsStats(); renderBoothKits(); return; } _renderTS(); };
+      var _openTs = openTsModal; openTsModal = function(id, opts) { if (!bkLoaded) loadBoothKits(false).then(function() { if (document.getElementById('tf_boothKit')) return; }); _openTs(id, opts); };
+      // row chip: which kit
+      var _rowOrig = null;
+    })();
+  </script>
+  <style>
+    .ho-poc{display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 4px;border-radius:50px;font-size:11px;background:rgba(0,118,187,0.08);color:var(--text)}
+    .ho-poc.cs{background:rgba(0,168,79,0.10)}
+    .ho-poc b{font-weight:700}.ho-poc>span{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em}
+    .ho-poc.sm{font-size:10px;padding:2px 8px 2px 3px}
+    .ho-poc img{border-radius:50%}
+    .pb-phase.ho .pb-num{background:#7c3aed;color:#fff}
+    .pb-phase.ho.complete .pb-num{background:var(--pp-green)}
+    .ho-who{display:flex;align-items:center;gap:14px;padding:12px 0 4px;flex-wrap:wrap}
+    .ho-who-card{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background:var(--bg);font-size:13px}
+    .ho-who-card>span{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)}
+    .ho-who-card b{color:var(--text)}.ho-who-card a{font-size:11px;color:var(--pp-blue);cursor:pointer}
+    .ho-who-card.missing{border:1px dashed #f59e0b}
+    .ho-who-card img{border-radius:50%}
+    .ho-arrow{font-size:20px;color:var(--text3)}
+    .ho-poc-now{margin-left:auto;font-size:12px;color:var(--text2);display:flex;align-items:center;gap:8px}
+    .pb-check.auto{cursor:default;border-style:dashed}
+    .ho-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+    .ho-summary label{display:block;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:4px}
+    .ho-f{width:100%;min-height:70px;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font:inherit;font-size:12.5px;color:var(--text);resize:vertical}
+    .ho-f:focus{outline:none;border-color:var(--pp-blue)}
+    .ho-actions{display:flex;justify-content:flex-end;gap:8px;align-items:center;flex-wrap:wrap}
+    .up-dot.green{background:var(--pp-green)}
+    .bk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+    .bk-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--sh-sm);display:flex;flex-direction:column}
+    .bk-card.warn{border-color:#f59e0b}
+    .bk-card.add{cursor:pointer;border-style:dashed;justify-content:center;align-items:center;min-height:200px;color:var(--text2)}
+    .bk-media{aspect-ratio:16/8;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .bk-media img{width:100%;height:100%;object-fit:cover}
+    .bk-noimg{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--text3)}
+    .bk-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px}
+    .bk-title{display:flex;align-items:center;gap:8px}.bk-title b{font-size:15px;color:var(--text);flex:1}
+    .bk-desc{font-size:12px;color:var(--text2)}
+    .bk-holder,.bk-next{display:flex;align-items:center;gap:8px;font-size:12.5px;flex-wrap:wrap}
+    .bk-holder>span:first-child,.bk-next>span:first-child{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);width:38px}
+    .bk-holder-rep{display:flex;align-items:center;gap:6px}.bk-holder-rep img{border-radius:50%}
+    .bk-holder a{font-size:11px;color:var(--pp-blue);cursor:pointer;margin-left:auto}
+    .bk-conf{font-size:12px;color:#b45309;background:#fef3c7;border-radius:10px;padding:8px 10px}
+    .bk-sec{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-top:6px;display:flex;align-items:center;gap:6px}
+    .bk-stops{display:flex;flex-direction:column;gap:6px}
+    .bk-stop{display:flex;gap:10px;align-items:flex-start}
+    .bk-stop-main{display:flex;flex-direction:column;gap:2px;min-width:0}
+    .bk-stop-main b{font-size:13px;color:var(--text);cursor:pointer}.bk-stop-main span{font-size:11px;color:var(--text3)}
+    .bk-move{color:#b45309 !important;font-weight:600}
+    .bk-hist>div{display:grid;grid-template-columns:70px 1fr;gap:2px 10px;padding:5px 0;border-top:1px solid var(--border);font-size:12px;cursor:pointer}
+    .bk-hist>div>span:first-child{color:var(--text3);font-size:11px;grid-row:span 2}
+    .bk-hist b{color:var(--text)}
+    @media(max-width:768px){.ho-summary{grid-template-columns:1fr}.bk-grid{grid-template-columns:1fr}}
+  </style>
 </body>
 </html>
