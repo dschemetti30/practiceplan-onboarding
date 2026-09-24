@@ -1219,7 +1219,7 @@
     .nav-group{display:none}
     .view-tab .soon-tag{display:none}
     .view-tab.soon{display:none}
-    @media(min-width:1024px){
+    @media(min-width:900px){
       body.pp-sidebar .pp-side{position:fixed;left:0;top:0;bottom:0;width:236px;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:18px 12px 14px;z-index:150}
       body.pp-sidebar .pp-side-logo{padding:2px 8px 18px}
       body.pp-sidebar .pp-side-logo img{height:32px}
@@ -2132,7 +2132,7 @@
         <div class="nav-group bottom">Workspace</div>
         <button class="view-tab" onclick="switchView('resources')" data-short="Docs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Resources</button>
         <button class="view-tab" onclick="switchView('activity')" data-short="Activity"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Activity</button>
-        <button class="view-tab soon" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Settings<span class="soon-tag">Soon</span></button>
+        
       </div>
 
       <div class="view-content active" id="dashboardView">
@@ -5547,7 +5547,7 @@
     function ppSetHeaderTitle(view) { var t = document.getElementById('hdrTitle'); if (!t || !PP_VIEW_TITLES[view]) return; t.innerHTML = '<span class="crumb">' + PP_VIEW_TITLES[view][0] + '</span><b>' + PP_VIEW_TITLES[view][1] + '</b>'; }
     function ppLayoutInit() {
       var tabs = document.querySelector('.view-tabs'), dash = document.getElementById('dashboard'), main = document.querySelector('.main-content'); if (!tabs || !dash || !main) return;
-      var wide = window.innerWidth >= 1024, side = document.getElementById('ppSide');
+      var wide = window.innerWidth >= 900, side = document.getElementById('ppSide');
       if (wide) {
         if (!side) {
           side = document.createElement('aside'); side.id = 'ppSide'; side.className = 'pp-side';
@@ -7832,6 +7832,47 @@
     .bk-hist>div>span:first-child{color:var(--text3);font-size:11px;grid-row:span 2}
     .bk-hist b{color:var(--text)}
     @media(max-width:768px){.ho-summary{grid-template-columns:1fr}.bk-grid{grid-template-columns:1fr}}
+  </style>
+
+  <script>
+    // NAVIGATION: every tab the signed-in person is allowed to see, always visible, sidebar at full height
+    function ppNavFit() {
+      var side = document.getElementById('ppSide'), nav = side && side.querySelector('.pp-side-nav'); if (!side || !nav || !document.body.classList.contains('pp-sidebar')) return;
+      side.classList.remove('compact', 'tight');
+      if (nav.scrollHeight > nav.clientHeight + 2) side.classList.add('compact');
+      if (nav.scrollHeight > nav.clientHeight + 2) side.classList.add('tight');
+      side.classList.toggle('scrolls', nav.scrollHeight > nav.clientHeight + 2);
+    }
+    (function() {
+      var _init = ppLayoutInit; ppLayoutInit = function() { _init(); setTimeout(ppNavFit, 30); };
+      var _gate = ppApplyMarketingGate; ppApplyMarketingGate = function() { _gate(); setTimeout(ppNavFit, 30); };
+      window.addEventListener('resize', function() { clearTimeout(window._ppNavFitT); window._ppNavFitT = setTimeout(ppNavFit, 150); });
+      // if the active tab sits below the fold, bring it into view
+      var _sv = switchView; switchView = function(v) { _sv(v); setTimeout(function() { var t = document.querySelector('.view-tab.active'); var nav = document.querySelector('#ppSide .pp-side-nav'); if (t && nav && document.body.classList.contains('pp-sidebar')) { var r = t.getBoundingClientRect(), n = nav.getBoundingClientRect(); if (r.top < n.top || r.bottom > n.bottom) t.scrollIntoView({ block: 'nearest' }); } }, 60); };
+      setTimeout(ppNavFit, 800);
+    })();
+  </script>
+  <style>
+    /* sidebar: full height, tabs shrink to fit before they ever scroll */
+    body.pp-sidebar .pp-side{min-height:100vh;height:100vh}
+    body.pp-sidebar .pp-side.compact .view-tab{padding:6px 10px;font-size:12.5px;border-radius:8px}
+    body.pp-sidebar .pp-side.compact .view-tabs{gap:1px}
+    body.pp-sidebar .pp-side.compact .nav-group{margin:8px 0 3px;font-size:9.5px}
+    body.pp-sidebar .pp-side.compact .pp-side-logo{margin-bottom:8px}
+    body.pp-sidebar .pp-side.compact .pp-side-logo img{height:26px}
+    body.pp-sidebar .pp-side.tight .view-tab{padding:5px 10px;font-size:12px}
+    body.pp-sidebar .pp-side.tight .nav-group{margin:6px 0 2px}
+    body.pp-sidebar .pp-side.tight .pp-side-foot{display:none}
+    body.pp-sidebar .pp-side.scrolls .pp-side-nav{scrollbar-width:thin;mask-image:linear-gradient(to bottom,#000 calc(100% - 28px),transparent);-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 28px),transparent)}
+    /* top-strip layout (narrow windows): wrap the tabs instead of hiding them off the right edge */
+    body:not(.pp-sidebar) .view-tabs{flex-wrap:wrap;width:100%;overflow:visible}
+    body:not(.pp-sidebar) .view-tabs .nav-group{flex-basis:100%;margin:6px 6px 0}
+    body.pp-sidebar .pp-side.compact .nav-group{padding:2px 12px 1px;line-height:1.3;margin:7px 0 2px}
+    body.pp-sidebar .pp-side.tight .nav-group{padding:0 12px;margin:5px 0 1px;font-size:9px}
+    body.pp-sidebar .pp-side.compact .pp-side-logo{margin-bottom:6px;padding-bottom:4px}
+    body.pp-sidebar .pp-side.tight .pp-side-logo img{height:22px}
+    body.pp-sidebar .pp-side.tight{padding-top:10px;padding-bottom:8px}
+    body:not(.pp-sidebar) .view-tab{flex:0 0 auto}
   </style>
 </body>
 </html>
