@@ -4867,6 +4867,10 @@
         + cell('registration', chip('registration', TS_REG))
         + cell('cost', s.cost ? '<b>' + ppFmtMoney(s.cost) + '</b>' : '<span class="pp-placeholder">$</span>', 'num')
         + '<td>' + (typeof leadCloseKitCell === 'function' ? leadCloseKitCell(s) : '') + '</td>'
+        + cell('hotel', chip('hotel', TS_TRAVEL))
+        + cell('flight', chip('flight', TS_TRAVEL))
+        + cell('outcomes', out)
+        + '<td style="text-align:right"><button class="pp-mini-btn" title="Open full editor" onclick="openTsModal(\'' + ppEsc(s.id) + '\')">' + ppSvg('expand') + '</button></td>'
         + '</tr>';
     }
     function tsCard(s) {
@@ -8152,6 +8156,148 @@
     .lead-close.ok{background:rgba(0,168,79,0.10);color:var(--pp-green)}.lead-close.ok span{color:var(--text2)}
     .lead-close.no{background:#fee2e2;color:#b91c1c;cursor:pointer}.lead-close.no span{color:#b91c1c;text-decoration:underline}
     .lead-close.wait{color:var(--text3);font-style:italic}
+  </style>
+
+  <style>
+    /* =====================================================================
+       POLISH LAYER: one control system, no stray lines, nothing falls out of its box
+       ===================================================================== */
+    /* ---- controls: one height, one radius, one type size ---- */
+    .text-action-btn,.pp-btn,.import-btn,.dh-chip,.styled-select select,.search-input,.pp-view-toggle button,.tsr-row .import-btn{box-sizing:border-box}
+    .text-action-btn,.pp-btn,.styled-select select,.search-input,.controls-row input[type="search"],.controls-row input[type="text"]{height:36px;line-height:1;font-size:12.5px;border-radius:10px}
+    .text-action-btn{display:inline-flex;align-items:center;gap:7px;padding:0 13px;font-weight:600;white-space:nowrap}
+    .text-action-btn svg{width:14px;height:14px;flex-shrink:0}
+    .text-action-btn.pp-icon-only{width:36px;padding:0;justify-content:center}
+    .pp-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 14px;font-weight:600;white-space:nowrap}
+    .pp-btn.danger{padding:0 12px}
+    .pp-mini-btn{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;padding:0;font-size:12px;vertical-align:middle}
+    .pp-mini-btn svg{width:13px;height:13px}
+    .dh-chip{height:30px;display:inline-flex;align-items:center;gap:6px;padding:0 11px;font-size:12px;border-radius:50px;white-space:nowrap}
+    .pp-view-toggle{height:36px;align-items:center}
+    .pp-view-toggle button{height:28px;line-height:1;padding:0 12px;font-size:12.5px}
+    .styled-select{height:36px}
+    .styled-select select{padding:0 32px 0 12px}
+    .search-input{padding:0 12px 0 32px}
+    /* toolbars wrap on a clean 8px grid, never overlap, and stay left-aligned on the second row */
+    .controls-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;row-gap:10px}
+    .controls-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;row-gap:8px;justify-content:flex-end}
+    .controls-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .cp-toolbar-left{gap:12px}
+    /* ---- text never leaves its cell ---- */
+    .pp-table td{overflow:hidden}
+    .pp-org-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block}
+    .pp-org-sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:block}
+    .pp-org-cell{min-width:0}
+    .pp-org-cell>div{min-width:0}
+    .pp-table td>div:not([class]){white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pp-table td .time-ago,.pp-table td.time-ago{white-space:nowrap}
+    .lead-contact{min-width:0}
+    .lead-contact>span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+    .pp-chip{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
+    .hq-kpi .l,.out-kpi .l,.pp-stat .l{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .hq-kpi .s,.out-kpi .s,.pp-stat .s{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pp-up-title,.pp-up-sub,.pb-client-main b,.pb-client-main span,.lh-show-t b,.bk-stop-main b,.soc-top-main b,.cp-card-title{overflow:hidden;text-overflow:ellipsis}
+    .pp-up-title{white-space:nowrap}
+    .pp-up-main{min-width:0}
+    /* rep cells: avatar + name on one line, point of contact beneath, never spilling */
+    .ho-poc{max-width:100%;overflow:hidden}
+    .ho-poc b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px}
+    .ho-poc.sm>span{display:none}
+    #subBoard td[data-edit="rep"],#subBoard td[data-edit="accountRep"]{min-width:150px}
+    /* leads table: the Close column earns its space by dropping Touch on narrower windows */
+    #leadTable th:nth-child(7),#leadTable td:nth-child(7){display:none}
+    @media(min-width:1700px){#leadTable th:nth-child(7),#leadTable td:nth-child(7){display:table-cell}}
+    #leadTable td[data-edit="notes"]{max-width:180px}
+    .lead-close{max-width:150px}.lead-close span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    /* ---- sidebar: no rules, no seams ---- */
+    body.pp-sidebar .nav-group{border:none !important;background:transparent}
+    body.pp-sidebar .pp-side-logo{border-bottom:none !important;box-shadow:none}
+    body.pp-sidebar .pp-side{box-shadow:1px 0 0 var(--border);border-right:none}
+    body.pp-sidebar .pp-side .view-tab{border:none;box-shadow:none;outline:none}
+    body.pp-sidebar .pp-side .view-tab:focus-visible{box-shadow:0 0 0 3px var(--ring)}
+    body.pp-sidebar .pp-side-foot{border-top:none;opacity:.8}
+    body.pp-sidebar .pp-side-nav::-webkit-scrollbar{width:0;height:0}
+    .pp-tab-ink{display:none !important}
+    /* ---- avatars: real photos or clean initials, never alt text ---- */
+    img.pp-avatar,.pp-avatars img,.pp-avatar-img,.team-avatar,.rot-rep img,.out-rep img,.bk-holder-rep img,.ho-poc img,.ho-who-card img,.pb-client img,.pp-up-item img{object-fit:cover;background:var(--bg);color:transparent;font-size:0}
+    .pp-avatar-fallback{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:linear-gradient(135deg,var(--pp-blue),var(--pp-green));color:#fff;font-weight:800;font-size:11px;letter-spacing:.02em;flex-shrink:0}
+    /* ---- tables: quieter header, steadier rows ---- */
+    .pp-table th{font-size:10.5px;letter-spacing:.08em;padding:11px 12px}
+    .pp-table td{padding:11px 12px;vertical-align:middle}
+    .pp-table tbody tr{animation-duration:.28s}
+    .pp-table tbody tr:nth-child(n+13){animation-delay:0s !important}
+    .pp-table tbody tr:hover td{background:rgba(0,118,187,0.028)}
+    .ts-add-row td,.ts-add-row input{white-space:normal}
+    .ts-add-input{height:36px;border-radius:10px}
+    /* ---- cards and panels: same corner, same shadow language ---- */
+    .stat-card,.hq-kpi,.out-kpi,.pp-stat,.bk-card,.cp-card,.pb-phase,.fol-card,.ca-panel,.tsr-row{transition:box-shadow var(--t-base),transform var(--t-base)}
+    .stat-card h3{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:20px}
+    /* ---- motion: calm, consistent, never in the way ---- */
+    .pp-btn,.text-action-btn,.dh-chip,.pp-mini-btn,.view-tab,.pp-view-toggle button{transition:background var(--t-fast),color var(--t-fast),border-color var(--t-fast),box-shadow var(--t-base),transform var(--t-fast)}
+    .pp-btn:hover,.text-action-btn:hover{transform:translateY(-1px);box-shadow:var(--sh-sm)}
+    .pp-btn:active,.text-action-btn:active{transform:translateY(0);box-shadow:none}
+    .pp-btn:focus-visible,.text-action-btn:focus-visible,.dh-chip:focus-visible,.styled-select select:focus-visible,.search-input:focus-visible{outline:none;box-shadow:0 0 0 3px var(--ring)}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+    /* ---- modals: header stays put, actions stay reachable ---- */
+    .modal-header{position:sticky;top:0;z-index:2;background:var(--card)}
+    .pp-modal-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding-top:14px}
+    .pp-modal-actions .right{display:flex;gap:8px}
+    /* ---- popovers ---- */
+    .pp-pop{border-radius:14px;box-shadow:var(--sh-lg)}
+    .pp-pop-opt{border-radius:8px}
+    /* ---- small screens ---- */
+    @media(max-width:768px){.text-action-btn{padding:0 11px}.controls-right{justify-content:flex-start}.pp-table td>div:not([class]){max-width:160px}}
+  </style>
+  <script>
+    // avatars that fail to load become initials, wherever they are
+    (function() {
+      function initials(img) { if (img.hasAttribute('onerror') || img.closest('.pp-org-cell, .org-avatar, .avatar-wrap')) { img.style.display = 'none'; return; } var near = img.parentNode ? (img.parentNode.textContent || '') : ''; if (!near.trim() && img.parentNode && img.parentNode.parentNode) near = img.parentNode.parentNode.textContent || ''; if (img.closest('.user-pill, .user-info, .header-user')) near = (currentUser && currentUser.name) || near; var alt = (img.getAttribute('alt') || img.getAttribute('title') || img.getAttribute('data-name') || near).trim(); var m = alt.split(/\s+/).filter(Boolean); var t = m.length ? (m[0][0] + (m[1] ? m[1][0] : '')).toUpperCase() : '?'; var s = document.createElement('span'); s.className = 'pp-avatar-fallback'; var w = img.getAttribute('width') || img.style.width || (img.getBoundingClientRect().width + 'px'); w = parseInt(w, 10) || 24; s.style.width = w + 'px'; s.style.height = w + 'px'; s.style.fontSize = Math.max(9, Math.round(w * 0.42)) + 'px'; s.textContent = t; s.title = alt; if (img.parentNode) img.parentNode.replaceChild(s, img); }
+      document.addEventListener('error', function(e) { var t = e.target; if (t && t.tagName === 'IMG' && !t.closest('.cp-card-media, .soc-media, .bk-media, .cpi-img, .cp-thumb')) initials(t); }, true);
+      // images already broken before this ran
+      setTimeout(function() { document.querySelectorAll('img').forEach(function(img) { if (img.complete && img.naturalWidth === 0 && img.src && !img.closest('.cp-card-media, .soc-media, .bk-media, .cpi-img')) initials(img); }); }, 1500);
+    })();
+    // requests: a clearer "make a post" icon
+    (function() { var _rr = renderRequests; renderRequests = function() { _rr(); document.querySelectorAll('#rqTableBody button[onclick*="rqToPost"]').forEach(function(b) { b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="10" y1="16" x2="14" y2="16"/></svg>'; }); }; })();
+  </script>
+  <style>
+    /* tables size to their container; columns compress before anything spills off the right edge */
+    body.pp-sidebar .pp-table{min-width:100%;width:100%}
+    body.pp-sidebar .pp-table.ts-cov{min-width:100%}
+    .pp-table th{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pp-table td:last-child{white-space:nowrap;width:1%}
+    #subBoard td:last-child .pp-mini-btn,#rqTable td:last-child .pp-mini-btn,#leadTableBody td:last-child .pp-mini-btn{width:26px;height:26px;margin-left:2px}
+    #rqTable td:first-child{max-width:340px}
+    #rqTable td:first-child .pp-org-sub{max-width:320px}
+    #tsGroups .pp-table{min-width:100%}
+    #tsGroups td[data-edit="name"] .pp-org-name{max-width:200px}
+    .table-wrapper{overflow-x:auto}
+  </style>
+  <style>
+    #subBoard table th:last-child{width:158px}
+    #subBoard table th:nth-child(5),#subBoard table th:nth-child(6){width:118px}
+    #subBoard table th:nth-child(8){width:100px}
+    #subBoard td:last-child{overflow:visible;text-align:right}
+    #rqTable{table-layout:fixed;width:100%}
+    #rqTable th:nth-child(1){width:29%}#rqTable th:nth-child(2){width:15%}#rqTable th:nth-child(3){width:12%}#rqTable th:nth-child(4){width:9%}#rqTable th:nth-child(5){width:8%}#rqTable th:nth-child(6){width:12%}#rqTable th:nth-child(7){width:10%}#rqTable th:nth-child(8){width:5%}
+    #rqTable td:nth-child(2) .pp-chip{max-width:100%}
+    #rqTable td:last-child{overflow:visible;text-align:right}
+    #leadTable td:last-child{overflow:visible}
+  </style>
+  <style>
+    /* dense tables keep their natural width and scroll inside their card instead of squeezing labels into dots */
+    body.pp-sidebar #tsGroups .pp-table{min-width:1260px !important}
+    body.pp-sidebar #leadTable{min-width:1120px}
+    body.pp-sidebar #lpTable{min-width:1080px}
+    .table-wrapper{position:relative;scrollbar-width:thin}
+    .table-wrapper::-webkit-scrollbar{height:8px}
+    .table-wrapper::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+    #tsGroups td[data-edit="cost"]{white-space:nowrap}
+    .ts-outcome{white-space:nowrap}
+  </style>
+  <style>
+    #tsGroups th:nth-child(5){width:128px}#tsGroups th:nth-child(7){width:130px}#tsGroups th:nth-child(3){width:118px}
+    #tsGroups td:nth-child(7){white-space:nowrap;overflow:visible}
+    .ts-col-chip{max-width:none;overflow:visible}
   </style>
 </body>
 </html>
