@@ -5893,7 +5893,7 @@
 
     async function importLeadHistory() {
       if (!confirm('Import every form submission from before lead intake started?\n\nEach one is tied to the conference it came from and assigned the way it really went: the Lead Owner in Close when the person is found there (by email, then organization), otherwise the rep who attended that show. They come in as Contacted with the source and date they had, no emails go out, and they stay out of the Open queue (filter: History). Anything that matches neither Close nor a show comes in unassigned so you can see it.')) return;
-      try { var r = await ppApi('importLeadHistory', {}, 170000); if (!r.success) throw new Error(r.error || 'Import failed'); await loadLeads(true); renderLeads(); renderUpcoming(); if (typeof renderLandingPages === 'function' && lpLoaded) renderLandingPages(); showToast(r.created + ' historical lead' + (r.created === 1 ? '' : 's') + ' imported' + (r.close ? '; ' + r.close.matched + ' matched in Close so far, the rest hourly' : ''), 'success'); } catch(e) { showToast('Could not import history: ' + e.message, 'error'); }
+      try { var r = await ppApi('importLeadHistory', {}, 290000); if (!r.success) throw new Error(r.error || 'Import failed'); await loadLeads(true); renderLeads(); renderUpcoming(); if (typeof renderLandingPages === 'function' && lpLoaded) renderLandingPages(); showToast(r.created + ' historical lead' + (r.created === 1 ? '' : 's') + ' imported' + (r.closeScheduled ? '; Close matching starts in a minute and runs on its own' : ''), 'success'); } catch(e) { showToast('Could not import history: ' + e.message, 'error'); }
     }
     // =====================================================================
     // CLOSE CRM: meetings + account health  (Sept 2026)
