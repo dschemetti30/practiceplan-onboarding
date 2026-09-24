@@ -2371,8 +2371,7 @@
         <div class="pp-stat-strip" id="leadStats"></div>
         <div id="leadRotation"></div>
         <div class="table-section">
-          <div class="controls-row">
-            <div class="section-title">Inbound Leads</div>
+          <div class="controls-row"><div class="cp-toolbar-left"><div class="section-title">Inbound Leads</div><div class="pp-view-toggle" id="leadViewToggle"></div></div>
             <div class="controls-right">
               <div class="controls-group filters-group">
                 <div class="styled-select"><select id="leadStatusFilter" onchange="leadStatusFilter=this.value;renderLeads()"><option value="open">Open leads</option><option value="all">All leads</option><option value="unassigned">Unassigned</option><option value="new">New</option><option value="contacted">Contacted</option><option value="meeting">Meeting set</option><option value="qualified">Qualified</option><option value="won">Won</option><option value="lost">Lost</option><option value="history">History (pre-intake)</option><option value="notinclose">Not in Close</option></select></div>
@@ -2690,7 +2689,7 @@
       animateCount('loadMetricOrgs', totalOrgs, 500); animateCount('loadMetricSpaces', totalSpaces, 600); animateCount('loadMetricComplete', totalComplete, 550);
       // Hold the finished state just long enough to read it (max ~0.9s), never longer than the data took
       var elapsed = Date.now() - (window._ppLoadStart || Date.now());
-      var hold = Math.max(600, (fromCache ? 1100 : 1400) - elapsed);
+      var hold = Math.max(1800, (fromCache ? 2600 : 3000) - elapsed);
       setTimeout(function() {
         var ov = document.getElementById('dataLoadingOverlay');
         if (ov) ov.classList.add('leaving');
@@ -2719,7 +2718,7 @@
       if (typeof PP_MARKETING_VIEWS !== 'undefined' && PP_MARKETING_VIEWS.indexOf(view) >= 0 && !ppMarketingAllowed()) { showToast('Marketing is still being built. Coming soon.', 'error'); return; }
       document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.view-content').forEach(c => c.classList.remove('active'));
-      document.querySelector('.view-tab[onclick*="' + view + '"]').classList.add('active');
+      var _tb = document.querySelector('.view-tab[onclick*="\'' + view + '\'"]'); if (_tb) _tb.classList.add('active');
       document.getElementById(view + 'View').classList.add('active');
       if (view === 'calendar') renderCalendar();
       if (view === 'pipeline') renderPipeline();
@@ -8298,6 +8297,209 @@
     #tsGroups th:nth-child(5){width:128px}#tsGroups th:nth-child(7){width:130px}#tsGroups th:nth-child(3){width:118px}
     #tsGroups td:nth-child(7){white-space:nowrap;overflow:visible}
     .ts-col-chip{max-width:none;overflow:visible}
+  </style>
+
+  <script>
+    // =====================================================================
+    // 1. ONBOARDING HUB: Submissions, Pipeline and Playbook are three ways to look at the same districts.
+    //    One tab, one header, one set of numbers, three modes that hand off to each other.
+    // =====================================================================
+    var OB_MODES = [['submissions', 'Board', 'Every district, grouped by stage, editable inline'], ['pipeline', 'Pipeline', 'The same districts as a kanban you can drag'], ['playbook', 'Playbook', 'One district at a time, step by step to handoff']];
+    var obMode = 'submissions';
+    function obHubHead() {
+      var today = ppTodayISO(), live = allData.filter(function(d) { return ['published', 'launched'].indexOf(d.pipelineStatus) >= 0; });
+      var counts = { 'in-progress': 0, onboarding: 0, published: 0, launched: 0 }; allData.forEach(function(d) { if (counts[d.pipelineStatus] !== undefined) counts[d.pipelineStatus]++; });
+      var ready = (typeof hoReady === 'function') ? allData.filter(hoReady).length : 0, noRep = allData.filter(function(d) { return !d.accountRep && ['in-progress', 'onboarding', 'published'].indexOf(d.pipelineStatus) >= 0; }).length, goLives = allData.filter(function(d) { var g = (typeof getGoLiveDate === 'function') ? getGoLiveDate(d) : (d.formData && d.formData.policies && d.formData.policies.goLiveDate); return g && g >= today && ppDaysBetween(g, today) <= 30; }).length;
+      var k = function(n, l, go, cls) { return '<div class="ob-k' + (cls ? ' ' + cls : '') + '" onclick="' + go + '"><b>' + n + '</b><span>' + l + '</span></div>'; };
+      return '<div class="ob-hub"><div class="ob-modes">' + OB_MODES.map(function(m) { return '<button class="' + (obMode === m[0] ? 'on' : '') + '" onclick="obSetMode(\'' + m[0] + '\')" title="' + m[2] + '">' + m[1] + '</button>'; }).join('') + '</div><div class="ob-ks">' + k(counts['in-progress'], 'in progress', "obSetMode('submissions');setFilter('in-progress')") + k(counts.onboarding, 'onboarding', "obSetMode('submissions');setFilter('onboarding')") + k(counts.published, 'published', "obSetMode('submissions');setFilter('published')") + k(live.length, 'live districts', "obSetMode('submissions');setFilter('launched')", 'good') + k(goLives, 'go-lives in 30d', "switchView('calendar')") + k(ready, 'ready to hand off', "obSetMode('playbook')", ready ? 'warn' : '') + k(noRep, 'without a rep', "obSetMode('submissions')", noRep ? 'warn' : '') + '</div></div>';
+    }
+    function obSetMode(mode) {
+      obMode = mode; var hub = document.getElementById('onboardingView'); if (!hub) return;
+      ['submissionsView', 'pipelineView', 'playbookView'].forEach(function(id) { var el = document.getElementById(id); if (el) el.style.display = (id === mode + 'View') ? '' : 'none'; });
+      var head = document.getElementById('obHubHead'); if (head) head.innerHTML = obHubHead();
+      if (mode === 'playbook') renderPlaybook(); else if (mode === 'pipeline') renderPipeline(); else { renderTable(); renderSubBoard(); }
+      var active = document.querySelector('.view-content.active'); if (active && active.id !== 'onboardingView') { document.querySelectorAll('.view-content').forEach(function(c) { c.classList.remove('active'); }); hub.classList.add('active'); }
+      document.querySelectorAll('.view-tab').forEach(function(t) { t.classList.toggle('active', (t.getAttribute('onclick') || '').indexOf("'onboarding'") >= 0); });
+      ppSetHeaderTitle('onboarding'); ppPageHead('onboarding');
+      try { history.replaceState(null, '', '#onboarding/' + mode); } catch(e) {}
+    }
+    (function() {
+      var subs = document.getElementById('submissionsView'), pipe = document.getElementById('pipelineView'), play = document.getElementById('playbookView'); if (!subs || !pipe || !play) return;
+      var hub = document.createElement('div'); hub.className = 'view-content'; hub.id = 'onboardingView'; hub.innerHTML = '<div id="obHubHead"></div>';
+      subs.parentNode.insertBefore(hub, subs);
+      [subs, pipe, play].forEach(function(v) { v.classList.remove('view-content', 'active'); v.classList.add('ob-pane'); hub.appendChild(v); v.style.display = 'none'; });
+      // nav: one tab replaces three
+      var tSub = document.querySelector('.view-tab[onclick="switchView(\'submissions\')"]'), tPipe = document.querySelector('.view-tab[onclick="switchView(\'pipeline\')"]'), tPlay = document.querySelector('.view-tab[onclick="switchView(\'playbook\')"]');
+      if (tSub) { tSub.setAttribute('onclick', "switchView('onboarding')"); tSub.setAttribute('data-short', 'Onboarding'); tSub.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Onboarding'; }
+      if (tPipe) tPipe.remove(); if (tPlay) tPlay.remove();
+      PP_VIEW_TITLES.onboarding = ['Onboarding', 'Onboarding'];
+      var _sv = switchView; switchView = function(v) {
+        if (v === 'submissions' || v === 'pipeline' || v === 'playbook') { obMode = v; v = 'onboarding'; }
+        _sv(v);
+        if (v === 'onboarding') { obSetMode(obMode); }
+      };
+      var _open = openPlaybookFor; openPlaybookFor = function(email) { pbClient = email; obMode = 'playbook'; switchView('onboarding'); };
+      // a stage change or edit anywhere refreshes the hub numbers
+      var _rt = renderTable; renderTable = function() { _rt(); var head = document.getElementById('obHubHead'); if (head && document.getElementById('onboardingView').classList.contains('active')) head.innerHTML = obHubHead(); };
+    })();
+
+    // =====================================================================
+    // 2. LEAD SOURCES: every inbound lead, ever, by where it came from and when. Replaces the history strip.
+    // =====================================================================
+    var lsView = 'queue', lsRange = 365, lsGroup = 'source', lsRep = 'all';
+    function lsSourceOf(l) { var s = (typeof leadShowFor === 'function') ? leadShowFor(l) : null; if (s) return { key: 'show:' + s.id, label: s.name, kind: 'conference', show: s }; var p = (typeof lpList !== 'undefined') ? lpList.find(function(p) { return !p.showId && [p.sourceKey, p.url].some(function(c) { return c && l.source && lpSourceMatches(l.source, c); }); }) : null; if (p) return { key: 'page:' + p.id, label: p.title, kind: 'evergreen page' }; return { key: 'src:' + String(l.source || '').toLowerCase().trim(), label: l.source || 'Unknown', kind: l.source ? 'other source' : 'no source' }; }
+    function renderLeadSources() {
+      var host = document.getElementById('leadSources'); if (!host) return;
+      if (lsView !== 'sources') { host.style.display = 'none'; return; } host.style.display = '';
+      var today = ppTodayISO(), since = new Date(); since.setDate(since.getDate() - lsRange); var sinceIso = lsRange ? since.toISOString().slice(0, 10) : '0000';
+      var all = leadList.filter(function(l) { return l.receivedAt && String(l.receivedAt).slice(0, 10) >= sinceIso && (lsRep === 'all' || l.assignedTo === lsRep); });
+      var groups = {}; all.forEach(function(l) { var s = lsSourceOf(l); var g = groups[s.key] = groups[s.key] || { key: s.key, label: s.label, kind: s.kind, show: s.show, leads: [], months: {} }; g.leads.push(l); var m = String(l.receivedAt).slice(0, 7); g.months[m] = (g.months[m] || 0) + 1; });
+      var rows = Object.keys(groups).map(function(k) { return groups[k]; }).sort(function(a, b) { return b.leads.length - a.leads.length; });
+      var months = []; var cur = new Date(lsRange ? since : new Date(Math.min.apply(null, all.map(function(l) { return new Date(l.receivedAt).getTime(); })) || Date.now())); cur.setDate(1); var end = new Date(); while (cur <= end && months.length < 36) { months.push(cur.toISOString().slice(0, 7)); cur.setMonth(cur.getMonth() + 1); }
+      var byMonth = {}; months.forEach(function(m) { byMonth[m] = {}; }); all.forEach(function(l) { var m = String(l.receivedAt).slice(0, 7); if (!byMonth[m]) return; var k = lsSourceOf(l).kind; byMonth[m][k] = (byMonth[m][k] || 0) + 1; });
+      var maxM = Math.max(1, Math.max.apply(null, months.map(function(m) { return Object.keys(byMonth[m]).reduce(function(n, k) { return n + byMonth[m][k]; }, 0); })));
+      var kindColor = { conference: 'var(--pp-blue)', 'evergreen page': 'var(--pp-green)', 'other source': '#7c3aed', 'no source': '#cbd5e1' };
+      var kinds = ['conference', 'evergreen page', 'other source', 'no source'];
+      var won = all.filter(function(l) { return l.status === 'won'; }).length, inClose = all.filter(function(l) { return l.closeLeadId; }).length, confs = rows.filter(function(g) { return g.kind === 'conference'; });
+      var k = function(v, l, s) { return '<div class="out-kpi"><div class="out-kpi-top"><div><div class="v">' + v + '</div><div class="l">' + l + '</div></div></div><div class="out-kpi-foot"><span>' + s + '</span></div></div>'; };
+      var maxG = Math.max(1, rows.length ? rows[0].leads.length : 1);
+      host.innerHTML = '<div class="out-head"><div class="pp-view-toggle">' + [[90, '90 days'], [365, '12 months'], [0, 'All time']].map(function(r) { return '<button class="' + (lsRange === r[0] ? 'on' : '') + '" onclick="lsRange=' + r[0] + ';renderLeadSources()">' + r[1] + '</button>'; }).join('') + '</div><div class="styled-select"><select onchange="lsRep=this.value;renderLeadSources()"><option value="all">Every rep</option>' + TEAM_MEMBERS.map(function(m) { return '<option value="' + m.email + '"' + (lsRep === m.email ? ' selected' : '') + '>' + m.name + '</option>'; }).join('') + '</select></div><div class="pp-toolbar-note">' + all.length + ' inbound lead' + (all.length === 1 ? '' : 's') + ', every source, current and historical.</div></div>'
+        + '<div class="out-kpis" style="grid-template-columns:repeat(5,1fr)">' + k(all.length, 'Inbound leads', lsRange ? 'in the period' : 'all time') + k(confs.length, 'Conferences with leads', confs.reduce(function(n, g) { return n + g.leads.length; }, 0) + ' leads from shows') + k(won, 'Won', all.length ? Math.round(won / all.length * 100) + '% of leads' : '') + k(inClose, 'In Close', all.length ? Math.round(inClose / all.length * 100) + '% linked' : '') + '<div class="out-kpi"><div class="out-kpi-top"><div><div class="v text">' + (rows[0] ? ppEsc(rows[0].label) : '-') + '</div><div class="l">Top source</div></div></div><div class="out-kpi-foot"><span>' + (rows[0] ? rows[0].leads.length + ' leads' : '') + '</span></div></div>' + '</div>'
+        + '<div class="stat-card out-card"><h3>When they came in<span class="out-legend">' + kinds.map(function(kk) { return '<i style="background:' + kindColor[kk] + '"></i>' + kk + ' '; }).join('') + '</span></h3><div class="ls-months">' + months.map(function(m) { var tot = Object.keys(byMonth[m]).reduce(function(n, kk) { return n + byMonth[m][kk]; }, 0); return '<div class="ls-m" title="' + ppFmtDate(m + '-01', { month: 'long', year: 'numeric' }) + ': ' + tot + '"><div class="ls-m-bar">' + kinds.map(function(kk) { return byMonth[m][kk] ? '<i style="height:' + (byMonth[m][kk] / maxM * 100) + '%;background:' + kindColor[kk] + '"></i>' : ''; }).join('') + '</div><span>' + ppFmtDate(m + '-01', { month: 'short' }) + (m.slice(5) === '01' || m === months[0] ? '<br>' + m.slice(0, 4) : '') + '</span><b>' + (tot || '') + '</b></div>'; }).join('') + '</div></div>'
+        + '<div class="stat-card out-card"><h3>By source<span class="n">' + rows.length + '</span></h3><div class="table-wrapper" style="border-radius:12px"><table class="pp-table ls-table"><thead><tr><th>Source</th><th>Kind</th><th>Leads</th><th>First</th><th>Latest</th><th>Won</th><th>Open</th><th>In Close</th><th>Reps</th></tr></thead><tbody>' + rows.map(function(g) { var first = g.leads.map(function(l) { return String(l.receivedAt).slice(0, 10); }).sort()[0], last = g.leads.map(function(l) { return String(l.receivedAt).slice(0, 10); }).sort().slice(-1)[0], w = g.leads.filter(function(l) { return l.status === 'won'; }).length, o = g.leads.filter(function(l) { return ['won', 'lost'].indexOf(l.status) < 0; }).length, ic = g.leads.filter(function(l) { return l.closeLeadId; }).length, reps = Object.keys(g.leads.reduce(function(a, l) { if (l.assignedTo) a[l.assignedTo] = 1; return a; }, {})); return '<tr onclick="lsOpen(\'' + ppEsc(g.key) + '\')" style="cursor:pointer"><td><div class="pp-org-name">' + ppEsc(g.label) + '</div>' + (g.show ? '<div class="pp-org-sub">' + (g.show._start ? ppFmtDate(g.show._start, { month: 'short', year: 'numeric' }) : '') + (g.show.location ? ' &middot; ' + ppEsc(g.show.location) : '') + '</div>' : '') + '</td><td><span class="pp-chip" style="background:' + kindColor[g.kind] + '22;color:' + (g.kind === 'no source' ? '#64748b' : kindColor[g.kind]) + '">' + g.kind + '</span></td><td><div class="ls-bar"><i style="width:' + Math.round(g.leads.length / maxG * 100) + '%"></i><b>' + g.leads.length + '</b></div></td><td class="time-ago">' + ppFmtDate(first, { month: 'short', day: 'numeric', year: 'numeric' }) + '</td><td class="time-ago">' + ppFmtDate(last, { month: 'short', day: 'numeric', year: 'numeric' }) + '</td><td>' + (w ? '<b style="color:var(--pp-green)">' + w + '</b>' : '<span class="pp-placeholder">0</span>') + '</td><td>' + o + '</td><td>' + ic + '/' + g.leads.length + '</td><td>' + (reps.length ? ppRepAvatars(reps.join(', '), 20) : '<span class="pp-placeholder">-</span>') + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+    }
+    function lsOpen(key) {
+      var leads = leadList.filter(function(l) { return lsSourceOf(l).key === key; }).sort(function(a, b) { return (b.receivedAt || '') < (a.receivedAt || '') ? -1 : 1; }); var g = leads.length ? lsSourceOf(leads[0]) : { label: key };
+      ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + ppEsc(g.label) + '</h2><div class="modal-subtitle">' + leads.length + ' inbound lead' + (leads.length === 1 ? '' : 's') + ' &middot; ' + ppEsc(g.kind || '') + '</div></div><div class="modal-body"><div class="table-wrapper" style="margin-top:16px;border-radius:12px"><table class="pp-table" style="min-width:680px"><thead><tr><th>Lead</th><th>Organization</th><th>Received</th><th>Status</th><th>Rep</th><th>Close</th></tr></thead><tbody>' + leads.map(function(l) { return '<tr><td><div class="pp-org-name">' + ppEsc(l.name || '(no name)') + '</div><div class="pp-org-sub">' + ppEsc(l.email || '') + '</div></td><td>' + ppEsc(l.org || '') + '</td><td class="time-ago">' + (l.receivedAt ? ppFmtDate(String(l.receivedAt).slice(0, 10), { month: 'short', day: 'numeric', year: 'numeric' }) : '') + (l.origin === 'history' ? ' <span class="ca-sub" style="display:inline">history</span>' : '') + '</td><td><span class="pp-chip ' + (l.status === 'won' ? 'booked' : l.status === 'lost' ? 'inactive' : 'unset') + '">' + ppEsc(l.status || 'new') + '</span></td><td>' + (l.assignedTo ? ppEsc(ppRepName(l.assignedTo)) : '<span class="pp-placeholder">-</span>') + '</td><td>' + (l.closeLeadId ? '<a href="' + ppEsc(l.closeUrl) + '" target="_blank" rel="noopener" style="color:var(--pp-blue)">' + ppEsc(l.closeStatus || 'open') + '</a>' : '<span class="pp-placeholder">not in Close</span>') + '</td></tr>'; }).join('') + '</tbody></table></div></div>');
+    }
+    (function() {
+      // the leads view gets a Queue / Sources toggle; the old history strip is retired
+      var view = document.getElementById('leadsView'); if (!view) return;
+      var host = document.createElement('div'); host.id = 'leadSources'; host.style.display = 'none'; view.appendChild(host);
+      renderLeadHistory = function() { var lh = document.getElementById('leadHistory'); if (lh) lh.remove(); };
+      var _rl = renderLeads; renderLeads = function() { _rl(); var stats = document.getElementById('leadStats'), rot = document.getElementById('leadRotation'), sec = view.querySelector('.table-section'); var q = lsView === 'queue'; [stats, rot, sec].forEach(function(el) { if (el) el.style.display = q ? '' : 'none'; }); renderLeadSources(); var tog = document.getElementById('leadViewToggle'); if (tog) tog.innerHTML = '<button class="' + (q ? 'on' : '') + '" onclick="lsView=\'queue\';renderLeads()">Queue</button><button class="' + (q ? '' : 'on') + '" onclick="lsView=\'sources\';renderLeads()">Sources</button>'; };
+    })();
+
+    // =====================================================================
+    // 3. ACTIVITY: a timeline grouped by day, reached from the dashboard. Out of the nav.
+    // =====================================================================
+    (function() {
+      var tab = document.querySelector('.view-tab[onclick="switchView(\'activity\')"]'); if (tab) tab.remove();
+      renderActivity = function() {
+        var feed = document.getElementById('activityFeed'); if (!feed) return;
+        var list = (activityFilter === 'all' ? allActivities : allActivities.filter(function(a) { return a.type === activityFilter; })).slice().sort(function(a, b) { return String(b.timestamp) < String(a.timestamp) ? -1 : 1; });
+        if (!list.length) { feed.innerHTML = '<div class="pp-empty"><strong>Nothing yet</strong>Changes the team makes show up here as they happen.</div>'; return; }
+        var today = ppTodayISO(), yday = new Date(Date.now() - 86400000).toISOString().slice(0, 10), html = '', lastDay = '';
+        var labels = { status: 'Stage', checklist: 'Checklist', rep: 'Rep', comment: 'Comment', archive: 'Archive', other: 'Update' };
+        list.forEach(function(a) {
+          var day = String(a.timestamp || '').slice(0, 10) || 'Earlier';
+          if (day !== lastDay) { lastDay = day; html += '<div class="act-day-h">' + (day === today ? 'Today' : day === yday ? 'Yesterday' : /\d{4}-\d{2}-\d{2}/.test(day) ? ppFmtDate(day, { weekday: 'long', month: 'long', day: 'numeric' }) : day) + '</div>'; }
+          var email = String(a.userEmail || a.user || '').toLowerCase(), member = TEAM_MEMBERS.find(function(m) { return m.email === email; }), who = member ? member.name : (email ? email.split('@')[0] : 'Someone');
+          var action = String(a.action || 'updated'); if (/^logactivity$/i.test(action)) action = 'updated';
+          var t = a.timestamp ? new Date(a.timestamp) : null, time = t && !isNaN(t) ? t.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '';
+          html += '<div class="act-item act-' + ppEsc(a.type || 'other') + '">' + (member ? getTeamPhoto(member.email, 30) : '<span class="pp-avatar-fallback" style="width:30px;height:30px">' + ppEsc(who.charAt(0).toUpperCase()) + '</span>') + '<div class="act-main"><div class="act-text"><b>' + ppEsc(who) + '</b> ' + ppEsc(action) + (a.target ? ' <span class="act-target">' + ppEsc(a.target) + '</span>' : '') + (a.detail ? ' <span class="act-detail">' + ppEsc(a.detail) + '</span>' : '') + '</div><div class="act-meta"><span>' + time + '</span><span class="pp-chip unset" style="font-size:9px;padding:1px 7px">' + (labels[a.type] || 'Update') + '</span></div></div></div>';
+        });
+        feed.innerHTML = '<div class="act-days">' + html + '</div>';
+      };
+    })();
+
+    // =====================================================================
+    // 4. PAGE HEADERS: every view opens the same way: eyebrow, title, one sentence on what the page is for.
+    // =====================================================================
+    var PP_PAGE_META = {
+      dashboard: ['HQ', 'Dashboard', 'What needs you today across onboarding, sales and marketing.'],
+      calendar: ['HQ', 'Calendar', 'Go-lives, trade shows and Close meetings on one calendar, in your time zone.'],
+      team: ['HQ', 'Team', 'Each person\'s accounts, onboardings, leads, meetings and shows.'],
+      onboarding: ['Onboarding', 'Onboarding', 'Every district from form to handoff. Board to edit, Pipeline to move, Playbook to work one at a time.'],
+      customers: ['Client Success', 'Client Overview', 'Live districts: health, touch, checklist and who owns the relationship.'],
+      credentials: ['Client Success', 'Client Credentials', 'Admin logins and platform access for every live district.'],
+      tradeshows: ['Sales', 'Trade Shows', 'The conference calendar, who is going, what it costs and what came out of it.'],
+      leads: ['Sales', 'Inbound Leads', 'Form leads routed to reps, matched to Close, and traced back to their source.'],
+      meetings: ['Sales', 'Meetings', 'This week\'s Close meetings by rep, then what is coming and what just happened.'],
+      landing: ['Sales', 'Landing Pages', 'Conference and evergreen pages, who their leads route to, and whether they are live.'],
+      outreach: ['Marketing', 'Outreach', 'Email outreach from Close: volume, response, who we reach and what subject lines work.'],
+      content: ['Marketing', 'Content Calendar', 'Every post, planned or published, across every platform.'],
+      social: ['Marketing', 'Social Performance', 'Reach, engagement, cadence and followers, built from the Content Calendar.'],
+      requests: ['Marketing', 'Creative Requests', 'Ask for a post, an announcement or a piece of collateral. Donnie is emailed on every request.'],
+      resources: ['Workspace', 'Resources', 'Sales documents, Drive folders, signed-document scanning and upload checks.'],
+      activity: ['Workspace', 'Activity', 'Everything the team changed, newest first.']
+    };
+    function ppPageHead(v) {
+      var meta = PP_PAGE_META[v]; var view = document.getElementById(v + 'View'); if (!meta || !view) return;
+      var head = view.querySelector(':scope > .page-head'); if (!head) { head = document.createElement('div'); head.className = 'page-head'; view.insertBefore(head, view.firstChild); }
+      head.innerHTML = '<div class="page-head-eyebrow">' + ppEsc(meta[0]) + '</div><h1 class="page-head-title">' + ppEsc(meta[1]) + '</h1><div class="page-head-sub">' + ppEsc(meta[2]) + '</div>';
+      // the in-page repeat of the title becomes redundant
+      view.querySelectorAll('.section-title, .ca-title, .activity-title, .hq-greet h1').forEach(function(t) { if (t.closest('.page-head')) return; var txt = t.textContent.trim().toLowerCase(); if (txt === meta[1].toLowerCase() || txt === 'outreach from close' || txt === 'activity log' || txt === 'facebook & instagram') t.classList.add('page-title-dup'); });
+    }
+    (function() {
+      var _sv = switchView; switchView = function(v) { _sv(v); var id = (v === 'submissions' || v === 'pipeline' || v === 'playbook') ? 'onboarding' : v; setTimeout(function() { ppPageHead(id); }, 0); };
+      // the top bar keeps only the breadcrumb; the page carries the title
+      var _st = ppSetHeaderTitle; ppSetHeaderTitle = function(view) { var t = document.getElementById('hdrTitle'); var meta = PP_PAGE_META[view] || PP_VIEW_TITLES[view]; if (t && meta) t.innerHTML = '<span class="crumb">' + ppEsc(meta[0]) + '</span><b>' + ppEsc(meta[1]) + '</b>'; else _st(view); };
+      setTimeout(function() { var a = document.querySelector('.view-content.active'); if (a) ppPageHead(a.id.replace('View', '')); }, 1500);
+    })();
+
+    // =====================================================================
+    // 5. SPLASH: three seconds, then the dashboard rises in. 6. NAV: room to breathe.
+    // =====================================================================
+</script>
+  <style>
+    /* onboarding hub */
+    .ob-hub{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:18px}
+    .ob-modes{display:inline-flex;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px;gap:2px;box-shadow:var(--sh-xs)}
+    .ob-modes button{height:32px;padding:0 16px;border:none;border-radius:9px;background:transparent;font:inherit;font-size:13px;font-weight:700;color:var(--text2);cursor:pointer;transition:background var(--t-fast),color var(--t-fast)}
+    .ob-modes button.on{background:linear-gradient(135deg,var(--pp-blue),var(--pp-green));color:#fff;box-shadow:var(--sh-sm)}
+    .ob-ks{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+    .ob-k{display:inline-flex;align-items:baseline;gap:6px;padding:6px 12px;border-radius:50px;background:var(--card);border:1px solid var(--border);cursor:pointer;font-size:12px;color:var(--text2);transition:box-shadow var(--t-base),transform var(--t-fast)}
+    .ob-k b{font-family:var(--font-display);font-size:15px;font-weight:800;color:var(--text)}
+    .ob-k:hover{transform:translateY(-1px);box-shadow:var(--sh-sm)}
+    .ob-k.good b{color:var(--pp-green)}.ob-k.warn{border-color:#f59e0b}.ob-k.warn b{color:#b45309}
+    .ob-pane{animation:ppViewIn .45s var(--ease) both}
+    /* lead sources */
+    .ls-months{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px;height:170px;align-items:end}
+    .ls-m{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:3px;min-width:0}
+    .ls-m-bar{width:62%;max-width:26px;height:120px;display:flex;flex-direction:column-reverse;border-radius:6px;overflow:hidden;background:var(--bg)}
+    .ls-m-bar i{display:block;width:100%}
+    .ls-m span{font-size:9px;color:var(--text3);text-align:center;line-height:1.1}.ls-m b{font-size:10px;color:var(--text2)}
+    .ls-bar{position:relative;height:22px;min-width:120px;background:var(--bg);border-radius:6px;overflow:hidden}
+    .ls-bar i{position:absolute;left:0;top:0;height:100%;background:linear-gradient(90deg,var(--pp-blue),var(--pp-green));border-radius:6px;opacity:.85}
+    .ls-bar b{position:relative;display:block;line-height:22px;padding:0 8px;font-size:12px;color:var(--text)}
+    .ls-table td{white-space:nowrap}
+    /* activity timeline */
+    .activity-view-wrap .activity-container{max-width:none}
+    .act-days{padding:6px 4px 10px}
+    .act-day-h{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);padding:14px 0 8px}
+    .act-day-h:first-child{padding-top:4px}
+    .act-item{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border-radius:12px;transition:background var(--t-fast)}
+    .act-item:hover{background:var(--bg)}
+    .act-item img{border-radius:50%;flex-shrink:0}
+    .act-main{min-width:0;flex:1}
+    .act-text{font-size:13px;color:var(--text2);line-height:1.45}
+    .act-text b{color:var(--text)}
+    .act-target{color:var(--pp-blue);font-weight:600}
+    .act-detail{color:var(--text3)}
+    .act-meta{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text3);margin-top:3px}
+    /* page headers */
+    .page-head{margin:2px 0 18px;animation:ppViewIn .45s var(--ease) both}
+    .page-head-eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--pp-blue);margin-bottom:2px}
+    .page-head-title{font-family:var(--font-display);font-size:26px;font-weight:800;letter-spacing:-0.02em;color:var(--text);margin:0;line-height:1.15}
+    .page-head-sub{font-size:13px;color:var(--text2);margin-top:4px;max-width:720px}
+    .page-title-dup{display:none !important}
+    .header .hdr-title,#hdrTitle{opacity:.85}
+    /* nav: breathing room (compact modes still apply only when the window is short) */
+    body.pp-sidebar .pp-side{padding:20px 14px 14px}
+    body.pp-sidebar .pp-side:not(.compact) .view-tab{padding:8px 12px;font-size:13.5px;border-radius:10px;margin:0}
+    body.pp-sidebar .pp-side:not(.compact) .view-tabs{gap:2px}
+    body.pp-sidebar .pp-side:not(.compact) .nav-group{margin:13px 0 5px;padding:0 12px;font-size:10px;letter-spacing:.11em}
+    body.pp-sidebar .pp-side:not(.compact) .nav-group:first-child{margin-top:6px}
+    body.pp-sidebar .pp-side:not(.compact) .pp-side-logo{margin-bottom:14px}
+    body.pp-sidebar .pp-side .view-tab.active{box-shadow:var(--sh-sm)}
+  </style>
+  <style>
+    #onboardingView .section-title{display:none}
+    #subBoard table th:nth-child(3){width:140px}
+    .ob-ks .ob-k{padding:5px 11px;font-size:11.5px}.ob-ks .ob-k b{font-size:14px}
+    .out-kpi .v{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+    .out-kpi .v.text{font-size:16px;line-height:1.3;white-space:normal;max-height:2.6em;overflow:hidden}
   </style>
 </body>
 </html>
