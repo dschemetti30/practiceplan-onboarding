@@ -2375,7 +2375,7 @@
             <div class="section-title">Inbound Leads</div>
             <div class="controls-right">
               <div class="controls-group filters-group">
-                <div class="styled-select"><select id="leadStatusFilter" onchange="leadStatusFilter=this.value;renderLeads()"><option value="open">Open leads</option><option value="all">All leads</option><option value="unassigned">Unassigned</option><option value="new">New</option><option value="contacted">Contacted</option><option value="meeting">Meeting set</option><option value="qualified">Qualified</option><option value="won">Won</option><option value="lost">Lost</option><option value="history">History (pre-intake)</option></select></div>
+                <div class="styled-select"><select id="leadStatusFilter" onchange="leadStatusFilter=this.value;renderLeads()"><option value="open">Open leads</option><option value="all">All leads</option><option value="unassigned">Unassigned</option><option value="new">New</option><option value="contacted">Contacted</option><option value="meeting">Meeting set</option><option value="qualified">Qualified</option><option value="won">Won</option><option value="lost">Lost</option><option value="history">History (pre-intake)</option><option value="notinclose">Not in Close</option></select></div>
                 <div class="styled-select"><select id="leadRepFilter" onchange="leadRepFilter=this.value;renderLeads()"><option value="all">All reps</option><option value="none">Unassigned</option></select></div>
                 <div class="styled-select"><select id="leadSourceFilter" onchange="leadSourceFilter=this.value;renderLeads()"><option value="all">All sources</option></select></div>
               </div>
@@ -2392,7 +2392,7 @@
             </div>
           </div>
           <div class="table-wrapper pp-desktop-only">
-            <table class="pp-table" id="leadTable"><thead><tr><th>Lead</th><th>Contact</th><th>Source</th><th>Received</th><th>Assigned</th><th>Status</th><th title="Received to first contact">Touch</th><th>Notes</th><th></th></tr></thead><tbody id="leadTableBody"><tr><td colspan="9" class="pp-empty">Loading leads...</td></tr></tbody></table>
+            <table class="pp-table" id="leadTable"><thead><tr><th>Lead</th><th>Contact</th><th>Source</th><th>Received</th><th>Assigned</th><th>Status</th><th title="Received to first contact">Touch</th><th>Close</th><th>Notes</th><th></th></tr></thead><tbody id="leadTableBody"><tr><td colspan="9" class="pp-empty">Loading leads...</td></tr></tbody></table>
           </div>
           <div class="pp-mobile-cards" id="leadMobileCards"></div>
         </div>
@@ -4783,7 +4783,7 @@
         if (!s.registration || s.registration === 'need-to-pay') s._todo.push('Register');
         if (s.hotel === 'need-to-book') s._todo.push('Hotel');
         if (s.flight === 'need-to-book') s._todo.push('Flight');
-        if (!s.boothSize && s._daysUntil !== null && s._daysUntil <= 60) s._todo.push('Booth size');
+        if (!s.boothKit && s._daysUntil !== null && s._daysUntil <= 60 && !/no booth/i.test(s.boothSize || '')) s._todo.push('Booth kit');
         if (!s._reps.length) s._todo.push('Assign rep');
       }
       return s;
@@ -4866,11 +4866,7 @@
         + cell('reps', ppRepAvatars(s.reps, 26))
         + cell('registration', chip('registration', TS_REG))
         + cell('cost', s.cost ? '<b>' + ppFmtMoney(s.cost) + '</b>' : '<span class="pp-placeholder">$</span>', 'num')
-        + cell('boothSize', s.boothSize ? '<span style="color:var(--text2)">' + ppEsc(s.boothSize) + '</span>' : '<span class="pp-placeholder">Booth?</span>')
-        + cell('hotel', chip('hotel', TS_TRAVEL))
-        + cell('flight', chip('flight', TS_TRAVEL))
-        + cell('outcomes', out)
-        + '<td style="text-align:right"><button class="pp-mini-btn" title="Open full editor" onclick="openTsModal(\'' + ppEsc(s.id) + '\')">' + ppSvg('expand') + '</button></td>'
+        + '<td>' + (typeof leadCloseKitCell === 'function' ? leadCloseKitCell(s) : '') + '</td>'
         + '</tr>';
     }
     function tsCard(s) {
@@ -4963,7 +4959,7 @@
         + '<div class="detail-section"><h3>Booth &amp; Logistics</h3><div class="pp-form">'
         + '<div><label>Registration</label><select id="tf_reg">' + opt(TS_REG, s.registration) + '</select></div>'
         + '<div><label>Event Cost ($)</label><input id="tf_cost" value="' + ppEsc(s.cost) + '" placeholder="2200" inputmode="numeric"></div>'
-        + '<div><label>Booth Size</label><input id="tf_booth" list="tfBoothList" value="' + ppEsc(s.boothSize) + '" placeholder="Pick or type" autocomplete="off"><datalist id="tfBoothList">' + TS_BOOTHS.map(function(b) { return '<option value="' + b + '">'; }).join('') + '</datalist></div>'
+        + '<div><label>Booth</label><div class="pp-toolbar-note" style="padding:8px 0">Pick the kit in the Booth section below. The old Booth Size text stays on the record but is no longer shown.</div><input id="tf_booth" type="hidden" value="' + ppEsc(s.boothSize) + '"></div>'
 
         + '<div><label>Hotel</label><select id="tf_hotel">' + opt(TS_TRAVEL, s.hotel) + '</select></div>'
         + '<div><label>Flight</label><select id="tf_flight">' + opt(TS_TRAVEL, s.flight) + '</select></div>'
@@ -5634,7 +5630,7 @@
     // INBOUND LEADS + ROUND ROBIN  (Sept 2026)
     // =====================================================================
     var LEAD_STATUSES = [{ val: 'new', label: 'New', cls: 'lead-new' }, { val: 'contacted', label: 'Contacted', cls: 'need-to-book' }, { val: 'meeting', label: 'Meeting', cls: 'aud-supers' }, { val: 'qualified', label: 'Qualified', cls: 'booked' }, { val: 'won', label: 'Won', cls: 'active' }, { val: 'lost', label: 'Lost', cls: 'inactive' }];
-    var LEAD_COLS = ['id', 'receivedAt', 'name', 'org', 'email', 'phone', 'source', 'notes', 'status', 'assignedTo', 'assignedAt', 'assignedBy', 'firstTouchAt', 'internalNotes', 'origin', 'sourceKey', 'updatedAt', 'updatedBy'];
+    var LEAD_COLS = ['id', 'receivedAt', 'name', 'org', 'email', 'phone', 'source', 'notes', 'status', 'assignedTo', 'assignedAt', 'assignedBy', 'firstTouchAt', 'internalNotes', 'origin', 'sourceKey', 'closeLeadId', 'closeUrl', 'closeStatus', 'closeLastTouch', 'closeLastTouchType', 'closeCheckedAt', 'updatedAt', 'updatedBy'];
     var leadList = [], leadsLoaded = false, leadsError = '', leadRotation = { order: [], next: '', paused: [] }, leadNotify = true, leadSearch = '', leadStatusFilter = 'open', leadRepFilter = 'all', leadSourceFilter = 'all';
     function leadNormalize(r) { var o = {}; LEAD_COLS.forEach(function(c) { o[c] = (r[c] === undefined || r[c] === null) ? '' : String(r[c]); }); if (LEAD_STATUSES.every(function(s) { return s.val !== o.status; })) o.status = 'new'; o.assignedTo = o.assignedTo.toLowerCase(); return o; }
     async function loadLeads(force) {
@@ -5648,7 +5644,8 @@
     function leadFiltered() {
       var q = leadSearch.trim();
       return leadList.filter(function(l) {
-        if (leadStatusFilter === 'open') { if (['won', 'lost'].indexOf(l.status) >= 0 || l.origin === 'history') return false; }
+        if (leadStatusFilter === 'notinclose') { if (!(l.closeCheckedAt && !l.closeLeadId)) return false; }
+        else if (leadStatusFilter === 'open') { if (['won', 'lost'].indexOf(l.status) >= 0 || l.origin === 'history') return false; }
         else if (leadStatusFilter === 'history') { if (l.origin !== 'history') return false; }
         else if (leadStatusFilter === 'unassigned') { if (l.assignedTo) return false; }
         else if (leadStatusFilter !== 'all' && l.status !== leadStatusFilter) return false;
@@ -8114,6 +8111,47 @@
     .pp-pop-sub{display:block;font-size:10.5px;color:var(--text3);margin:2px 0 0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px}
     .pp-pop-searchable .pp-pop-opt{flex-wrap:wrap}
     .pp-pop-empty{padding:12px;font-size:12px;color:var(--text3);text-align:center}
+  </style>
+
+  <script>
+    // =====================================================================
+    // LEADS <-> CLOSE: every inbound lead shows its Close status and last activity, or a flag when it is not there
+    // =====================================================================
+    function leadCloseKitCell(s) {
+      var k = (typeof bkList !== 'undefined') ? bkList.find(function(x) { return x.id === s.boothKit; }) : null;
+      if (k) return '<span class="ts-col-chip" style="cursor:pointer" title="Booth kit assigned. Click to see the kits." onclick="event.stopPropagation();setTsView(\'booths\')">&#9635; ' + ppEsc(k.name) + '</span>';
+      if (/no booth/i.test(s.boothSize || '')) return '<span class="ca-sub">no booth</span>';
+      return '<span class="pp-chip need-to-book" style="cursor:pointer" title="No kit assigned. Open the show and pick one." onclick="event.stopPropagation();openTsModal(\'' + ppEsc(s.id) + '\')">Pick kit<i class="caret"></i></span>';
+    }
+    function leadCloseCell(l) {
+      if (l.closeLeadId) { var age = l.closeLastTouch ? ppAgo(l.closeLastTouch) : ''; return '<a class="lead-close ok" href="' + ppEsc(l.closeUrl || ('https://app.close.com/lead/' + l.closeLeadId + '/')) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Open in Close"><b>' + ppEsc(l.closeStatus || 'In Close') + '</b><span>' + (l.closeLastTouch ? ppEsc(l.closeLastTouchType || 'activity') + ' ' + age : 'no activity yet') + '</span></a>'; }
+      if (!l.closeCheckedAt) return '<span class="lead-close wait" title="Not checked against Close yet">not checked</span>';
+      return '<span class="lead-close no" title="No Close lead found by email or organization. Click to link one." onclick="event.stopPropagation();leadLinkClose(\'' + ppEsc(l.id) + '\',this)"><b>Not in Close</b><span>link</span></span>';
+    }
+    function leadLinkClose(id, el) { ppFormPopover(el, [{ key: 'url', label: 'Close lead URL', value: '', placeholder: 'https://app.close.com/lead/lead_xxx/' }], async function(v) { if (!v.url) return; try { var r = await ppApi('setLeadCloseLink', { id: id, url: v.url }, 60000); if (!r.success) throw new Error(r.error); var l = leadList.find(function(x) { return x.id === id; }); if (l && r.lead) Object.assign(l, r.lead); renderLeads(); showToast('Linked to Close', 'success'); } catch(e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v29)' : ''), 'error'); } }, { title: 'Link this lead to Close' }); }
+    async function matchLeadsToCloseNow(btn) { var o = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<svg class="pp-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></svg> Matching with Close...'; try { var r = await ppApi('matchLeadsToClose', { limit: 80 }, 170000); if (!r.success) throw new Error(r.error); await loadLeads(true); renderLeads(); showToast(r.matched + ' matched, ' + r.refreshed + ' refreshed' + (r.unmatched ? ', ' + r.unmatched + ' not found' : '') + (r.remaining > 0 ? '; ' + r.remaining + ' more next run' : ''), 'success'); } catch(e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v29)' : ''), 'error'); } btn.disabled = false; btn.innerHTML = o; }
+    // row: insert the Close cell before Notes
+    (function() {
+      var _row = leadRow; leadRow = function(l) { var html = _row(l); var i = html.indexOf('<td class="pp-cell" data-edit="notes"'); if (i < 0) i = html.lastIndexOf('<td style="text-align:right"'); if (i < 0) return html; return html.slice(0, i) + '<td>' + leadCloseCell(l) + '</td>' + html.slice(i); };
+      // stats + filter + button
+      var _rl = renderLeads; renderLeads = function() {
+        _rl();
+        var stats = document.getElementById('leadStats'); if (stats && leadsLoaded) { var checked = leadList.filter(function(l) { return l.closeCheckedAt; }), notIn = checked.filter(function(l) { return !l.closeLeadId; }), inC = leadList.filter(function(l) { return l.closeLeadId; }); if (!document.getElementById('leadCloseStat')) stats.insertAdjacentHTML('beforeend', '<div class="pp-stat" id="leadCloseStat"></div>'); var st = document.getElementById('leadCloseStat'); st.className = 'pp-stat ' + (notIn.length ? 'warn' : 'good'); st.style.cursor = 'pointer'; st.onclick = function() { leadStatusFilter = 'notinclose'; var sel = document.getElementById('leadStatusFilter'); if (sel) { if (![].some.call(sel.options, function(o) { return o.value === 'notinclose'; })) sel.insertAdjacentHTML('beforeend', '<option value="notinclose">Not in Close</option>'); sel.value = 'notinclose'; } renderLeads(); }; st.innerHTML = '<div class="v">' + notIn.length + '</div><div class="l">Not in Close</div><div class="s">' + inC.length + ' linked' + (leadList.length - checked.length ? ' &middot; ' + (leadList.length - checked.length) + ' unchecked' : '') + '</div>'; }
+        var actions = document.querySelector('#leadsView .actions-group'); if (actions && !document.getElementById('leadCloseBtn')) { var b = document.createElement('button'); b.id = 'leadCloseBtn'; b.className = 'text-action-btn'; b.title = 'Look every unlinked lead up in Close by email, then organization, and pull last activity'; b.setAttribute('onclick', 'matchLeadsToCloseNow(this)'); b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Match with Close'; actions.insertBefore(b, actions.firstChild); }
+      };
+      // the "notinclose" filter
+      var _gf = typeof leadFiltered === 'function' ? leadFiltered : null;
+      if (_gf) leadFiltered = function() { var rows = _gf(); if (leadStatusFilter === 'notinclose') rows = leadList.filter(function(l) { return l.closeCheckedAt && !l.closeLeadId; }); return rows; };
+    })();
+    // history panel: how many of each conference's leads are in Close
+    (function() { var _rh = renderLeadHistory; renderLeadHistory = function() { _rh(); document.querySelectorAll('#leadHistory .lh-show').forEach(function(el) { var name = (el.querySelector('.lh-show-t b') || {}).textContent; var s = tsList.find(function(x) { return x.name === name; }); if (!s) return; var leads = leadList.filter(function(l) { var m = leadShowFor(l); return m && m.id === s.id; }), inC = leads.filter(function(l) { return l.closeLeadId; }).length, notIn = leads.filter(function(l) { return l.closeCheckedAt && !l.closeLeadId; }).length; var n = el.querySelector('.lh-n'); if (n && leads.length) n.insertAdjacentHTML('beforeend', ' &middot; <span title="Linked to Close">' + inC + '/' + leads.length + ' in Close</span>' + (notIn ? ' <span style="color:#b91c1c;font-weight:700">' + notIn + ' missing</span>' : '')); }); }; })();
+  </script>
+  <style>
+    .lead-close{display:inline-flex;flex-direction:column;gap:1px;font-size:11px;line-height:1.2;text-decoration:none;padding:4px 8px;border-radius:9px}
+    .lead-close b{font-weight:700}.lead-close span{font-size:10px;color:var(--text3)}
+    .lead-close.ok{background:rgba(0,168,79,0.10);color:var(--pp-green)}.lead-close.ok span{color:var(--text2)}
+    .lead-close.no{background:#fee2e2;color:#b91c1c;cursor:pointer}.lead-close.no span{color:#b91c1c;text-decoration:underline}
+    .lead-close.wait{color:var(--text3);font-style:italic}
   </style>
 </body>
 </html>
