@@ -1,33 +1,31 @@
-// PracticePlan admin API layer on Vercel.
-// Sits in front of the Apps Script deployment: reads are cached at Vercel's edge (fast, stale-while-revalidate),
-// writes pass straight through. The Google Sheet stays the store; Apps Script keeps all its logic.
-//
-// Setup: add APPS_SCRIPT_URL (the /exec URL) in the Vercel project's Environment Variables, redeploy.
-// The admin page detects this endpoint and uses it automatically; without it, it falls back to JSONP.
+// PracticePlan admin API layer on Vercel (ES module: this repo's package.json has "type": "module").
+// Sits in front of the Apps Script deployment: reads are cached at Vercel's edge, writes pass straight through.
+// Setup: Vercel > Settings > Environments > Production (and Preview) > Environment Variables > APPS_SCRIPT_URL = the /exec URL. Redeploy.
 
 const READ = /^(get|bootstrap|ppPing|buildAudience|search|list)/i;
-const NO_CACHE = new Set(['getActivity']);                      // always live
-const SHORT = { ppPing: 5 };                                      // seconds of edge cache for specific reads
-const DEFAULT_SMAXAGE = 45, SWR = 900;                            // fresh for 45s, then served stale while a refresh runs (up to 15 min)
+const NO_CACHE = new Set(['getActivity']);
+const SHORT = { ppPing: 5 };
+const DEFAULT_SMAXAGE = 45, SWR = 900;
 
-module.exports = async function handler(req, res) {
-  const upstream = process.env.APPS_SCRIPT_URL;
-  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  if (req.method === 'OPTIONS') return res.status(204).end();
-  if (!upstream) return res.status(500).json({ success: false, error: 'APPS_SCRIPT_URL is not set on this Vercel project' });
-
+export default async function handler(req, res) {
   try {
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    if (req.method === 'OPTIONS') { res.status(204).end(); return; }
+    const upstream = process.env.APPS_SCRIPT_URL;
+    if (!upstream) { res.setHeader('Cache-Control', 'no-store'); res.status(200).json({ success: false, error: 'APPS_SCRIPT_URL is not set on this Vercel project' }); return; }
+
     if (req.method === 'POST') {
       const body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body || {});
       const r = await fetch(upstream, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body, redirect: 'follow' });
       const text = await r.text();
       res.setHeader('Cache-Control', 'no-store');
-      return send(res, text);
+      send(res, text); return;
     }
-    const q = new URLSearchParams(req.query || {});
-    q.delete('callback'); q.delete('rev');                        // rev only exists to vary the cache key after a write
+
+    const q = new URLSearchParams();
+    for (const [k, v] of Object.entries(req.query || {})) { if (k === 'callback' || k === 'rev') continue; q.append(k, Array.isArray(v) ? v[0] : String(v)); }
     const action = q.get('action') || '';
     const url = upstream + (upstream.includes('?') ? '&' : '?') + q.toString();
     const r = await fetch(url, { redirect: 'follow' });
@@ -35,20 +33,17 @@ module.exports = async function handler(req, res) {
     const isRead = READ.test(action) && !NO_CACHE.has(action) && /"success"\s*:\s*true/.test(text.slice(0, 200));
     if (isRead) {
       const s = SHORT[action] !== undefined ? SHORT[action] : DEFAULT_SMAXAGE;
-      res.setHeader('Cache-Control', `public, s-maxage=${s}, stale-while-revalidate=${SWR}`);
-      res.setHeader('Vary', 'Accept');
+      res.setHeader('Cache-Control', 'public, s-maxage=' + s + ', stale-while-revalidate=' + SWR);
     } else res.setHeader('Cache-Control', 'no-store');
-    return send(res, text);
+    send(res, text);
   } catch (e) {
-    res.setHeader('Cache-Control', 'no-store');
-    return res.status(502).json({ success: false, error: 'Upstream failed: ' + (e && e.message) });
+    try { res.setHeader('Cache-Control', 'no-store'); res.status(200).json({ success: false, error: 'API layer error: ' + (e && e.message ? e.message : String(e)) }); } catch (e2) { res.status(500).end(); }
   }
-};
+}
 
 function send(res, text) {
-  // Apps Script answers JSONP with a callback wrapper only when asked; we never ask, so this is plain JSON. Guard anyway.
-  const m = text.match(/^\s*[\w$]+\((.*)\)\s*;?\s*$/s);
+  const m = /^\s*[\w$]+\(([\s\S]*)\)\s*;?\s*$/.exec(text);
   const json = m ? m[1] : text;
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  return res.status(200).send(json);
+  res.status(200).send(json);
 }
