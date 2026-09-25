@@ -9227,11 +9227,78 @@
     .map-panel-sub{font-size:12px;color:var(--text3);margin-bottom:10px}
     .map-panel-rows{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
     .map-panel-rows>div{display:grid;grid-template-columns:86px 1fr;gap:8px;font-size:12.5px;align-items:baseline}
-    .map-panel-rows span{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)}.map-panel-rows b{color:var(--text);font-weight:600;line-height:1.35}
+    .map-panel-rows>div>span{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)}.map-panel-rows b{color:var(--text);font-weight:600;line-height:1.35}
     .map-panel-actions{display:flex;gap:6px;flex-wrap:wrap}
     .map-panel-actions .pp-btn{height:32px;padding:0 12px;font-size:12px;text-decoration:none}
     .map-hint{position:absolute;left:12px;bottom:10px;font-size:10.5px;color:var(--text3);background:var(--card);border-radius:50px;padding:3px 10px;opacity:.85;pointer-events:none}
     .map-tip{z-index:3}
+  </style>
+
+  <script>
+    // ---- map: defaults and labels ----
+    M.kinds = { customer: true, onboarding: true, prospect: false, show: true };
+    (function() {
+      var _u = mUpdate; mUpdate = function() { _u(); var bar = document.getElementById('mapBar'); if (!bar) return; bar.querySelectorAll('.map-legend .map-chip').forEach(function(b) { b.innerHTML = b.innerHTML.replace('Other Close leads', 'Prospects').replace('Conferences', 'Trade shows'); }); };
+    })();
+    // ---- map: the pin panel ----
+    function mRelTime(iso) { if (!iso) return ''; var d = new Date(iso); if (isNaN(d)) return ''; var days = Math.round((Date.now() - d.getTime()) / 86400000); return days <= 0 ? 'today' : days === 1 ? 'yesterday' : days < 30 ? days + ' days ago' : ppFmtDate(String(iso).slice(0, 10), { month: 'short', day: 'numeric', year: 'numeric' }); }
+    function mLastContact(d) {
+      if (d.lastTouch) return (d.lastTouchType ? ppEsc(d.lastTouchType) + ', ' : '') + mRelTime(d.lastTouch);
+      if (typeof leadList !== 'undefined') { var id = (String(d.url || '').match(/lead\/([A-Za-z0-9_]+)/) || [])[1]; var l = id && leadList.find(function(x) { return x.closeLeadId === id; }); if (l && l.closeLastTouch) return ppEsc(l.closeLastTouchType || 'activity') + ', ' + mRelTime(l.closeLastTouch); }
+      return 'nothing on record';
+    }
+    mOpenPanel = function(d) {
+      M.open = d; var panel = document.getElementById('mapPanel'); if (!panel) return;
+      var rows = [];
+      if (d.kind === 'show') { rows.push(['When', d.date ? ppFmtDate(d.date, { month: 'long', day: 'numeric', year: 'numeric' }) : '-']); rows.push(['Reps', d.reps ? ppEsc(ppSplitReps(d.reps).map(ppRepName).join(', ')) : 'unassigned']); }
+      else {
+        rows.push(['Status', ppEsc(d.status || '-')]); rows.push(['Owner', d.owner ? ppEsc(ppRepName(d.owner) || d.owner) : '-']); if (d.source) rows.push(['Source', ppEsc(d.source)]);
+        rows.push(['Last contact', mLastContact(d)]);
+        if (d.kind === 'prospect') { var m = d.meet; rows.push(['Meetings', m && (m.past || m.upcoming) ? (m.upcoming ? 'next ' + ppFmtDate(m.next.slice(0, 10), { month: 'short', day: 'numeric' }) + (m.past ? ', ' : '') : '') + (m.past ? m.past + ' past' : '') : 'none']); }
+        if (d.rev) { var t = rvTrend(d.rev); rows.push(['Reservations', (d.rev.res2026 || 0).toLocaleString() + ' in 2026' + (d.rev.res2025 ? ' <span class="map-muted">(' + d.rev.res2025.toLocaleString() + ' in 2025)</span>' : '')]); rows.push(['Growth', (d.rev.yoy2026 !== null && d.rev.yoy2026 !== undefined ? '<span class="map-growth ' + (d.rev.yoy2026 >= 0 ? 'up' : 'down') + '">' + (d.rev.yoy2026 >= 0 ? '+' : '') + Math.round(d.rev.yoy2026 * 100) + '%</span> vs 2025 ' : '') + '<span class="pp-chip ' + t.cls + '">' + t.label + '</span>']); }
+      }
+      var actions = d.kind === 'show' ? '<button type="button" class="pp-btn primary" onclick="switchView(\'tradeshows\');setTimeout(function(){openTsModal(\'' + ppEsc(d.id) + '\')},300)">Open show</button>' : (d.url ? '<a class="pp-btn primary" href="' + ppEsc(d.url) + '" target="_blank" rel="noopener">Close</a>' : '') + (d.acctKey ? '<button type="button" class="pp-btn" onclick="switchView(\'customers\');caView=\'list\';setTimeout(function(){var s=document.querySelector(\'#closeAccounts input[type=search], #closeAccounts .search-input\'); if(s){s.value=' + JSON.stringify(d.name).replace(/"/g, '&quot;') + ';s.dispatchEvent(new Event(\'input\'))}},400)">Overview</button>' : '');
+      panel.innerHTML = '<button type="button" class="map-panel-x" data-close="1" title="Close">&#x2715;</button><div class="map-panel-kind" style="color:' + MAP_COLOR[d.kind] + '"><i style="background:' + MAP_COLOR[d.kind] + '"></i>' + (d.kind === 'show' ? 'Trade show' : d.kind === 'customer' ? 'Customer' : d.kind === 'onboarding' ? 'Onboarding' : 'Prospect') + '</div><h3>' + ppEsc(d.name) + '</h3><div class="map-panel-sub">' + ppEsc(d.q) + '</div>'
+        + '<div class="map-panel-rows">' + rows.map(function(r) { return '<div><span>' + r[0] + '</span><em>' + r[1] + '</em></div>'; }).join('') + '</div>'
+        + '<div class="map-panel-actions">' + actions + '<button type="button" class="pp-btn" data-close="1">Back</button></div>';
+      panel.style.display = 'block'; panel.classList.add('open'); mUpdate();
+      if (!panel._wired) { panel._wired = true; panel.addEventListener('click', function(e) { var t = e.target.closest('[data-close]'); if (t) { e.preventDefault(); e.stopPropagation(); mClosePanel(); } }); }
+    };
+    // ---- revenue: acronym-aware account matching (Legacy SSS = Legacy School of Sports Sciences) ----
+    (function() {
+      var STOP = { of: 1, the: 1, and: 1, for: 1 };
+      function acr(s) { return String(s || '').toLowerCase().replace(/\(.*?\)/g, '').replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter(function(w) { return w && !STOP[w]; }); }
+      function acrMatch(a, b) { var wa = acr(a), wb = acr(b); if (!wa.length || !wb.length) return false; var f = function(words, other) { return other.some(function(tok) { if (tok.length < 3 || tok.length > 6) return false; for (var i = 0; i + tok.length <= words.length; i++) { var ini = words.slice(i, i + tok.length).map(function(w) { return w[0]; }).join(''); if (ini === tok) { var rest = other.filter(function(x) { return x !== tok; }); return !rest.length || rest.every(function(x) { return words.indexOf(x) >= 0; }); } } return false; }); }; return f(wa, wb) || f(wb, wa); }
+      var _rvA = rvAccountFor; rvAccountFor = function(r) { var a = _rvA(r); if (a) return a; return (typeof closeAccounts !== 'undefined' ? closeAccounts : []).find(function(x) { return acrMatch(r.org, x.organization || x.closeName); }) || null; };
+    })();
+    // ---- revenue view: clients first, data check compact and collapsed ----
+    (function() {
+      var _rr = renderRevenue; renderRevenue = function() {
+        _rr(); var el = document.getElementById('closeAccounts'); if (!el || caView !== 'revenue') return;
+        var cards = el.querySelectorAll(':scope > .stat-card'); var check = [].find.call(cards, function(c) { return /Customer data check/.test((c.querySelector('h3') || {}).textContent || ''); }); var table = [].find.call(cards, function(c) { return /^Clients/.test((c.querySelector('h3') || {}).textContent || ''); });
+        if (check && table) { table.parentNode.insertBefore(table, check); var h3 = check.querySelector('h3'); var chk = rvCheck(); var n = chk.activeNotCustomer.length + chk.customerNoActivity.length + chk.unlinked.length + chk.dup.length; var body = check.querySelector('.rv-check'); if (body && !check.querySelector('.rv-check-toggle')) { body.style.display = 'none'; h3.insertAdjacentHTML('beforeend', '<button type="button" class="dh-chip rv-check-toggle' + (n ? ' on' : '') + '" onclick="var b=this.closest(\'.stat-card\').querySelector(\'.rv-check\');b.style.display=b.style.display===\'none\'?\'\':\'none\'">' + (n ? n + ' to review' : 'All clean') + '</button>'); } }
+      };
+    })();
+    // ---- client overview: never show two rows for the same district ----
+    (function() {
+      function fold(list) {
+        var groups = {}; list.forEach(function(a) { var k = mNameKey(a.organization || a.closeName); if (!k) return; var st = (String(a.closeName || a.organization || '').match(/\(([A-Z]{2})\)/) || [])[1] || ''; (groups[k] = groups[k] || []).push({ a: a, st: st }); });
+        var drop = {};
+        Object.keys(groups).forEach(function(k) { var g = groups[k]; if (g.length < 2) return; var states = g.map(function(x) { return x.st; }).filter(Boolean); if (states.length && states.some(function(s) { return s !== states[0]; })) return; g.sort(function(x, y) { return ((y.a.closeLeadId ? 2 : 0) + String(y.a.sources || '').split(',').length) - ((x.a.closeLeadId ? 2 : 0) + String(x.a.sources || '').split(',').length); }); var to = g[0].a; g.slice(1).forEach(function(x) { var from = x.a; Object.keys(from).forEach(function(f) { if (f === 'organization' || f === 'orgEmail' || f === 'sources') return; if (from[f] && !to[f]) to[f] = from[f]; }); to.sources = Array.from(new Set(String(to.sources || '').split(',').concat(String(from.sources || '').split(',')).filter(Boolean))).join(','); to.aliases = Array.from(new Set(String(to.aliases || '').split(',').concat([from.orgEmail], String(from.aliases || '').split(',')).filter(Boolean))).join(','); drop[from.orgEmail] = true; }); });
+        return list.filter(function(a) { return !drop[a.orgEmail]; });
+      }
+      var _lca = loadCloseAccounts; loadCloseAccounts = async function(force) { var r = await _lca(force); if (typeof closeAccounts !== 'undefined' && closeAccounts.length) { var before = closeAccounts.length; var folded = fold(closeAccounts); if (folded.length !== before) { closeAccounts.length = 0; folded.forEach(function(a) { closeAccounts.push(a); }); } } return r; };
+      if (typeof closeAccounts !== 'undefined' && closeAccounts.length) { var f2 = fold(closeAccounts); closeAccounts.length = 0; f2.forEach(function(a) { closeAccounts.push(a); }); }
+    })();
+  </script>
+  <style>
+    .map-panel-rows>div{display:grid;grid-template-columns:92px 1fr;gap:8px;font-size:12.5px;align-items:baseline}
+    .map-panel-rows em{font-style:normal;font-weight:500;color:var(--text);line-height:1.4}
+    .map-panel-rows .map-muted{color:var(--text3);font-weight:400}
+    .map-growth{font-weight:700}.map-growth.up{color:var(--pp-green)}.map-growth.down{color:#b91c1c}
+    .map-panel-actions{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px}
+    .map-panel-actions .pp-btn{height:34px;padding:0 8px;font-size:12px;justify-content:center;width:100%;text-decoration:none}
+    .rv-check-toggle{margin-left:auto}
   </style>
 </body>
 </html>
