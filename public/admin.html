@@ -6369,7 +6369,7 @@
       if (!confirm('Merge ' + names.join(' + ') + ' into one account? The others fold into it and stay merged on future syncs. You can unmerge from the account later.')) return;
       try { var r = await ppApi('mergeAccounts', { keys: keys, primaryKey: primary }, 90000); if (!r.success) throw new Error(r.error || 'Merge failed'); caSelected = {}; caDupes = null; await loadCloseAccounts(true); caOpen[primary] = true; renderCloseAccounts(); renderUpcoming(); showToast('Merged ' + r.merged + ' record' + (r.merged === 1 ? '' : 's') + ' into ' + r.primary.organization, 'success'); } catch(e) { showToast(e.message, 'error'); }
     }
-    async function caUnmerge(fromKey) { if (!confirm('Split this record back out? It returns as its own account on the next sync.')) return; try { var r = await ppApi('unmergeAccount', { fromKey: fromKey }, 60000); if (!r.success) throw new Error(r.error); await loadCloseAccounts(true); renderCloseAccounts(); showToast('Unmerged. It will reappear after the next sync.', 'success'); } catch(e) { showToast(e.message, 'error'); } }
+    async function caUnmerge(fromKey) { if (!confirm('Split this record back out? It returns as its own account on the next sync, and the two will not be folded together again automatically.')) return; var host = closeAccounts.find(function(a) { return String(a.aliases || '').split(',').indexOf(fromKey) >= 0; }); var fromName = (typeof caList !== 'undefined' && caList[fromKey]) || fromKey; try { var r = await ppApi('unmergeAccount', { fromKey: fromKey, fromName: fromName, toName: host ? (host.organization || host.closeName) : '' }, 60000); if (!r.success) throw new Error(r.error); await loadCloseAccounts(true); renderCloseAccounts(); showToast('Unmerged. It will reappear after the next sync.', 'success'); } catch(e) { showToast(e.message, 'error'); } }
     async function caLoadDupes() { closeAcctFilter = 'dupes'; if (!caDupes) { renderCloseAccounts(); try { var r = await ppApi('suggestDuplicates', {}, 60000); caDupes = r.success ? (r.groups || []) : []; } catch(e) { caDupes = []; } } renderCloseAccounts(); }
     function caDupesPanel() {
       if (!caDupes) return '<div class="pp-empty">Looking for duplicates...</div>';
@@ -9101,7 +9101,7 @@
     function mCustomerSet() {
       var set = {};
       (typeof closeAccounts !== 'undefined' ? closeAccounts : []).forEach(function(a) { var st = String(a.statusLabel || ''); if (/customer|won/i.test(st) && !/waiting|pending/i.test(st)) set[mNameKey(a.organization || a.closeName)] = { acct: a, why: st }; });
-      (typeof rvList !== 'undefined' ? rvList : []).forEach(function(r) { if ((r.res2026 || 0) > 0) { var k = mNameKey(r.org); set[k] = set[k] || { rev: r, why: 'billing in 2026' }; if (!set[k].rev) set[k].rev = r; } });
+      (typeof rvList !== 'undefined' ? rvList : []).forEach(function(r) { if ((r.res2026 || 0) > 0) { var acct = (typeof rvAccountFor === 'function') ? rvAccountFor(r) : null; var k = mNameKey(acct ? (acct.organization || acct.closeName) : r.org); set[k] = set[k] || { rev: r, why: 'billing in 2026', acct: acct }; if (!set[k].rev) set[k].rev = r; if (acct && !set[k].acct) set[k].acct = acct; } });
       return set;
     }
     function mMeetingIndex() { var idx = {}, now = Date.now(); (typeof closeMeetings !== 'undefined' ? closeMeetings : []).forEach(function(m) { var k = mNameKey(m.leadName); if (!k) return; var t = new Date(m.start).getTime(); var e = idx[k] = idx[k] || { past: 0, upcoming: 0, last: '', next: '' }; if (t < now) { e.past++; if (!e.last || m.start > e.last) e.last = m.start; } else { e.upcoming++; if (!e.next || m.start < e.next) e.next = m.start; } }); return idx; }
@@ -9478,5 +9478,90 @@
     .map-tip{z-index:5}.map-panel{z-index:6}.map-hint{z-index:4}
     .map-root .map-dots,.map-root .map-labels{display:none}
   </style>
+
+  <script>
+// Shared organization-identity rule (used by Apps Script and admin.html): two names are the same organization when
+// their core words match after expanding abbreviations and dropping generic words, when one is a prefix/subset of the
+// other (KIPP vs KIPP Nashville, Harrison School District vs Harrison School District 2), or when one is the other's acronym
+// (TCS = The Covenant School, SWISD = Southwest ISD). A disagreeing state (from "(TX)") always keeps them apart.
+function ppOrgTokens_(s) {
+  var t = String(s || '').toLowerCase().replace(/\(.*?\)/g, ' ').replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').trim().split(/\s+/).filter(Boolean);
+  var EXP = { u: 'university', univ: 'university', mt: 'mount', umc: 'united methodist church', isd: 'isd', cisd: 'isd', sd: 'district', usd: 'district', csd: 'district', hs: 'high school', ms: 'middle school', es: 'elementary school', sw: 'southwest', nw: 'northwest', se: 'southeast', ne: 'northeast', st: 'saint', ft: 'fort', dist: 'district', sch: 'school', schs: 'schools', acad: 'academy', ctr: 'center', intl: 'international', natl: 'national', dept: 'department', assn: 'association', jr: 'junior', sr: 'senior' };
+  var out = []; t.forEach(function(w) { var e = EXP[w]; if (e) out = out.concat(e.split(' ')); else out.push(w); });
+  return out;
+}
+var PP_ORG_GENERIC = { university: 1, college: 1, school: 1, schools: 1, district: 1, independent: 1, isd: 1, city: 1, county: 1, public: 1, academy: 1, the: 1, of: 1, and: 1, llc: 1, inc: 1, church: 1, united: 1, methodist: 1, high: 1, middle: 1, elementary: 1, sports: 1, plex: 1, z: 1, complex: 1, center: 1, community: 1, unified: 1, consolidated: 1, board: 1, education: 1, parish: 1, township: 1, area: 1, regional: 1, charter: 1, preparatory: 1, prep: 1, christian: 0, catholic: 0, park: 0 };
+function ppOrgCore_(s) { return ppOrgTokens_(s).filter(function(w) { return !PP_ORG_GENERIC[w]; }); }
+function ppOrgAcronym_(s) { return ppOrgTokens_(s).filter(function(w) { return w !== 'the' && w !== 'of' && w !== 'and'; }).map(function(w) { return w === 'isd' ? 'isd' : w[0]; }).join(''); }
+function ppOrgStateOf_(s) { var m = String(s || '').match(/\(([A-Z]{2})\)/); return m ? m[1] : ''; }
+function ppOrgAcrTokens_(s) { var out = []; ppOrgTokens_(s).forEach(function(w) { var m = { southwest: ['south', 'west'], northwest: ['north', 'west'], southeast: ['south', 'east'], northeast: ['north', 'east'], isd: ['independent', 'school', 'district'] }[w]; if (m) out = out.concat(m); else out.push(w); }); return out; }
+function ppAlignedAcronym_(shortName, longName) {
+  // walk the short name: a token either equals the next long token, or is the initials of the next N long tokens
+  var A = ppOrgTokens_(shortName), B = ppOrgAcrTokens_(longName), j = 0, SKIP = { the: 1, of: 1, and: 1 }, acr = 0;
+  for (var i = 0; i < A.length; i++) {
+    var w = A[i];
+    var jw = j; while (jw < B.length && SKIP[B[jw]] && B[jw] !== w) jw++;
+    if (jw < B.length && B[jw] === w) { j = jw + 1; continue; }
+    if (w.length >= 2 && w.length <= 7) {
+      var ok = false;
+      [true, false].forEach(function(includeSkip) { if (ok) return; var ini = '', jj = j; while (jj < B.length && ini.length < w.length) { if (includeSkip || !SKIP[B[jj]]) ini += B[jj][0]; jj++; } if (ini === w) { j = jj; ok = true; } });
+      if (ok) { acr++; continue; }
+    }
+    // a qualifier left on the short name after the long name is used up (SWISD San Antonio)
+    if (j >= B.length && acr && A.length - i <= 2) return true;
+    return false;
+  }
+  var left = B.slice(j).filter(function(w) { return !SKIP[w] && !PP_ORG_GENERIC[w]; });
+  return acr > 0 && left.length <= 2;
+}
+function ppOrgClass_(s) {
+  var t = ppOrgTokens_(s), has = function(ws) { return ws.some(function(w) { return t.indexOf(w) >= 0; }); };
+  if (has(['isd', 'district', 'schools', 'cisd', 'usd'])) return 'district';
+  if (has(['university', 'college', 'univ'])) return 'college';
+  if (has(['church', 'umc', 'methodist', 'baptist', 'lutheran', 'ministries', 'chapel']) && !has(['university', 'college'])) return 'church';
+  if (has(['sports', 'plex', 'complex', 'athletic', 'athletics', 'club', 'fieldhouse', 'arena', 'recreation', 'parks'])) return 'sports';
+  if (has(['school', 'academy', 'high', 'middle', 'elementary', 'prep', 'preparatory'])) return 'school';
+  return '';
+}
+function ppSameOrg_(a, b) {
+  var sa = ppOrgStateOf_(a), sb = ppOrgStateOf_(b); if (sa && sb && sa !== sb) return false;
+  var ta = ppOrgClass_(a), tb = ppOrgClass_(b); if (ta && tb && ta !== tb) return false;
+  var ca = ppOrgCore_(a), cb = ppOrgCore_(b); if (!ca.length || !cb.length) return false;
+  var ka = ca.join(' '), kb = cb.join(' '); if (ka === kb) return true;
+  // one is the other plus a short qualifier at the end (a campus, a number, a city): KIPP / KIPP Nashville, Harrison SD / Harrison SD 2
+  var small = ca.length <= cb.length ? ca : cb, big = ca.length <= cb.length ? cb : ca;
+  var isPrefix = small.every(function(w, i) { return big[i] === w; }), extra = big.slice(small.length);
+  if (isPrefix && small.join(' ').length >= 4 && (extra.length === 1 || extra.every(function(w) { return /^\d+$/.test(w); }))) return true;
+  // acronyms, whole or partial: TCS / The Covenant School, SWISD / Southwest ISD, Legacy SSS / Legacy School of Sports Sciences
+  if (ppAlignedAcronym_(a, b) || ppAlignedAcronym_(b, a)) return true;
+  // abbreviated words: U of W Parkside / University of Wisconsin-Parkside. Every core word of each name must be
+  // accounted for by the other (same word, a 1-2 letter abbreviation with the same initial, or a 3+ letter prefix).
+  var la = ppOrgTokens_(a), lb = ppOrgTokens_(b);
+  var covers = function(core, other) { return core.every(function(w) { return other.some(function(x) { return x === w || (x.length <= 2 && x[0] === w[0]) || (x.length >= 3 && w.indexOf(x) === 0) || (w.length <= 2 && w[0] === x[0] && !PP_ORG_GENERIC[x]); }); }); };
+  if (covers(ca, lb) && covers(cb, la) && ca.some(function(w) { return cb.indexOf(w) >= 0; })) return true;
+  return false;
+}
+function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
+
+    // client-side fold uses the same rule; the 'never merge' pairs come with the accounts payload when present
+    (function() {
+      function fold(list) {
+        var never = (window._ppNeverMerge || {}), clusters = [], drop = {};
+        list.forEach(function(a) { var name = a.organization || a.closeName; var home = null; for (var c = 0; c < clusters.length && !home; c++) { var n0 = clusters[c][0].organization || clusters[c][0].closeName; if (never[[ppOrgGroupKey_(name), ppOrgGroupKey_(n0)].sort().join(' || ')]) continue; if (ppSameOrg_(name, n0)) home = clusters[c]; } if (home) home.push(a); else clusters.push([a]); });
+        clusters.forEach(function(c) { if (c.length < 2) return; c.sort(function(x, y) { return ((y.closeLeadId ? 2 : 0) + String(y.sources || '').split(',').length) - ((x.closeLeadId ? 2 : 0) + String(x.sources || '').split(',').length); }); var to = c[0]; c.slice(1).forEach(function(from) { Object.keys(from).forEach(function(f) { if (f === 'organization' || f === 'orgEmail' || f === 'sources') return; if (from[f] && !to[f]) to[f] = from[f]; }); to.sources = Array.from(new Set(String(to.sources || '').split(',').concat(String(from.sources || '').split(',')).filter(Boolean))).join(','); to.aliases = Array.from(new Set(String(to.aliases || '').split(',').concat([from.orgEmail, from.organization], String(from.aliases || '').split(',')).filter(Boolean))).join(','); drop[from.orgEmail] = true; }); });
+        return list.filter(function(a) { return !drop[a.orgEmail]; });
+      }
+      window.ppFoldAccounts = fold;
+      var _lca = loadCloseAccounts; loadCloseAccounts = async function(force) { var r = await _lca(force); if (typeof closeAccounts !== 'undefined' && closeAccounts.length) { var folded = fold(closeAccounts); if (folded.length !== closeAccounts.length) { closeAccounts.length = 0; folded.forEach(function(a) { closeAccounts.push(a); }); } } return r; };
+      if (typeof closeAccounts !== 'undefined' && closeAccounts.length) { var f2 = fold(closeAccounts); closeAccounts.length = 0; f2.forEach(function(a) { closeAccounts.push(a); }); }
+      // revenue rows and the map use the shared rule too
+      mNameKey = function(s) { var c = ppOrgClass_(s); return ppOrgGroupKey_(s) + (c ? '#' + c : ''); };
+      var _rvA = rvAccountFor; rvAccountFor = function(r) { var a = _rvA(r); if (a) return a; return (typeof closeAccounts !== 'undefined' ? closeAccounts : []).find(function(x) { return ppSameOrg_(r.org, x.organization || x.closeName); }) || null; };
+    })();
+    // the Accounts number matches the list, and the list says what it is showing
+    (function() {
+      var _rca = renderCloseAccounts; renderCloseAccounts = function() { _rca(); var el = document.getElementById('closeAccounts'); if (!el) return; var rows = el.querySelectorAll('.ca-table tbody tr').length; var chip = el.querySelector('.dh-chips'); if (chip && !el.querySelector('.ca-showing')) chip.insertAdjacentHTML('beforeend', '<span class="pp-toolbar-note ca-showing" style="margin-left:auto">Showing ' + rows + ' of ' + closeAccounts.length + '</span>'); };
+    })();
+  </script>
 </body>
 </html>
