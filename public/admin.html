@@ -8961,5 +8961,132 @@
     })();
   </script>
   <style>.pp-fast-badge{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);border:1px solid var(--border);border-radius:50px;padding:3px 9px;margin-right:8px;position:relative;z-index:1}.pp-fast-badge.on{color:var(--pp-green);border-color:rgba(0,168,79,0.4)}</style>
+
+  <script>
+    // =====================================================================
+    // SUPER ADMIN + SETTINGS (Workspace): write-back to Close lives here, for Donnie only
+    // =====================================================================
+    var PP_SUPER_ADMINS = ['donnie.schemetti@practiceplan.io', 'd.schemetti@gmail.com'];
+    function ppIsSuperAdmin() { return PP_SUPER_ADMINS.indexOf(String(currentUser?.email || '').toLowerCase()) >= 0; }
+    function renderSettings() {
+      var host = document.getElementById('settingsHost'); if (!host) return;
+      if (!ppIsSuperAdmin()) { host.innerHTML = '<div class="stat-card"><div class="pp-empty"><strong>Super admin only</strong>These settings are managed by Donnie.</div></div>'; return; }
+      var push = intel && intel.push === 'on';
+      host.innerHTML = '<div class="stat-card out-card"><h3>Close write-back</h3><div class="intel-push ' + (push ? 'on' : '') + '"><span class="dh-dot"></span><b>Write-back to Close is ' + (intelLoaded ? (push ? 'on' : 'off') : 'loading') + '</b><span>' + (push ? 'PP Score, PP Tier, Nearest Customers, PP Nearby Line and PP Campaign update in Close on every scoring run and campaign tag.' : 'Scores and audiences stay in this tool. Turning this on creates five lead fields in Close (PP Score, PP Tier, Nearest Customers, PP Nearby Line, PP Campaign) and writes to them.') + '</span><button class="pp-btn ' + (push ? '' : 'primary') + '" onclick="intelTogglePush(this)"' + (intelLoaded ? '' : ' disabled') + '>' + (push ? 'Turn off' : 'Turn on') + '</button></div><div class="pp-toolbar-note" style="margin-top:8px">Only super admins see this page; the server refuses the change from anyone else.</div></div>'
+        + '<div class="stat-card out-card"><h3>Who can see what</h3><div class="pp-toolbar-note">Marketing views: ' + ppEsc((typeof PP_MARKETING_USERS !== 'undefined' ? PP_MARKETING_USERS : []).map(ppRepName).join(', ')) + '. Super admins: ' + ppEsc(PP_SUPER_ADMINS.map(ppRepName).join(', ')) + '. Change these lists in admin.html.</div></div>';
+      if (!intelLoaded) loadIntel(false).then(renderSettings);
+    }
+    (function() {
+      var res = document.getElementById('resourcesView'); if (!res) return;
+      var v = document.createElement('div'); v.className = 'view-content'; v.id = 'settingsView'; v.innerHTML = '<div id="settingsHost"></div>'; res.insertAdjacentElement('afterend', v);
+      PP_VIEW_TITLES.settings = ['Workspace', 'Settings']; PP_PAGE_META.settings = ['Workspace', 'Settings', 'Switches that change what the tool writes to other systems. Super admin only.'];
+      var _sv = switchView; switchView = function(v2) { _sv(v2); if (v2 === 'settings') setTimeout(renderSettings, 20); };
+      function addTab() { if (!ppIsSuperAdmin() || document.querySelector('.view-tab[onclick="switchView(\'settings\')"]')) return; var tRes = document.querySelector('.view-tab[onclick="switchView(\'resources\')"]'); if (!tRes) return; var b = document.createElement('button'); b.className = 'view-tab'; b.setAttribute('onclick', "switchView('settings')"); b.setAttribute('data-short', 'Settings'); b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Settings'; tRes.insertAdjacentElement('afterend', b); if (typeof ppNavFit === 'function') setTimeout(ppNavFit, 50); }
+      var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(addTab, 200); };
+      // the write-back card leaves the Intel page; a read-only line stays
+      var _ri = renderIntel; renderIntel = function() { _ri(); var host = document.getElementById('intelHost'); if (!host) return; var card = host.querySelector('.intel-push'); if (card) { var on = intel && intel.push === 'on'; card.outerHTML = '<div class="pp-toolbar-note" style="flex:1">Write-back to Close is <b>' + (on ? 'on' : 'off') + '</b>' + (ppIsSuperAdmin() ? ' &middot; <a onclick="switchView(\'settings\')" style="cursor:pointer;color:var(--pp-blue)">change in Settings</a>' : '') + '</div>'; } };
+    })();
+
+    // =====================================================================
+    // ONBOARDING HUB: no numbers on the hub (this screen is shared with districts)
+    // =====================================================================
+    (function() { var _h = obHubHead; obHubHead = function() { var html = _h(); return html.replace(/<div class="ob-ks">[\s\S]*?<\/div><\/div>$/, '</div>'); }; })();
+
+    // =====================================================================
+    // MAP: zoom and pan, state focus, search, kinds incl. onboarding
+    // =====================================================================
+    var mapState = 'all', mapQ = '';
+    var MAP_STATE_NAMES = { AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California', CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', DC: 'District of Columbia', FL: 'Florida', GA: 'Georgia', HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana', IA: 'Iowa', KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland', MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri', MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey', NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio', OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina', SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont', VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming' };
+    mapFilter.onboarding = true;
+    renderMap = function() {
+      var host = document.getElementById('mapHost'); if (!host) return;
+      if (!mapLoaded) { host.innerHTML = ppLoader('Placing everything on the map', { rows: 3 }); Promise.all([loadMapPoints(false), mapLibs()]).then(renderMap).catch(function(e) { host.innerHTML = '<div class="pp-empty">' + ppEsc(e.message) + '</div>'; }); return; }
+      if (!window._usTopo) { mapLibs().then(renderMap).catch(function(e) { host.innerHTML = '<div class="pp-empty">' + ppEsc(e.message) + '</div>'; }); return; }
+      if (mapPoints.error) { host.innerHTML = '<div class="pp-empty"><strong>Map points are not available</strong>' + ppEsc(mapPoints.error) + '</div>'; return; }
+      var all = mapPoints.points || [], q = mapQ.trim().toLowerCase();
+      var pts = all.filter(function(p) { return p.lat && mapFilter[p.kind] && (mapRep === 'all' || p.owner === mapRep || (p.reps || '').indexOf(mapRep) >= 0) && (mapState === 'all' || p.state === mapState || (p.kind === 'show' && (p.q || '').slice(-2) === mapState)) && (!q || (p.name + ' ' + p.q).toLowerCase().indexOf(q) >= 0); });
+      var counts = { customer: 0, onboarding: 0, prospect: 0, show: 0 }; all.forEach(function(p) { if (counts[p.kind] !== undefined) counts[p.kind]++; });
+      var statesPresent = {}; all.forEach(function(p) { var s = p.state || (p.kind === 'show' ? (p.q || '').slice(-2) : ''); if (s && MAP_STATE_NAMES[s]) statesPresent[s] = (statesPresent[s] || 0) + 1; });
+      var W = Math.max(720, host.clientWidth - 2), H = Math.round(W * 0.62);
+      host.innerHTML = '<div class="map-bar"><div class="map-legend">' + [['customer', 'Customers', 'var(--pp-green)'], ['onboarding', 'Onboarding', '#7c3aed'], ['prospect', 'Prospects', 'var(--pp-blue)'], ['show', 'Conferences', '#f59e0b']].map(function(k) { return '<button class="map-chip' + (mapFilter[k[0]] ? ' on' : '') + '" onclick="mapFilter[\'' + k[0] + '\']=!mapFilter[\'' + k[0] + '\'];renderMap()"><i style="background:' + k[2] + '"></i>' + k[1] + ' <b>' + counts[k[0]] + '</b></button>'; }).join('') + '</div>'
+        + '<div class="styled-select"><select onchange="mapState=this.value;renderMap()"><option value="all">Whole country</option>' + Object.keys(statesPresent).sort().map(function(s) { return '<option value="' + s + '"' + (mapState === s ? ' selected' : '') + '>' + MAP_STATE_NAMES[s] + ' (' + statesPresent[s] + ')</option>'; }).join('') + '</select></div>'
+        + '<div class="styled-select"><select onchange="mapRep=this.value;renderMap()"><option value="all">Everyone</option>' + TEAM_MEMBERS.map(function(m) { return '<option value="' + m.email + '"' + (mapRep === m.email ? ' selected' : '') + '>' + m.name + '</option>'; }).join('') + '</select></div>'
+        + '<input class="search-input" style="width:200px" placeholder="Find a district or city" value="' + ppEsc(mapQ) + '" oninput="mapQ=this.value;renderMap()">'
+        + '<span class="pp-toolbar-note">' + (mapPoints.pending ? mapPoints.geocoded + ' of ' + mapPoints.total + ' places on the map; the rest are being placed in the background.' : pts.length + ' shown') + '</span>'
+        + '<div class="map-zoom"><button title="Zoom in" onclick="mapZoomBy(1.6)">+</button><button title="Zoom out" onclick="mapZoomBy(0.625)">&minus;</button><button title="Reset" onclick="mapZoomReset()">&#8634;</button></div><button class="text-action-btn" onclick="mapLoaded=false;renderMap()">Refresh</button></div>'
+        + '<div class="map-stage"><svg id="usMap" viewBox="0 0 ' + W + ' ' + H + '"></svg><div class="map-tip" id="mapTip"></div><div class="map-hint">Scroll to zoom, drag to pan, click a state to focus it</div></div>';
+      var svg = d3.select('#usMap'), feat = topojson.feature(_usTopo, _usTopo.objects.states), proj = d3.geoAlbersUsa().fitExtent([[10, 10], [W - 10, H - 10]], feat), path = d3.geoPath(proj), states = feat.features;
+      var fips = { '01': 'AL', '02': 'AK', '04': 'AZ', '05': 'AR', '06': 'CA', '08': 'CO', '09': 'CT', '10': 'DE', '11': 'DC', '12': 'FL', '13': 'GA', '15': 'HI', '16': 'ID', '17': 'IL', '18': 'IN', '19': 'IA', '20': 'KS', '21': 'KY', '22': 'LA', '23': 'ME', '24': 'MD', '25': 'MA', '26': 'MI', '27': 'MN', '28': 'MS', '29': 'MO', '30': 'MT', '31': 'NE', '32': 'NV', '33': 'NH', '34': 'NJ', '35': 'NM', '36': 'NY', '37': 'NC', '38': 'ND', '39': 'OH', '40': 'OK', '41': 'OR', '42': 'PA', '44': 'RI', '45': 'SC', '46': 'SD', '47': 'TN', '48': 'TX', '49': 'UT', '50': 'VT', '51': 'VA', '53': 'WA', '54': 'WV', '55': 'WI', '56': 'WY' };
+      var byState = {}; all.forEach(function(p) { if (p.kind === 'customer' && p.state) byState[p.state] = (byState[p.state] || 0) + 1; });
+      var g = svg.append('g').attr('class', 'map-root');
+      g.selectAll('path.map-state').data(states).enter().append('path').attr('d', path).attr('class', function(d) { return 'map-state' + (byState[fips[d.id]] ? ' has' : '') + (mapState === fips[d.id] ? ' focus' : ''); }).style('fill-opacity', function(d) { var n = byState[fips[d.id]] || 0; return n ? Math.min(0.45, 0.12 + n * 0.06) : 1; }).style('cursor', 'pointer').on('click', function(e, d) { var st = fips[d.id]; mapState = (mapState === st) ? 'all' : st; renderMap(); }).append('title').text(function(d) { var st = fips[d.id]; return MAP_STATE_NAMES[st] + (byState[st] ? ': ' + byState[st] + ' customer' + (byState[st] === 1 ? '' : 's') : ''); });
+      g.append('path').datum(topojson.mesh(_usTopo, _usTopo.objects.states, function(a, b) { return a !== b; })).attr('class', 'map-mesh').attr('d', path);
+      var color = { customer: 'var(--pp-green)', onboarding: '#7c3aed', prospect: 'var(--pp-blue)', show: '#f59e0b' }, order = { prospect: 0, show: 1, onboarding: 2, customer: 3 }, rad = { customer: 6, onboarding: 6, show: 6, prospect: 4 };
+      var tip = document.getElementById('mapTip');
+      var data = pts.sort(function(a, b) { return order[a.kind] - order[b.kind]; }).map(function(p) { var xy = proj([p.lng, p.lat]); return xy ? Object.assign({ x: xy[0], y: xy[1] }, p) : null; }).filter(Boolean);
+      var dots = g.selectAll('circle').data(data).enter().append('circle').attr('cx', function(d) { return d.x; }).attr('cy', function(d) { return d.y; }).attr('r', 0).attr('class', function(d) { return 'map-dot ' + d.kind; }).attr('fill', function(d) { return color[d.kind]; })
+        .on('mousemove', function(e, d) { tip.style.display = 'block'; tip.style.left = (e.offsetX + 14) + 'px'; tip.style.top = (e.offsetY + 14) + 'px'; tip.innerHTML = '<b>' + ppEsc(d.name) + '</b><span>' + ppEsc(d.q) + '</span>' + (d.kind === 'show' ? '<span>' + (d.date ? ppFmtDate(d.date, { month: 'short', day: 'numeric', year: 'numeric' }) : '') + (d.reps ? ' &middot; ' + ppSplitReps(d.reps).map(ppRepName).join(', ') : '') + '</span>' : '<span>' + ppEsc(d.status || '') + (d.owner ? ' &middot; ' + ppEsc(ppRepName(d.owner)) : '') + (d.source ? ' &middot; ' + ppEsc(d.source) : '') + '</span>'); })
+        .on('mouseleave', function() { tip.style.display = 'none'; })
+        .on('click', function(e, d) { e.stopPropagation(); if (d.kind === 'show') { switchView('tradeshows'); setTimeout(function() { openTsModal(d.id); }, 300); } else if (d.url) window.open(d.url, '_blank'); });
+      dots.transition().delay(function(d, i) { return Math.min(700, i * 2); }).duration(350).attr('r', function(d) { return rad[d.kind]; });
+      // zoom: wheel and drag, buttons, state focus fits the state
+      var zoom = d3.zoom().scaleExtent([1, 14]).on('zoom', function(e) { g.attr('transform', e.transform); var k = e.transform.k; g.selectAll('circle').attr('r', function(d) { return rad[d.kind] / Math.sqrt(k); }).attr('stroke-width', 1.2 / Math.sqrt(k)); g.select('.map-mesh').attr('stroke-width', 0.8 / k); });
+      svg.call(zoom); window._ppMapZoom = zoom; window._ppMapSvg = svg;
+      var target = mapState !== 'all' ? states.find(function(d) { return fips[d.id] === mapState; }) : null;
+      if (target) { var b = path.bounds(target), dx = b[1][0] - b[0][0], dy = b[1][1] - b[0][1], cx = (b[0][0] + b[1][0]) / 2, cy = (b[0][1] + b[1][1]) / 2, k = Math.min(12, 0.85 / Math.max(dx / W, dy / H)); svg.transition().duration(650).call(zoom.transform, d3.zoomIdentity.translate(W / 2 - k * cx, H / 2 - k * cy).scale(k)); }
+      else if (q && data.length === 1) { var k2 = 8; svg.transition().duration(650).call(zoom.transform, d3.zoomIdentity.translate(W / 2 - k2 * data[0].x, H / 2 - k2 * data[0].y).scale(k2)); }
+    };
+    function mapZoomBy(f) { if (window._ppMapSvg && window._ppMapZoom) window._ppMapSvg.transition().duration(300).call(window._ppMapZoom.scaleBy, f); }
+    function mapZoomReset() { mapState = 'all'; mapQ = ''; renderMap(); }
+
+    // =====================================================================
+    // CAMPAIGN AUDIENCE: any states, any roles or title words, size range, community, score floor
+    // =====================================================================
+    var CAMP_ROLES = ['Superintendent', 'Asst / Deputy Supt', 'Business / Finance', 'Athletic Director', 'Facilities / Operations', 'Principal / Head of School', 'Coach', 'Other'];
+    var CAMP_COMMUNITIES = ['Urban', 'Suburban', 'Rural', 'Town'];
+    camp = Object.assign({ states: ['TX'], roles: ['Superintendent'], titles: '', minSize: 0, maxSize: 0, minScore: 0, communities: [] }, camp);
+    CAMP_PRESETS = [
+      { name: 'TX Superintendents, wave 1', states: ['TX'], tiers: 'A,B', roles: ['Superintendent'], tag: 'TX-SUPT-2026 Wave 1' },
+      { name: 'TX Superintendents, wave 2 (Tier C)', states: ['TX'], tiers: 'C', roles: ['Superintendent'], tag: 'TX-SUPT-2026 Wave 2' },
+      { name: 'TX Business officers', states: ['TX'], tiers: 'A,B,C', roles: ['Business / Finance'], tag: 'TX-BO-2026 Wave 1' },
+      { name: 'TX Athletic directors', states: ['TX'], tiers: 'A,B', roles: ['Athletic Director'], tag: 'TX-AD-2026 Wave 1' },
+      { name: 'Large districts, any state', states: [], tiers: 'A,B', roles: ['Superintendent', 'Business / Finance'], minSize: 10000, tag: 'LARGE-2026 Wave 1' }
+    ];
+    campApplyPreset = function(i) { var p = CAMP_PRESETS[i]; if (!p) return; camp = Object.assign({}, camp, { states: [], roles: [], titles: '', minSize: 0, maxSize: 0, minScore: 0, communities: [], sources: '' }, p); delete camp.name; campResult = null; renderCampaign(); campBuild(); };
+    campBuild = async function() { if (campBusy) return; campBusy = true; renderCampaign(); try { var r = await ppApi('buildAudience', { states: (camp.states || []).join(','), tiers: camp.tiers, roles: (camp.roles || []).join(','), titles: camp.titles || '', minSize: camp.minSize || 0, maxSize: camp.maxSize || 0, minScore: camp.minScore || 0, communities: (camp.communities || []).join(','), sources: camp.sources || '', limit: 2000 }, 170000); if (!r.success) throw new Error(r.error); campResult = r; } catch(e) { campResult = { error: e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v39)' : '') }; } campBusy = false; renderCampaign(); };
+    function campChips(key, options, allLabel) { var sel = camp[key] || []; return '<div class="camp-chips">' + '<button type="button" class="dh-chip' + (!sel.length ? ' on' : '') + '" onclick="camp.' + key + '=[];renderCampaign()">' + allLabel + '</button>' + options.map(function(o) { var on = sel.indexOf(o) >= 0; return '<button type="button" class="dh-chip' + (on ? ' on' : '') + '" onclick="campToggle(\'' + key + '\',\'' + ppEsc(o) + '\')">' + ppEsc(o) + '</button>'; }).join('') + '</div>'; }
+    function campToggle(key, val) { var sel = (camp[key] || []).slice(); var i = sel.indexOf(val); if (i >= 0) sel.splice(i, 1); else sel.push(val); camp[key] = sel; renderCampaign(); }
+    renderCampaign = function() {
+      var host = document.getElementById('campHost'); if (!host) return;
+      var r = campResult, aud = (r && r.audience) || [];
+      var statesAvail = Object.keys(intel && intel.customerStates || {}).concat(['TX', 'VA', 'GA', 'NC', 'SC', 'IL', 'MI', 'PA', 'OK', 'LA', 'TN', 'FL', 'OH', 'AL', 'MS', 'AR', 'NM', 'MD', 'IN', 'MO', 'KS', 'CO', 'AZ', 'WI', 'MN', 'KY', 'NJ', 'NY', 'CA', 'WA', 'OR']).filter(function(s, i, a) { return a.indexOf(s) === i; }).sort();
+      host.innerHTML = '<div class="stat-card out-card"><h3>Campaign audience<span class="out-legend">Any states, any roles, any size. Presets are starting points.</span></h3>'
+        + '<div class="camp-presets">' + CAMP_PRESETS.map(function(p, i) { return '<button class="dh-chip' + (camp.tag === p.tag ? ' on' : '') + '" onclick="campApplyPreset(' + i + ')">' + ppEsc(p.name) + '</button>'; }).join('') + '</div>'
+        + '<div class="camp-grid"><div><label>States</label>' + campChips('states', statesAvail, 'Any state') + '</div>'
+        + '<div><label>Role on the lead (any of)</label>' + campChips('roles', CAMP_ROLES, 'Any role') + '<input class="camp-in" placeholder="or title words, comma separated: CFO, executive director, facilities" value="' + ppEsc(camp.titles || '') + '" onchange="camp.titles=this.value"></div>'
+        + '<div><label>Community</label>' + campChips('communities', CAMP_COMMUNITIES, 'Any') + '</div>'
+        + '<div class="camp-nums"><div><label>Tiers</label><input class="camp-in" value="' + ppEsc(camp.tiers || '') + '" onchange="camp.tiers=this.value" placeholder="A,B"></div><div><label>Min score</label><input class="camp-in" type="number" value="' + (camp.minScore || '') + '" onchange="camp.minScore=parseInt(this.value,10)||0"></div><div><label>Students, from</label><input class="camp-in" type="number" value="' + (camp.minSize || '') + '" onchange="camp.minSize=parseInt(this.value,10)||0" placeholder="0"></div><div><label>to</label><input class="camp-in" type="number" value="' + (camp.maxSize || '') + '" onchange="camp.maxSize=parseInt(this.value,10)||0" placeholder="any"></div><div><label>Close source</label><input class="camp-in" value="' + ppEsc(camp.sources || '') + '" onchange="camp.sources=this.value" placeholder="AskTED, THSADA"></div><div><label>Campaign tag</label><input class="camp-in" value="' + ppEsc(camp.tag || '') + '" onchange="camp.tag=this.value"></div></div></div>'
+        + '<div class="camp-actions"><button class="pp-btn primary" onclick="campBuild()"' + (campBusy ? ' disabled' : '') + '>' + (campBusy ? 'Building...' : 'Build audience') + '</button>' + (aud.length ? '<button class="pp-btn" onclick="campExport()">Export CSV</button>' + (ppIsSuperAdmin() || (intel && intel.push === 'on') ? '<button class="pp-btn" onclick="campTag(this)">Tag in Close</button>' : '') : '') + '<span class="pp-toolbar-note">' + (r && !r.error ? r.total + ' leads match &middot; ' + r.withNearby + ' have a nearby line &middot; ' + r.anchors + ' live districts as anchors' : r && r.error ? '<span style="color:#b91c1c">' + ppEsc(r.error) + '</span>' : 'Pick a preset or set the filters, then Build.') + '</span></div>'
+        + (aud.length ? '<div class="camp-how"><b>In Close:</b> after Tag in Close, a Smart View where <i>PP Campaign</i> is "' + ppEsc(camp.tag) + '", add to the sequence, and use <code>{{custom.PP Nearby Line}}</code> where the neighbor sentence goes.</div>'
+          + '<div class="table-wrapper" style="border-radius:12px"><table class="pp-table" style="min-width:1000px"><thead><tr><th>District</th><th>Tier</th><th>Roles on lead</th><th>Nearby line</th><th>Owner</th><th></th></tr></thead><tbody>' + aud.slice(0, 200).map(function(l) { return '<tr><td><div class="pp-org-name">' + ppEsc(l.name) + '</div><div class="pp-org-sub">' + ppEsc([l.city, l.state].filter(Boolean).join(', ')) + (l.size ? ' &middot; ' + ppEsc(l.size) : '') + (l.source ? ' &middot; ' + ppEsc(l.source) : '') + (l.campaign ? ' &middot; <b>' + ppEsc(l.campaign) + '</b>' : '') + '</div></td><td>' + intelTierChip(l.tier, l.score) + '</td><td style="font-size:11.5px;color:var(--text2);white-space:normal;max-width:180px">' + ppEsc(l.roles) + '</td><td style="font-size:11.5px;color:var(--text2);white-space:normal;max-width:360px">' + (l.nearby ? ppEsc(l.nearby) : '<span class="pp-placeholder">no line yet</span>') + '</td><td>' + (l.owner ? ppRepAvatars(l.owner, 22) : '<span class="pp-placeholder">-</span>') + '</td><td style="text-align:right">' + (l.url ? '<a class="pp-mini-btn" href="' + ppEsc(l.url) + '" target="_blank" rel="noopener">' + ppSvg('expand') + '</a>' : '') + '</td></tr>'; }).join('') + '</tbody></table></div>' + (aud.length > 200 ? '<div class="pp-toolbar-note" style="margin-top:8px">Showing 200 of ' + aud.length + '. Export CSV has them all.</div>' : '') : '') + '</div>';
+    };
+  </script>
+  <style>
+    .map-zoom{display:inline-flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--card)}
+    .map-zoom button{width:34px;height:34px;border:none;background:transparent;font:inherit;font-size:16px;color:var(--text2);cursor:pointer}
+    .map-zoom button:hover{background:var(--bg);color:var(--text)}
+    .map-zoom button+button{border-left:1px solid var(--border)}
+    .map-state.focus{stroke:var(--pp-blue);stroke-width:1.5}
+    .map-hint{position:absolute;right:12px;bottom:10px;font-size:10.5px;color:var(--text3);background:var(--card);border-radius:50px;padding:3px 10px;opacity:.85;pointer-events:none}
+    .map-stage svg{cursor:grab}.map-stage svg:active{cursor:grabbing}
+    .camp-grid{display:grid;grid-template-columns:1.2fr 1.4fr .8fr;gap:14px 18px;margin:6px 0 4px}
+    .camp-grid label{display:block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
+    .camp-chips{display:flex;flex-wrap:wrap;gap:4px}
+    .camp-chips .dh-chip{height:26px;padding:0 9px;font-size:11px}
+    .camp-in{width:100%;height:32px;padding:0 10px;border:1px solid var(--border);border-radius:9px;background:var(--bg);font:inherit;font-size:12.5px;color:var(--text);margin-top:6px}
+    .camp-nums{grid-column:1 / -1;display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+    .camp-nums .camp-in{margin-top:0}
+    @media(max-width:1100px){.camp-grid{grid-template-columns:1fr}.camp-nums{grid-template-columns:repeat(3,1fr)}}
+  </style>
 </body>
 </html>
