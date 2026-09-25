@@ -9197,7 +9197,7 @@
     // background polls refresh pins in place; a resize rebuilds the scene but keeps the zoom
     (function() {
       var _load = loadMapPoints; loadMapPoints = async function(force) { var before = mapLoaded ? JSON.stringify((mapPoints.points || []).length + ':' + mapPoints.pending) : ''; await _load(force); var after = JSON.stringify((mapPoints.points || []).length + ':' + mapPoints.pending); if (M.built && before !== after && document.getElementById('mapView').classList.contains('active')) mUpdate(); };
-      window.addEventListener('resize', function() { clearTimeout(window._ppMapT); window._ppMapT = setTimeout(function() { if (M.built && document.getElementById('mapView').classList.contains('active')) { M.built = false; renderMap(); } }, 250); });
+      window.addEventListener('resize', function() { clearTimeout(window._ppMapT); window._ppMapT = setTimeout(function() { if (M.built && document.getElementById('mapView').classList.contains('active')) { var open = M.open; M.built = false; renderMap(); if (open) setTimeout(function() { mOpenPanel(open); }, 50); } }, 250); });
       // data the map depends on: when accounts, revenue or meetings load later, re-classify pins
       ['loadCloseAccounts', 'loadRevenue', 'loadCloseMeetings'].forEach(function(fn) { if (typeof window[fn] === 'function') { var orig = window[fn]; window[fn] = async function() { var r = await orig.apply(this, arguments); if (M.built && document.getElementById('mapView').classList.contains('active')) mUpdate(); return r; }; } });
     })();
@@ -9299,6 +9299,116 @@
     .map-panel-actions{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px}
     .map-panel-actions .pp-btn{height:34px;padding:0 8px;font-size:12px;justify-content:center;width:100%;text-decoration:none}
     .rv-check-toggle{margin-left:auto}
+  </style>
+  <script>
+    // ---- map: meeting history from the two-year Close sync, not just the display window ----
+    (function() {
+      var _mp = mPoints; mPoints = function() { var out = _mp(); out.forEach(function(p) { if (p.meetHist) p.meet = { past: p.meetHist.past, upcoming: p.meetHist.upcoming, last: p.meetHist.last, next: p.meetHist.next, lastTitle: p.meetHist.lastTitle }; }); return out; };
+      var _open = mOpenPanel; mOpenPanel = function(d) { _open(d); var panel = document.getElementById('mapPanel'); if (!panel || d.kind === 'show') return; var rows = panel.querySelector('.map-panel-rows'); if (!rows) return; var m = d.meet; var existing = [].find.call(rows.children, function(r) { return /^Meetings/.test(r.textContent); }); if (existing) existing.remove(); var line = m && (m.past || m.upcoming) ? (m.upcoming ? 'next ' + ppFmtDate(String(m.next).slice(0, 10), { month: 'short', day: 'numeric' }) + (m.past ? ' &middot; ' : '') : '') + (m.past ? m.past + ' past' + (m.last ? ', last ' + ppFmtDate(String(m.last).slice(0, 10), { month: 'short', day: 'numeric', year: 'numeric' }) : '') : '') : 'none on record'; var lc = [].find.call(rows.children, function(r) { return /^Last contact/.test(r.textContent); }); var el = document.createElement('div'); el.innerHTML = '<span>Meetings</span><em>' + line + '</em>'; if (lc) lc.insertAdjacentElement('afterend', el); else rows.appendChild(el); };
+    })();
+    // ---- map: zoomed-in view. Strokes never scale, pins shrink gently, labels appear up close, hit areas are generous ----
+    (function() {
+      var _build = mBuild; mBuild = function(host) { _build(host); M.g.append('g').attr('class', 'map-labels'); M.zoom.on('zoom.v4', function(e) { mZoomStyle(e.transform.k); }); };
+      function mZoomStyle(k) {
+        var dots = M.g.selectAll('.map-dots circle'); dots.attr('r', function(d) { return mR(d, k); });
+        M.g.selectAll('.map-hit').attr('r', function(d) { return Math.max(mR(d, k) * 2.2, 10 / k); });
+        var labels = M.g.select('.map-labels'); labels.style('display', k >= 5 ? 'inline' : 'none'); if (k >= 5) { var placed = []; labels.selectAll('text').attr('font-size', 11 / k).attr('dx', function(d) { return mR(d, k) + 4 / k; }).attr('dy', 4 / k).style('display', function(d) { var w = (String(d.name).length * 6.2 + 8) / k, hgt = 14 / k, x0 = d.x + mR(d, k) + 4 / k, y0 = d.y - hgt / 2; var box = [x0, y0, x0 + w, y0 + hgt]; var hit = placed.some(function(b) { return !(box[2] < b[0] || box[0] > b[2] || box[3] < b[1] || box[1] > b[3]); }); if (hit) return 'none'; placed.push(box); return null; }); }
+        M.g.classed('zoomed', k >= 3);
+      }
+      window.mR = function(d, k) { var base = MAP_R[d.kind] * (d.sel ? 1.35 : 1); return base / Math.pow(k, 0.85); };
+      var _u = mUpdate; mUpdate = function() {
+        _u(); var k = (M.transform && M.transform.k) || 1;
+        var data = M.g.select('.map-dots').selectAll('circle').data();
+        // one invisible, bigger circle per pin catches the click; the visible dot stays small and clean
+        var hits = M.g.select('.map-dots').selectAll('.map-hit').data(data, function(d) { return d.kind + ':' + (d.id || d.key) + ':' + d.q; });
+        hits.exit().remove();
+        hits.enter().append('circle').attr('class', 'map-hit').merge(hits).attr('cx', function(d) { return d.x; }).attr('cy', function(d) { return d.y; }).attr('r', function(d) { return Math.max(mR(d, k) * 2.2, 10 / k); })
+          .on('mousemove', function(e, d) { var tip = document.getElementById('mapTip'); tip.style.display = 'block'; tip.style.left = (e.offsetX + 14) + 'px'; tip.style.top = (e.offsetY + 14) + 'px'; tip.innerHTML = '<b>' + ppEsc(d.name) + '</b><span>' + ppEsc(d.q) + (d.kind === 'show' ? '' : ' &middot; ' + ppEsc(d.status || '')) + '</span>'; M.g.selectAll('.map-dots circle:not(.map-hit)').classed('hover', function(x) { return x === d; }); })
+          .on('mouseleave', function() { document.getElementById('mapTip').style.display = 'none'; M.g.selectAll('.map-dots circle').classed('hover', false); })
+          .on('click', function(e, d) { e.stopPropagation(); mOpenPanel(d); });
+        M.g.select('.map-dots').selectAll('.map-hit').raise();
+        M.g.selectAll('.map-dots circle:not(.map-hit)').interrupt().attr('r', function(d) { return mR(d, k); }).on('mousemove', null).on('mouseleave', null).on('click', null);
+        // labels
+        var lbl = M.g.select('.map-labels').selectAll('text').data(data, function(d) { return d.kind + ':' + (d.id || d.key) + ':' + d.q; });
+        lbl.exit().remove();
+        lbl.enter().append('text').attr('class', function(d) { return 'map-label ' + d.kind; }).merge(lbl).attr('x', function(d) { return d.x; }).attr('y', function(d) { return d.y; }).text(function(d) { return String(d.name).replace(/\s*\([A-Z]{2}\)\s*$/, ''); });
+        mZoomStyle(k);
+      };
+    })();
+    // ---- client data: editing, importing and merging are super admin only ----
+    (function() {
+      var _rr = renderRevenue; renderRevenue = function() {
+        _rr(); if (ppIsSuperAdmin()) return; var el = document.getElementById('closeAccounts'); if (!el || caView !== 'revenue') return;
+        el.querySelectorAll('.rv-add, [onclick*="startRevenueImport"]').forEach(function(b) { b.remove(); });
+        el.querySelectorAll('.pp-table tbody tr').forEach(function(tr) { tr.style.cursor = ''; tr.title = ''; var c = tr.cloneNode(true); tr.parentNode.replaceChild(c, tr); c.querySelectorAll('.pp-chip[onclick*="rvPickAccount"]').forEach(function(ch) { ch.removeAttribute('onclick'); ch.style.cursor = 'default'; }); });
+        el.querySelectorAll('a[onclick*="rvPickAccount"]').forEach(function(a) { a.remove(); });
+      };
+      var _rca = renderCloseAccounts; renderCloseAccounts = function() { _rca(); if (ppIsSuperAdmin()) return; var el = document.getElementById('closeAccounts'); if (!el) return; el.querySelectorAll('.ca-sel, .ca-merge-bar, [onclick*="caMerge"], [onclick*="caUnmerge"], [onclick*="caLink"], [onclick*="openLinkAccount"]').forEach(function(x) { x.remove(); }); };
+      rvEdit = (function(orig) { return function(id) { if (!ppIsSuperAdmin()) return; return orig(id); }; })(rvEdit);
+      rvPickAccount = (function(orig) { return function(id, el) { if (!ppIsSuperAdmin()) return; return orig(id, el); }; })(rvPickAccount);
+    })();
+  </script>
+  <style>
+    .map-dot,.map-hit,.map-mesh,.map-state{vector-effect:non-scaling-stroke}
+    .map-dot{stroke:#fff;stroke-width:1.1px;cursor:pointer;transition:none}
+    .map-dot.prospect{fill-opacity:.85;stroke-width:.9px}
+    .map-dot.sel{stroke:#0f172a;stroke-width:1.6px}
+    .map-dot.hover{stroke:#0f172a;stroke-width:1.6px;filter:drop-shadow(0 0 2px rgba(15,23,42,.35))}
+    .map-hit{fill:transparent;stroke:none;cursor:pointer}
+    .map-mesh{stroke-width:.7px}
+    .map-root.zoomed .map-mesh{stroke:#94a3b8;stroke-opacity:.6}
+    .map-root.zoomed .map-state{fill-opacity:.9}
+    .map-labels{pointer-events:none;display:none}
+    .map-label{font-family:var(--font-body,inherit);font-weight:600;fill:#0f172a;paint-order:stroke;stroke:#fff;stroke-width:2.5px;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+    .map-label.prospect{fill:#334155;font-weight:500}
+    [data-theme="dark"] .map-label{fill:#e2e8f0;stroke:#0f172a}
+  </style>
+  <script>
+    // ---- map: geography when you zoom in. County outlines from the US Atlas and major-city reference labels. ----
+    var MAP_CITIES = [['New York', 40.71, -74.01], ['Los Angeles', 34.05, -118.24], ['Chicago', 41.88, -87.63], ['Houston', 29.76, -95.37], ['Phoenix', 33.45, -112.07], ['Philadelphia', 39.95, -75.17], ['San Antonio', 29.42, -98.49], ['San Diego', 32.72, -117.16], ['Dallas', 32.78, -96.80], ['Austin', 30.27, -97.74], ['Jacksonville', 30.33, -81.66], ['Fort Worth', 32.75, -97.33], ['Columbus', 39.96, -83.00], ['Charlotte', 35.23, -80.84], ['Indianapolis', 39.77, -86.16], ['San Francisco', 37.77, -122.42], ['Seattle', 47.61, -122.33], ['Denver', 39.74, -104.99], ['Nashville', 36.16, -86.78], ['Oklahoma City', 35.47, -97.52], ['El Paso', 31.76, -106.49], ['Washington', 38.91, -77.04], ['Las Vegas', 36.17, -115.14], ['Boston', 42.36, -71.06], ['Portland', 45.52, -122.68], ['Louisville', 38.25, -85.76], ['Memphis', 35.15, -90.05], ['Detroit', 42.33, -83.05], ['Baltimore', 39.29, -76.61], ['Milwaukee', 43.04, -87.91], ['Albuquerque', 35.08, -106.65], ['Tucson', 32.22, -110.97], ['Fresno', 36.74, -119.79], ['Sacramento', 38.58, -121.49], ['Kansas City', 39.10, -94.58], ['Atlanta', 33.75, -84.39], ['Omaha', 41.26, -95.93], ['Raleigh', 35.78, -78.64], ['Miami', 25.76, -80.19], ['Minneapolis', 44.98, -93.27], ['Tulsa', 36.15, -95.99], ['Cleveland', 41.50, -81.69], ['New Orleans', 29.95, -90.07], ['Tampa', 27.95, -82.46], ['Pittsburgh', 40.44, -79.99], ['Cincinnati', 39.10, -84.51], ['St. Louis', 38.63, -90.20], ['Orlando', 28.54, -81.38], ['Salt Lake City', 40.76, -111.89], ['Birmingham', 33.52, -86.81], ['Richmond', 37.54, -77.44], ['Virginia Beach', 36.85, -75.98], ['Norfolk', 36.85, -76.29], ['Little Rock', 34.75, -92.29], ['Boise', 43.62, -116.20], ['Des Moines', 41.59, -93.62], ['Madison', 43.07, -89.40], ['Buffalo', 42.89, -78.88], ['Lubbock', 33.58, -101.86], ['Corpus Christi', 27.80, -97.40], ['Amarillo', 35.22, -101.83], ['Waco', 31.55, -97.15], ['McAllen', 26.20, -98.23], ['Laredo', 27.51, -99.51], ['Midland', 32.00, -102.08], ['Tyler', 32.35, -95.30], ['Beaumont', 30.08, -94.10], ['Abilene', 32.45, -99.73], ['San Angelo', 31.46, -100.44], ['Killeen', 31.12, -97.73], ['College Station', 30.63, -96.33], ['Wichita Falls', 33.91, -98.49], ['Texarkana', 33.44, -94.05], ['Brownsville', 25.90, -97.50], ['Plano', 33.02, -96.70], ['Denton', 33.21, -97.13], ['McKinney', 33.20, -96.64], ['Arlington', 32.74, -97.11], ['Frisco', 33.15, -96.82], ['Wichita', 37.69, -97.34], ['Shreveport', 32.53, -93.75], ['Baton Rouge', 30.45, -91.19], ['Jackson', 32.30, -90.18], ['Montgomery', 32.37, -86.30], ['Mobile', 30.69, -88.04], ['Knoxville', 35.96, -83.92], ['Chattanooga', 35.05, -85.31], ['Lexington', 38.04, -84.50], ['Greenville', 34.85, -82.40], ['Columbia', 34.00, -81.03], ['Charleston', 32.78, -79.93], ['Savannah', 32.08, -81.10], ['Augusta', 33.47, -81.97], ['Macon', 32.84, -83.63], ['Athens', 33.96, -83.38], ['Roanoke', 37.27, -79.94], ['Charlottesville', 38.03, -78.48], ['Fredericksburg', 38.30, -77.46], ['Harrisburg', 40.27, -76.88], ['Albany', 42.65, -73.76], ['Rochester', 43.16, -77.61], ['Grand Rapids', 42.96, -85.67], ['Lansing', 42.73, -84.56], ['Toledo', 41.65, -83.54], ['Dayton', 39.76, -84.19], ['Akron', 41.08, -81.52], ['Fort Wayne', 41.08, -85.14], ['Peoria', 40.69, -89.59], ['Springfield', 39.80, -89.64], ['Champaign', 40.12, -88.24], ['Rockford', 42.27, -89.09], ['Green Bay', 44.51, -88.01], ['Duluth', 46.79, -92.10], ['Fargo', 46.88, -96.79], ['Sioux Falls', 43.55, -96.73], ['Lincoln', 40.81, -96.68], ['Topeka', 39.05, -95.68], ['Springfield', 37.21, -93.29], ['Colorado Springs', 38.83, -104.82], ['Santa Fe', 35.69, -105.94], ['Reno', 39.53, -119.81], ['Spokane', 47.66, -117.43], ['Tacoma', 47.25, -122.44], ['Eugene', 44.05, -123.09], ['Anchorage', 61.22, -149.90], ['Honolulu', 21.31, -157.86], ['Tallahassee', 30.44, -84.28], ['Pensacola', 30.42, -87.22], ['Gainesville', 29.65, -82.32], ['Fort Lauderdale', 26.12, -80.14], ['Hartford', 41.76, -72.69], ['Providence', 41.82, -71.41], ['Manchester', 42.99, -71.46], ['Portland ME', 43.66, -70.26], ['Burlington', 44.48, -73.21]];
+    (function() {
+      var countiesReady = null;
+      function ensureCountyPath() { if (!M.built || !window._usCounties) return; var g = M.g.select('.map-counties'); if (g.empty()) g = M.g.insert('g', '.map-mesh').attr('class', 'map-counties'); if (g.select('path').empty()) g.append('path').datum(topojson.mesh(_usCounties, _usCounties.objects.counties, function(a, b) { return a !== b && (a.id / 1000 | 0) === (b.id / 1000 | 0); })).attr('class', 'map-county-mesh').attr('d', M.path); }
+      function loadCounties() { if (window._usCounties) { ensureCountyPath(); return Promise.resolve(); } if (countiesReady) return countiesReady; countiesReady = fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/counties-10m.json').then(function(r) { return r.json(); }).then(function(t) { window._usCounties = t; ensureCountyPath(); }).catch(function(e) { console.warn('counties', e); countiesReady = null; }); return countiesReady; }
+      window.mLoadCounties = loadCounties;
+      var _build = mBuild; mBuild = function(host) {
+        _build(host);
+        var g = M.g; g.insert('g', '.map-mesh').attr('class', 'map-counties');
+        var cities = g.append('g').attr('class', 'map-cities');
+        var pts = MAP_CITIES.map(function(c) { var xy = M.proj([c[2], c[1]]); return xy ? { name: c[0], x: xy[0], y: xy[1] } : null; }).filter(Boolean);
+        var ci = cities.selectAll('g').data(pts).enter().append('g').attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; });
+        ci.append('circle').attr('class', 'map-city-dot').attr('r', 1.2);
+        ci.append('text').attr('class', 'map-city-label').attr('dx', 3).attr('dy', -2).text(function(d) { return d.name; });
+        // the labels group must stay above cities and counties
+        g.select('.map-labels').raise(); g.select('.map-dots').raise(); g.select('.map-labels').raise();
+        M.zoom.on('zoom.v5', function(e) { mGeoStyle(e.transform.k); });
+        mGeoStyle((M.transform && M.transform.k) || 1);
+      };
+      var _u10 = mUpdate; mUpdate = function() { _u10(); if (M.built) mGeoStyle((M.transform && M.transform.k) || 1); };
+      function mGeoStyle(k) {
+        var zoomed = k >= 3;
+        M.g.classed('geo', zoomed);
+        if (zoomed) loadCounties();
+        M.g.select('.map-counties').style('display', zoomed ? 'inline' : 'none');
+        var cities = M.g.select('.map-cities'); cities.style('display', k >= 2.2 ? 'inline' : 'none');
+        cities.selectAll('circle').attr('r', 1.6 / k); cities.selectAll('text').attr('font-size', 9.5 / k).attr('dx', 4 / k).attr('dy', -3 / k);
+        // fewer city labels when less zoomed: show every nth by a stable order
+        var pins = M.g.select('.map-dots').selectAll('circle:not(.map-hit)').data(), near = 26 / k;
+        cities.selectAll('g').style('display', function(d, i) { var thin = k >= 6 ? false : (k >= 3.5 ? i % 2 !== 0 : i % 3 !== 0); if (thin) return 'none'; var crowded = pins.some(function(p) { return Math.abs(p.x - d.x) < near * 2.4 && Math.abs(p.y - d.y) < near; }); return crowded ? 'none' : null; });
+      }
+    })();
+  </script>
+  <style>
+    .map-county-mesh{fill:none;stroke:#94a3b8;stroke-opacity:.35;stroke-width:.5px;vector-effect:non-scaling-stroke}
+    .map-root.geo .map-mesh{stroke:#64748b;stroke-opacity:.7;stroke-width:1px}
+    .map-root.geo .map-state{fill:#eef2f7}
+    .map-root.geo .map-state.has{fill:#dbe7f3}
+    .map-root.geo .map-state.focus{fill:#e3ecf6}
+    [data-theme="dark"] .map-root.geo .map-state{fill:#1e293b}
+    .map-cities{pointer-events:none;display:none}
+    .map-city-dot{fill:#64748b;vector-effect:non-scaling-stroke}
+    .map-city-label{font-family:var(--font-body,inherit);fill:#64748b;font-weight:600;letter-spacing:.04em;paint-order:stroke;stroke:#f8fafc;stroke-width:2px;vector-effect:non-scaling-stroke;text-transform:uppercase}
+    [data-theme="dark"] .map-city-label{fill:#94a3b8;stroke:#0f172a}
   </style>
 </body>
 </html>
