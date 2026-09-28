@@ -9716,5 +9716,72 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       window.glSave = async function(btn) { btn.disabled = true; try { var r = await ppApi('setGoLiveStatus', { value: document.getElementById('glStatus').value }); if (!r.success) throw new Error(r.error); showToast('Saved', 'success'); } catch(e) { showToast(e.message, 'error'); } btn.disabled = false; };
     })();
   </script>
+
+  <script>
+    // ---- calibration: a short read, not a wall of bars ----
+    (function() {
+      var _ri = renderIntel; renderIntel = function() {
+        _ri(); var card = document.getElementById('intelCal'); if (!card || !intel || !intel.calibration) return;
+        var c = intel.calibration, lift = c.lift || {}, pick = function(dim, label) { var d = lift[dim] || {}; var ks = Object.keys(d).filter(function(k) { return k !== 'unknown' && k !== 'none'; }); if (!ks.length) return null; ks.sort(function(a, b) { return d[b] - d[a]; }); var top = ks[0], bottom = ks[ks.length - 1]; return { label: label, top: top, topV: d[top], bottom: bottom, bottomV: d[bottom] }; };
+        var x = function(v) { return v >= 1 ? v.toFixed(1) + 'x' : Math.round(v * 100) + '%'; }, nice = { size: { 'under1k': 'under 1,000 students', '1k-3k': '1,000 to 3,000 students', '3k-10k': '3,000 to 10,000 students', '10k-40k': '10,000 to 40,000 students', '40k+': '40,000+ students' }, source: { conference: 'conference leads', inbound: 'inbound leads', list: 'purchased-list leads', other: 'other sources' } };
+        var s = pick('size', 'size'), src = pick('source', 'source'), lines = [];
+        if (s) lines.push('<b>' + (nice.size[s.top] || s.top) + '</b> are ' + x(s.topV) + ' as likely to become customers as the average lead' + (s.bottomV < 0.8 ? '; ' + (nice.size[s.bottom] || s.bottom) + ' only ' + x(s.bottomV) : '') + '.');
+        if (src) lines.push('<b>' + (nice.source[src.top] || src.top) + '</b> convert at ' + x(src.topV) + ' the average' + (src.bottomV < 0.8 ? '; ' + (nice.source[src.bottom] || src.bottom) + ' at ' + x(src.bottomV) : '') + '.');
+        var tw = intel.tierWins || {}, twTxt = Object.keys(tw).length ? 'Of leads that became customers, ' + Object.keys(tw).sort().map(function(k) { return tw[k] + ' were Tier ' + k; }).join(', ') + ' when they converted.' : '';
+        card.innerHTML = '<h3>How the score is weighted<span class="out-legend">learned from your ' + (c.n || 0) + ' customers, re-learned on every run</span></h3><div class="cal-lines">' + lines.map(function(l) { return '<div>' + l + '</div>'; }).join('') + '<div class="pp-toolbar-note">Fit (65%) is what kind of district it is: size, how they found us, state, contacts on the lead, distance to a customer. Heat (35%) is whether they are talking to us: replies, meetings, opens, recent touches; it fades over time. ' + twTxt + '</div></div>';
+      };
+    })();
+    // ---- follow-ups: everyone by default, cards in columns ----
+    fuRep = 'all';
+    (function() { var _rf = renderFollowUps; renderFollowUps = function() { _rf(); var list = document.querySelector('#fuHost .fu-list'); if (list) list.classList.add('fu-grid'); }; })();
+    // ---- conference mode: customers, prospects, lost, each as its own list ----
+    cmTargetsHtml = function(s) {
+      if (!cmTargets || cmTargets.error) return '<div class="pp-toolbar-note">' + (cmTargets && cmTargets.error ? ppEsc(cmTargets.error) : 'Loading targets') + '</div>';
+      var info = cmTargets.show || {}, scope = (info.state ? 'in ' + info.state : 'anywhere') + ', plus anyone tagged with this show before';
+      var table = function(rows, kind) { if (!rows.length) return '<div class="pp-up-empty">None ' + scope + '.</div>'; return '<div class="table-wrapper" style="border-radius:12px;max-height:380px;overflow:auto"><table class="pp-table" style="min-width:860px"><thead><tr><th>District</th><th>' + (kind === 'cust' ? 'Health' : 'Tier') + '</th><th>Why</th><th>' + (kind === 'cust' ? 'Talk about' : 'Next play') + '</th><th>Met</th></tr></thead><tbody>' + rows.map(function(l) { return '<tr class="' + (l.met === 'yes' ? 'cm-met' : '') + '"><td><div class="pp-org-name">' + ppEsc(l.name) + '</div><div class="pp-org-sub">' + ppEsc([l.city, l.state].filter(Boolean).join(', ')) + (l.status ? ' &middot; ' + ppEsc(l.status) : '') + (l.owner ? ' &middot; ' + ppEsc(ppRepName(l.owner)) : '') + '</div></td><td>' + (kind === 'cust' ? (/down|no reservations/.test(l.why) ? '<span class="pp-chip need-to-book">Needs attention</span>' : /growing/.test(l.why) ? '<span class="pp-chip booked">Growing</span>' : '<span class="pp-chip unset">Steady</span>') : intelTierChip(l.tier, l.score)) + '</td><td style="font-size:11.5px;color:var(--text2);white-space:normal;max-width:200px">' + ppEsc(l.why || (l.miles !== '' ? l.miles + ' mi' : '')) + '</td><td style="font-size:11.5px;white-space:normal;max-width:240px">' + ppEsc(kind === 'cust' ? (/down|no reservations/.test(l.why) ? 'What changed this year, and what would help' : 'Playoff portal, photos, a referral to a neighbor') : kind === 'lost' ? (l.competitor ? 'How ' + l.competitor + ' is going; contract timing' : 'What changed since ' + (l.status || 'last time')) : l.nextPlay) + '</td><td>' + (l.met === 'yes' ? '<b style="color:var(--pp-green)">Yes</b>' + (l.metNotes ? '<div class="ca-sub">' + ppEsc(l.metNotes) + '</div>' : '') : '<button class="pp-mini-btn" title="Log a conversation" onclick="cmMeetLead(\'' + ppEsc(l.id) + '\',\'' + ppEsc(s.id) + '\',\'' + ppEsc(l.name).replace(/'/g, '&#39;') + '\')">+</button>') + (l.url ? ' <a class="pp-mini-btn" href="' + ppEsc(l.url) + '" target="_blank" rel="noopener">' + ppSvg('expand') + '</a>' : '') + '</td></tr>'; }).join('') + '</tbody></table></div>'; };
+      return '<div class="ob-h" style="margin-top:12px">Customers to check in with<span class="n">' + (cmTargets.customers || []).length + '</span><span class="ca-sub" style="margin-left:8px;text-transform:none;letter-spacing:0">client success: ' + scope + '; ones with reservations down or none this year first</span></div>' + table(cmTargets.customers || [], 'cust')
+        + '<div class="ob-h" style="margin-top:14px">Prospects to find<span class="n">' + (cmTargets.prospects || []).length + '</span><span class="ca-sub" style="margin-left:8px;text-transform:none;letter-spacing:0">sales: ' + scope + ', ranked by PP Score; being near the venue is only a small bump</span></div>' + table(cmTargets.prospects || [], 'pros')
+        + '<div class="ob-h" style="margin-top:14px">Lost or with a competitor<span class="n">' + (cmTargets.lost || []).length + '</span><span class="ca-sub" style="margin-left:8px;text-transform:none;letter-spacing:0">worth a hello: contracts end, people move</span></div>' + table(cmTargets.lost || [], 'lost');
+    };
+    (function() { var _rb = renderBooth; renderBooth = async function(showId) { await cmLoadTargets(showId); var t = cmTargets || {}; var all = [].concat((t.customers || []).map(function(x) { x._kind = 'Customer'; return x; }), (t.prospects || []).map(function(x) { x._kind = 'Prospect'; return x; }), (t.lost || []).map(function(x) { x._kind = 'Lost'; return x; })); all.forEach(function(x) { var id = 'at_' + showId + '_' + x.id; if (!cmRows.some(function(r) { return r.id === id || r.leadId === x.id; })) cmRows.push({ id: id, showId: showId, org: x.name, name: '', title: x._kind + (x.tier ? ' · Tier ' + x.tier : '') + (x.why ? ' · ' + x.why : ''), email: '', leadId: x.id, leadName: x.name, matchedBy: 'target', met: x.met, notes: x.metNotes, _target: true }); }); cmTargets = Object.assign({}, cmTargets, { targets: [] }); return _rb(showId); }; })();
+    // ---- campaign audience: build your own ----
+    CAMP_PRESETS = [];
+    camp = Object.assign(camp, { states: [], roles: [], tiers: 'A,B', minSize: 0, maxSize: 0, minScore: 0, communities: [], sources: '', tag: '', titles: '' });
+    (function() {
+      var _rc = renderCampaign; renderCampaign = function() {
+        _rc(); var host = document.getElementById('campHost'); if (!host) return;
+        var presets = host.querySelector('.camp-presets'); if (presets) presets.remove();
+        var h3 = host.querySelector('h3'); if (h3) h3.innerHTML = 'Build an audience<span class="out-legend">pick who, then Build. Tag in Close writes the audience name to each lead so a Smart View and a sequence can use it.</span>';
+        host.querySelectorAll('.camp-grid label').forEach(function(l) { var t = l.textContent.trim(); if (t === 'Tiers') l.innerHTML = 'Tiers <span class="camp-help">A is hottest; leave "A,B" for the best fits</span>'; if (t === 'Min score') l.closest('div').style.display = 'none'; if (t === 'Students, from') l.innerHTML = 'District size, students from'; if (t === 'to') l.innerHTML = 'to <span class="camp-help">blank means any</span>'; if (t === 'Close source') l.innerHTML = 'Only leads from <span class="camp-help">a Close source, optional</span>'; if (t === 'Campaign tag') l.innerHTML = 'Audience name <span class="camp-help">becomes the PP Campaign tag in Close</span>'; if (t === 'Community') l.innerHTML = 'Community type'; if (/Role on the lead/.test(t)) l.innerHTML = 'Who must be on the lead'; if (t === 'States') l.innerHTML = 'States'; });
+      };
+    })();
+    // ---- logos: only crisp, real logos show; everything else is an initials tile ----
+    (function() {
+      var CACHE = {}; try { Object.assign(CACHE, JSON.parse(localStorage.getItem('pp-logo-ok') || '{}')); } catch(e) {}
+      function remember(d, ok) { CACHE[d] = ok ? 1 : 0; try { localStorage.setItem('pp-logo-ok', JSON.stringify(CACHE)); } catch(e) {} }
+      window.ppLogoCheck = function(img) { var d = img.getAttribute('data-domain'); var ok = img.naturalWidth >= 48 && img.naturalHeight >= 48 && Math.abs(img.naturalWidth / img.naturalHeight - 1) < 0.35; if (!ok) { img.remove(); remember(d, false); } else { img.classList.add('ok'); remember(d, true); } };
+      ppAvatar = function(name, domainOrEmail, size) {
+        var d = ppLogoDomain(domainOrEmail), sz = size || 32, known = d ? CACHE[d] : undefined;
+        var img = (d && known !== 0) ? '<img alt="" loading="lazy" data-domain="' + ppEsc(d) + '" src="https://www.google.com/s2/favicons?domain=' + encodeURIComponent(d) + '&sz=128" onload="ppLogoCheck(this)" onerror="this.remove()"' + (known === 1 ? ' class="ok"' : '') + '>' : '';
+        return '<div class="pp-org-avatar pp-av" style="background:' + getOrgColor(name || '?') + ';width:' + sz + 'px;height:' + sz + 'px;font-size:' + Math.max(9, Math.round(sz * 0.38)) + 'px">' + ppEsc(getOrgInitials(name || '?')) + img + '</div>';
+      };
+    })();
+    // ---- settings: test digest; go-live also reports opportunities ----
+    (function() {
+      var _rs = renderSettings; renderSettings = function() { _rs(); var host = document.getElementById('settingsHost'); if (!host || !ppIsSuperAdmin() || document.getElementById('digestTest')) return; host.insertAdjacentHTML('beforeend', '<div class="stat-card out-card"><h3>Follow-up digest</h3><div class="pp-toolbar-note" style="margin-bottom:8px">A branded email at 7am to each rep with their follow-ups, most urgent first, each with the reason, the next play, the nearby customer and an Open in Close button. Turn it on from the Follow-ups card on Close Intel.</div><button id="digestTest" class="pp-btn" onclick="this.disabled=true;ppApi(\'sendTestDigest\').then(function(){showToast(\'Sent to you\',\'success\')}).catch(function(e){showToast(e.message,\'error\')})">Email me a sample</button></div>'); };
+      var _pm = ppMarkLiveInClose; ppMarkLiveInClose = async function(email, org) { try { var r = await ppApi('closeMarkLive', { orgEmail: email }); if (r.success) showToast(org + ': Close status ' + (r.before ? '"' + r.before + '" to ' : '') + '"' + r.status + '"' + (r.oppsWon ? ', ' + r.oppsWon + ' opportunit' + (r.oppsWon === 1 ? 'y' : 'ies') + ' marked Won' : r.oppNote ? ' (' + r.oppNote + ')' : ''), 'success'); else if (!r.skipped) showToast('Close not updated: ' + r.error, 'error'); } catch(e) {} };
+    })();
+  </script>
+  <style>
+    .cal-lines{display:flex;flex-direction:column;gap:6px;font-size:13.5px;color:var(--text2);line-height:1.5}.cal-lines b{color:var(--text)}
+    .fu-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .fu-grid .fu-item{flex-direction:column;gap:8px}.fu-grid .fu-actions{flex-direction:row;width:100%}.fu-grid .fu-actions .pp-btn{flex:1}
+    @media(max-width:1300px){.fu-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:800px){.fu-grid{grid-template-columns:1fr}}
+    .camp-help{font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3);margin-left:6px}
+    .pp-org-avatar{border-radius:9px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;color:#fff;letter-spacing:.02em;position:relative;overflow:hidden;flex-shrink:0}
+    .pp-org-avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;opacity:0;transition:opacity .2s}
+    .pp-org-avatar img.ok{opacity:1}
+  </style>
 </body>
 </html>
