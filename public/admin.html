@@ -9783,5 +9783,26 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     .pp-org-avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;opacity:0;transition:opacity .2s}
     .pp-org-avatar img.ok{opacity:1}
   </style>
+
+  <script>
+    // Settings: schools-only proof points
+    (function() {
+      var _rs = renderSettings; renderSettings = function() {
+        _rs(); var ex = document.getElementById('nbExclude'); if (!ex || document.getElementById('nbSchools')) return;
+        ex.closest('.stat-card').querySelector('.pp-toolbar-note').insertAdjacentHTML('afterend', '<label class="rv-toggle" style="margin:0 0 8px"><input type="checkbox" id="nbSchools" checked onchange="nbSchools(this.checked)"> Only schools, districts and colleges count as nearby proof points (churches, gyms and sports venues stay customers but are not cited)</label>');
+        ppApi('getNearbyExclude').then(function(r) { var c = document.getElementById('nbSchools'); if (c && r && r.success) c.checked = r.schoolsOnly !== 'off'; }).catch(function() {});
+      };
+      window.nbSchools = async function(on) { try { var r = await ppApi('setNearbySchoolsOnly', { on: on }); if (!r.success) throw new Error(r.error); showToast('Saved. Nearest customers re-score in the next minute.', 'success'); } catch(e) { showToast(e.message, 'error'); } };
+    })();
+  </script>
+
+  <script>
+    // trade-show social requests: marked Auto with their post date; the super admin's first load starts the daily job
+    (function() {
+      var _row = rqRow; rqRow = function(q) { var html = _row(q); if (q.auto === 'yes' || q.postDate) { var tag = '<span class="pp-chip unset" style="margin-left:6px;font-size:10px">' + (q.auto === 'yes' ? 'Auto' : '') + (q.postDate ? (q.auto === 'yes' ? ' &middot; ' : '') + 'post ' + ppFmtDate(q.postDate, { month: 'short', day: 'numeric' }) : '') + '</span>'; html = html.replace(/(<div class="pp-org-name">[^<]*)(<\/div>)/, '$1' + tag + '$2'); } return html; };
+      var ran = false;
+      var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); if (ran || !ppIsSuperAdmin()) return; ran = true; setTimeout(function() { ppApi('runShowSocial', {}, 120000).then(function(r) { if (r && r.success && r.created && r.created.length) { showToast('Queued social graphics: ' + r.created.join(', '), 'success'); if (typeof loadRequests === 'function') loadRequests(true); } }).catch(function() {}); }, 4000); };
+    })();
+  </script>
 </body>
 </html>
