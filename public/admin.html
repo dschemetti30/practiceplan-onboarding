@@ -6074,7 +6074,7 @@
         + cell('notes', p.notes ? '<span class="lead-note">' + ppEsc(p.notes) + '</span>' : '<span class="pp-placeholder">Add a note</span>')
         + '<td style="text-align:right"><button class="pp-mini-btn danger" title="Remove" onclick="event.stopPropagation();lpDelete(\'' + ppEsc(p.id) + '\')">&#10005;</button></td></tr>';
     }
-    var lpSort = null, lpCollapsed = { past: true };
+    var lpSort = null, lpCollapsed = { past: true, ever: true };
     function lpSortBy(key) { if (lpSort && lpSort.key === key) { lpSort.dir = lpSort.dir === 'asc' ? 'desc' : 'asc'; } else lpSort = { key: key, dir: key === 'leads' || key === 'show' ? 'desc' : 'asc' }; renderLandingPages(); }
     function lpVal(p, key) { var show = lpShow(p); switch (key) { case 'title': return (p.title || '').toLowerCase(); case 'url': return lpSlug(p.url).toLowerCase(); case 'show': return show && show._start ? show._start : (show ? '9998' : '9999'); case 'reps': return lpRepFor(p).map(ppRepName).join(', ').toLowerCase(); case 'source': return (p.sourceKey || '').toLowerCase(); case 'leads': return lpLeads(p).length; case 'notes': return (p.notes || '').toLowerCase(); } return ''; }
     function renderLandingPages() {
@@ -6613,7 +6613,7 @@
       var st = CP_STATUSES.find(function(s) { return s.val === p.status; }) || CP_STATUSES[0], d = p.date ? ppDaysBetween(p.date, ppTodayISO()) : null;
       return '<tr data-id="' + ppEsc(p.id) + '">'
         + cell('date', p.date ? '<div class="ts-date' + (d !== null && d >= 0 && d <= 3 ? ' soon' : '') + '">' + ppFmtDate(p.date, { weekday: 'short', month: 'short', day: 'numeric' }) + '<span class="sub">' + (d === null ? '' : d === 0 ? 'Today' : d > 0 ? 'in ' + d + 'd' : Math.abs(d) + 'd ago') + '</span></div>' : '<span class="pp-placeholder">Set date</span>')
-        + cell('title', '<div class="cp-post-cell">' + (cpThumb(p.assetUrl) ? '<img class="cp-thumb" src="' + ppEsc(cpThumb(p.assetUrl)) + '" alt="" loading="lazy" onerror="this.remove()">' : '') + '<div style="min-width:0"><div class="pp-org-name">' + ppEsc(p.title || '(untitled)') + '</div><div class="pp-org-sub">' + ppEsc((p.copy || '').slice(0, 90)) + (p.copy && p.copy.length > 90 ? '...' : '') + '</div></div></div>')
+        + cell('title', '<div class="cp-post-cell">' + (cpThumb(p.assetUrl) ? '<img class="cp-thumb" src="' + ppEsc(cpThumb(p.assetUrl)) + '" alt="" loading="lazy" data-id="' + ppEsc((String(p.assetUrl || '').match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([A-Za-z0-9_-]{10,})/) || [])[1] || '') + '" onerror="cpThumbFail(this)">' : (p.assetUrl ? '<span class="cp-thumb cp-thumb-x" title="No preview: this link is not an image file or a shared Drive file">no preview</span>' : '')) + '<div style="min-width:0"><div class="pp-org-name">' + ppEsc(p.title || '(untitled)') + '</div><div class="pp-org-sub">' + ppEsc((p.copy || '').slice(0, 90)) + (p.copy && p.copy.length > 90 ? '...' : '') + '</div></div></div>')
         + cell('channel', (typeof cpPlatformIcons === 'function') ? cpPlatformIcons(p, 22) : '<span class="pp-chip pick">' + ppEsc(p.channel || 'Channel?') + '</span>')
         + cell('status', '<span class="pp-chip pick ' + st.cls + '">' + st.label + '<i class="caret"></i></span>')
         + cell('owner', p.owner ? '<div style="display:flex;align-items:center;gap:6px">' + ppRepAvatars(p.owner, 22) + '<span style="font-size:11px;color:var(--text2)">' + ppEsc(ppRepName(p.owner)) + '</span></div>' : '<span class="pp-chip need-to-book">Owner<i class="caret"></i></span>')
@@ -6849,7 +6849,9 @@
       try { var r = await cpUploadAsset(f); if (r) { document.getElementById('cp_asset').value = r.url; var pv = document.getElementById('cp_asset_preview'); if (pv) { pv.src = r.thumb; pv.style.display = 'block'; } showToast('Image uploaded to Drive', 'success'); } } catch(e) { showToast(e.message, 'error'); }
       if (lab) lab.textContent = 'Upload image'; input.value = '';
     }
-    function cpThumb(url) { var m = String(url || '').match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([A-Za-z0-9_-]{10,})/); if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w400'; if (/\.(png|jpe?g|gif|webp)(\?|$)/i.test(url) || /scontent|cdninstagram|fbcdn/.test(url)) return url; return ''; }
+    function cpThumbFail(img) { var id = img.getAttribute('data-id'); if (id && !img.dataset.alt) { img.dataset.alt = '1'; img.src = 'https://lh3.googleusercontent.com/d/' + id + '=w400'; return; } var s = document.createElement('span'); s.className = 'cp-thumb cp-thumb-x'; s.title = id ? 'Drive file is not shared: set it to Anyone with the link can view' : 'Image could not load (expired or private link)'; s.textContent = id ? 'share it' : 'no preview'; img.replaceWith(s); }
+    function cpThumb(url) { var m = String(url || '').match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([A-Za-z0-9_-]{10,})/); if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w400';
+      var db = String(url || '').match(/dropbox\.com\/(?:s|scl\/fi)\/[^?]+/); if (db) return String(url).replace(/[?&]dl=0/, '').replace(/\?.*$/, '') + '?raw=1'; if (/\.(png|jpe?g|gif|webp)(\?|$)/i.test(url) || /scontent|cdninstagram|fbcdn/.test(url)) return url; return ''; }
     // =====================================================================
     // OUTREACH v2: designed report over the Close outreach data
     // =====================================================================
@@ -10077,5 +10079,42 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       var _lr = loadRequests; loadRequests = async function(force) { var r = await _lr(force); if (force) plan = null; return r; };
     })();
   </script>
+  <script>
+    // ---- disconnect and fix ----
+    leadDisconnect = async function(id) {
+      var l = leadList.find(function(x) { return x.id === id; }); if (!l || !l.closeLeadId) return;
+      var pushed = /created lead|added contact|opportunity created/.test(String(l.closePushNote || ''));
+      var msg = 'This inbound lead is connected to the wrong Close CRM lead.\n\nOK = disconnect and fix: ' + (pushed ? 'remove what the tool added over there (' + String(l.closePushNote || '').replace(/matched by [^;]+;?\s*/, '') + '), then ' : '') + 'create or match this lead correctly in Close CRM under the strict rule.\n\nCancel = only disconnect; leave Close CRM as it is.';
+      var fix = confirm(msg);
+      try { var r = await ppApi('disconnectClose', { id: id, undo: fix && pushed, recreate: fix }, 170000); if (!r.success) throw new Error(r.error); var i = leadList.findIndex(function(x) { return x.id === id; }); if (i >= 0) leadList[i] = r.lead; renderLeads(); var f = r.fixed; showToast('Disconnected' + (r.done && r.done.length ? ' (' + r.done.join(', ') + ')' : '') + (f ? (f.error ? '. Fix failed: ' + f.error : f.skipped ? '. Not recreated: ' + f.skipped : '. ' + (f.created ? 'Created in Close CRM' : 'Matched in Close CRM') + ': ' + f.note) : ''), f && f.error ? 'error' : 'success'); } catch(e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v60)' : ''), 'error'); }
+    };
+    // ---- landing pages: shows that still need a page, at the top ----
+    (function() {
+      var _rl = renderLandingPages; renderLandingPages = function() {
+        _rl(); var view = document.getElementById('landingView'); if (!view) return;
+        var today = ppTodayISO(), linked = {}; (lpList || []).forEach(function(p) { if (p.showId) linked[p.showId] = 1; });
+        var need = (tsList || []).filter(function(s) { if (s.archived === true || String(s.archived) === 'TRUE') return false; var start = String(s.exhibitStart || s.eventDate || '').slice(0, 10); return /^\d{4}-\d{2}-\d{2}$/.test(start) && start >= today && !linked[s.id]; }).sort(function(a, b) { return String(a.exhibitStart || a.eventDate).localeCompare(String(b.exhibitStart || b.eventDate)); });
+        var host = document.getElementById('lpNeed'); if (!host) { host = document.createElement('div'); host.id = 'lpNeed'; var first = view.querySelector('.table-wrapper, .controls-row'); (first || view).insertAdjacentElement('beforebegin', host); }
+        if (!need.length) { host.innerHTML = ''; return; }
+        host.innerHTML = '<div class="stat-card out-card" style="border-left:3px solid #f59e0b"><h3>Shows that still need a landing page<span class="n">' + need.length + '</span><span class="out-legend">every upcoming show without a page linked to it. Pages are built on conferences.practice-plan.com and show up here once linked to the show; the request center queues the page request four weeks out, or request it now</span></h3><div class="lp-need">' + need.map(function(s) { var start = String(s.exhibitStart || s.eventDate).slice(0, 10), days = ppDaysBetween(start, today); return '<div class="lp-need-item' + (days <= 21 ? ' soon' : '') + '"><div><b>' + ppEsc(s.name) + '</b><span>' + ppFmtDate(start, { month: 'short', day: 'numeric' }) + (days <= 21 ? ' · ' + days + ' days out' : '') + '</span></div><div style="display:flex;gap:6px"><button class="pp-btn primary" onclick="lpNewForShow(\'' + ppEsc(s.id) + '\')">Add page</button><button class="pp-btn" onclick="switchView(\'tradeshows\');setTimeout(function(){openTsModal(\'' + ppEsc(s.id) + '\')},300)">Show</button></div></div>'; }).join('') + '</div></div>';
+      };
+      window.lpNewForShow = function(showId) { var s = tsList.find(function(x) { return x.id === showId; }); if (!s) return; var existing = (rqList || []).find(function(q) { return q.showId === showId && q.kind === 'landing' && !/Done|Declined/.test(q.status); }); if (existing) { switchView('requests'); setTimeout(function() { if (typeof openRequestModal === 'function') openRequestModal(existing.id); }, 300); return; } openRequestModal(null); setTimeout(function() { var t = document.getElementById('rq_title'), ty = document.getElementById('rq_type'), d = document.getElementById('rq_details'), r = document.getElementById('rq_related'), n = document.getElementById('rq_needed'); if (t) t.value = 'Landing page: ' + s.name; if (ty) ty.value = 'Landing Page'; if (r) r.value = 'show:' + s.id; var start = String(s.exhibitStart || s.eventDate || '').slice(0, 10); if (n && start) { var dt = new Date(start + 'T12:00:00'); dt.setDate(dt.getDate() - 7); n.value = dt.toISOString().slice(0, 10); } if (d) d.value = 'Finalize the show landing page (conferences.practice-plan.com): headline, who is at the booth, the form, and the show-specific offer. Live a week before the show.' + (s.location ? '\nWhere: ' + s.location : ''); }, 80); };
+    })();
+    // ---- On deck: lead-time settings and unplaced shows ----
+    (function() {
+      var _rr = renderRequests; renderRequests = function() { _rr(); if (rqFilter !== 'deck') return; var host = document.getElementById('rqDeck'); if (!host || !ppIsSuperAdmin() || host.querySelector('.rq-lead') ) return; var card = host.querySelector('.out-card'); if (!card) return; var plan = window._rqPlanData; if (!plan) return; var lead = plan.lead || {}; card.insertAdjacentHTML('beforeend', '<div class="rq-lead" style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;align-items:center"><span class="ca-sub">Lead times (days before the show):</span>' + ['landing', 'flyer', 'social'].map(function(k) { var v = lead[k] || {}; return '<label class="ca-sub" style="text-transform:none;letter-spacing:0">' + ({ landing: 'Landing page', flyer: 'Flyer', social: 'Social' }[k]) + ' opens <input type="number" min="1" class="pp-inline-select" style="height:28px;width:56px" data-rl="' + k + '.lead" value="' + ppEsc(String(v.lead || '')) + '"> needed <input type="number" min="0" class="pp-inline-select" style="height:28px;width:56px" data-rl="' + k + '.needBefore" value="' + ppEsc(String(v.needBefore || '')) + '"></label>'; }).join('') + '<button class="pp-btn" onclick="rqLeadSave(this)">Save</button>' + (plan.unplaced && plan.unplaced.length ? '<span class="pp-toolbar-note" style="color:#b91c1c;flex-basis:100%">No requests can be planned for shows without a usable date: ' + ppEsc(plan.unplaced.join(', ')) + '. Set a start date on those shows.</span>' : '') + '</div>'); };
+      window.rqLeadSave = async function(btn) { var cfg = {}; document.querySelectorAll('[data-rl]').forEach(function(el) { var k = el.getAttribute('data-rl').split('.'); cfg[k[0]] = cfg[k[0]] || {}; cfg[k[0]][k[1]] = Number(el.value) || 0; }); btn.disabled = true; try { var r = await ppApi('setRequestLead', { config: cfg }); if (!r.success) throw new Error(r.error); showToast('Saved; the next pass follows the new lead times', 'success'); window._rqPlanData = null; loadRequests(true); } catch(e) { showToast(e.message, 'error'); } btn.disabled = false; };
+      // keep the plan payload for the settings row
+      var _api = ppApi; ppApi = function(action, params, t) { var p = _api.apply(this, arguments); if (action === 'getRequestPlan') p.then(function(r) { if (r && r.success) window._rqPlanData = r; }).catch(function() {}); return p; };
+    })();
+  </script>
+  <style>
+    .cp-thumb-x{display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:var(--text3);text-align:center;line-height:1.1;padding:4px}
+    .lp-need{display:flex;flex-direction:column;gap:6px}
+    .lp-need-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;border:1px solid var(--border);border-radius:10px;background:var(--card)}
+    .lp-need-item.soon{border-color:#f59e0b;background:rgba(245,158,11,0.06)}
+    .lp-need-item b{display:block;font-size:13px;color:var(--text)}.lp-need-item span{font-size:11.5px;color:var(--text3)}
+    .lp-need-item .pp-btn{height:30px;padding:0 10px;font-size:12px}
+  </style>
 </body>
 </html>
