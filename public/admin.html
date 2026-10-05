@@ -10162,5 +10162,29 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     .out-chart,.fol-svg{overflow:hidden}
   </style>
   <style>#requestsView .controls-row select[onchange*="rqFilter"]{display:none}#requestsView .controls-row .styled-select:has(select[onchange*="rqFilter"]){display:none}</style>
+  <script>
+    // ---- inbound leads: email check indicator and a fix popover ----
+    (function() {
+      function badge(l) { var c = l.emailCheck; if (!l.email) return ''; if (c === 'ok') return '<span class="em-ok" title="Email looks right and the domain accepts mail">&#10003;</span>'; if (c === 'suspect') return '<button type="button" class="em-fix suspect" title="Looks like a typo' + (l.emailSuggest ? '. Suggested: ' + ppEsc(l.emailSuggest) : '') + '" onclick="event.stopPropagation();leadFixEmail(\'' + ppEsc(l.id) + '\')">check</button>'; if (c === 'bad') return '<button type="button" class="em-fix bad" title="This address cannot receive mail' + (l.emailSuggest ? '. Suggested: ' + ppEsc(l.emailSuggest) : '') + '" onclick="event.stopPropagation();leadFixEmail(\'' + ppEsc(l.id) + '\')">fix</button>'; return '<span class="em-unk" title="Not checked yet">?</span>'; }
+      var _rl = renderLeads; renderLeads = function() { _rl(); var unchecked = []; document.querySelectorAll('#leadTableBody tr[data-id]').forEach(function(tr) { var l = leadList.find(function(x) { return x.id === tr.getAttribute('data-id'); }); if (!l || tr.querySelector('.em-ok,.em-fix,.em-unk')) return; var cell = [].find.call(tr.querySelectorAll('td'), function(td) { return td.textContent.indexOf(l.email || '@@') >= 0; }); if (cell && l.email) { var span = [].find.call(cell.querySelectorAll('*'), function(el) { return el.children.length === 0 && el.textContent.trim() === l.email; }) || cell; span.insertAdjacentHTML('beforeend', ' ' + badge(l)); if (!l.emailCheck) unchecked.push(l.id); } }); if (unchecked.length && !window._emVerifying) { window._emVerifying = true; ppApi('verifyEmails', { ids: unchecked.slice(0, 150).join(',') }, 170000).then(function(r) { if (r.success) { Object.keys(r.results || {}).forEach(function(id) { var l = leadList.find(function(x) { return x.id === id; }); if (l) { l.emailCheck = r.results[id].check; l.emailSuggest = r.results[id].suggest; } }); renderLeads(); } }).catch(function() {}).finally(function() { window._emVerifying = false; }); } };
+      window.leadFixEmail = function(id) { var l = leadList.find(function(x) { return x.id === id; }); if (!l) return; ppFormPopover(document.activeElement || document.body, [{ key: 'email', label: 'Email' + (l.emailSuggest ? ' (suggested: ' + l.emailSuggest + ')' : ''), value: l.emailSuggest || l.email || '' }], async function(v) { try { var r = await ppApi('fixEmail', { id: id, value: v.email }); if (!r.success) throw new Error(r.error); var i = leadList.findIndex(function(x) { return x.id === id; }); if (i >= 0) leadList[i] = r.lead; renderLeads(); showToast(r.check.check === 'ok' ? 'Email fixed and verified' : r.check.check === 'bad' ? 'Still looks wrong: ' + (r.check.suggest ? 'try ' + r.check.suggest : 'that domain cannot receive mail') : 'Saved; still looks unusual', r.check.check === 'bad' ? 'error' : 'success'); } catch(e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v63)' : ''), 'error'); } }, { title: 'Fix the email for ' + (l.name || l.org) });
+      };
+    })();
+    // ---- requests: List is the default; List / Board is a separate view switch ----
+    rqMode = 'list';
+    (function() {
+      var _rr = renderRequests; renderRequests = function() { _rr(); var view = document.getElementById('requestsView'); if (!view) return; var bar = view.querySelector('.rq-mode'); if (!bar) return; var sw = bar.querySelector('.rq-modeswitch'); if (sw) { sw.classList.add('pp-view-toggle'); sw.style.marginLeft = 'auto'; sw.setAttribute('title', 'How to show the requests'); var lbl = sw.querySelector('.rq-vlabel'); if (!lbl) sw.insertAdjacentHTML('afterbegin', '<span class="rq-vlabel">View</span>'); if (rqFilter === 'deck') sw.style.visibility = 'hidden'; else sw.style.visibility = ''; } };
+    })();
+  </script>
+  <style>
+    .em-ok{color:var(--pp-green);font-weight:800;margin-left:4px}
+    .em-unk{color:var(--text3);margin-left:4px;font-size:11px}
+    .em-fix{margin-left:4px;height:18px;padding:0 6px;border-radius:50px;border:1px solid;background:transparent;font:inherit;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer}
+    .em-fix.suspect{color:#b45309;border-color:#f59e0b}.em-fix.bad{color:#b91c1c;border-color:#dc2626;background:rgba(220,38,38,0.06)}
+    .rq-mode .rq-modeswitch{display:inline-flex;align-items:center;gap:4px;padding:3px;border:1px solid var(--border);border-radius:10px;background:var(--card)}
+    .rq-mode .rq-modeswitch button{border-radius:8px;padding:5px 10px}
+    .rq-vlabel{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:0 4px 0 6px}
+    .rq-mode{display:flex;align-items:center}
+  </style>
 </body>
 </html>
