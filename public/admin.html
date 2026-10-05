@@ -2391,7 +2391,7 @@
             </div>
           </div>
           <div class="table-wrapper pp-desktop-only">
-            <table class="pp-table" id="leadTable"><thead><tr><th>Lead</th><th>Contact</th><th>Source</th><th>Received</th><th>Assigned</th><th>Status</th><th title="Received to first contact">Touch</th><th>CRM</th><th>Notes</th><th></th></tr></thead><tbody id="leadTableBody"><tr><td colspan="9" class="pp-empty">Loading leads...</td></tr></tbody></table>
+            <table class="pp-table" id="leadTable"><thead><tr><th>Lead</th><th>Contact</th><th>Source</th><th>Received</th><th>Assigned</th><th>Status</th><th title="Received to first contact">Touch</th><th>Notes</th><th>CRM</th><th></th></tr></thead><tbody id="leadTableBody"><tr><td colspan="9" class="pp-empty">Loading leads...</td></tr></tbody></table>
           </div>
           <div class="pp-mobile-cards" id="leadMobileCards"></div>
         </div>
@@ -10185,6 +10185,32 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     .rq-mode .rq-modeswitch button{border-radius:8px;padding:5px 10px}
     .rq-vlabel{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:0 4px 0 6px}
     .rq-mode{display:flex;align-items:center}
+  </style>
+  <style>
+    /* Inbound Leads: nothing clipped, columns sized for what they hold, less important columns step aside on smaller screens */
+    #leadTable{table-layout:fixed;min-width:1180px}
+    #leadTable th:nth-child(1),#leadTable td:nth-child(1){width:19%}
+    #leadTable th:nth-child(2),#leadTable td:nth-child(2){width:19%}
+    #leadTable th:nth-child(3),#leadTable td:nth-child(3){width:8%}
+    #leadTable th:nth-child(4),#leadTable td:nth-child(4){width:8%}
+    #leadTable th:nth-child(5),#leadTable td:nth-child(5){width:10%}
+    #leadTable th:nth-child(6),#leadTable td:nth-child(6){width:7%}
+    #leadTable th:nth-child(7),#leadTable td:nth-child(7){width:6%}
+    #leadTable th:nth-child(8),#leadTable td:nth-child(8){width:10%}
+    #leadTable th:nth-child(9),#leadTable td:nth-child(9){width:10%}
+    #leadTable th:nth-child(10),#leadTable td:nth-child(10){width:3%}
+    #leadTable td:nth-child(2),#leadTable td:nth-child(5),#leadTable td:nth-child(8),#leadTable td:nth-child(9){white-space:normal;overflow:visible;text-overflow:clip;line-height:1.35;vertical-align:top;padding-top:10px}
+    #leadTable .lead-contact{display:flex;flex-direction:column;gap:3px}
+    #leadTable .lead-contact .pp-copyable{word-break:break-all;display:inline}
+    #leadTable .lead-contact .em-ok,#leadTable .lead-contact .em-fix,#leadTable .lead-contact .em-unk{display:inline-block;vertical-align:middle}
+    #leadTable .lead-close{white-space:normal;height:auto;min-height:24px;padding:3px 8px;line-height:1.25;display:inline-flex;align-items:center;gap:4px;max-width:100%}
+    #leadTable .lead-close b{white-space:normal}
+    #leadTable .lead-note{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:normal;font-size:12px}
+    #leadTable .lead-extras{flex-wrap:wrap}
+    #leadTable td:first-child .pp-org-name{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.25}
+    #leadTable td:first-child .pp-org-sub{white-space:normal;overflow:visible;text-overflow:clip}
+    @media(max-width:1500px){#leadTable th:nth-child(7),#leadTable td:nth-child(7){display:none}#leadTable{min-width:1100px}}
+    @media(max-width:1300px){#leadTable th:nth-child(4),#leadTable td:nth-child(4){display:none}#leadTable{min-width:1000px}}
   </style>
 </body>
 </html>
