@@ -10023,7 +10023,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       // the old marketing gate defers to the config once it is loaded
       if (typeof ppApplyMarketingGate === 'function') { var _g = ppApplyMarketingGate; ppApplyMarketingGate = function() { if (navCfg) { navApply(); return; } _g(); }; }
       var _sv = switchView; switchView = function(v) { if (navCfg && currentUser && !navVisible(v, currentUser.email) && v !== 'dashboard') { showToast('That page is not turned on for you', 'error'); return; } return _sv(v); };
-      var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() { ppApi('getStartup', {}, 60000).then(function(r) { if (!r || !r.success) return; navCfg = r.nav || {}; navApply(); window._ppInbound = Object.assign({ success: true }, r.inbound || {}); if (!seqCfg) seqCfg = { success: true, defaults: r.seqDefaults || {}, sequences: [], senders: [], partial: true }; }).catch(function() {}); }, 1500); };
+      var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() { ppApi('getStartup', {}, 60000).then(function(r) { if (!r || !r.success) return; navCfg = r.nav || {}; navApply(); window._ppStartup = r; window._ppInbound = Object.assign({ success: true }, r.inbound || {}); if (!seqCfg) seqCfg = { success: true, defaults: r.seqDefaults || {}, sequences: [], senders: [], partial: true }; }).catch(function() {}); }, 1500); };
       // Settings card
       var _rs = renderSettings; renderSettings = function() { _rs(); var host = document.getElementById('settingsHost'); if (!host || !ppIsSuperAdmin() || document.getElementById('navCard')) return; host.insertAdjacentHTML('afterbegin', '<div class="stat-card out-card" id="navCard"><h3>Who sees which pages</h3><div class="pp-empty">Loading</div></div>'); navRenderCard(); };
       window.navRenderCard = async function() {
@@ -10211,6 +10211,71 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     #leadTable td:first-child .pp-org-sub{white-space:normal;overflow:visible;text-overflow:clip}
     @media(max-width:1500px){#leadTable th:nth-child(7),#leadTable td:nth-child(7){display:none}#leadTable{min-width:1100px}}
     @media(max-width:1300px){#leadTable th:nth-child(4),#leadTable td:nth-child(4){display:none}#leadTable{min-width:1000px}}
+  </style>
+  <style>#leadTable .lead-contact>span{display:block !important;white-space:normal !important;overflow:visible !important;text-overflow:clip !important;max-width:none !important;word-break:break-all;overflow-wrap:anywhere}#leadTable .lead-contact .pp-copyable{white-space:normal !important;overflow:visible !important;max-width:none !important}#leadTable td:nth-child(2){overflow:visible !important}</style>
+  <script>
+    // =====================================================================
+    // READINESS: what a lead needs before a sequence can start, shown as three steps with the fix one click away
+    // =====================================================================
+    function ppLeadPlan(l) {
+      var d = (seqCfg && seqCfg.defaults) || (window._ppStartup && window._ppStartup.seqDefaults) || {};
+      var showName = (typeof leadShowFor === 'function' && l.source) ? (function() { var s = leadShowFor(l); return s ? (s.name || s) : ''; })() : (l.show || '');
+      var show = showName ? (tsList || []).find(function(s) { return s.name === showName; }) : null;
+      if (!show) return { scope: 'website', showName: '', sequenceId: (d.website || {}).sequenceId || '', where: 'Settings > Sequences > Website and other inbound' };
+      var johnOn = String(show.reps || '').toLowerCase().indexOf('john.brochu@practiceplan.io') >= 0, base = johnOn ? (d.johnShow || {}) : (d.show || {});
+      return { scope: 'show', showName: show.name, showId: show.id, sequenceId: show.fuSequenceId || base.sequenceId || '', where: 'the ' + show.name + ' show, or Settings > Sequences > ' + (johnOn ? 'Shows John attends' : 'Shows') };
+    }
+    function ppReadiness(l) {
+      var plan = ppLeadPlan(l), steps = [];
+      var emailOk = !!l.email && l.emailCheck !== 'bad';
+      steps.push({ key: 'email', label: 'Email', ok: emailOk, warn: !!l.email && l.emailCheck === 'suspect', why: !l.email ? 'No email address' : l.emailCheck === 'bad' ? 'Email cannot receive mail' + (l.emailSuggest ? ' (try ' + l.emailSuggest + ')' : '') : l.emailCheck === 'suspect' ? 'Email looks like a typo; worth a glance' : 'Email verified', action: !emailOk || l.emailCheck === 'suspect' ? { label: l.email ? 'Fix email' : 'Add email', fn: 'leadFixEmail(\'' + ppEsc(l.leadId || l.id) + '\')' } : null });
+      var crmOk = !!(l.closeLeadId && (l.closeContactId || l.closeOppId));
+      steps.push({ key: 'crm', label: 'In Close CRM', ok: crmOk, why: crmOk ? 'Lead and contact exist in Close CRM' : l.closeLeadId ? 'Linked, but the contact is not on the Close CRM lead yet' : 'Not in Close CRM yet', action: crmOk ? null : { label: 'Add to CRM', fn: 'leadPushClose(\'' + ppEsc(l.leadId || l.id) + '\',this)', needs: emailOk } });
+      var seqOk = !!(l.fuSequenceId || plan.sequenceId);
+      steps.push({ key: 'seq', label: 'Sequence', ok: seqOk, why: seqOk ? 'Sequence chosen for ' + (plan.scope === 'show' ? plan.showName : 'website leads') : 'No sequence chosen for ' + (plan.scope === 'show' ? plan.showName : 'website leads'), action: seqOk ? null : { label: 'Choose', fn: plan.scope === 'show' && plan.showId ? 'switchView(\'tradeshows\');setTimeout(function(){openTsModal(\'' + ppEsc(plan.showId) + '\')},300)' : 'switchView(\'settings\')' } });
+      var state = l.state || l.fuState || '';
+      var done = ['enrolled', 'replied', 'meeting', 'finished'].indexOf(state) >= 0;
+      return { steps: steps, ready: steps.every(function(s) { return s.ok; }), done: done, plan: plan };
+    }
+    function ppReadinessStrip(l, opts) {
+      opts = opts || {}; var r = ppReadiness(l), state = l.state || l.fuState || '';
+      var dots = r.steps.map(function(s, i) { return '<span class="rd-step ' + (s.ok ? (s.warn ? 'warn' : 'ok') : 'todo') + '" title="' + ppEsc(s.why) + '"><i>' + (s.ok ? (s.warn ? '!' : '&#10003;') : (i + 1)) + '</i>' + (opts.compact ? '' : '<b>' + s.label + '</b>') + '</span>'; }).join('<span class="rd-line"></span>');
+      var tail;
+      if (r.done) tail = '<span class="rd-step ok"><i>&#10003;</i>' + (opts.compact ? '' : '<b>' + ({ enrolled: 'In sequence', replied: 'Replied', meeting: 'Meeting', finished: 'Finished' }[state] || 'Running') + '</b>') + '</span>';
+      else if (r.ready) tail = '<span class="rd-step ready"><i>&#9654;</i>' + (opts.compact ? '' : '<b>Ready</b>') + '</span>';
+      else { var first = r.steps.find(function(s) { return !s.ok; }); tail = first && first.action ? '<button type="button" class="rd-fix' + (first.action.needs === false ? ' off' : '') + '" title="' + ppEsc(first.why) + '" onclick="event.stopPropagation();' + first.action.fn + '">' + first.action.label + '</button>' : ''; }
+      return '<div class="rd-strip' + (opts.compact ? ' compact' : '') + '">' + dots + '<span class="rd-line"></span>' + tail + '</div>';
+    }
+    // ---- Follow-up page: strip on every row; Start now only when ready ----
+    (function() {
+      var _rf = renderFollowUp; renderFollowUp = function() {
+        _rf(); var host = document.getElementById('fqHost'); if (!host || !fq || !fq.rows) return;
+        host.querySelectorAll('tbody tr').forEach(function(tr) { var cb = tr.querySelector('input[type=checkbox]'); if (!cb) return; var m = (cb.getAttribute('onchange') || '').match(/fqSel\['([^']+)'\]/); if (!m) return; var r = fq.rows.find(function(x) { return x.id === m[1]; }); if (!r) return; var lead = Object.assign({ leadId: r.id }, r); var rd = ppReadiness(lead); var cell = tr.children[2]; if (cell && !cell.querySelector('.rd-strip')) cell.insertAdjacentHTML('beforeend', ppReadinessStrip(lead, { compact: true })); var start = [].find.call(tr.querySelectorAll('button'), function(b) { return /Start now|Approve/.test(b.textContent); }); if (start && !rd.ready && !rd.done) { start.disabled = true; start.classList.add('off'); var first = rd.steps.find(function(s) { return !s.ok; }); start.title = 'Cannot start yet: ' + (first ? first.why : ''); } });
+        var ready = fq.rows.filter(function(r) { return ['scheduled', 'queued', 'review'].indexOf(r.state) >= 0 && ppReadiness(Object.assign({ leadId: r.id }, r)).ready; }).length, waiting = fq.rows.filter(function(r) { return ['scheduled', 'queued', 'review', 'blocked', 'ineligible'].indexOf(r.state) >= 0 && !ppReadiness(Object.assign({ leadId: r.id }, r)).ready; }).length;
+        var kp = host.querySelector('.out-kpis'); if (kp && !kp.querySelector('.rd-kpi')) kp.insertAdjacentHTML('afterend', '<div class="rd-kpi">' + (waiting ? '<span class="rd-kpi-item todo"><b>' + waiting + '</b> need something before they can start (a fix is one click on each row)</span>' : '') + (ready ? '<span class="rd-kpi-item ok"><b>' + ready + '</b> ready to start</span>' : '') + (!waiting && !ready ? '<span class="rd-kpi-item ok">Everything that can start has started</span>' : '') + '<span class="rd-legend"><i>1</i> email verified <i>2</i> in Close CRM <i>3</i> sequence chosen <i>&#9654;</i> ready</span></div>');
+      };
+    })();
+    // ---- Inbound Leads: compact strip in the CRM column ----
+    (function() {
+      var _rl = renderLeads; renderLeads = function() { _rl(); document.querySelectorAll('#leadTableBody tr[data-id]').forEach(function(tr) { if (tr.querySelector('.rd-strip')) return; var l = leadList.find(function(x) { return x.id === tr.getAttribute('data-id'); }); if (!l || l.origin === 'history') return; var cell = tr.children[8] || tr.lastElementChild; if (cell) cell.insertAdjacentHTML('beforeend', ppReadinessStrip(Object.assign({ leadId: l.id }, l), { compact: true })); }); };
+    })();
+  </script>
+  <style>
+    .rd-strip{display:inline-flex;align-items:center;gap:0;margin-top:6px;flex-wrap:nowrap}
+    .rd-step{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
+    .rd-step i{width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:10px;font-weight:800;border:1.5px solid var(--border);color:var(--text3);background:var(--card)}
+    .rd-step.ok i{background:var(--pp-green);border-color:var(--pp-green);color:#fff}
+    .rd-step.warn i{background:#f59e0b;border-color:#f59e0b;color:#fff}
+    .rd-step.ready i{background:var(--pp-blue);border-color:var(--pp-blue);color:#fff;font-size:8px}
+    .rd-step.todo i{border-style:dashed}
+    .rd-step b{font-weight:600}.rd-step.ok b,.rd-step.ready b{color:var(--text)}
+    .rd-line{width:14px;height:1.5px;background:var(--border);margin:0 2px}
+    .rd-fix{height:22px;padding:0 9px;border-radius:50px;border:1px solid var(--pp-blue);background:rgba(0,118,187,0.08);color:var(--pp-blue);font:inherit;font-size:11px;font-weight:700;cursor:pointer}
+    .rd-fix.off{opacity:.5;cursor:not-allowed}
+    .rd-kpi{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:-4px 0 10px;font-size:12.5px;color:var(--text2)}
+    .rd-kpi-item b{font-weight:800;color:var(--text)}.rd-kpi-item.todo b{color:#b45309}.rd-kpi-item.ok b{color:var(--pp-green)}
+    .rd-legend{margin-left:auto;font-size:11px;color:var(--text3);display:inline-flex;align-items:center;gap:4px}.rd-legend i{font-style:normal;width:16px;height:16px;border-radius:50%;border:1.5px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;margin-left:6px}
+    button.off,.pp-mini-btn.off{opacity:.45;cursor:not-allowed}
   </style>
 </body>
 </html>
