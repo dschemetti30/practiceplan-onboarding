@@ -5383,14 +5383,14 @@
     }
     function ppFormPopover(anchor, fields, onSave, opts) {
       opts = opts || {};
-      var html = (opts.title ? '<div class="pp-pop-title">' + opts.title + '</div>' : '') + '<div class="pp-pop-form' + (opts.inline ? ' inline' : '') + '">' + fields.map(function(f) {
+      var html = (opts.title ? '<div class="pp-pop-title">' + opts.title + '</div>' : '') + (opts.note ? '<div class="pp-pop-note">' + ppEsc(opts.note) + '</div>' : '') + '<div class="pp-pop-form' + (opts.inline ? ' inline' : '') + '">' + fields.map(function(f) {
         var val = ppEsc(f.value === undefined || f.value === null ? '' : f.value);
         return '<label><span>' + ppEsc(f.label) + '</span>' + (f.readonly ? '<div class="ro">' + (val || '-') + '</div>' : f.type === 'select' ? '<select data-key="' + ppEsc(f.key) + '">' + (f.options || []).map(function(o) { return '<option value="' + ppEsc(o.val) + '"' + (o.val === f.value ? ' selected' : '') + '>' + ppEsc(o.label) + '</option>'; }).join('') + '</select>' : '<input type="' + (f.type || 'text') + '" data-key="' + ppEsc(f.key) + '" value="' + val + '" placeholder="' + ppEsc(f.placeholder || '') + '"' + (f.type === 'number' ? ' inputmode="numeric" min="0"' : '') + (f.list ? ' list="' + ppEsc(f.list) + '"' : '') + '>') + '</label>';
-      }).join('') + '</div><div class="pp-pop-foot">' + (opts.footer || '') + '<span style="flex:1"></span><button type="button" class="pp-btn" id="ppFormCancel">Cancel</button><button type="button" class="pp-btn primary" id="ppFormSave">Save</button></div>';
+      }).join('') + '</div><div class="pp-pop-foot">' + (opts.footer || '') + '<span style="flex:1"></span><button type="button" class="pp-btn" id="ppFormCancel">Cancel</button><button type="button" class="pp-btn primary" id="ppFormSave">' + ppEsc(opts.submitLabel || 'Save') + '</button></div>';
       var saved = false;
       var read = function() { var o = {}; fields.forEach(function(f) { if (f.readonly) return; var el = p.querySelector('[data-key="' + f.key + '"]'); o[f.key] = el ? el.value.trim() : ''; }); return o; };
       var dirty = function() { var o = read(); return fields.some(function(f) { return !f.readonly && String(f.value === undefined || f.value === null ? '' : f.value) !== o[f.key]; }); };
-      var p = ppPopoverOpen(anchor, html, { cls: 'pp-pop-form-wrap', onClose: function(reason) { if (!saved && reason === 'outside' && dirty()) onSave(read()); } });
+      var p = ppPopoverOpen(anchor, html, { cls: 'pp-pop-form-wrap', onClose: function(reason) { if (!saved && !opts.confirmOnly && reason === 'outside' && dirty()) onSave(read()); } });
       p.querySelector('#ppFormSave').addEventListener('click', function() { saved = true; var vals = read(); ppPopoverClose('save'); onSave(vals); });
       p.querySelector('#ppFormCancel').addEventListener('click', function() { saved = true; ppPopoverClose('cancel'); });
       p.querySelectorAll('input').forEach(function(inp) { inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); saved = true; var vals = read(); ppPopoverClose('save'); onSave(vals); } }); });
@@ -10280,5 +10280,62 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
   </style>
   <style>#fqHost th.rd-th,#fqHost td.rd-td{width:205px;min-width:205px}#fqHost td.rd-td .rd-strip{margin-top:0;white-space:nowrap}#fqHost tbody td{vertical-align:middle}#fqHost td .ca-sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}.rd-strip{white-space:nowrap}.rd-fix{white-space:nowrap}#leadTable td:nth-child(9) .rd-strip{margin-top:6px}
 #fqHost table.pp-table{table-layout:fixed;min-width:1040px;width:100%}#fqHost table.pp-table th:nth-child(1){width:34px}#fqHost table.pp-table th:nth-child(2){width:23%}#fqHost table.pp-table th:nth-child(3){width:150px}#fqHost table.pp-table th:nth-child(4){width:205px}#fqHost table.pp-table th:nth-child(5){width:118px}#fqHost table.pp-table th:nth-child(6){width:16%}#fqHost table.pp-table th:nth-child(8){width:276px}@media(max-width:1500px){#fqHost table.pp-table th:nth-child(7),#fqHost table.pp-table td:nth-child(7){display:none}}#fqHost td:last-child .pp-mini-btn{margin-right:2px}#fqHost td.fq-note{font-size:11.5px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#fqHost td{overflow:hidden;text-overflow:ellipsis}#fqHost td:last-child{overflow:visible}#fqHost .pp-org-name,#fqHost .pp-org-sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#fqHost tbody tr{height:58px}</style>
+  <script>
+    // =====================================================================
+    // ADD TO CRM with a preview: clean name, lead type, state, and whether it joins an existing contact's lead
+    // =====================================================================
+    leadPushClose = async function(id, btn) {
+      if (btn) btn.disabled = true;
+      try {
+        var pr = await ppApi('crmProposal', { id: id }, 120000); if (!pr.success) throw new Error(pr.error);
+        var l = leadList.find(function(x) { return x.id === id; }) || {};
+        var types = pr.types || ['K-12', 'College / University', 'Parks and Rec', 'Facility', 'Municipal', 'Church', 'State / National Association', 'Other'];
+        var anchor = btn || document.body;
+        ppFormPopover(anchor, [
+          { key: 'crmName', label: 'Lead name in Close CRM', value: pr.name || '' },
+          { key: 'leadType', label: 'Lead type', type: 'select', options: types.map(function(t) { return { val: t, label: t }; }), value: pr.type || 'Other' }
+        ], async function(v) {
+          try { var r = await ppApi('pushLeadToClose', { id: id, crmName: v.crmName, leadType: v.leadType }, 170000); if (!r.success) throw new Error(r.error); var i = leadList.findIndex(function(x) { return x.id === id; }); if (i >= 0) leadList[i] = r.lead; renderLeads(); var res = r.result || {}; showToast(res.skipped ? 'Not added: ' + res.skipped : (res.created ? 'Created in Close CRM' : 'Matched in Close CRM') + (res.note ? ': ' + res.note : ''), res.skipped ? 'error' : 'success'); } catch(e) { showToast(e.message, 'error'); }
+        }, { title: pr.sibling ? 'Joins ' + (pr.sibling.name || 'another contact') + "'s lead (same organization)" : 'Add to Close CRM', note: (pr.sibling ? 'This organization already has a Close CRM lead from this show; the contact will be added there instead of creating a second lead.' : 'The name and type below are what Close CRM will show. Edit if the guess is off.') + (pr.state ? '' : ' No state could be worked out; add it to the name if you know it.'), submitLabel: 'Add to CRM', confirmOnly: true });
+      } catch(e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v65)' : ''), 'error'); }
+      if (btn) btn.disabled = false;
+    };
+    // ---- Inbound Leads: the CRM column is just a link state now; readiness and follow-up live on the Follow-up page ----
+    (function() {
+      var _cell = leadCloseCell;
+      leadCloseCell = function(l) {
+        if (l.mergedInto) { var pr = leadList.find(function(x) { return x.id === l.mergedInto; }); return '<span class="lead-link merged" title="Merged into ' + ppEsc(pr ? (pr.name || pr.org) : 'another contact') + ': one Close CRM lead for the organization">Merged</span>'; }
+        if (l.closeLeadId) return '<a class="lead-link yes" href="' + ppEsc(l.closeUrl || '#') + '" target="_blank" rel="noopener" title="Linked to a Close CRM lead' + (l.closeStatus ? ' (' + ppEsc(l.closeStatus) + ')' : '') + '. Click to open.">' + ppSvg('check') + ' Linked' + (l.closeStatus ? ' <i>' + ppEsc(l.closeStatus) + '</i>' : '') + '</a>';
+        if (l.closeCheckedAt) return '<span class="lead-link no" title="No Close CRM lead matched by email, domain or phone. Add to CRM creates one; click here to link one by hand." onclick="event.stopPropagation();leadLinkClose(\'' + ppEsc(l.id) + '\',this)">Not linked</span>';
+        return '<span class="lead-link unk" title="Not checked against Close CRM yet">Checking</span>';
+      };
+      var _rl = renderLeads; renderLeads = function() { _rl(); document.querySelectorAll('#leadTableBody .rd-strip').forEach(function(s) { s.remove(); });
+        // same-organization groups: offer a merge
+        var groups = {}; (leadList || []).forEach(function(l) { if (l.mergedInto || l.origin === 'history' || !l.org) return; var key = String(l.org).toLowerCase().replace(/[^a-z0-9]/g, '') + '|' + (String(l.email || '').split('@')[1] || ''); (groups[key] = groups[key] || []).push(l); });
+        document.querySelectorAll('#leadTableBody tr[data-id]').forEach(function(tr) { var l = leadList.find(function(x) { return x.id === tr.getAttribute('data-id'); }); if (!l || l.mergedInto || !l.org) return; var key = String(l.org).toLowerCase().replace(/[^a-z0-9]/g, '') + '|' + (String(l.email || '').split('@')[1] || ''); var g = groups[key] || []; if (g.length < 2 || tr.querySelector('.lead-merge')) return; var ex = tr.querySelector('.lead-extras'); if (ex) ex.insertAdjacentHTML('beforeend', '<button class="pp-mini-btn lead-merge" style="width:auto;padding:0 8px;color:var(--pp-blue)" title="' + (g.length - 1) + ' other contact' + (g.length > 2 ? 's' : '') + ' from this organization. Merge them into one Close CRM lead." onclick="event.stopPropagation();leadMergeGroup(\'' + ppEsc(l.id) + '\')">' + (g.length - 1) + ' more from this org</button>'); });
+      };
+      window.leadMergeGroup = function(id) {
+        var l = leadList.find(function(x) { return x.id === id; }); if (!l) return; var key = String(l.org).toLowerCase().replace(/[^a-z0-9]/g, '') + '|' + (String(l.email || '').split('@')[1] || '');
+        var g = (leadList || []).filter(function(x) { return !x.mergedInto && x.origin !== 'history' && x.org && (String(x.org).toLowerCase().replace(/[^a-z0-9]/g, '') + '|' + (String(x.email || '').split('@')[1] || '')) === key; });
+        ppFormPopover(document.activeElement || document.body, [{ key: 'primary', label: 'Who gets the follow-up (the primary contact)', type: 'select', options: g.map(function(x) { return { val: x.id, label: (x.name || '(no name)') + (x.title ? ', ' + x.title : '') + (x.email ? ' · ' + x.email : '') }; }), value: (g.find(function(x) { return x.closeLeadId; }) || g[0]).id }], async function(v) { try { var r = await ppApi('mergeLeads', { ids: g.map(function(x) { return x.id; }).join(','), primaryId: v.primary }, 170000); if (!r.success) throw new Error(r.error); showToast('One Close CRM lead for ' + ppEsc(l.org) + '; added ' + (r.joined || []).join(', '), 'success'); loadLeads(true); } catch(e) { showToast(e.message, 'error'); } }, { title: 'Merge ' + g.length + ' contacts from ' + (l.org || 'this organization'), note: 'They become contacts on one Close CRM lead. Only the primary enters the follow-up sequence; the others are kept on the lead for reference.', submitLabel: 'Merge', confirmOnly: true });
+      };
+    })();
+    // ---- Follow-up: Dismiss with a reason replaces Skip ----
+    (function() {
+      var _acts = fqRowActions; fqRowActions = function(r) { return _acts(r).replace(/<button class="pp-mini-btn" style="width:auto;padding:0 8px" onclick="fqDo\('([^']+)','skip'\)">Skip<\/button>/, '<button class="pp-mini-btn" style="width:auto;padding:0 8px" title="Not credible, wrong contact, duplicate: keep them out of the queue, with the reason noted in Close CRM" onclick="fqDismiss(\'$1\')">Dismiss</button>'); };
+      window.fqDismiss = function(id) { ppFormPopover(document.activeElement || document.body, [{ key: 'reason', label: 'Why', type: 'select', options: [{ val: 'not a credible lead', label: 'Not a credible lead' }, { val: 'wrong kind of contact for a sequence', label: 'Wrong kind of contact' }, { val: 'duplicate of another contact', label: 'Duplicate' }, { val: 'asked not to be contacted', label: 'Asked not to be contacted' }, { val: 'handling by hand', label: 'Handling by hand' }, { val: 'other', label: 'Other' }], value: 'not a credible lead' }], async function(v) { try { var r = await ppApi('fuAction', { id: id, act: 'dismiss', reason: v.reason }, 170000); if (!r.success) throw new Error(r.error); fqLoad(true); } catch(e) { showToast(e.message, 'error'); } }, { title: 'Dismiss from follow-up', submitLabel: 'Dismiss', confirmOnly: true }); };
+      var _bulk = fqBulk; fqBulk = function(act) { if (act === 'skip') { var ids = Object.keys(fqSel).filter(function(k) { return fqSel[k]; }); if (!ids.length) return; ppFormPopover(document.activeElement || document.body, [{ key: 'reason', label: 'Why', type: 'select', options: [{ val: 'not a credible lead', label: 'Not a credible lead' }, { val: 'wrong kind of contact for a sequence', label: 'Wrong kind of contact' }, { val: 'duplicate of another contact', label: 'Duplicate' }, { val: 'handling by hand', label: 'Handling by hand' }], value: 'not a credible lead' }], async function(v) { try { var r = await ppApi('fuAction', { ids: ids.join(','), act: 'dismiss', reason: v.reason }, 170000); if (!r.success) throw new Error(r.error); fqSel = {}; fqLoad(true); } catch(e) { showToast(e.message, 'error'); } }, { title: 'Dismiss ' + ids.length + ' from follow-up', submitLabel: 'Dismiss', confirmOnly: true }); return; } return _bulk(act); };
+      var _rf = renderFollowUp; renderFollowUp = function() { _rf(); var host = document.getElementById('fqHost'); if (!host) return; host.querySelectorAll('button').forEach(function(b) { if (b.textContent.trim() === 'Skip' && /fqBulk/.test(b.getAttribute('onclick') || '')) b.textContent = 'Dismiss'; }); };
+    })();
+  </script>
+  <style>
+    .lead-link{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px;border-radius:50px;font-size:11px;font-weight:700;letter-spacing:.02em;text-decoration:none;white-space:nowrap}
+    .lead-link svg{width:12px;height:12px}
+    .lead-link.yes{background:rgba(0,168,79,0.1);color:var(--pp-green)}.lead-link.yes i{font-style:normal;font-weight:600;color:var(--text2);margin-left:2px}
+    .lead-link.no{background:rgba(245,158,11,0.12);color:#b45309;cursor:pointer;border:1px dashed #f59e0b}
+    .lead-link.unk{background:var(--bg);color:var(--text3)}
+    .lead-link.merged{background:var(--bg);color:var(--text2);border:1px solid var(--border)}
+  </style>
+  <style>.pp-pop-note{font-size:12px;color:var(--text2);line-height:1.4;margin:-4px 0 10px;max-width:360px}.pp-pop-form select{width:100%;height:34px;border:1px solid var(--border);border-radius:8px;padding:0 8px;font:inherit;font-size:13px;background:var(--card);color:var(--text)}</style>
 </body>
 </html>
