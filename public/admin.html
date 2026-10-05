@@ -2374,7 +2374,7 @@
           <div class="controls-row"><div class="cp-toolbar-left"><div class="section-title">Inbound Leads</div><div class="pp-view-toggle" id="leadViewToggle"></div></div>
             <div class="controls-right">
               <div class="controls-group filters-group">
-                <div class="styled-select"><select id="leadStatusFilter" onchange="leadStatusFilter=this.value;renderLeads()"><option value="open">Open leads</option><option value="all">All leads</option><option value="unassigned">Unassigned</option><option value="new">New</option><option value="contacted">Contacted</option><option value="meeting">Meeting set</option><option value="qualified">Qualified</option><option value="won">Won</option><option value="lost">Lost</option><option value="history">History (pre-intake)</option><option value="notinclose">Not in Close CRM</option></select></div>
+                <div class="styled-select"><select id="leadStatusFilter" onchange="leadStatusFilter=this.value;renderLeads()"><option value="open">Open leads</option><option value="all">All leads</option><option value="merged">Merged contacts</option><option value="unassigned">Unassigned</option><option value="new">New</option><option value="contacted">Contacted</option><option value="meeting">Meeting set</option><option value="qualified">Qualified</option><option value="won">Won</option><option value="lost">Lost</option><option value="history">History (pre-intake)</option><option value="notinclose">Not in Close CRM</option></select></div>
                 <div class="styled-select"><select id="leadRepFilter" onchange="leadRepFilter=this.value;renderLeads()"><option value="all">All reps</option><option value="none">Unassigned</option></select></div>
                 <div class="styled-select"><select id="leadSourceFilter" onchange="leadSourceFilter=this.value;renderLeads()"><option value="all">All sources</option></select></div>
               </div>
@@ -5649,7 +5649,9 @@
       var q = leadSearch.trim();
       return leadList.filter(function(l) {
         if (leadStatusFilter === 'notinclose') { if (!(l.closeCheckedAt && !l.closeLeadId)) return false; }
-        else if (leadStatusFilter === 'open') { if (['won', 'lost'].indexOf(l.status) >= 0 || l.origin === 'history') return false; }
+        else if (leadStatusFilter === 'merged') { if (!l.mergedInto) return false; }
+        else if (l.mergedInto) return false;
+        if (leadStatusFilter === 'open') { if (['won', 'lost'].indexOf(l.status) >= 0 || l.origin === 'history') return false; }
         else if (leadStatusFilter === 'history') { if (l.origin !== 'history') return false; }
         else if (leadStatusFilter === 'unassigned') { if (l.assignedTo) return false; }
         else if (leadStatusFilter !== 'all' && l.status !== leadStatusFilter) return false;
@@ -10166,7 +10168,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // ---- inbound leads: email check indicator and a fix popover ----
     (function() {
       function badge(l) { var c = l.emailCheck; if (!l.email) return ''; if (c === 'ok') return '<span class="em-ok" title="Email looks right and the domain accepts mail">&#10003;</span>'; if (c === 'suspect') return '<button type="button" class="em-fix suspect" title="Looks like a typo' + (l.emailSuggest ? '. Suggested: ' + ppEsc(l.emailSuggest) : '') + '" onclick="event.stopPropagation();leadFixEmail(\'' + ppEsc(l.id) + '\')">check</button>'; if (c === 'bad') return '<button type="button" class="em-fix bad" title="This address cannot receive mail' + (l.emailSuggest ? '. Suggested: ' + ppEsc(l.emailSuggest) : '') + '" onclick="event.stopPropagation();leadFixEmail(\'' + ppEsc(l.id) + '\')">fix</button>'; return '<span class="em-unk" title="Not checked yet">?</span>'; }
-      var _rl = renderLeads; renderLeads = function() { _rl(); var unchecked = []; document.querySelectorAll('#leadTableBody tr[data-id]').forEach(function(tr) { var l = leadList.find(function(x) { return x.id === tr.getAttribute('data-id'); }); if (!l || tr.querySelector('.em-ok,.em-fix,.em-unk')) return; var cell = [].find.call(tr.querySelectorAll('td'), function(td) { return td.textContent.indexOf(l.email || '@@') >= 0; }); if (cell && l.email) { var span = [].find.call(cell.querySelectorAll('*'), function(el) { return el.children.length === 0 && el.textContent.trim() === l.email; }) || cell; span.insertAdjacentHTML('beforeend', ' ' + badge(l)); if (!l.emailCheck) unchecked.push(l.id); } }); if (unchecked.length && !window._emVerifying) { window._emVerifying = true; ppApi('verifyEmails', { ids: unchecked.slice(0, 150).join(',') }, 170000).then(function(r) { if (r.success) { Object.keys(r.results || {}).forEach(function(id) { var l = leadList.find(function(x) { return x.id === id; }); if (l) { l.emailCheck = r.results[id].check; l.emailSuggest = r.results[id].suggest; } }); renderLeads(); } }).catch(function() {}).finally(function() { window._emVerifying = false; }); } };
+      var _rl = renderLeads; renderLeads = function() { _rl(); var unchecked = []; document.querySelectorAll('#leadTableBody tr[data-id]').forEach(function(tr) { var l = leadList.find(function(x) { return x.id === tr.getAttribute('data-id'); }); if (!l || tr.querySelector('.em-ok,.em-fix,.em-unk')) return; var cell = [].find.call(tr.querySelectorAll('td'), function(td) { return td.textContent.indexOf(l.email || '@@') >= 0; }); if (cell && l.email) { var span = [].find.call(cell.querySelectorAll('*'), function(el) { return el.children.length === 0 && el.textContent.trim() === l.email; }) || cell; span.insertAdjacentHTML('afterbegin', badge(l) + ' '); span.setAttribute('title', l.email); if (!l.emailCheck) unchecked.push(l.id); } }); if (unchecked.length && !window._emVerifying) { window._emVerifying = true; ppApi('verifyEmails', { ids: unchecked.slice(0, 150).join(',') }, 170000).then(function(r) { if (r.success) { var changed = 0; Object.keys(r.results || {}).forEach(function(id) { var l = leadList.find(function(x) { return x.id === id; }); if (l && (l.emailCheck !== r.results[id].check)) { l.emailCheck = r.results[id].check; l.emailSuggest = r.results[id].suggest; changed++; } }); if (changed) renderLeads(); } }).catch(function() {}).finally(function() { window._emVerifying = false; }); } };
       window.leadFixEmail = function(id) { var l = leadList.find(function(x) { return x.id === id; }); if (!l) return; ppFormPopover(document.activeElement || document.body, [{ key: 'email', label: 'Email' + (l.emailSuggest ? ' (suggested: ' + l.emailSuggest + ')' : ''), value: l.emailSuggest || l.email || '' }], async function(v) { try { var r = await ppApi('fixEmail', { id: id, value: v.email }); if (!r.success) throw new Error(r.error); var i = leadList.findIndex(function(x) { return x.id === id; }); if (i >= 0) leadList[i] = r.lead; renderLeads(); showToast(r.check.check === 'ok' ? 'Email fixed and verified' : r.check.check === 'bad' ? 'Still looks wrong: ' + (r.check.suggest ? 'try ' + r.check.suggest : 'that domain cannot receive mail') : 'Saved; still looks unusual', r.check.check === 'bad' ? 'error' : 'success'); } catch(e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v63)' : ''), 'error'); } }, { title: 'Fix the email for ' + (l.name || l.org) });
       };
     })();
@@ -10337,5 +10339,100 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     .lead-link.merged{background:var(--bg);color:var(--text2);border:1px solid var(--border)}
   </style>
   <style>.pp-pop-note{font-size:12px;color:var(--text2);line-height:1.4;margin:-4px 0 10px;max-width:360px}.pp-pop-form select{width:100%;height:34px;border:1px solid var(--border);border-radius:8px;padding:0 8px;font:inherit;font-size:13px;background:var(--card);color:var(--text)}</style>
+  <script>
+    // =====================================================================
+    // INBOUND LEADS: one consistent row. Actions live in the last column; the CRM column says one thing once.
+    // =====================================================================
+    (function() {
+      function actionsFor(l) {
+        var me = (currentUser?.email || '').toLowerCase(), can = ppIsSuperAdmin() || (l.assignedTo || '').toLowerCase() === me;
+        var missing = [!l.email && 'email', !l.phone && 'phone', !l.title && 'title'].filter(Boolean);
+        var key = l.org ? String(l.org).toLowerCase().replace(/[^a-z0-9]/g, '') + '|' + (String(l.email || '').split('@')[1] || '') : '';
+        var sibs = key ? (leadList || []).filter(function(x) { return x.id !== l.id && !x.mergedInto && x.origin !== 'history' && x.org && (String(x.org).toLowerCase().replace(/[^a-z0-9]/g, '') + '|' + (String(x.email || '').split('@')[1] || '')) === key; }) : [];
+        var b = function(label, title, fn, cls) { return '<button type="button" class="la-btn' + (cls ? ' ' + cls : '') + '" title="' + ppEsc(title) + '" onclick="event.stopPropagation();' + fn + '">' + label + '</button>'; };
+        var out = '';
+        if (!l.closeLeadId && !l.mergedInto && l.origin !== 'history' && l.emailCheck !== 'bad') out += b('Add to CRM', 'Create or match this lead in Close CRM (you get a preview first)', 'leadPushClose(\'' + ppEsc(l.id) + '\',this)', 'primary');
+        if (sibs.length && !l.mergedInto) out += b('Merge ' + (sibs.length + 1), sibs.length + ' other contact' + (sibs.length > 1 ? 's' : '') + ' from this organization: ' + sibs.map(function(x) { return x.name || x.email; }).join(', ') + '. Merge into one Close CRM lead.', 'leadMergeGroup(\'' + ppEsc(l.id) + '\')');
+        if (missing.length) out += b('Find info', 'Missing ' + missing.join(', ') + '. Look the organization up and search for the person.', 'leadEnrich(\'' + ppEsc(l.id) + '\',this)');
+        if (l.closeLeadId && can && !l.mergedInto) out += b('Disconnect', 'Wrong Close CRM lead? Disconnect it; it will not be matched to that lead again.', 'leadDisconnect(\'' + ppEsc(l.id) + '\')', 'quiet');
+        return out;
+      }
+      var _rl = renderLeads; renderLeads = function() {
+        _rl();
+        var merged = {}; (leadList || []).forEach(function(l) { if (l.mergedInto) (merged[l.mergedInto] = merged[l.mergedInto] || []).push(l); });
+        document.querySelectorAll('#leadTableBody tr[data-id]').forEach(function(tr) {
+          var l = leadList.find(function(x) { return x.id === tr.getAttribute('data-id'); }); if (!l) return;
+          tr.querySelectorAll('.lead-extras, .lead-disc, .lead-merge, .rd-strip').forEach(function(el) { el.remove(); });
+          var last = tr.lastElementChild; if (last && !last.querySelector('.la-wrap')) { var keep = last.innerHTML; last.innerHTML = '<div class="la-wrap">' + actionsFor(l) + keep + '</div>'; }
+          var crm = tr.children[8]; if (crm && merged[l.id] && merged[l.id].length && !crm.querySelector('.lead-plus')) crm.insertAdjacentHTML('beforeend', ' <span class="lead-plus" title="' + ppEsc(merged[l.id].map(function(x) { return x.name || x.email; }).join(', ')) + '">+' + merged[l.id].length + '</span>');
+        });
+      };
+      // the merge dialog: who is primary, and whether everyone gets the sequence
+      window.leadMergeGroup = function(id) {
+        var l = leadList.find(function(x) { return x.id === id; }); if (!l) return; var key = String(l.org).toLowerCase().replace(/[^a-z0-9]/g, '') + '|' + (String(l.email || '').split('@')[1] || '');
+        var g = (leadList || []).filter(function(x) { return !x.mergedInto && x.origin !== 'history' && x.org && (String(x.org).toLowerCase().replace(/[^a-z0-9]/g, '') + '|' + (String(x.email || '').split('@')[1] || '')) === key; });
+        ppFormPopover(document.activeElement || document.body, [
+          { key: 'primary', label: 'Primary contact (the Close CRM lead is named for them)', type: 'select', options: g.map(function(x) { return { val: x.id, label: (x.name || '(no name)') + (x.title ? ', ' + x.title : '') + (x.email ? ' · ' + x.email : '') }; }), value: (g.find(function(x) { return x.closeLeadId; }) || g[0]).id },
+          { key: 'follow', label: 'Follow-up sequence goes to', type: 'select', options: [{ val: 'all', label: 'Every contact (each gets their own emails)' }, { val: 'primary', label: 'The primary only' }], value: 'all' }
+        ], async function(v) { try { var r = await ppApi('mergeLeads', { ids: g.map(function(x) { return x.id; }).join(','), primaryId: v.primary, followAll: v.follow === 'all' }, 170000); if (!r.success) throw new Error(r.error); var pr = g.find(function(x) { return x.id === v.primary; }) || {}; showToast('Merged ' + g.length + ' contacts into one Close CRM lead for ' + (l.org || 'the organization') + (v.follow === 'all' ? '; each gets the follow-up' : '; follow-up goes to ' + (pr.name || 'the primary')), 'success'); await loadLeads(true); } catch(e) { showToast(e.message, 'error'); } }, { title: 'Merge ' + g.length + ' contacts from ' + (l.org || 'this organization'), note: 'They become contacts on one Close CRM lead. The merged rows move to the "Merged contacts" view; the primary row shows +N.', submitLabel: 'Merge', confirmOnly: true });
+      };
+    })();
+    // ---- Follow-up rows: show the merged group ----
+    (function() {
+      var _rf = renderFollowUp; renderFollowUp = function() { _rf(); if (!fq || !fq.rows) return; var byPrimary = {}; fq.rows.forEach(function(r) { if (r.mergedInto) (byPrimary[r.mergedInto] = byPrimary[r.mergedInto] || []).push(r); }); document.querySelectorAll('#fqHost tbody tr').forEach(function(tr) { var cb = tr.querySelector('input[type=checkbox]'); var m = cb && (cb.getAttribute('onchange') || '').match(/fqSel\['([^']+)'\]/); if (!m) return; var r = fq.rows.find(function(x) { return x.id === m[1]; }); if (!r) return; var sub = tr.querySelector('.pp-org-sub'); if (!sub || sub.querySelector('.lead-plus')) return; if (r.mergedInto) { var p = fq.rows.find(function(x) { return x.id === r.mergedInto; }); sub.insertAdjacentHTML('beforeend', ' <span class="lead-plus" title="One of several contacts on this Close CRM lead">with ' + ppEsc(p ? (p.name || 'the primary') : 'others') + '</span>'); } else if (byPrimary[r.id]) sub.insertAdjacentHTML('beforeend', ' <span class="lead-plus" title="' + ppEsc(byPrimary[r.id].map(function(x) { return x.name || x.email; }).join(', ')) + '">+' + byPrimary[r.id].length + '</span>'); }); };
+    })();
+  </script>
+  <style>
+    /* one row shape */
+    #leadTable tbody tr{height:66px}
+    #leadTable td{vertical-align:middle !important;padding-top:8px !important;padding-bottom:8px !important}
+    #leadTable td:nth-child(2) .lead-contact{gap:2px}
+    #leadTable td:nth-child(2) .lead-contact>span{display:-webkit-box !important;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden !important;line-height:1.3}
+    #leadTable .pp-org-name,#leadTable .pp-org-sub{white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important}
+    #leadTable .lead-note{-webkit-line-clamp:2}
+    #leadTable th:nth-child(10),#leadTable td:nth-child(10){width:180px;text-align:right}
+    #leadTable th:nth-child(1),#leadTable td:nth-child(1){width:17%}
+    #leadTable th:nth-child(2),#leadTable td:nth-child(2){width:17%}
+    #leadTable th:nth-child(9),#leadTable td:nth-child(9){width:11%}
+    .la-wrap{display:inline-flex;flex-wrap:wrap;justify-content:flex-end;gap:4px;align-items:center;max-width:180px}
+    .la-btn{height:24px;padding:0 9px;border-radius:50px;border:1px solid var(--border);background:var(--card);color:var(--text2);font:inherit;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background var(--t-fast),color var(--t-fast),border-color var(--t-fast),transform var(--t-fast)}
+    .la-btn:hover{border-color:var(--pp-blue);color:var(--pp-blue);transform:translateY(-1px)}
+    .la-btn.primary{background:var(--pp-blue);border-color:var(--pp-blue);color:#fff}.la-btn.primary:hover{filter:brightness(1.08);color:#fff}
+    .la-btn.quiet{color:var(--text3)}
+    .lead-plus{display:inline-flex;align-items:center;height:18px;padding:0 6px;border-radius:50px;background:var(--bg);border:1px solid var(--border);font-size:10px;font-weight:700;color:var(--text2);margin-left:4px;cursor:default}
+    /* premium motion, respectful of reduced-motion */
+    @media(prefers-reduced-motion:no-preference){
+      .view-content.active{animation:ppViewIn .28s var(--ease) both}
+      @keyframes ppViewIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+      .pp-table tbody tr{animation:ppRowIn .22s var(--ease) both}
+      .pp-table tbody tr:nth-child(1){animation-delay:.02s}.pp-table tbody tr:nth-child(2){animation-delay:.04s}.pp-table tbody tr:nth-child(3){animation-delay:.06s}.pp-table tbody tr:nth-child(4){animation-delay:.08s}.pp-table tbody tr:nth-child(5){animation-delay:.10s}.pp-table tbody tr:nth-child(6){animation-delay:.12s}.pp-table tbody tr:nth-child(n+7){animation-delay:.14s}
+      @keyframes ppRowIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+      .pp-chip,.lead-link,.rd-step i{transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease}
+      .pp-pop{animation:ppPopIn .16s var(--ease) both;transform-origin:top left}
+      @keyframes ppPopIn{from{opacity:0;transform:scale(.97) translateY(-3px)}to{opacity:1;transform:none}}
+      .pp-table tbody tr{transition:background .15s ease}
+      .stat-card,.out-kpi,.rq-card{transition:box-shadow .2s ease,transform .2s ease}
+    }
+  </style>
+  <style>
+    #leadTable{min-width:1100px}
+    #leadTable th:nth-child(1),#leadTable td:nth-child(1){width:178px}
+    #leadTable th:nth-child(2),#leadTable td:nth-child(2){width:214px}
+    #leadTable th:nth-child(3),#leadTable td:nth-child(3){width:90px}
+    #leadTable th:nth-child(4),#leadTable td:nth-child(4){width:84px}
+    #leadTable th:nth-child(5),#leadTable td:nth-child(5){width:100px}
+    #leadTable th:nth-child(6),#leadTable td:nth-child(6){width:84px}
+    #leadTable th:nth-child(7),#leadTable td:nth-child(7){width:60px}
+    #leadTable th:nth-child(8),#leadTable td:nth-child(8){width:84px}
+    #leadTable th:nth-child(9),#leadTable td:nth-child(9){width:120px}
+    #leadTable th:nth-child(10),#leadTable td:nth-child(10){width:150px}
+    #leadTable td:nth-child(3),#leadTable td:nth-child(4),#leadTable td:nth-child(6){padding-left:6px !important;padding-right:6px !important}
+    #leadTable th{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    #leadTable .pp-chip{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+    @media(max-width:1600px){#leadTable th:nth-child(7),#leadTable td:nth-child(7){display:none}#leadTable{min-width:1040px}}
+    @media(max-width:1300px){#leadTable th:nth-child(4),#leadTable td:nth-child(4){display:none}#leadTable{min-width:964px}}
+    .la-wrap{max-width:150px}
+  </style>
+  <style>#leadTable td:nth-child(2) .lead-contact>span{-webkit-line-clamp:3;font-size:11.5px;line-height:1.3}#leadTable .lead-contact .em-ok,#leadTable .lead-contact .em-fix,#leadTable .lead-contact .em-unk{margin-left:0;margin-right:3px}</style>
 </body>
 </html>
