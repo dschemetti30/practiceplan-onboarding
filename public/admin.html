@@ -10600,5 +10600,50 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
   <script>
     async function dismissSignedDoc(fileId, btn) { if (btn) btn.disabled = true; try { var r = await ppApi('dismissSignedDoc', { fileId: fileId }); if (!r.success) throw new Error(r.error); signedDocs = (signedDocs || []).filter(function(d) { return d.fileId !== fileId; }); renderDocsPanel(); showToast('Hidden for good', 'success'); } catch(e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v70)' : ''), 'error'); if (btn) btn.disabled = false; } }
   </script>
+  <script>
+    // =====================================================================
+    // SPEED: pages paint from the last answer instantly, then refresh in the background
+    // =====================================================================
+    var ppSwr = {
+      key: function(action, params) { return 'pp-swr-' + action + '-' + (currentUser?.email || '') + '-' + JSON.stringify(params || {}); },
+      read: function(action, params, maxAgeMs) { try { var raw = localStorage.getItem(ppSwr.key(action, params)); if (!raw) return null; var o = JSON.parse(raw); if (Date.now() - o.t > (maxAgeMs || 6 * 3600000)) return null; return o.v; } catch(e) { return null; } },
+      write: function(action, params, v) { try { localStorage.setItem(ppSwr.key(action, params), JSON.stringify({ t: Date.now(), v: v })); } catch(e) {} }
+    };
+    // Inbound Leads: paint from cache, refresh behind
+    (function() {
+      var _ll = loadLeads;
+      loadLeads = async function(force) {
+        if (!leadsLoaded && !force) { var c = ppSwr.read('getLeads', {}, 12 * 3600000); if (c && c.rows) { leadList = c.rows.map(leadNormalize); leadRotation = c.rotation || leadRotation; leadNotify = c.notify !== false; leadsLoaded = true; leadsError = ''; if (typeof renderLeads === 'function') { try { renderLeads(); } catch(e) {} } _ll(true).then(function() { try { renderLeads(); } catch(e) {} }); return leadList; } }
+        var out = await _ll(force); if (leadsLoaded && !leadsError) ppSwr.write('getLeads', {}, { rows: leadList, rotation: leadRotation, notify: leadNotify }); return out;
+      };
+    })();
+    // Follow-up queue
+    (function() {
+      var _fq = fqLoad;
+      fqLoad = async function(force) {
+        if (!fq && !force) { var c = ppSwr.read('getFollowUpQueue', {}, 6 * 3600000); if (c) { fq = c; renderFollowUp(); _fq(true); return; } }
+        await _fq(force); if (fq && !fq.error) ppSwr.write('getFollowUpQueue', {}, fq);
+      };
+    })();
+    // CRM Health
+    (function() {
+      var _ch = chLoad;
+      chLoad = async function(force) {
+        if (!ch && !force) { var c = ppSwr.read('getCrmHealth', {}, 12 * 3600000); if (c) { ch = c; renderCrmHealth(); _ch(true); return; } }
+        await _ch(force); if (ch && !ch.error) ppSwr.write('getCrmHealth', {}, ch);
+      };
+    })();
+    // Requests and the plan
+    (function() {
+      if (typeof loadRequests !== 'function') return;
+      var _lr = loadRequests;
+      loadRequests = async function(force) {
+        if (!rqLoaded && !force) { var c = ppSwr.read('getRequests', {}, 12 * 3600000); if (c && c.rows) { rqList = c.rows; rqLoaded = true; try { renderRequests(); } catch(e) {} _lr(true).then(function() { try { renderRequests(); } catch(e) {} }); return rqList; } }
+        var out = await _lr(force); if (rqLoaded) ppSwr.write('getRequests', {}, { rows: rqList }); return out;
+      };
+    })();
+    // the second refresh pass for the bootstrap bundle only runs when the tab is actually in front and idle
+    (function() { var _b = ppBootstrapRefresh; if (typeof _b !== 'function') return; ppBootstrapRefresh = function() { if (document.visibilityState !== 'visible') return; if (window.requestIdleCallback) return requestIdleCallback(function() { _b(); }, { timeout: 4000 }); return _b(); }; })();
+  </script>
 </body>
 </html>
