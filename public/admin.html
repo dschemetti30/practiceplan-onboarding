@@ -10103,7 +10103,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     (function() {
       var _rl = renderLandingPages; renderLandingPages = function() {
         _rl(); var view = document.getElementById('landingView'); if (!view) return;
-        var today = ppTodayISO(), linked = {}; (lpList || []).forEach(function(p) { if (p.showId) linked[p.showId] = 1; });
+        var today = ppTodayISO(), linked = {}; (lpList || []).forEach(function(p) { if (p.showId) linked[p.showId] = 1; }); (tsList || []).forEach(function(s) { if (s.pageUrl) linked[s.id] = 1; });
         var need = (tsList || []).filter(function(s) { if (s.archived === true || String(s.archived) === 'TRUE') return false; var start = String(s.exhibitStart || s.eventDate || '').slice(0, 10); return /^\d{4}-\d{2}-\d{2}$/.test(start) && start >= today && !linked[s.id]; }).sort(function(a, b) { return String(a.exhibitStart || a.eventDate).localeCompare(String(b.exhibitStart || b.eventDate)); });
         var host = document.getElementById('lpNeed'); if (!host) { host = document.createElement('div'); host.id = 'lpNeed'; var first = view.querySelector('.table-wrapper, .controls-row'); (first || view).insertAdjacentElement('beforebegin', host); }
         if (!need.length) { host.innerHTML = ''; return; }
