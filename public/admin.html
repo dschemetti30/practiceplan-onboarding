@@ -5636,7 +5636,7 @@
     // =====================================================================
     // INBOUND LEADS + ROUND ROBIN  (Sept 2026)
     // =====================================================================
-    var LEAD_STATUSES = [{ val: 'new', label: 'New', cls: 'lead-new' }, { val: 'contacted', label: 'Contacted', cls: 'need-to-book' }, { val: 'meeting', label: 'Meeting', cls: 'aud-supers' }, { val: 'qualified', label: 'Qualified', cls: 'booked' }, { val: 'won', label: 'Won', cls: 'active' }, { val: 'lost', label: 'Lost', cls: 'inactive' }];
+    var LEAD_STATUSES = [{ val: 'new', label: 'New', cls: 'lead-new' }, { val: 'contacted', label: 'Contacted', cls: 'need-to-book' }, { val: 'replied', label: 'Replied', cls: 'aud-k12' }, { val: 'meeting', label: 'Meeting', cls: 'aud-supers' }, { val: 'qualified', label: 'Qualified', cls: 'booked' }, { val: 'won', label: 'Won', cls: 'active' }, { val: 'lost', label: 'Lost', cls: 'inactive' }];
     var LEAD_COLS = ['id', 'receivedAt', 'name', 'org', 'email', 'phone', 'source', 'notes', 'status', 'assignedTo', 'assignedAt', 'assignedBy', 'firstTouchAt', 'internalNotes', 'origin', 'sourceKey', 'closeLeadId', 'closeUrl', 'closeStatus', 'closeLastTouch', 'closeLastTouchType', 'closeCheckedAt', 'updatedAt', 'updatedBy'];
     var leadList = [], leadsLoaded = false, leadsError = '', leadRotation = { order: [], next: '', paused: [] }, leadNotify = true, leadSearch = '', leadStatusFilter = 'open', leadRepFilter = 'all', leadSourceFilter = 'all';
     function leadNormalize(r) { var o = {}; LEAD_COLS.forEach(function(c) { o[c] = (r[c] === undefined || r[c] === null) ? '' : String(r[c]); }); if (LEAD_STATUSES.every(function(s) { return s.val !== o.status; })) o.status = 'new'; o.assignedTo = o.assignedTo.toLowerCase(); return o; }
@@ -10726,13 +10726,13 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v96 · Oct 8';
+    var PP_BUILD = 'v97 · Oct 8';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
-        ppApi('ppPing', {}, 30000).then(function(r) { var v = Number(r && r.version) || 0; window._ppServerVersion = v; if (v && v < 96) { tag.classList.add('warn'); tag.textContent = PP_BUILD + ' · Extras v' + v + ' (needs v96)'; tag.title = 'The server is behind this page: install the current Extras.gs and deploy a new version.'; } else if (v) tag.textContent = PP_BUILD + ' · Extras v' + v; }).catch(function() {});
+        ppApi('ppPing', {}, 30000).then(function(r) { var v = Number(r && r.version) || 0; window._ppServerVersion = v; if (v && v < 97) { tag.classList.add('warn'); tag.textContent = PP_BUILD + ' · Extras v' + v + ' (needs v97)'; tag.title = 'The server is behind this page: install the current Extras.gs and deploy a new version.'; } else if (v) tag.textContent = PP_BUILD + ' · Extras v' + v; }).catch(function() {});
       }, 1500); };
-      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 96 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 96 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
+      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 97 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 97 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
     })();
     // =====================================================================
     // TEAM: titles and headshots, editable in Settings
@@ -11131,5 +11131,9 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     window.fqDiag = async function(id, btn) { btn.disabled = true; try { var r = await ppApi('diagLead', { id: id }, 120000); if (!r.success) throw new Error(r.error); var box = btn.closest('.fq-fix'); var txt = JSON.stringify(r.diag, null, 2); box.insertAdjacentHTML('afterend', '<details open class="fq-email" style="margin-bottom:8px"><summary><span class="fq-email-day">Diagnostics</span><span class="fq-email-what">what Close CRM has, what was sent, what it answered</span><button class="text-action-btn" onclick="event.preventDefault();ppCopy(this.closest(\'details\').querySelector(\'pre\').textContent,\'Diagnostics\')">Copy</button></summary><pre class="prev-mail" style="font-size:11px;max-height:360px;overflow:auto">' + ppEsc(txt) + '</pre></details>'); } catch(e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v88)' : ''), 'error'); } btn.disabled = false; };
   </script>
   <style>.ts-email-link{margin-top:10px;font-size:12px;color:var(--text2);line-height:1.5}.ts-email-link a{color:var(--pp-blue);font-weight:700;text-decoration:none}</style>
+  <script>
+    // the status chip explains itself when the tool set it
+    (function() { var _rl = renderLeads; renderLeads = function() { _rl(); document.querySelectorAll('#leadTableBody tr[data-id]').forEach(function(tr) { var l = leadList.find(function(x) { return x.id === tr.getAttribute('data-id'); }); if (!l || !l.statusAuto) return; var chip = tr.querySelector('.pp-chip, .lead-status'); if (chip && !chip.title) chip.title = 'Set by the tool: ' + l.statusAuto; }); }; })();
+  </script>
 </body>
 </html>
