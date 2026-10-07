@@ -2689,13 +2689,10 @@
       var metrics = document.getElementById('loadingMetrics');
       var totalOrgs = data.length, totalSpaces = data.reduce(function(s, d) { return s + (d.spaces || 0); }, 0);
       var totalComplete = data.filter(function(d) { return ['complete', 'onboarding', 'published', 'launched'].indexOf(d.pipelineStatus) >= 0; }).length;
-      if (metrics) metrics.classList.add('visible');
-      var states = {}; data.forEach(function(d) { var st = String(d.state || '').trim().toUpperCase(); if (st) states[st] = 1; });
-      animateCount('loadMetricOrgs', totalOrgs, 700); animateCount('loadMetricStates', Object.keys(states).length, 650); animateCount('loadMetricSpaces', totalSpaces, 800);
-      try { ppSplashGrowth(data); } catch(e) {}
+      // one scene only: the mark and the progress ring, then straight into the tool
       // Hold the finished state just long enough to read it (max ~0.9s), never longer than the data took
       var elapsed = Date.now() - (window._ppLoadStart || Date.now());
-      var hold = Math.max(900, (fromCache ? 1300 : 1500) - elapsed);
+      var hold = Math.max(250, 500 - elapsed);
       setTimeout(function() {
         var ov = document.getElementById('dataLoadingOverlay');
         if (ov) ov.classList.add('leaving');
@@ -11128,5 +11125,6 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     window.fqFixFields = async function(id, btn) { btn.disabled = true; try { var r = await ppApi('fixLeadFields', { id: id }, 120000); if (!r.success) throw new Error(r.error); var wrote = Object.keys(r.wrote || {}).map(function(k) { return k + ': ' + (r.wrote[k] || '(blank)'); }); var box = btn.closest('.fq-fix'); if (box) box.innerHTML = '<b>' + (r.errors.length ? 'Partly done' : 'Done') + '.</b> ' + (wrote.length ? 'On the Close CRM lead now: ' + ppEsc(wrote.join(' · ')) : '') + (r.errors.length ? '<div class="fq-fix-err">' + r.errors.map(ppEsc).join('<br>') + '</div>' : ''); showToast(r.errors.length ? 'Some fields could not be written; see the note in the preview' : 'Fields written to Close CRM', r.errors.length ? 'error' : 'success'); if (!r.errors.length) { closeModal(); fqPreview(id); } } catch(e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v86)' : ''), 'error'); btn.disabled = false; } };
   </script>
   <style>.fq-fix{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border-radius:10px;background:rgba(245,158,11,0.08);border:1px solid #f59e0b;font-size:12.5px;margin-bottom:8px}.fq-fix-err{margin-top:6px;color:#991b1b;font-size:12px;line-height:1.5}</style>
+  <style>#loadingMetrics{display:none !important}</style>
 </body>
 </html>
