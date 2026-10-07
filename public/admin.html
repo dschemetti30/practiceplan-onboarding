@@ -9974,7 +9974,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         + '<div class="ob-modes" style="margin:12px 0 10px">' + tabs.map(function(t) { return '<button class="' + (fqView === t[0] ? 'on' : '') + '" onclick="fqView=\'' + t[0] + '\';fqSel={};renderFollowUp()">' + t[1] + ' <b>' + t[2] + '</b></button>'; }).join('') + '<span style="margin-left:auto;display:flex;gap:6px;align-items:center">' + (selCount ? '<span class="ca-sub">' + selCount + ' selected</span><button class="pp-btn primary" onclick="fqBulk(\'start\')">Start now</button><button class="pp-btn" onclick="fqBulk(\'stop\')">Stop</button><button class="pp-btn" onclick="fqBulk(\'hold\')">Hold</button><button class="pp-btn" onclick="fqBulk(\'skip\')">Skip</button><button class="pp-btn" onclick="fqBulkSchedule()">Pick a date</button>' : '') + '<button class="text-action-btn" onclick="fqLoad(true)">Refresh</button>' + (ppIsSuperAdmin() ? '<button class="text-action-btn" onclick="ppApi(\'runSequenceKick\',{},170000).then(function(){showToast(\'Ran the enrollment pass\',\'success\');fqLoad(true)})">Run now</button>' : '') + '</span></div>'
         + (!list.length ? '<div class="stat-card"><div class="pp-empty"><strong>Nothing here</strong>' + (fqView === 'queue' ? 'New inbound leads land here with a start date; the hourly pass enrolls them.' : fqView === 'exceptions' ? 'No lead is waiting on a person.' : 'No leads in this view.') + '</div></div>' : Object.keys(groups).map(function(show) { var g = groups[show]; var showId = g[0].showId; return '<div class="stat-card out-card"><h3>' + ppEsc(show) + '<span class="n">' + g.length + '</span><span class="out-legend">' + (showId ? '<a onclick="switchView(\'tradeshows\');setTimeout(function(){openTsModal(\'' + ppEsc(showId) + '\')},300)" style="cursor:pointer;color:var(--pp-blue)">sequence settings</a>' : '<a onclick="switchView(\'settings\')" style="cursor:pointer;color:var(--pp-blue)">website defaults</a>') + '</span></h3><div class="table-wrapper" style="border-radius:12px"><table class="pp-table" style="min-width:960px"><thead><tr><th style="width:44px"><input type="checkbox" onchange="fqSelAll(this,' + JSON.stringify(g.map(function(r) { return r.id; })).replace(/"/g, '&quot;') + ')"></th><th>Lead</th><th>State</th><th>Sequence</th><th>What&#39;s next</th><th></th></tr></thead><tbody>' + g.map(function(r) { return '<tr><td><input type="checkbox"' + (fqSel[r.id] ? ' checked' : '') + ' onchange="fqSel[\'' + ppEsc(r.id) + '\']=this.checked;renderFollowUp()"></td><td><div style="display:flex;align-items:center;gap:8px;min-width:0">' + (r.rep ? ppRepAvatars(r.rep, 24) : '<span class="pp-avatar-text" style="width:24px;height:24px;font-size:9px;background:var(--bg);color:var(--text3);border:1px dashed var(--border)" title="No rep assigned">?</span>') + '<div style="min-width:0"><div class="pp-org-name">' + ppEsc(r.org || r.name) + '</div><div class="pp-org-sub">' + ppEsc([r.name, r.email].filter(Boolean).join(' · ')) + '</div></div></div></td><td>' + fqChip(r.state) + '<div class="ca-sub fq-when">' + (r.state === 'enrolled' && r.next ? 'next email ' + ppFmtDate(r.next.slice(0, 10), { month: 'short', day: 'numeric' }) + (r.step ? ' · step ' + ppEsc(r.step) + (r.stage === 'john' ? ' (John)' : r.stage === 'rep' && r.sender === 'john_then_rep' ? ' (rep)' : '') : '') : ['scheduled', 'review', 'queued'].indexOf(r.state) >= 0 && r.date ? 'starts ' + ppFmtDate(r.date, { month: 'short', day: 'numeric' }) : (r.closeStatus ? ppEsc(r.closeStatus) + ' in Close CRM' : '')) + '</div></td><td style="font-size:11.5px;color:var(--text2)">' + ppEsc(seqName(r.sequenceId)) + (r.sender ? ' · ' + (r.sender === 'john_then_rep' ? 'John intro, then the rep in-thread' : r.sender === 'john' ? 'John' : 'the rep') : '') + '</td><td class="fq-note" title="' + ppEsc(r.note || '') + '">' + ppEsc(r.note || '') + '</td><td style="text-align:right;white-space:nowrap">' + fqRowActions(r) + '</td></tr>'; }).join('') + '</tbody></table></div></div>'; }).join(''));
     }
-    function fqRowActions(r) { var b = function(act, label, cls) { return '<button class="pp-mini-btn" style="width:auto;padding:0 8px' + (cls ? ';color:var(--pp-green)' : '') + '" onclick="fqDo(\'' + ppEsc(r.id) + '\',\'' + act + '\')">' + label + '</button> '; }; var out = ''; if (r.state === 'review') out += b('approve', 'Approve', 1); if (['scheduled', 'queued', 'held', 'blocked', 'skipped'].indexOf(r.state) >= 0) out += b('start', 'Start now', 1); if (r.state === 'enrolled') out += b('stop', 'Stop'); if (['scheduled', 'queued', 'review'].indexOf(r.state) >= 0) out += b('hold', 'Hold'); if (r.state !== 'skipped' && r.state !== 'finished') out += b('skip', 'Skip'); if (r.state === 'replied' && r.subId) out += b('resume', 'Resume'); if (['held', 'skipped', 'blocked', 'stopped'].indexOf(r.state) >= 0) out += b('requeue', 'Re-queue'); if (r.state === 'enrolled') out += b('refresh', 'Refresh'); if (r.closeUrl) out += '<a class="pp-mini-btn" href="' + ppEsc(r.closeUrl) + '" target="_blank" rel="noopener" title="View in Close CRM">' + ppSvg('expand') + '</a>'; return out; }
+    function fqRowActions(r) { var b = function(act, label, cls) { return '<button class="pp-mini-btn" style="width:auto;padding:0 8px' + (cls ? ';color:var(--pp-green)' : '') + '" onclick="fqDo(\'' + ppEsc(r.id) + '\',\'' + act + '\')">' + label + '</button> '; }; var out = ''; if (r.state === 'review') out += b('approve', 'Approve', 1); if (['scheduled', 'queued', 'held', 'blocked', 'skipped'].indexOf(r.state) >= 0) out += b('start', 'Start now', 1); if (r.state === 'enrolled') out += b('stop', 'Stop'); if (['scheduled', 'queued', 'review'].indexOf(r.state) >= 0) out += b('hold', 'Hold'); if (r.state !== 'skipped' && r.state !== 'finished') out += b('skip', 'Skip'); if (r.state === 'replied' && r.subId) out += b('resume', 'Resume'); if (['held', 'skipped', 'blocked', 'stopped'].indexOf(r.state) >= 0) out += b('requeue', 'Re-queue'); if (r.state === 'enrolled') out += b('refresh', 'Refresh'); if (r.closeUrl) out += '<a class="pp-mini-btn pp-close-link" href="' + ppEsc(r.closeUrl) + '" target="_blank" rel="noopener" title="Opens this lead in Close CRM">Close CRM &#8599;</a>'; return out; }
     async function fqDo(id, act, extra) { try { var r = await ppApi('fuAction', Object.assign({ id: id, act: act }, extra || {}), 170000); if (!r.success) throw new Error(r.error); fqLoad(true); } catch(e) { showToast(e.message, 'error'); } }
     function fqSelAll(cb, ids) { ids.forEach(function(id) { fqSel[id] = cb.checked; }); renderFollowUp(); }
     async function fqBulk(act) { var ids = Object.keys(fqSel).filter(function(k) { return fqSel[k]; }); if (!ids.length) return; if (act === 'start' && !confirm('Enroll ' + ids.length + ' lead' + (ids.length === 1 ? '' : 's') + ' now? Active conversations are still skipped.')) return; try { var r = await ppApi('fuAction', { ids: ids.join(','), act: act }, 170000); if (!r.success) throw new Error(r.error); fqSel = {}; showToast(r.done + ' updated', 'success'); fqLoad(true); } catch(e) { showToast(e.message, 'error'); } }
@@ -10723,13 +10723,13 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v83 · Oct 8';
+    var PP_BUILD = 'v84 · Oct 8';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
-        ppApi('ppPing', {}, 30000).then(function(r) { var v = Number(r && r.version) || 0; window._ppServerVersion = v; if (v && v < 83) { tag.classList.add('warn'); tag.textContent = PP_BUILD + ' · Extras v' + v + ' (needs v83)'; tag.title = 'The server is behind this page: install the current Extras.gs and deploy a new version.'; } else if (v) tag.textContent = PP_BUILD + ' · Extras v' + v; }).catch(function() {});
+        ppApi('ppPing', {}, 30000).then(function(r) { var v = Number(r && r.version) || 0; window._ppServerVersion = v; if (v && v < 84) { tag.classList.add('warn'); tag.textContent = PP_BUILD + ' · Extras v' + v + ' (needs v84)'; tag.title = 'The server is behind this page: install the current Extras.gs and deploy a new version.'; } else if (v) tag.textContent = PP_BUILD + ' · Extras v' + v; }).catch(function() {});
       }, 1500); };
-      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 83 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 83 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
+      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 84 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 84 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
     })();
     // =====================================================================
     // TEAM: titles and headshots, editable in Settings
@@ -11017,5 +11017,81 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     .lead-title.empty{color:var(--text3);font-style:italic}
   </style>
   <style>.la-wrap{max-width:200px;display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end}.la-btn{height:22px;padding:0 8px;font-size:10.5px}#leadsView table.pp-table th:last-child{width:210px}</style>
+  <script>
+    // =====================================================================
+    // EVERY REQUEST SHOWS ITSELF: a progress bar across the top, and the button you pressed goes busy
+    // =====================================================================
+    (function() {
+      var inflight = 0, bar = document.createElement('div'); bar.id = 'ppProgress'; document.body.appendChild(bar);
+      var _api = ppApi; ppApi = function(action, params, timeout) { inflight++; bar.classList.add('on'); var p = _api.apply(this, arguments); var done = function() { inflight = Math.max(0, inflight - 1); if (!inflight) { bar.classList.add('done'); setTimeout(function() { bar.classList.remove('on', 'done'); }, 350); } }; p.then(done, done); return p; };
+      // any button whose click starts a request shows a spinner until the next paint after the request
+      document.addEventListener('click', function(ev) { var b = ev.target.closest('button'); if (!b || b.disabled || b.classList.contains('pp-busy')) return; var before = inflight; setTimeout(function() { if (inflight > before) { b.classList.add('pp-busy'); var tick = setInterval(function() { if (!inflight) { b.classList.remove('pp-busy'); clearInterval(tick); } }, 150); setTimeout(function() { b.classList.remove('pp-busy'); clearInterval(tick); }, 180000); } }, 30); }, true);
+    })();
+    // Preview opens instantly with a skeleton and fills as each part arrives
+    (function() {
+      var _prev = fqPreview; fqPreview = async function(id) {
+        var r = (fq && fq.rows || []).find(function(x) { return x.id === id; }) || {};
+        ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>Checking the whole path</h2><div class="modal-subtitle">' + ppEsc(r.org || r.name || '') + ' · reading Close CRM, the Workflow steps and the templates</div></div><div class="modal-body"><div class="pp-skel"><div></div><div></div><div></div><div></div><div></div><div></div></div></div>');
+        await _prev(id);
+      };
+    })();
+    // =====================================================================
+    // TRADE SHOWS: the short name on the row, editable, written to Close CRM on change
+    // =====================================================================
+    window.tsShortEdit = function(id, el) {
+      var s = tsList.find(function(x) { return x.id === id; }); if (!s) return;
+      ppFormPopover(el, [{ key: 'shortName', label: 'Short name (how the conference reads in emails)', value: s.shortName || s.shortNameAuto || '' }], async function(v) { try { var r = await ppApi('setShortName', { showId: id, shortName: v.shortName }, 170000); if (!r.success) throw new Error(r.error); s.shortName = v.shortName; s.shortNameAuto = r.shortName; renderTradeShows(); showToast('Short name "' + r.shortName + '" saved; ' + r.updated + ' lead' + (r.updated === 1 ? '' : 's') + ' updated in Close CRM', 'success'); } catch(e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v84)' : ''), 'error'); } }, { title: s.name, note: 'Written to the "Conference Short Name" field on every lead from this show the moment you save.', submitLabel: 'Save and update Close CRM' });
+    };
+    window.tsFillShortNames = async function(btn) { if (btn) btn.disabled = true; try { var r = await ppApi('fillShortNames', {}, 170000); if (!r.success) throw new Error(r.error); var rows = r.rows || []; showToast(rows.length + ' shows have a short name; ' + rows.reduce(function(a, x) { return a + (x.leads || 0); }, 0) + ' leads updated in Close CRM', 'success'); loadTradeShows(true).then(function() { try { renderTradeShows(); } catch(e) {} }); } catch(e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v84)' : ''), 'error'); } if (btn) btn.disabled = false; };
+    (function() {
+      var _rt = renderTradeShows; renderTradeShows = function() { _rt();
+        // the Booth column becomes the Short name column
+        document.querySelectorAll('#tsGroups thead th').forEach(function(th) { if (th.textContent.trim() === 'Booth') th.textContent = 'Short name'; });
+        document.querySelectorAll('#tradeshowsView tr[data-id]').forEach(function(tr) { var s = tsList.find(function(x) { return x.id === tr.getAttribute('data-id'); }); if (!s) return; var idx = -1; var ths = tr.closest('table') && tr.closest('table').querySelectorAll('thead th'); if (ths) [].forEach.call(ths, function(th, i) { if (th.textContent.trim() === 'Short name') idx = i; }); if (idx < 0) return; var td = tr.children[idx]; if (!td || td.querySelector('.ts-sn')) return; var sn = s.shortName || s.shortNameAuto || ''; td.innerHTML = '<button type="button" class="ts-sn' + (s.shortName ? '' : ' auto') + '" title="' + (s.shortName ? 'Set by hand. Click to change; Close CRM updates at once.' : 'Guessed from the name. Click to change; Close CRM updates at once.') + '" onclick="event.stopPropagation();tsShortEdit(\'' + ppEsc(s.id) + '\',this)">' + ppEsc(sn || '+ short name') + '</button>'; });
+        var ctl = document.querySelector('#tradeshowsView .controls-row'); if (ctl && !ctl.querySelector('.ts-sn-fill')) ctl.insertAdjacentHTML('beforeend', '<button class="text-action-btn ts-sn-fill" onclick="tsFillShortNames(this)" title="Give every show a short name (guessed where blank) and write it to every lead in Close CRM">Write short names to Close CRM</button>');
+      };
+    })();
+    // =====================================================================
+    // INBOUND LEADS: actions as a neat stack; the expand icon never opens Close CRM
+    // =====================================================================
+    (function() {
+      var _rl = renderLeads; renderLeads = function() { _rl();
+        document.querySelectorAll('#leadTableBody .la-wrap').forEach(function(w) { if (w.querySelector('.la-more')) return; var btns = [].slice.call(w.querySelectorAll('button, a')); var order = ['Add to CRM', 'Merge', 'Find info', 'Disconnect']; btns.sort(function(a, b) { var ia = order.indexOf(a.textContent.trim()), ib = order.indexOf(b.textContent.trim()); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); }); btns.forEach(function(b) { w.appendChild(b); }); var rest = btns.slice(1); if (rest.length > 1) { rest.forEach(function(b) { b.classList.add('la-hidden'); }); var more = document.createElement('button'); more.type = 'button'; more.className = 'la-btn la-more'; more.textContent = 'More'; more.title = 'Merge, Find info, Disconnect, details'; more.onclick = function(ev) { ev.stopPropagation(); var open = w.classList.toggle('open'); more.textContent = open ? 'Less' : 'More'; }; w.insertBefore(more, rest[0]); } });
+      };
+      // anywhere an expand icon links to Close CRM, say so in words
+      var fix = function() { document.querySelectorAll('a[href*="app.close.com"]').forEach(function(a) { if (a.querySelector('svg') && !a.textContent.trim()) { a.innerHTML = 'Close CRM &#8599;'; a.className = (a.className || '').replace('pp-mini-btn', 'pp-mini-btn pp-close-link'); a.title = 'Opens this lead in Close CRM'; } }); };
+      var obs = new MutationObserver(function() { clearTimeout(window._ppCloseLinkT); window._ppCloseLinkT = setTimeout(fix, 80); }); obs.observe(document.body, { childList: true, subtree: true }); fix();
+    })();
+    // the sliding nav highlight is gone; the active tab carries its own color, so it can never sit between rows
+    (function() { var ink = document.getElementById('ppTabInk'); if (ink) ink.remove(); window.ppTabInk = function() {}; })();
+  </script>
+  <style>
+    #ppProgress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--pp-blue),var(--pp-green));z-index:3000;opacity:0;transition:width .25s ease,opacity .3s ease;pointer-events:none}
+    #ppProgress.on{opacity:1;width:70%;transition:width 8s cubic-bezier(.1,.6,.3,1),opacity .2s}
+    #ppProgress.done{width:100%;transition:width .25s ease}
+    .pp-busy{position:relative;color:transparent !important;pointer-events:none}
+    .pp-busy::after{content:"";position:absolute;inset:0;margin:auto;width:14px;height:14px;border:2px solid currentColor;border-color:var(--pp-blue) transparent var(--pp-blue) transparent;border-radius:50%;animation:ppSpin .7s linear infinite}
+    .pp-btn.primary.pp-busy::after,.la-btn.pp-busy::after{border-color:#fff transparent #fff transparent}
+    @keyframes ppSpin{to{transform:rotate(360deg)}}
+    .pp-skel{display:flex;flex-direction:column;gap:10px}.pp-skel div{height:40px;border-radius:10px;background:linear-gradient(90deg,var(--bg) 25%,var(--border) 50%,var(--bg) 75%);background-size:200% 100%;animation:ppShimmer 1.2s infinite}
+    .pp-skel div:nth-child(2){width:80%}.pp-skel div:nth-child(4){width:60%}.pp-skel div:nth-child(6){height:120px}
+    @keyframes ppShimmer{to{background-position:-200% 0}}
+    .ts-sn{font:inherit;font-size:12px;font-weight:800;letter-spacing:.02em;color:var(--pp-blue);background:rgba(0,118,187,0.08);border:1px solid transparent;border-radius:8px;padding:4px 9px;cursor:pointer;white-space:nowrap}
+    .ts-sn.auto{color:var(--text2);background:var(--bg);border-color:var(--border);font-weight:700}
+    .ts-sn:hover{border-color:var(--pp-blue)}
+    .la-wrap{display:flex;flex-direction:column;align-items:stretch;gap:4px;max-width:132px;margin-left:auto}
+    .la-wrap .la-btn{width:100%;justify-content:center;text-align:center;height:24px;font-size:11px}
+    .la-wrap .la-btn:first-child{background:var(--pp-blue);border-color:var(--pp-blue);color:#fff}
+    .la-wrap .la-btn:first-child.la-merge-any,.la-wrap .la-btn:first-child.la-find{background:var(--card);border-color:var(--border);color:var(--text2)}
+    #leadsView table.pp-table th:last-child{width:150px}
+    .pp-close-link{width:auto !important;padding:0 8px !important;font-size:10.5px;white-space:nowrap}
+    .view-tab.active{background:linear-gradient(135deg,var(--pp-blue),var(--pp-green)) !important;color:#fff !important}
+  </style>
+  <style>.la-wrap .la-hidden{display:none}.la-wrap.open .la-hidden{display:inline-flex}.la-wrap .la-more{background:var(--card) !important;border-color:var(--border) !important;color:var(--text2) !important}</style>
+  <script>
+    // Follow-up: the Close CRM link lives under the lead's name, not in the crowded actions cell
+    (function() { var _rf = renderFollowUp; renderFollowUp = function() { _rf(); document.querySelectorAll('#fqHost tbody tr').forEach(function(tr) { var a = tr.querySelector('td:last-child a.pp-close-link'); if (!a) return; var sub = tr.querySelector('.pp-org-sub') || tr.children[1]; if (!sub) return; a.classList.add('fq-close-inline'); sub.appendChild(document.createTextNode(' ')); sub.appendChild(a); }); }; })();
+  </script>
+  <style>.fq-close-inline{display:inline-flex !important;height:18px !important;padding:0 7px !important;font-size:10px !important;border-radius:50px !important;vertical-align:middle;margin-left:4px;color:var(--pp-blue) !important;border-color:rgba(0,118,187,0.3) !important}</style>
 </body>
 </html>
