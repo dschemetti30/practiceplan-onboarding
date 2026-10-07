@@ -9957,7 +9957,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // FOLLOW-UP (Sales): the sequence queue, what is running, exceptions, and the funnel
     // =====================================================================
     var fq = null, fqBusy = false, fqSel = {}, fqView = 'queue', seqCfg = null;
-    var FU_STATES = { queued: ['Queued', 'unset'], scheduled: ['Scheduled', 'need-to-book'], review: ['Needs approval', 'need-to-book'], enrolled: ['In sequence', 'booked'], replied: ['Replied', 'booked'], meeting: ['Meeting booked', 'booked'], finished: ['Finished', 'unset'], held: ['Held', 'unset'], stopped: ['Stopped', 'unset'], skipped: ['Skipped', 'unset'], blocked: ['Blocked', 'need-to-book'], ineligible: ['No email', 'unset'] };
+    var FU_STATES = { queued: ['Queued', 'unset'], scheduled: ['Scheduled', 'need-to-book'], review: ['Needs approval', 'need-to-book'], launching: ['Starting', 'booked'], enrolled: ['In sequence', 'booked'], replied: ['Replied', 'booked'], meeting: ['Meeting booked', 'booked'], finished: ['Finished', 'unset'], held: ['Held', 'unset'], stopped: ['Stopped', 'unset'], skipped: ['Skipped', 'unset'], blocked: ['Blocked', 'need-to-book'], ineligible: ['No email', 'unset'] };
     async function fqLoad(force) { if (fq && !force) return; fqBusy = true; renderFollowUp(); try { var r = await ppApi('getFollowUpQueue', {}, 170000); if (!r.success) throw new Error(r.error); fq = r; if (!seqCfg || seqCfg.partial) { try { var c = await ppApi('getSequenceConfig', {}, 120000); if (c.success) seqCfg = c; } catch(e) {} } } catch(e) { fq = { error: e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v55)' : '') }; } fqBusy = false; renderFollowUp(); }
     function fqChip(st) { var d = FU_STATES[st] || [st, 'unset']; return '<span class="pp-chip ' + d[1] + '">' + d[0] + '</span>'; }
     function renderFollowUp() {
@@ -9969,7 +9969,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       var k = function(n, label, sub, cls) { return '<div class="out-kpi' + (cls ? ' ' + cls : '') + '"><div class="out-kpi-top"><div><div class="v">' + (n || 0) + '</div><div class="l">' + label + '</div></div></div><div class="out-kpi-foot"><span>' + sub + '</span></div></div>'; };
       var running = rows.filter(function(r) { return r.state === 'enrolled'; }).length, replied = rows.filter(function(r) { return r.state === 'replied'; }).length, meetings = rows.filter(function(r) { return r.state === 'meeting'; }).length, waiting = (c.scheduled || 0) + (c.queued || 0), review = c.review || 0, exceptions = (c.blocked || 0) + (c.ineligible || 0) + (c.held || 0);
       var tabs = [['queue', 'Up next', waiting + review], ['running', 'Running', running + replied + meetings], ['exceptions', 'Needs a human', exceptions], ['all', 'Everything', rows.length]];
-      var list = rows.filter(function(r) { if (fqView === 'queue') return ['queued', 'scheduled', 'review'].indexOf(r.state) >= 0; if (fqView === 'running') return ['enrolled', 'replied', 'meeting', 'finished'].indexOf(r.state) >= 0; if (fqView === 'exceptions') return ['blocked', 'ineligible', 'held', 'skipped', 'stopped'].indexOf(r.state) >= 0; return true; });
+      var list = rows.filter(function(r) { if (fqView === 'queue') return ['queued', 'scheduled', 'review'].indexOf(r.state) >= 0; if (fqView === 'running') return ['launching', 'enrolled', 'replied', 'meeting', 'finished'].indexOf(r.state) >= 0; if (fqView === 'exceptions') return ['blocked', 'ineligible', 'held', 'skipped', 'stopped'].indexOf(r.state) >= 0; return true; });
       list.sort(function(a, b) { return (a.show || 'zzz').localeCompare(b.show || 'zzz') || (a.date || '').localeCompare(b.date || '') || (b.received || '').localeCompare(a.received || ''); });
       var groups = {}; list.forEach(function(r) { (groups[r.show || 'Website and other'] = groups[r.show || 'Website and other'] || []).push(r); });
       var selCount = Object.keys(fqSel).filter(function(k) { return fqSel[k]; }).length;
@@ -10726,13 +10726,13 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v99 · Oct 8';
+    var PP_BUILD = 'v100 · Oct 8';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
-        ppApi('ppPing', {}, 30000).then(function(r) { var v = Number(r && r.version) || 0; window._ppServerVersion = v; if (v && v < 99) { tag.classList.add('warn'); tag.textContent = PP_BUILD + ' · Extras v' + v + ' (needs v99)'; tag.title = 'The server is behind this page: install the current Extras.gs and deploy a new version.'; } else if (v) tag.textContent = PP_BUILD + ' · Extras v' + v; }).catch(function() {});
+        ppApi('ppPing', {}, 30000).then(function(r) { var v = Number(r && r.version) || 0; window._ppServerVersion = v; if (v && v < 100) { tag.classList.add('warn'); tag.textContent = PP_BUILD + ' · Extras v' + v + ' (needs v100)'; tag.title = 'The server is behind this page: install the current Extras.gs and deploy a new version.'; } else if (v) tag.textContent = PP_BUILD + ' · Extras v' + v; }).catch(function() {});
       }, 1500); };
-      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 99 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 99 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
+      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 100 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 100 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
     })();
     // =====================================================================
     // TEAM: titles and headshots, editable in Settings
@@ -11135,5 +11135,12 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // the status chip explains itself when the tool set it
     (function() { var _rl = renderLeads; renderLeads = function() { _rl(); document.querySelectorAll('#leadTableBody tr[data-id]').forEach(function(tr) { var l = leadList.find(function(x) { return x.id === tr.getAttribute('data-id'); }); if (!l || !l.statusAuto) return; var chip = tr.querySelector('.pp-chip, .lead-status'); if (chip && !chip.title) chip.title = 'Set by the tool: ' + l.statusAuto; }); }; })();
   </script>
+  <script>
+    // while anything is starting, the page refreshes itself every 12 seconds until it settles
+    (function() { var _rf = renderFollowUp; renderFollowUp = function() { _rf(); var starting = (fq && fq.rows || []).some(function(r) { return r.state === 'launching'; }); clearTimeout(window._fqPollT); if (starting && document.getElementById('followupView') && document.getElementById('followupView').classList.contains('active')) window._fqPollT = setTimeout(function() { fqLoad(true); }, 12000); }; })();
+    // the bulk Approve / Start toast says what happened right away
+    (function() { var _fd = window.fqBulkDo; if (typeof _fd !== 'function') return; })();
+  </script>
+  <style>.pp-chip.booked[data-state="launching"]{animation:ppPulse 1.2s ease-in-out infinite}@keyframes ppPulse{50%{opacity:.55}}</style>
 </body>
 </html>
