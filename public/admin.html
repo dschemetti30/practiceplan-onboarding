@@ -10726,13 +10726,13 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v103 · Oct 8';
+    var PP_BUILD = 'v104 · Oct 8';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
-        ppApi('ppPing', {}, 30000).then(function(r) { var v = Number(r && r.version) || 0; window._ppServerVersion = v; if (v && v < 103) { tag.classList.add('warn'); tag.textContent = PP_BUILD + ' · Extras v' + v + ' (needs v103)'; tag.title = 'The server is behind this page: install the current Extras.gs and deploy a new version.'; } else if (v) tag.textContent = PP_BUILD + ' · Extras v' + v; }).catch(function() {});
+        ppApi('ppPing', {}, 30000).then(function(r) { var v = Number(r && r.version) || 0; window._ppServerVersion = v; if (v && v < 104) { tag.classList.add('warn'); tag.textContent = PP_BUILD + ' · Extras v' + v + ' (needs v104)'; tag.title = 'The server is behind this page: install the current Extras.gs and deploy a new version.'; } else if (v) tag.textContent = PP_BUILD + ' · Extras v' + v; }).catch(function() {});
       }, 1500); };
-      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 103 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 103 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
+      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 104 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 104 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
     })();
     // =====================================================================
     // TEAM: titles and headshots, editable in Settings
@@ -11162,5 +11162,23 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     })();
   </script>
   <style>.hook-steps{margin-top:10px;font-size:12.5px;color:var(--text2)}.hook-steps ol{margin:6px 0 12px 18px;padding:0;line-height:1.6}.hook-steps code{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:1px 5px;font-size:11.5px}</style>
+  <script>
+    // a status line at the top of every page that reads Close CRM, when there is something to say
+    (function() {
+      var CLOSE_VIEWS = ['leads', 'followup', 'crmhealth', 'intel', 'customers', 'meetings', 'calendar', 'map', 'outreach', 'tradeshows', 'settings'];
+      var last = 0, cached = null;
+      async function ppStatusRefresh() { if (Date.now() - last < 120000 && cached) return cached; try { cached = await ppApi('ppStatus', {}, 30000); last = Date.now(); } catch(e) { cached = null; } return cached; }
+      function ppStatusPaint(view) { var el = document.getElementById('ppStatusLine'); var vc = document.getElementById(view + 'View'); if (!vc) return; if (!el) { el = document.createElement('div'); el.id = 'ppStatusLine'; } if (!cached || cached.level === 'ok' || CLOSE_VIEWS.indexOf(view) < 0) { el.remove(); return; } el.className = 'pp-status ' + cached.level; el.innerHTML = '<i></i><span>' + ppEsc(cached.text) + '</span>'; vc.insertAdjacentElement('afterbegin', el); }
+      var _sv = switchView; switchView = function(v) { _sv(v); ppStatusRefresh().then(function() { ppStatusPaint(v); }); };
+      setTimeout(function() { ppStatusRefresh().then(function() { var active = document.querySelector('.view-content.active'); if (active) ppStatusPaint(active.id.replace(/View$/, '')); }); }, 2500);
+      setInterval(function() { last = 0; ppStatusRefresh().then(function() { var active = document.querySelector('.view-content.active'); if (active) ppStatusPaint(active.id.replace(/View$/, '')); }); }, 10 * 60000);
+    })();
+  </script>
+  <style>
+    .pp-status{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:12px;font-size:12.5px;line-height:1.45;margin:0 0 14px;border:1px solid}
+    .pp-status i{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+    .pp-status.warn{background:rgba(245,158,11,0.08);border-color:#f59e0b;color:#92400e}.pp-status.warn i{background:#f59e0b}
+    .pp-status.info{background:rgba(0,118,187,0.06);border-color:rgba(0,118,187,0.35);color:#0b4f7a}.pp-status.info i{background:var(--pp-blue)}
+  </style>
 </body>
 </html>
