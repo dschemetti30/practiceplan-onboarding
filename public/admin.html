@@ -10728,7 +10728,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v112 · Oct 12c';
+    var PP_BUILD = 'v113 · Oct 12d';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -11232,7 +11232,10 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     .loading-progress-fill::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);animation:ppSheen 1.6s ease-in-out infinite}
     @keyframes ppSheen{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
     .dashboard.active{animation:ppDashIn 1.4s cubic-bezier(.2,.8,.2,1) both}
-    @keyframes ppDashIn{from{opacity:0;transform:translateY(6px)}35%{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    /* opacity only on the container: a transform here (even the identity one an animation leaves behind) would turn the fixed sidebar into a scrolling one */
+    @keyframes ppDashIn{from{opacity:0}35%{opacity:0}to{opacity:1}}
+    .dashboard.active .main-content{animation:ppMainIn 1.4s cubic-bezier(.2,.8,.2,1) both}
+    @keyframes ppMainIn{from{transform:translateY(6px)}35%{transform:translateY(6px)}to{transform:none}}
     @media(prefers-reduced-motion:reduce){.splash,.splash *,.data-loading-overlay,.login-screen,.dashboard.active{animation:none !important;transition:none !important}}
   </style>
   <style>
