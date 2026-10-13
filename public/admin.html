@@ -11410,15 +11410,29 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         if (fit !== null || heat !== null) bar = '<div class="tp-bar" title="Fit ' + (fit === null ? '?' : fit) + ' · Heat ' + (heat === null ? '?' : heat) + '"><i class="fit" style="width:' + Math.round((fit || 0) * 0.65) + '%"></i><i class="heat" style="width:' + Math.round((heat || 0) * 0.35) + '%"></i></div><div class="tp-bar-l">fit <b>' + (fit === null ? '?' : fit) + '</b> · heat <b>' + (heat === null ? '?' : heat) + '</b></div>';
         return '<div class="tp-score">' + intelTierChip(l.tier, l.score) + bar + '</div>';
       }
+      function money(n) { n = Number(n) || 0; return n >= 1000 ? '$' + (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, '') + 'k' : '$' + n.toLocaleString(); }
+      window.ppOppCell = function(o) {
+        if (!o) return '<span class="tp-empty">no opportunity</span>';
+        var per = o.period === 'annual' ? '/yr' : o.period === 'monthly' ? '/mo' : '', val = o.value ? money(o.value) + per : '', when = o.close ? ppFmtDate(o.close, { month: 'short', day: 'numeric' }) : '';
+        if (o.type === 'active') { var late = o.close && o.close < new Date().toISOString().slice(0, 10); return '<div class="tp-opp"><div class="tp-opp-top"><span class="tp-opp-chip">' + ppEsc(o.label || 'Open') + '</span>' + (o.conf !== null && o.conf !== undefined ? '<span class="tp-opp-conf" title="Confidence"><i><s style="width:' + Math.max(0, Math.min(100, o.conf)) + '%"></s></i><b>' + o.conf + '%</b></span>' : '') + '</div><div class="tp-opp-sub">' + (val ? '<b>' + val + '</b>' : '<span class="tp-empty">no value</span>') + (when ? ' \u00b7 <span class="' + (late ? 'late' : '') + '" title="Expected close date' + (late ? ' (past)' : '') + '">' + (late ? 'was due ' : 'closes ') + when + '</span>' : '') + (o.n > 1 ? ' \u00b7 +' + (o.n - 1) + ' more' : '') + '</div>' + (o.note ? '<div class="tp-opp-note" title="' + ppEsc(o.note) + '">' + ppEsc(o.note) + '</div>' : '') + '</div>'; }
+        return '<div class="tp-opp closed"><div class="tp-opp-top"><span class="tp-opp-chip ' + (o.type === 'won' ? 'won' : 'lost') + '">' + ppEsc(o.type === 'won' ? 'Won' : o.type === 'lost' ? 'Lost' : (o.label || 'Closed')) + '</span></div><div class="tp-opp-sub">' + (val ? val : '') + (when ? (val ? ' \u00b7 ' : '') + when : '') + (o.label && o.type !== 'won' && o.label !== 'Lost' ? ' \u00b7 ' + ppEsc(o.label) : '') + '</div></div>';
+      };
+      var oppCell = window.ppOppCell;
+      window.ppPipelineLine = function(rows) {
+        var open = rows.filter(function(l) { return l.opp && l.opp.type === 'active'; }), total = 0, weighted = 0, dated = 0, late = 0, today = new Date().toISOString().slice(0, 10), won = rows.filter(function(l) { return l.opp && l.opp.type === 'won'; }).length;
+        open.forEach(function(l) { var o = l.opp; total += o.total || o.value || 0; weighted += Math.round((o.total || o.value || 0) * ((o.conf === null || o.conf === undefined ? 50 : o.conf) / 100)); if (o.close) { dated++; if (o.close < today) late++; } });
+        if (!open.length) return '<div class="tp-pipe"><b>No open opportunities</b> among these ' + rows.length + ' prospects' + (won ? ' \u00b7 ' + won + ' already won' : '') + '.</div>';
+        return '<div class="tp-pipe"><b>' + open.length + ' open opportunit' + (open.length === 1 ? 'y' : 'ies') + '</b> worth <b>' + money(total) + '</b> (<b>' + money(weighted) + '</b> weighted by confidence) \u00b7 ' + (open.length - dated ? '<span class="warn">' + (open.length - dated) + ' with no close date</span>' : 'all have a close date') + (late ? ' \u00b7 <span class="late">' + late + ' past the expected close date</span>' : '') + ' \u00b7 ' + (rows.length - open.length) + ' prospects with no opportunity yet</div>';
+      };
       window.intelTableHtml = function(rows) {
-        return '<div class="table-wrapper" style="border-radius:12px"><table class="pp-table tp-table" style="min-width:960px;width:100%"><thead><tr><th style="width:21%">District</th><th style="width:108px">Score</th><th style="width:16%">Next play</th><th>Why</th><th style="width:13%">Nearest</th><th style="width:104px">Status</th><th style="width:54px">Rep</th><th style="width:104px"></th></tr></thead><tbody>'
+        return '<div class="table-wrapper" style="border-radius:12px"><table class="pp-table tp-table" style="min-width:960px;width:100%"><thead><tr><th style="width:20%">District</th><th style="width:108px">Score</th><th style="width:15%">Next play</th><th>Why</th><th style="width:12%">Nearest</th><th style="width:168px">Opportunity</th><th style="width:50px">Rep</th><th style="width:104px"></th></tr></thead><tbody>'
           + (rows.length ? rows.slice(0, 150).map(function(l) {
-              return '<tr><td><div class="pp-org-name" title="' + ppEsc(l.name) + '">' + ppEsc(l.name) + '</div><div class="pp-org-sub" title="' + ppEsc([l.city, l.state].filter(Boolean).join(', ') + (l.size ? ' · ' + l.size : '') + (l.conference || l.source ? ' · ' + (l.conference || l.source) : '')) + '">' + ppEsc([l.city, l.state].filter(Boolean).join(', ')) + (l.size ? ' &middot; ' + ppEsc(l.size) : '') + (l.conference || l.source ? ' &middot; ' + ppEsc(l.conference || l.source) : '') + '</div></td>'
+              return '<tr><td><div class="pp-org-name" title="' + ppEsc(l.name) + '">' + ppEsc(l.name) + '</div><div class="pp-org-sub" title="' + ppEsc([l.city, l.state].filter(Boolean).join(', ') + (l.size ? ' · ' + l.size : '') + (l.conference || l.source ? ' · ' + (l.conference || l.source) : '')) + '">' + (l.status ? '<span class="tp-status" title="Status in Close CRM">' + ppEsc(l.status) + '</span> ' : '') + ppEsc([l.city, l.state].filter(Boolean).join(', ')) + (l.size ? ' &middot; ' + ppEsc(l.size) : '') + (l.conference || l.source ? ' &middot; ' + ppEsc(l.conference || l.source) : '') + '</div></td>'
                 + '<td>' + scoreCell(l) + '</td>'
                 + '<td><div class="tp-play">' + (l.nextPlay ? ppEsc(l.nextPlay) : '<span class="tp-empty">no play yet</span>') + (l.lastInbound ? '<div class="ca-sub">they wrote ' + ppAgo(l.lastInbound) + '</div>' : l.lastTouch ? '<div class="ca-sub">last touch ' + ppAgo(l.lastTouch) + '</div>' : '') + '</div></td>'
                 + '<td>' + whyChips(l.why) + '</td>'
                 + '<td>' + nearest(l.nearest) + '</td>'
-                + '<td><span class="pp-chip unset">' + ppEsc(l.status || '') + '</span></td>'
+                + '<td>' + oppCell(l.opp) + '</td>'
                 + '<td>' + (l.owner ? ppRepAvatars(l.owner, 24) : '<span class="pp-placeholder">-</span>') + '</td>'
                 + '<td class="n">' + (l.url ? '<a class="pp-mini-btn" href="' + ppEsc(l.url) + '" target="_blank" rel="noopener" title="Open in Close CRM">' + ppSvg('expand') + '</a>' : '') + '</td></tr>'; }).join('')
             : '<tr><td colspan="8"><div class="pp-empty"><strong>Nothing scored yet</strong>Click Score now. The first run geocodes cities and scores in batches every few minutes until every lead is covered.</div></td></tr>')
@@ -11430,10 +11444,22 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         var top = intel.top || [];
         var rows = top.filter(function(l) { return (intelTier === 'all' || l.tier === intelTier) && (intelState === 'all' || l.state === intelState) && (intelOwner === 'all' || l.owner === intelOwner) && (!intelQ || (l.name + ' ' + l.city + ' ' + l.nearest).toLowerCase().indexOf(intelQ.toLowerCase()) >= 0); });
         wrap.outerHTML = intelTableHtml(rows);
+        var nw = host.querySelector('.out-card .table-wrapper'); if (nw && !host.querySelector('.tp-pipe')) nw.insertAdjacentHTML('beforebegin', ppPipelineLine(rows));
       };
     })();
   </script>
 
+  <style>
+    .tp-pipe{font-size:12.5px;color:var(--text2);padding:8px 12px;margin:0 0 10px;border-radius:10px;background:var(--bg);border:1px solid var(--border)}.tp-pipe b{color:var(--text);font-weight:800}.tp-pipe .warn{color:#92400e;font-weight:700}.tp-pipe .late{color:#b4312a;font-weight:700}
+    .tp-opp{font-size:11.5px;line-height:1.3;min-width:0}.tp-opp-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    .tp-opp-chip{display:inline-flex;align-items:center;height:18px;padding:0 7px;border-radius:50px;font-size:10px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;background:rgba(0,118,187,0.1);color:#0b5fa5;white-space:nowrap;max-width:110px;overflow:hidden;text-overflow:ellipsis}
+    .tp-opp-chip.won{background:rgba(15,122,74,0.12);color:#0f7a4a}.tp-opp-chip.lost{background:var(--bg);color:var(--text3);border:1px solid var(--border)}
+    .tp-opp-conf{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;color:var(--text2)}.tp-opp-conf i{display:block;width:34px;height:5px;border-radius:3px;background:var(--border);overflow:hidden}.tp-opp-conf s{display:block;height:100%;background:#0076bb;border-radius:3px;text-decoration:none}.tp-opp-conf b{font-weight:800;color:var(--text)}
+    .tp-opp-sub{margin-top:3px;color:var(--text2);white-space:normal}.tp-opp-sub b{color:var(--text);font-weight:800}.tp-opp-sub .late{color:#b4312a;font-weight:700}
+    .tp-opp-note{margin-top:2px;color:var(--text3);font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .tp-opp.closed .tp-opp-sub{color:var(--text3)}
+    .tp-status{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;color:var(--text2);background:var(--bg);border:1px solid var(--border);border-radius:50px;padding:0 6px;line-height:15px;vertical-align:1px}
+  </style>
   <style>
     /* ---- phones: five-slot bottom bar with a More sheet, tiles two-up, tab rows that scroll instead of wrapping ---- */
     @media(max-width:768px){
