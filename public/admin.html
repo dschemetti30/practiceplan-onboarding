@@ -592,7 +592,8 @@
       .search-group .search-input{flex:1;min-width:0;padding:8px 10px;font-size:12px}
       .search-group .text-action-btn{white-space:nowrap;padding:8px 10px;font-size:11px}
       .actions-group .text-action-btn{flex:1;justify-content:center;padding:8px 10px;font-size:11px}
-      .table-wrapper{display:none}
+      #submissionsView .table-section>.table-wrapper{display:none}
+      .table-wrapper{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
       .mobile-cards{display:flex;flex-direction:column;gap:8px}
       .mobile-card{padding:12px;border-radius:12px}
       .mobile-card-header{margin-bottom:8px;gap:10px}
@@ -10737,7 +10738,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v117 · Oct 12i';
+    var PP_BUILD = 'v119 · Oct 12k';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -11435,7 +11436,12 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     /* ---- phones: five-slot bottom bar with a More sheet, tiles two-up, tab rows that scroll instead of wrapping ---- */
     @media(max-width:768px){
       .dashboard.active .main-content{animation:none !important;transform:none !important}   /* the bottom bar lives inside main-content on phones; a transform here would unpin it */
-      .view-tabs{flex-wrap:nowrap;overflow:visible;justify-content:space-around;padding:6px 4px calc(8px + env(safe-area-inset-bottom))}
+      body:not(.pp-sidebar) .view-tabs{flex-wrap:nowrap;overflow:visible;justify-content:space-around;align-items:stretch;padding:6px 4px calc(8px + env(safe-area-inset-bottom))}
+      .view-tabs .pp-build{display:none}
+      .m-sheet .pp-build-foot{margin:4px 4px 0;font-size:10.5px;color:var(--text3);letter-spacing:.04em}
+      .pp-table{min-width:720px}
+      .pp-table td,.pp-table th{padding:10px 10px}
+      .fq-table .la-wrap,.pp-table .la-wrap{flex-wrap:wrap}
       .view-tabs .view-tab{display:none}
       .view-tabs .view-tab.m-primary,.view-tabs .view-tab.m-more{display:flex;flex:1 1 0;max-width:88px}
       .view-tabs .view-tab.m-more.on{color:var(--pp-blue)}
@@ -11475,6 +11481,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         var groups = {}; all.forEach(function(b) { var p = b.previousElementSibling, g = 'Pages'; while (p) { if (p.classList && p.classList.contains('nav-group')) { g = p.textContent.trim(); break; } p = p.previousElementSibling; } (groups[g] = groups[g] || []).push(b); });
         sheet.innerHTML = Object.keys(groups).map(function(g) { return '<h4>' + ppEsc(g) + '</h4><div class="m-grid">' + groups[g].map(function(b) { return '<button type="button" data-view="' + viewOf(b) + '">' + (b.querySelector('svg') ? b.querySelector('svg').outerHTML : '') + '<span>' + ppEsc(b.getAttribute('data-short') || b.textContent.trim()) + '</span></button>'; }).join('') + '</div>'; }).join('');
         var more = tabs.querySelector('.m-more'); if (more && more !== tabs.lastElementChild) tabs.appendChild(more);
+        var tag = document.getElementById('ppBuildTag'); sheet.insertAdjacentHTML('beforeend', '<div class="pp-build-foot">' + ppEsc(tag ? tag.textContent : (typeof PP_BUILD === 'string' ? PP_BUILD : '')) + '</div>');
       }
       function build() {
         var tabs = document.querySelector('.view-tabs'); if (!tabs || tabs.dataset.mobileNav) return; tabs.dataset.mobileNav = '1';
@@ -11492,6 +11499,57 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       var _sv = switchView; switchView = function(v) { _sv(v); try { if (window._ppMoreToggle) window._ppMoreToggle(false); reflect(); } catch (e) {} };
       var _li = ppLayoutInit; ppLayoutInit = function() { _li(); try { build(); reflect(); } catch (e) {} };
       setTimeout(function() { try { build(); reflect(); } catch (e) {} }, 0);
+    })();
+  </script>
+
+  <style>
+    /* ---- Follow-up on phones: one card per lead ---- */
+    .fq-cards{display:flex;flex-direction:column;gap:10px;padding:2px 0 4px}
+    .fq-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 12px 10px;box-shadow:var(--sh-xs)}
+    .fq-card-top{display:flex;align-items:flex-start;gap:10px}
+    .fq-card-top input[type=checkbox]{margin:4px 0 0;flex:0 0 auto}
+    .fq-card-who{flex:1;min-width:0}
+    .fq-card-who .pp-org-name{font-size:14px;white-space:normal;line-height:1.25}
+    .fq-card-who .pp-org-sub{white-space:normal;word-break:break-word;font-size:11.5px;margin-top:2px}
+    .fq-card-state{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+    .fq-card-state .pp-chip{font-size:10px}
+    .fq-card-state .ca-sub{font-size:10.5px;text-align:right;max-width:120px;white-space:normal;line-height:1.3}
+    .fq-card-next{margin:10px 0 0;padding:9px 10px;border-radius:10px;background:var(--bg);font-size:12.5px;line-height:1.45;color:var(--text)}
+    .fq-card-next .fq-next b{color:var(--text2)}
+    .fq-card-next:empty{display:none}
+    .fq-card-seq{margin-top:8px;font-size:11px;color:var(--text3);white-space:normal}
+    .fq-card-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+    .fq-card-acts .pp-mini-btn{height:34px;line-height:32px;padding:0 12px !important;font-size:12px;width:auto;border-radius:9px}
+    .fq-card-acts .pp-mini-btn.pp-close-link{margin-left:auto}
+    .fq-card-acts .la-wrap{display:contents}
+    .fq-card-acts .la-more,.fq-card-acts .la-more-btn{display:none}
+  </style>
+  <script>
+    // phones: the Follow-up table becomes a card per lead, built from the same row the table would have shown
+    (function() {
+      var _rf = renderFollowUp; renderFollowUp = function() {
+        _rf(); if (window.innerWidth > 768) return;
+        var host = document.getElementById('fqHost'); if (!host || !fq || !fq.rows) return;
+        host.querySelectorAll('.table-wrapper').forEach(function(wrap) {
+          var trs = wrap.querySelectorAll('tbody tr'); if (!trs.length) return;
+          var cards = [];
+          trs.forEach(function(tr) {
+            var cb = tr.querySelector('input[type=checkbox]'); var m = cb && (cb.getAttribute('onchange') || '').match(/fqSel\['([^']+)'\]/); if (!m) return;
+            var r = fq.rows.find(function(x) { return x.id === m[1]; }); if (!r) return;
+            var tds = tr.children, stateTd = tds[2], noteTd = tr.querySelector('td.fq-note') || tds[5], actsTd = tr.lastElementChild;
+            var chip = stateTd ? (stateTd.querySelector('.pp-chip') ? stateTd.querySelector('.pp-chip').outerHTML : '') : fqChip(r.state);
+            var when = stateTd && stateTd.querySelector('.ca-sub') ? stateTd.querySelector('.ca-sub').outerHTML : '';
+            var next = noteTd ? noteTd.innerHTML : ppEsc(r.note || '');
+            var seqName = (fq.sequences && fq.sequences[r.sequenceId]) || '';
+            cards.push('<div class="fq-card"><div class="fq-card-top">' + (cb ? cb.outerHTML : '') + (r.rep ? ppRepAvatars(r.rep, 28) : '') + '<div class="fq-card-who"><div class="pp-org-name">' + ppEsc(r.org || r.name) + (r.notes ? '<span class="fq-leadnote" tabindex="0" data-note="' + ppEsc(r.notes) + '" aria-label="Note from the lead"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8M8 17h5"/></svg></span>' : '') + '</div><div class="pp-org-sub">' + ppEsc([r.name, r.email].filter(Boolean).join(' · ')) + '</div></div><div class="fq-card-state">' + chip + when + '</div></div>'
+              + '<div class="fq-card-next">' + next + '</div>'
+              + (seqName ? '<div class="fq-card-seq">' + ppEsc(seqName) + (r.sender === 'john_then_rep' ? ' · John intro, then the rep in-thread' : '') + '</div>' : '')
+              + '<div class="fq-card-acts">' + (actsTd ? actsTd.innerHTML : fqRowActions(r)) + (r.closeUrl && !(actsTd && actsTd.querySelector('.pp-close-link')) ? '<a class="pp-mini-btn pp-close-link" href="' + ppEsc(r.closeUrl) + '" target="_blank" rel="noopener">Close CRM &#8599;</a>' : '') + '</div></div>');
+          });
+          if (!cards.length) return;
+          var div = document.createElement('div'); div.className = 'fq-cards'; div.innerHTML = cards.join(''); wrap.replaceWith(div);
+        });
+      };
     })();
   </script>
 </body>
