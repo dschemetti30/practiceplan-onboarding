@@ -4427,7 +4427,7 @@
     // the tabs show a setup message instead of breaking the rest of the admin.
     // =====================================================================
     var CRED_STATUSES = [{val:'active',label:'Active'},{val:'onboarding',label:'Onboarding'},{val:'on-hold',label:'On Hold'},{val:'inactive',label:'Inactive'}];
-    var TS_AUDIENCES = [{val:'supers',label:'Superintendents',short:'Supts'},{val:'ads',label:'Athletic Directors',short:'ADs'},{val:'sbo',label:'Business Officials',short:'SBOs'},{val:'munis',label:'Parks & Rec',short:'Parks & Rec'},{val:'heads',label:'Heads of School',short:'Heads'},{val:'other',label:'Other',short:'Other'}];
+    var TS_AUDIENCES = [{val:'supers',label:'Superintendents',short:'Supts'},{val:'ads',label:'Athletic Directors',short:'ADs'},{val:'sbo',label:'Business Officials',short:'SBOs'},{val:'munis',label:'Parks & Rec',short:'Parks & Rec'},{val:'heads',label:'Heads of School',short:'Heads'},{val:'faith',label:'Churches & faith-based',short:'Faith'},{val:'other',label:'Other',short:'Other'}];
     var TS_REG = [{val:'',label:'Not registered',short:'Register'},{val:'need-to-pay',label:'Need to Pay',short:'To pay'},{val:'paid',label:'Paid',short:'Paid'},{val:'sold-out',label:'Sold Out',short:'Sold out'},{val:'skip',label:'Not Attending',short:'Skipping'}];
     var TS_BOOTHS = ['10 x 10', '8 x 8', '8 x 10', 'No Booth Needed'];
     var TS_TRAVEL = [{val:'',label:'Not set',short:''},{val:'need-to-book',label:'Need to Book',short:'To book'},{val:'booked',label:'Booked',short:'Booked'},{val:'driving',label:'Driving',short:'Driving'},{val:'na',label:'N/A',short:'N/A'}];
@@ -10738,7 +10738,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v133 · Oct 13n';
+    var PP_BUILD = 'v134 · Oct 13o';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
