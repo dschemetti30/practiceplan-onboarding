@@ -10737,7 +10737,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v116 · Oct 12h';
+    var PP_BUILD = 'v117 · Oct 12i';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -11179,7 +11179,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       var CLOSE_VIEWS = ['leads', 'followup', 'crmhealth', 'intel', 'customers', 'meetings', 'calendar', 'map', 'outreach', 'tradeshows', 'settings'];
       var last = 0, cached = null;
       async function ppStatusRefresh() { if (Date.now() - last < 120000 && cached) return cached; try { cached = await ppApi('ppStatus', {}, 30000); last = Date.now(); } catch(e) { cached = null; } return cached; }
-      function ppStatusPaint(view) { var el = document.getElementById('ppStatusLine'); var vc = document.getElementById(view + 'View'); if (!vc) return; if (!el) { el = document.createElement('div'); el.id = 'ppStatusLine'; } if (!cached || cached.level === 'ok' || CLOSE_VIEWS.indexOf(view) < 0) { el.remove(); return; } el.className = 'pp-status ' + cached.level; el.innerHTML = '<i></i><span>' + ppEsc(cached.text) + '</span>'; vc.insertAdjacentElement('afterbegin', el); }
+      function ppStatusPaint(view) { var el = document.getElementById('ppStatusLine'); var vc = document.getElementById(view + 'View'); if (!vc) return; if (!el) { el = document.createElement('div'); el.id = 'ppStatusLine'; } if (!cached || cached.level === 'ok' || !cached.text || CLOSE_VIEWS.indexOf(view) < 0) { el.remove(); return; } el.className = 'pp-status ' + cached.level; el.innerHTML = '<i></i><span>' + ppEsc(cached.text) + '</span>'; vc.insertAdjacentElement('afterbegin', el); }
       var _sv = switchView; switchView = function(v) { _sv(v); ppStatusRefresh().then(function() { ppStatusPaint(v); }); };
       setTimeout(function() { ppStatusRefresh().then(function() { var active = document.querySelector('.view-content.active'); if (active) ppStatusPaint(active.id.replace(/View$/, '')); }); }, 2500);
       setInterval(function() { last = 0; ppStatusRefresh().then(function() { var active = document.querySelector('.view-content.active'); if (active) ppStatusPaint(active.id.replace(/View$/, '')); }); }, 10 * 60000);
@@ -11365,6 +11365,133 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       window.bgSetLimit = async function(btn) { var v = parseInt(document.getElementById('bgLimit').value.replace(/[^0-9]/g, ''), 10); if (!v) return showToast('Enter the daily limit as a number', 'error'); btn.disabled = true; try { var r = await ppApi('bgSetLimit', { limit: v }); if (!r.success) throw new Error(r.error); showToast('Daily limit set to ' + v.toLocaleString(), 'success'); bgRender(r); } catch (e) { showToast(e.message, 'error'); btn.disabled = false; } };
       window.bgInstall = async function(btn) { if (!confirm('Reinstall the schedule? The old triggers for these jobs are removed and recreated at the cadences shown. Meetings, emails and the lead index then only ask Close CRM for records changed since the last check (usually one call), and a full rebuild runs on Sundays. Triggers from the original Code.gs are left alone.')) return; btn.disabled = true; try { var r = await ppApi('bgInstallSchedule', {}, 90000); if (!r.success) throw new Error(r.error); showToast('Schedule applied: ' + r.installed.installed + ' jobs, ' + r.installed.removed + ' old triggers removed', 'success'); bgRender(r); } catch (e) { showToast(e.message, 'error'); btn.disabled = false; } };
       window.bgRunJob = async function(name, btn) { btn.disabled = true; btn.textContent = 'Running'; try { var r = await ppApi('bgRunJob', { job: name }, 300000); if (!r.success) throw new Error(r.error); showToast(name.replace(/^pp/, '') + ' ran', 'success'); bgRender(r); } catch (e) { showToast(e.message, 'error'); btn.disabled = false; btn.textContent = 'Run now'; } };
+    })();
+  </script>
+
+  <style>
+    /* ---- Top prospects: one line per district, reasons as chips, scores as a small bar ---- */
+    .tp-table{table-layout:fixed}.tp-table th,.tp-table td{padding:10px 10px;}.tp-table td{vertical-align:middle;overflow:hidden}.tp-table .pp-org-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tp-table .pp-org-sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .tp-table th.n,.tp-table td.n{text-align:right}
+    .tp-score{display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-width:96px}
+    .tp-bar{display:flex;height:5px;border-radius:4px;overflow:hidden;background:var(--bg);width:96px}
+    .tp-bar i{display:block;height:100%}.tp-bar .fit{background:var(--pp-blue)}.tp-bar .heat{background:#f59e0b}
+    .tp-bar-l{font-size:10.5px;color:var(--text3);white-space:nowrap}.tp-bar-l b{color:var(--text2);font-weight:600}
+    .tp-why{display:flex;flex-wrap:wrap;gap:4px}
+    .tp-why span{display:inline-block;font-size:11px;line-height:1.3;padding:3px 8px;border-radius:50px;background:var(--bg);color:var(--text2);white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis}
+    .tp-why span.more{color:var(--pp-blue);background:rgba(0,118,187,.08);cursor:default}
+    .tp-play{font-weight:600;font-size:12.5px;max-width:240px;min-width:150px;white-space:normal;line-height:1.35}
+    .tp-play .ca-sub{margin-top:2px;font-weight:400}
+    .tp-near{font-size:12px;color:var(--text2);max-width:220px}.tp-near b{color:var(--text);font-weight:600;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .tp-near span{font-size:11px;color:var(--text3)}
+    .tp-empty{color:var(--text3);font-size:11.5px;font-style:italic}
+    @media(max-width:1240px){.tp-table th:nth-child(4),.tp-table td:nth-child(4){display:none}.tp-table{min-width:680px !important}.tp-play{min-width:0;white-space:normal}.tp-table td:nth-child(3){white-space:normal}}
+    .m-sheet,.m-sheet-bg,.view-tab.m-more{display:none}
+  </style>
+  <script>
+    // Top prospects rebuilt: the earlier table wrapped a paragraph of reasons into a narrow column and left "undefined" in the score cell
+    (function() {
+      function num(v) { var n = Number(v); return isNaN(n) ? null : Math.max(0, Math.min(100, Math.round(n))); }
+      function whyChips(why) {
+        var parts = String(why || '').split(/,\s*|;\s*/).map(function(x) { return x.trim(); }).filter(Boolean);
+        if (!parts.length) return '<span class="tp-empty">no signals yet</span>';
+        var show = parts.slice(0, 3), rest = parts.slice(3);
+        return '<div class="tp-why">' + show.map(function(x) { return '<span title="' + ppEsc(x) + '">' + ppEsc(x) + '</span>'; }).join('') + (rest.length ? '<span class="more" title="' + ppEsc(rest.join('\n')) + '">+' + rest.length + '</span>' : '') + '</div>';
+      }
+      function nearest(txt) {
+        var parts = String(txt || '').split(/,\s*(?=[A-Z])/).map(function(x) { return x.trim(); }).filter(Boolean);
+        if (!parts.length) return '<span class="tp-empty">none within 200 mi</span>';
+        return '<div class="tp-near" title="' + ppEsc(parts.join('\n')) + '"><b>' + ppEsc(parts[0]) + '</b>' + (parts.length > 1 ? '<span>+' + (parts.length - 1) + ' more nearby</span>' : '') + '</div>';
+      }
+      function scoreCell(l) {
+        var fit = num(l.fit), heat = num(l.heat), bar = '';
+        if (fit !== null || heat !== null) bar = '<div class="tp-bar" title="Fit ' + (fit === null ? '?' : fit) + ' · Heat ' + (heat === null ? '?' : heat) + '"><i class="fit" style="width:' + Math.round((fit || 0) * 0.65) + '%"></i><i class="heat" style="width:' + Math.round((heat || 0) * 0.35) + '%"></i></div><div class="tp-bar-l">fit <b>' + (fit === null ? '?' : fit) + '</b> · heat <b>' + (heat === null ? '?' : heat) + '</b></div>';
+        return '<div class="tp-score">' + intelTierChip(l.tier, l.score) + bar + '</div>';
+      }
+      window.intelTableHtml = function(rows) {
+        return '<div class="table-wrapper" style="border-radius:12px"><table class="pp-table tp-table" style="min-width:960px;width:100%"><thead><tr><th style="width:21%">District</th><th style="width:108px">Score</th><th style="width:16%">Next play</th><th>Why</th><th style="width:13%">Nearest</th><th style="width:104px">Status</th><th style="width:54px">Rep</th><th style="width:104px"></th></tr></thead><tbody>'
+          + (rows.length ? rows.slice(0, 150).map(function(l) {
+              return '<tr><td><div class="pp-org-name" title="' + ppEsc(l.name) + '">' + ppEsc(l.name) + '</div><div class="pp-org-sub" title="' + ppEsc([l.city, l.state].filter(Boolean).join(', ') + (l.size ? ' · ' + l.size : '') + (l.conference || l.source ? ' · ' + (l.conference || l.source) : '')) + '">' + ppEsc([l.city, l.state].filter(Boolean).join(', ')) + (l.size ? ' &middot; ' + ppEsc(l.size) : '') + (l.conference || l.source ? ' &middot; ' + ppEsc(l.conference || l.source) : '') + '</div></td>'
+                + '<td>' + scoreCell(l) + '</td>'
+                + '<td><div class="tp-play">' + (l.nextPlay ? ppEsc(l.nextPlay) : '<span class="tp-empty">no play yet</span>') + (l.lastInbound ? '<div class="ca-sub">they wrote ' + ppAgo(l.lastInbound) + '</div>' : l.lastTouch ? '<div class="ca-sub">last touch ' + ppAgo(l.lastTouch) + '</div>' : '') + '</div></td>'
+                + '<td>' + whyChips(l.why) + '</td>'
+                + '<td>' + nearest(l.nearest) + '</td>'
+                + '<td><span class="pp-chip unset">' + ppEsc(l.status || '') + '</span></td>'
+                + '<td>' + (l.owner ? ppRepAvatars(l.owner, 24) : '<span class="pp-placeholder">-</span>') + '</td>'
+                + '<td class="n">' + (l.url ? '<a class="pp-mini-btn" href="' + ppEsc(l.url) + '" target="_blank" rel="noopener" title="Open in Close CRM">' + ppSvg('expand') + '</a>' : '') + '</td></tr>'; }).join('')
+            : '<tr><td colspan="8"><div class="pp-empty"><strong>Nothing scored yet</strong>Click Score now. The first run geocodes cities and scores in batches every few minutes until every lead is covered.</div></td></tr>')
+          + '</tbody></table></div>';
+      };
+      var _ri2 = renderIntel; renderIntel = function() {
+        _ri2(); var host = document.getElementById('intelHost'); if (!host || !intelLoaded || (intel && intel.error)) return;
+        var tbl = host.querySelector('.out-card table'); if (!tbl) return; var wrap = tbl.closest('.table-wrapper'); if (!wrap) return;
+        var top = intel.top || [];
+        var rows = top.filter(function(l) { return (intelTier === 'all' || l.tier === intelTier) && (intelState === 'all' || l.state === intelState) && (intelOwner === 'all' || l.owner === intelOwner) && (!intelQ || (l.name + ' ' + l.city + ' ' + l.nearest).toLowerCase().indexOf(intelQ.toLowerCase()) >= 0); });
+        wrap.outerHTML = intelTableHtml(rows);
+      };
+    })();
+  </script>
+
+  <style>
+    /* ---- phones: five-slot bottom bar with a More sheet, tiles two-up, tab rows that scroll instead of wrapping ---- */
+    @media(max-width:768px){
+      .dashboard.active .main-content{animation:none !important;transform:none !important}   /* the bottom bar lives inside main-content on phones; a transform here would unpin it */
+      .view-tabs{flex-wrap:nowrap;overflow:visible;justify-content:space-around;padding:6px 4px calc(8px + env(safe-area-inset-bottom))}
+      .view-tabs .view-tab{display:none}
+      .view-tabs .view-tab.m-primary,.view-tabs .view-tab.m-more{display:flex;flex:1 1 0;max-width:88px}
+      .view-tabs .view-tab.m-more.on{color:var(--pp-blue)}
+      .view-tabs .view-tab.m-more::after{content:'More'}
+      .view-tabs .view-tab.m-more.on::after{content:attr(data-short)}
+      .m-sheet{display:block;position:fixed;left:0;right:0;bottom:0;z-index:310;background:var(--card);border-radius:18px 18px 0 0;box-shadow:0 -18px 48px rgba(15,23,42,.22);padding:14px 14px calc(84px + env(safe-area-inset-bottom));transform:translateY(105%);transition:transform .22s cubic-bezier(.2,.8,.2,1);max-height:78vh;overflow:auto}
+      .m-sheet.open{transform:none}
+      .m-sheet-bg{display:block;position:fixed;inset:0;z-index:305;background:rgba(15,23,42,.35);opacity:0;pointer-events:none;transition:opacity .2s}
+      .m-sheet-bg.open{opacity:1;pointer-events:auto}
+      .m-sheet h4{margin:4px 4px 10px;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3)}
+      .m-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+      .m-grid button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px 10px;border:1px solid var(--border);border-radius:12px;background:var(--bg);font:inherit;font-size:10.5px;font-weight:600;color:var(--text2);line-height:1.1}
+      .m-grid button svg{width:20px;height:20px}
+      .m-grid button.active{border-color:var(--pp-blue);color:var(--pp-blue);background:rgba(0,118,187,.08)}
+      .out-kpis{grid-template-columns:repeat(2,1fr) !important;gap:8px}
+      .out-kpi .v{font-size:20px}
+      .ob-modes{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;gap:6px;padding-bottom:2px}
+      .ob-modes::-webkit-scrollbar{display:none}
+      .ob-modes>button{white-space:nowrap;flex:0 0 auto}
+      .ob-modes>span{flex:0 0 auto;margin-left:8px !important}
+      .fq-steps,.pp-steps{overflow-x:auto;scrollbar-width:none;white-space:nowrap}
+      .stat-card h3 .out-legend{display:flex;flex-wrap:wrap;gap:6px}
+      .page-head p{font-size:12.5px}
+      .table-wrapper{border-radius:12px}
+    }
+  </style>
+  <script>
+    // phones: Home, Shows, Leads, Follow-up on the bar, everything else behind More
+    (function() {
+      var PRIMARY = ['dashboard', 'tradeshows', 'leads', 'followup'];
+      function viewOf(btn) { var m = String(btn.getAttribute('onclick') || '').match(/switchView\('([^']+)'\)/); return m ? m[1] : ''; }
+      var sheet = null;
+      function fill() {
+        var tabs = document.querySelector('.view-tabs'); if (!tabs || !sheet) return;
+        var all = [].slice.call(tabs.querySelectorAll('.view-tab')).filter(function(b) { return !b.classList.contains('soon') && !b.classList.contains('m-more') && viewOf(b); });
+        all.forEach(function(b) { b.classList.toggle('m-primary', PRIMARY.indexOf(viewOf(b)) >= 0); });
+        var groups = {}; all.forEach(function(b) { var p = b.previousElementSibling, g = 'Pages'; while (p) { if (p.classList && p.classList.contains('nav-group')) { g = p.textContent.trim(); break; } p = p.previousElementSibling; } (groups[g] = groups[g] || []).push(b); });
+        sheet.innerHTML = Object.keys(groups).map(function(g) { return '<h4>' + ppEsc(g) + '</h4><div class="m-grid">' + groups[g].map(function(b) { return '<button type="button" data-view="' + viewOf(b) + '">' + (b.querySelector('svg') ? b.querySelector('svg').outerHTML : '') + '<span>' + ppEsc(b.getAttribute('data-short') || b.textContent.trim()) + '</span></button>'; }).join('') + '</div>'; }).join('');
+        var more = tabs.querySelector('.m-more'); if (more && more !== tabs.lastElementChild) tabs.appendChild(more);
+      }
+      function build() {
+        var tabs = document.querySelector('.view-tabs'); if (!tabs || tabs.dataset.mobileNav) return; tabs.dataset.mobileNav = '1';
+        var more = document.createElement('button'); more.type = 'button'; more.className = 'view-tab m-more'; more.setAttribute('data-short', 'More'); more.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>';
+        more.onclick = function() { toggle(); }; tabs.appendChild(more);
+        var bg = document.createElement('div'); bg.className = 'm-sheet-bg'; bg.onclick = function() { toggle(false); };
+        sheet = document.createElement('div'); sheet.className = 'm-sheet'; fill();
+        var mo = new MutationObserver(function() { clearTimeout(mo._t); mo._t = setTimeout(function() { fill(); reflect(); }, 50); }); mo.observe(tabs, { childList: true });
+        sheet.addEventListener('click', function(e) { var b = e.target.closest('button[data-view]'); if (!b) return; toggle(false); switchView(b.getAttribute('data-view')); });
+        document.body.appendChild(bg); document.body.appendChild(sheet);
+        window._ppMoreToggle = toggle;
+        function toggle(force) { var open = force === undefined ? !sheet.classList.contains('open') : !!force; sheet.classList.toggle('open', open); bg.classList.toggle('open', open); sheet.querySelectorAll('button[data-view]').forEach(function(b) { b.classList.toggle('active', !!document.querySelector('.view-tab.active[onclick*="' + b.getAttribute('data-view') + '"]')); }); }
+      }
+      function reflect() { var tabs = document.querySelector('.view-tabs'); if (!tabs) return; try { if (sheet && sheet.querySelectorAll('button[data-view]').length !== tabs.querySelectorAll('.view-tab:not(.soon):not(.m-more)').length) fill(); } catch (e) {} var active = tabs.querySelector('.view-tab.active'); var more = tabs.querySelector('.m-more'); if (!more) return; var hidden = active && !active.classList.contains('m-primary'); more.classList.toggle('on', !!hidden); more.setAttribute('data-short', hidden ? (active.getAttribute('data-short') || 'More') : 'More'); }
+      var _sv = switchView; switchView = function(v) { _sv(v); try { if (window._ppMoreToggle) window._ppMoreToggle(false); reflect(); } catch (e) {} };
+      var _li = ppLayoutInit; ppLayoutInit = function() { _li(); try { build(); reflect(); } catch (e) {} };
+      setTimeout(function() { try { build(); reflect(); } catch (e) {} }, 0);
     })();
   </script>
 </body>
