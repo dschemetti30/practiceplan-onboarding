@@ -10738,7 +10738,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v135 · Oct 14a';
+    var PP_BUILD = 'v136 · Oct 14b';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -11422,7 +11422,8 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       window.ppPipelineLine = function(rows) {
         var open = rows.filter(function(l) { return l.opp && l.opp.type === 'active'; }), total = 0, weighted = 0, dated = 0, late = 0, today = new Date().toISOString().slice(0, 10), won = rows.filter(function(l) { return l.opp && l.opp.type === 'won'; }).length;
         open.forEach(function(l) { var o = l.opp; total += o.total || o.value || 0; weighted += Math.round((o.total || o.value || 0) * ((o.conf === null || o.conf === undefined ? 50 : o.conf) / 100)); if (o.close) { dated++; if (o.close < today) late++; } });
-        if (!open.length) return '<div class="tp-pipe"><b>No open opportunities</b> among these ' + rows.length + ' prospects' + (won ? ' \u00b7 ' + won + ' already won' : '') + '.</div>';
+        var lr = intel && intel.opps; var syncNote = lr ? ' <span class="ca-sub">Last sync ' + ppAgo(lr.at) + ': Close CRM returned ' + lr.opportunities + ' opportunit' + (lr.opportunities === 1 ? 'y' : 'ies') + ' on ' + lr.leads + ' leads, ' + (lr.matched || 0) + ' of them in the index' + (lr.opportunities === 0 ? ' (nothing came back; tell Donnie)' : '') + '.</span> <button class="text-action-btn" onclick="intelSyncOpps(this)">Sync now</button>' : '';
+        if (!open.length) return '<div class="tp-pipe"><b>No open opportunities</b> among these ' + rows.length + ' prospects' + (won ? ' \u00b7 ' + won + ' already won' : '') + '.' + syncNote + '</div>';
         return '<div class="tp-pipe"><b>' + open.length + ' open opportunit' + (open.length === 1 ? 'y' : 'ies') + '</b> worth <b>' + money(total) + '</b> (<b>' + money(weighted) + '</b> weighted by confidence) \u00b7 ' + (open.length - dated ? '<span class="warn">' + (open.length - dated) + ' with no close date</span>' : 'all have a close date') + (late ? ' \u00b7 <span class="late">' + late + ' past the expected close date</span>' : '') + ' \u00b7 ' + rows.filter(function(l) { return !l.opp; }).length + ' prospects with no opportunity yet</div>';
       };
       window.intelTableHtml = function(rows) {
