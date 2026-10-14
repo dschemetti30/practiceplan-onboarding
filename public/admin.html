@@ -10738,7 +10738,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v137 · Oct 14c';
+    var PP_BUILD = 'v141 · Oct 14g';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -11422,9 +11422,9 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       window.ppPipelineLine = function(rows) {
         var open = rows.filter(function(l) { return l.opp && l.opp.type === 'active'; }), total = 0, weighted = 0, dated = 0, late = 0, today = new Date().toISOString().slice(0, 10), won = rows.filter(function(l) { return l.opp && l.opp.type === 'won'; }).length;
         open.forEach(function(l) { var o = l.opp; total += o.total || o.value || 0; weighted += Math.round((o.total || o.value || 0) * ((o.conf === null || o.conf === undefined ? 50 : o.conf) / 100)); if (o.close) { dated++; if (o.close < today) late++; } });
-        var lr = intel && intel.opps; var syncNote = lr ? ' <span class="ca-sub">Last sync ' + ppAgo(lr.at) + ': Close CRM returned ' + lr.opportunities + ' opportunit' + (lr.opportunities === 1 ? 'y' : 'ies') + ' on ' + lr.leads + ' leads, ' + (lr.matched || 0) + ' of them in the index' + (lr.opportunities === 0 ? ' (nothing came back; tell Donnie)' : '') + '.</span> <button class="text-action-btn" onclick="intelSyncOpps(this)">Sync now</button>' : '';
+        var lr = intel && intel.opps; var syncNote = ' <span class="ca-sub">' + (lr ? 'Last sync ' + ppAgo(lr.at) + ': Close CRM returned ' + lr.opportunities + ' opportunit' + (lr.opportunities === 1 ? 'y' : 'ies') + ' on ' + lr.leads + ' leads, ' + (lr.matched || 0) + ' of them in the index' + (lr.opportunities === 0 ? ' (nothing came back; tell Donnie)' : '') + '.' : 'Opportunities have not been synced since this version was installed.') + '</span> <button class="text-action-btn" onclick="intelSyncOpps(this)">Sync now</button> <button class="text-action-btn" onclick="intelDiagOpps()" title="Compares the index with what Close CRM returns, and copies the result">Check a lead</button>';
         if (!open.length) return '<div class="tp-pipe"><b>No open opportunities</b> among these ' + rows.length + ' prospects' + (won ? ' \u00b7 ' + won + ' already won' : '') + '.' + syncNote + '</div>';
-        return '<div class="tp-pipe"><b>' + open.length + ' open opportunit' + (open.length === 1 ? 'y' : 'ies') + '</b> worth <b>' + money(total) + '</b> (<b>' + money(weighted) + '</b> weighted by confidence) \u00b7 ' + (open.length - dated ? '<span class="warn">' + (open.length - dated) + ' with no close date</span>' : 'all have a close date') + (late ? ' \u00b7 <span class="late">' + late + ' past the expected close date</span>' : '') + ' \u00b7 ' + rows.filter(function(l) { return !l.opp; }).length + ' prospects with no opportunity yet</div>';
+        return '<div class="tp-pipe"><b>' + open.length + ' open opportunit' + (open.length === 1 ? 'y' : 'ies') + '</b> worth <b>' + money(total) + '</b> (<b>' + money(weighted) + '</b> weighted by confidence) \u00b7 ' + (open.length - dated ? '<span class="warn">' + (open.length - dated) + ' with no close date</span>' : 'all have a close date') + (late ? ' \u00b7 <span class="late">' + late + ' past the expected close date</span>' : '') + ' \u00b7 ' + rows.filter(function(l) { return !l.opp; }).length + ' prospects with no opportunity yet' + syncNote + '</div>';
       };
       window.intelTableHtml = function(rows) {
         return '<div class="table-wrapper" style="border-radius:12px"><table class="pp-table tp-table" style="min-width:960px;width:100%"><thead><tr><th style="width:20%">District</th><th style="width:108px">Score</th><th style="width:15%">Next play</th><th>Why</th><th style="width:12%">Nearest</th><th style="width:168px">Opportunity</th><th style="width:50px">Rep</th><th style="width:104px"></th></tr></thead><tbody>'
@@ -11883,6 +11883,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         if (intelAttn) { var tb = card.querySelector('tbody'); if (tb && !inList) tb.innerHTML = '<tr><td colspan="8"><div class="pp-empty"><strong>' + (fuList ? 'Nothing needs a touch' : 'Checking') + '</strong>' + (fuList ? 'Every scored lead has been touched recently enough.' : 'Looking at every lead\u2026') + '</div></td></tr>'; var cnt = card.querySelector('h3 .n'); if (cnt) cnt.textContent = inList; }
         var pipe = card.querySelector('.tp-pipe'); if (pipe && !pipe.querySelector('.sync') && (intel.top || []).some(function(l) { return l.opp && l.opp.type === 'unknown'; })) pipe.innerHTML = '<b>Opportunities have not been synced from Close CRM yet</b>, so the column reads "not synced yet". <button class="text-action-btn sync" onclick="intelSyncOpps(this)">Sync opportunities now</button> <span class="ca-sub">a few calls; it also runs daily at 4 AM</span>';
       };
+      window.intelDiagOpps = async function() { var q = prompt('District name to check against Close CRM (blank for a general check):', ''); if (q === null) return; try { var r = await ppApi('diagOpps', { q: q }, 120000); if (!r.success) throw new Error(r.error); var txt = JSON.stringify(r, null, 2); ppCopy(txt, 'Diagnosis'); alert(txt.slice(0, 1800) + (txt.length > 1800 ? '\n…(copied in full)' : '')); } catch (e) { showToast(e.message, 'error'); } };
       window.intelSyncOpps = async function(btn) { btn.disabled = true; btn.textContent = 'Syncing\u2026'; try { var r = await ppApi('syncOpportunities', {}, 290000); if (!r.success) throw new Error(r.error); showToast(r.opportunities + ' opportunities on ' + r.leads + ' leads', 'success'); await loadIntel(true); renderIntel(); } catch (e) { showToast(e.message, 'error'); btn.disabled = false; btn.textContent = 'Sync opportunities now'; } };
     })();
   </script>
@@ -12020,7 +12021,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         if (st === 'replied' || fqS(id).unanswered) it('resume', 'Auto-reply, resume', 'not a real reply');
         if (['enrolled', 'launching', 'replied', 'manual', 'scheduled', 'queued', 'review'].indexOf(st) >= 0) it('bounced', 'Email bounced', 'pause; fix the address');
         if (['scheduled', 'queued', 'review'].indexOf(st) >= 0) items.push('<button onclick="fqSel={};fqSel[\'' + ppEsc(id) + '\']=true;fqBulkSchedule()">Pick a start date</button><button onclick="fqSel={};fqSel[\'' + ppEsc(id) + '\']=true;fqBulkSequence()">Change the sequence</button>');
-        if (st === 'manual') it('requeue', 'Back to the sequence'); if (['held', 'skipped', 'blocked', 'stopped'].indexOf(st) >= 0) it('requeue', 'Re-queue');
+        if (st === 'manual') it('requeue', 'Back to the sequence'); if (['held', 'skipped', 'blocked', 'stopped'].indexOf(st) >= 0) it('requeue', 'Re-queue'); if (st === 'replied' || st === 'finished') it('requeue', 'Start the sequence over', 'this was not a real conversation');
         if (['enrolled', 'replied', 'meeting', 'launching'].indexOf(st) >= 0) it('refresh', 'Refresh from Close CRM');
         items.push('<div class="sep"></div>'); if (r.closeUrl) items.push('<a href="' + ppEsc(r.closeUrl) + '" target="_blank" rel="noopener">Open in Close CRM &#8599;</a>');
         items.push('<button onclick="fqNotLead(\'' + ppEsc(id) + '\')">Not a prospect<small>partner, vendor, association</small></button>');
@@ -12128,6 +12129,25 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       // the badge should be right even before anyone opens the tab: one quiet read a few seconds after the page is up
       setTimeout(function() { if (!fq && typeof fqLoad === 'function' && window.currentUser) { try { fqLoad(false, true).then(function() { fqBadge(); }); } catch (e) {} } else fqBadge(); }, 9000);
       var _sv = switchView; switchView = function(v) { _sv(v); if (v === 'leads') setTimeout(function() { fqMarkSeen(fqFresh().map(function(r) { return r.id; })); }, 4000); };
+    })();
+  </script>
+  <script>
+    // ---- Settings: the shared Google Calendar for trade shows ----
+    (function() {
+      var cal = null;
+      window.ppCalRender = function() {
+        var host = document.getElementById('ppCalCard'); if (!host) return;
+        if (!cal) { host.innerHTML = '<div class="pp-empty">Checking the calendar…</div>'; return; }
+        if (cal.error) { host.innerHTML = '<div class="pp-empty">' + ppEsc(cal.error) + '</div>'; return; }
+        var lr = null; try { lr = JSON.parse(cal.lastResult || 'null'); } catch (e) {}
+        host.innerHTML = '<div class="pp-toolbar-note" style="margin-bottom:10px">Every show on the Trade Shows tab becomes an all-day event on a shared Google Calendar called <b>' + ppEsc(cal.name || 'PracticePlan Trade Shows') + '</b>, with the booth, location, reps, show page and travel notes in the description' + (cal.guests === 'on' ? ', and the reps added as guests so it shows on their own calendars too' : '') + '. It syncs every morning at 7 and whenever you press Sync now. Edit shows here; the calendar follows.</div>'
+          + '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px"><button class="pp-btn primary" onclick="ppCalSync(this)">' + (cal.connected ? 'Sync now' : 'Create the calendar and sync') + '</button>' + (cal.connected ? '<a class="pp-btn" href="https://calendar.google.com/calendar/u/0/r?cid=' + encodeURIComponent(cal.id) + '" target="_blank" rel="noopener">Open in Google Calendar</a>' : '') + '<label class="rv-toggle" style="height:30px"><input type="checkbox"' + (cal.guests === 'on' ? ' checked' : '') + ' onchange="ppCalGuests(this.checked)"> Invite the reps as guests</label>' + (cal.lastSync ? '<span class="ca-sub">Last sync ' + ppAgo(cal.lastSync) + (lr ? ': ' + lr.created + ' added, ' + lr.updated + ' updated, ' + lr.removed + ' removed' : '') + '</span>' : '<span class="ca-sub">Never synced</span>') + '</div>'
+          + (cal.connected ? '<div class="ca-sub"><b>To see it on your own calendar:</b> in Google Calendar it appears under "Other calendars" for anyone it is shared with (share it from the calendar\'s settings in Google Calendar: ' + ppEsc(cal.id) + '). On a phone, open the Google Calendar app, Settings, and turn the calendar on. For Outlook or Apple Calendar, use the calendar\'s "Secret address in iCal format" from its Google settings to subscribe.</div>' : '');
+      };
+      window.ppCalLoad = async function() { try { var r = await ppApi('calendarStatus', {}, 60000); cal = r.success ? r : { error: r.error }; } catch (e) { cal = { error: e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs the latest Extras)' : '') }; } ppCalRender(); };
+      window.ppCalSync = async function(btn) { btn.disabled = true; var was = btn.textContent; btn.textContent = 'Syncing…'; try { var r = await ppApi('calendarSync', {}, 170000); if (!r.success) throw new Error(r.error); showToast(r.created + ' added, ' + r.updated + ' updated, ' + r.removed + ' removed on ' + r.calendar, 'success', 6000); await ppCalLoad(); } catch (e) { showToast(e.message, 'error'); btn.disabled = false; btn.textContent = was; } };
+      window.ppCalGuests = async function(on) { try { var r = await ppApi('setCalendarGuests', { value: on ? 'on' : 'off' }); if (!r.success) throw new Error(r.error); cal.guests = on ? 'on' : 'off'; ppCalRender(); } catch (e) { showToast(e.message, 'error'); } };
+      var _rs = renderSettings; renderSettings = function() { _rs(); var host = document.getElementById('settingsHost'); if (!host || document.getElementById('ppCalCard') || !ppIsSuperAdmin()) return; host.insertAdjacentHTML('beforeend', '<div class="stat-card out-card"><h3>Trade shows on Google Calendar</h3><div id="ppCalCard"></div></div>'); ppCalLoad(); };
     })();
   </script>
 </body>
