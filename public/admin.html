@@ -10758,7 +10758,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v150 · Oct 15k';
+    var PP_BUILD = 'v150 · Oct 15l';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -12241,7 +12241,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     #leadTable{min-width:1180px}
     body.pp-sidebar #leadTable{min-width:1180px}
     #leadTable th:nth-child(7),#leadTable td:nth-child(7){display:table-cell}
-    #leadTable th:nth-child(1){width:auto}#leadTable th:nth-child(2){width:122px}#leadTable th:nth-child(3){width:15%}#leadTable th:nth-child(4){width:78px}#leadTable th:nth-child(5){width:132px}#leadTable th:nth-child(6){width:116px}#leadTable th:nth-child(7){width:54px;text-align:center;padding-left:4px;padding-right:4px}#leadTable th:nth-child(8){width:92px;text-align:center;overflow:visible;text-overflow:clip;padding-left:4px;padding-right:4px}#leadTable th:last-child,#leadsView table.pp-table th:last-child{width:214px}
+    #leadTable th:nth-child(1){width:auto}#leadTable th:nth-child(2){width:104px}#leadTable th:nth-child(3){width:15%}#leadTable th:nth-child(4){width:92px;overflow:visible;text-overflow:clip}#leadTable th:nth-child(5){width:132px}#leadTable th:nth-child(6){width:116px}#leadTable th:nth-child(7){width:54px;text-align:center;padding-left:4px;padding-right:4px}#leadTable th:nth-child(8){width:92px;text-align:center;overflow:visible;text-overflow:clip;padding-left:4px;padding-right:4px}#leadTable th:last-child,#leadsView table.pp-table th:last-child{width:214px}
     #leadTable th:nth-child(1),#leadTable td:nth-child(1){min-width:300px}
     #leadTable th,#leadTable td{padding-left:10px;padding-right:10px}
     #leadTable td:first-child{padding-right:8px}
@@ -12264,10 +12264,10 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     .la-contact .pp-placeholder{font-style:italic;color:var(--text3)}
     .la-reg{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:50px;font-size:10px;font-weight:700;background:rgba(0,168,79,0.1);color:#0f7a4a;vertical-align:middle}
     #leadTable td.la-li-td{overflow:visible;padding-left:6px !important;padding-right:6px !important}
-    .la-find{display:inline-flex;flex-direction:row;gap:4px;align-items:center}
+    .la-find{display:inline-flex;flex-direction:column;gap:4px;align-items:stretch;width:84px}
     .la-find a{display:inline-flex;align-items:center;justify-content:center;gap:4px;height:22px;padding:0 8px;border-radius:7px;font-size:10.5px;font-weight:700;text-decoration:none;white-space:nowrap;border:1px solid rgba(10,102,194,0.35);color:#0a66c2;background:rgba(10,102,194,0.06)}
     .la-find a:hover{background:rgba(10,102,194,0.14)}
-    .la-find a.g{color:var(--text2);border-color:var(--border);background:var(--card);font-weight:800;width:22px;padding:0;font-size:11px}
+    .la-find a.g{color:var(--text2);border-color:var(--border);background:var(--card);font-weight:700}
     .la-find a.g:hover{background:var(--bg)}
     .la-find a.off{opacity:.45;pointer-events:none}
     #leadTable td.la-crm-td{text-align:center;overflow:visible}
@@ -12293,7 +12293,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     .la-menu-item span{display:block;font-size:11px;color:var(--text2);line-height:1.4;margin-top:1px}
     .la-menu-item.danger b{color:#b91c1c}
     .la-menu-sep{height:1px;background:var(--border);margin:4px 6px}
-    @media(max-width:900px){.la-find a.li .lbl{display:none}.la-find a.li{padding:0 7px}#leadTable th:nth-child(2){width:64px}}
+    @media(max-width:900px){.la-find{width:40px}.la-find a .lbl{display:none}.la-find a{padding:0}#leadTable th:nth-child(2){width:60px}}
   </style>
   <script>
     (function() {
@@ -12309,7 +12309,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         var li = leadLinkedInUrl(l), g = leadGoogleUrl(l), who = [clean(l.name), clean(l.title), clean(l.org), [clean(l.city), clean(l.state)].filter(Boolean).join(', ')].filter(Boolean).join(' · ');
         return '<td class="la-li-td"><div class="la-find">'
           + '<a class="li' + (li ? '' : ' off') + '" href="' + ppEsc(li || '#') + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Find on LinkedIn: ' + ppEsc(who || 'no name yet') + '">' + LI_ICON + '<span class="lbl">LinkedIn</span></a>'
-          + '<a class="g' + (g ? '' : ' off') + '" href="' + ppEsc(g || '#') + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Search Google for ' + ppEsc(who || 'this lead') + ', limited to LinkedIn profiles">G</a>'
+          + '<a class="g' + (g ? '' : ' off') + '" href="' + ppEsc(g || '#') + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Search Google for ' + ppEsc(who || 'this lead') + ', limited to LinkedIn profiles">' + LI_ICON + '<span class="lbl">Google</span></a>'
           + '</div></td>';
       }
       function crmCell(l, plus) {
