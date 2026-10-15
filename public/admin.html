@@ -9639,12 +9639,19 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       var matched = cmRows.filter(function(r) { return r.leadId; }), met = cmRows.filter(function(r) { return r.met === 'yes'; });
       var byId = (intel && intel.byId) || {};
       var q = cmQ.trim().toLowerCase(), rows = cmRows.filter(function(r) { return !q || (r.org + ' ' + r.name + ' ' + r.title).toLowerCase().indexOf(q) >= 0; }).sort(function(a, b) { var ta = byId[a.leadId] ? byId[a.leadId][0] : -1, tb = byId[b.leadId] ? byId[b.leadId][0] : -1; return tb - ta; });
-      return '<div class="detail-section" id="cmSection"><h3>Conference mode</h3><div class="pp-toolbar-note" style="margin-bottom:10px">Upload the attendee list (any spreadsheet with organization, name, title, email columns). Each attendee is matched to Close CRM by organization so you walk in knowing status, tier, last touch and the nearest customer. At the booth, open the phone view and log who you met; it writes a note to Close CRM and creates an inbound lead credited to this show.</div>'
-        + '<div class="camp-actions"><button class="pp-btn" onclick="document.getElementById(\'cmFile\').click()">Upload attendee list</button><input type="file" id="cmFile" accept=".csv,.xlsx,.xls" style="display:none" onchange="cmImport(this.files[0],\'' + ppEsc(s.id) + '\');this.value=\'\'"><a class="pp-btn primary" href="' + ppEsc(location.pathname) + '?booth=' + encodeURIComponent(s.id) + '" target="_blank">Open booth view</a><button class="pp-btn" onclick="ppCopy(location.origin+location.pathname+\'?booth=' + encodeURIComponent(s.id) + '\',\'Booth link\')">Copy booth link</button><span class="pp-toolbar-note">' + (cmRows.length ? cmRows.length + ' attendees &middot; ' + matched.length + ' matched to Close CRM &middot; ' + met.length + ' met' : 'No attendee list yet') + '</span></div>'
+      return '<div class="detail-section" id="cmSection"><h3>Conference mode</h3><div class="pp-toolbar-note" style="margin-bottom:10px">Pull the registered attendees straight from Close CRM (contacts tagged with the show\'s attendee Lead Source), or upload a spreadsheet. Every attendee carries its Close CRM lead and contact, so you walk in knowing status, tier, last touch and the nearest customer, and a lead that comes in through the show\'s intake form is matched to its pre-registered attendee instead of creating a duplicate. At the booth, open the phone view and log who you met; it writes a note to Close CRM and creates an inbound lead credited to this show.</div>'
+        + '<div class="camp-actions"><button class="pp-btn primary" onclick="cmFromClose(\'' + ppEsc(s.id) + '\',this)" title="Attendees tagged in Close CRM with a contact Lead Source such as &quot;Attendee List - ASBO International&quot;">' + (s.attendeeSource ? 'Re-pull from Close CRM' : 'Pull attendees from Close CRM') + '</button><button class="pp-btn" onclick="document.getElementById(\'cmFile\').click()">Upload a spreadsheet</button><input type="file" id="cmFile" accept=".csv,.xlsx,.xls" style="display:none" onchange="cmImport(this.files[0],\'' + ppEsc(s.id) + '\');this.value=\'\'"><a class="pp-btn" href="' + ppEsc(location.pathname) + '?booth=' + encodeURIComponent(s.id) + '" target="_blank">Open booth view</a><button class="pp-btn" onclick="ppCopy(location.origin+location.pathname+\'?booth=' + encodeURIComponent(s.id) + '\',\'Booth link\')">Copy booth link</button><span class="pp-toolbar-note">' + (cmRows.length ? cmRows.length + ' attendees &middot; ' + matched.length + ' matched to Close CRM &middot; ' + met.length + ' met' : 'No attendee list yet') + (s.attendeeSource ? ' &middot; from Close CRM contacts tagged \u201c' + ppEsc(s.attendeeSource) + '\u201d' + (s.attendeesSyncedAt ? ', pulled ' + ppAgo(s.attendeesSyncedAt) : '') : '') + '</span></div>'
         + (cmRows.length ? '<input class="search-input" style="width:100%;margin:8px 0" placeholder="Find an attendee or district" value="' + ppEsc(cmQ) + '" oninput="cmQ=this.value;cmRefresh()"><div class="table-wrapper" style="border-radius:12px;max-height:420px;overflow:auto"><table class="pp-table" style="min-width:820px"><thead><tr><th>Attendee</th><th>District in Close</th><th>Tier</th><th>Nearest customer</th><th>Met</th></tr></thead><tbody>' + rows.slice(0, 300).map(function(r) { var t = byId[r.leadId]; return '<tr class="' + (r.met === 'yes' ? 'cm-met' : '') + '"><td><div class="pp-org-name">' + ppEsc(r.name || r.org) + '</div><div class="pp-org-sub">' + ppEsc([r.title, r.name ? r.org : ''].filter(Boolean).join(' · ')) + '</div></td><td>' + (r.leadId ? '<span class="pp-chip booked">' + ppEsc(r.leadName) + '</span>' : '<span class="pp-chip unset">not in Close CRM</span>') + '</td><td>' + (t ? intelTierChip(t[1], t[0]) : '-') + '</td><td style="font-size:11.5px;color:var(--text2)">' + (t && t[2] ? ppEsc(t[2].split(', ')[0]) : '-') + '</td><td>' + (r.met === 'yes' ? '<b style="color:var(--pp-green)">Yes</b>' + (r.notes ? '<div class="ca-sub">' + ppEsc(r.notes) + '</div>' : '') : '<button class="pp-mini-btn" title="Log a meeting" onclick="cmMeet(\'' + ppEsc(r.id) + '\')">+</button>') + '</td></tr>'; }).join('') + '</tbody></table></div>' : '') + '</div>';
     }
     function cmRefresh() { var sec = document.getElementById('cmSection'); if (!sec || !cmShow) return; var s = tsList.find(function(x) { return x.id === cmShow; }); if (s) sec.outerHTML = cmSection(s); }
     async function cmImport(file, showId) { if (!file) return; try { var sheets = await ppParseWorkbook(file, {}); var first = (Array.isArray(sheets) ? sheets[0] : { rows: sheets[Object.keys(sheets)[0]] }) || {}; var rows = first.rows || []; if (!rows.length) throw new Error('Empty file'); var hdr = rows[0].map(function(h) { return String(h || '').toLowerCase().trim(); }); var col = function(res) { for (var i = 0; i < hdr.length; i++) if (res.some(function(r) { return r.test(hdr[i]); })) return i; return -1; }; var cOrg = col([/organi[sz]ation|district|school|company|account|employer|institution/]), cName = col([/^name$|full name|attendee|contact/]), cFirst = col([/first/]), cLast = col([/last|surname/]), cTitle = col([/title|role|position/]), cEmail = col([/e-?mail/]); if (cOrg < 0) throw new Error('Could not find an organization or district column'); var out = rows.slice(1).map(function(r) { var name = cName >= 0 ? r[cName] : [cFirst >= 0 ? r[cFirst] : '', cLast >= 0 ? r[cLast] : ''].filter(Boolean).join(' '); return { org: String(r[cOrg] || '').trim(), name: String(name || '').trim(), title: cTitle >= 0 ? String(r[cTitle] || '').trim() : '', email: cEmail >= 0 ? String(r[cEmail] || '').trim() : '' }; }).filter(function(r) { return r.org; }); var res = await ppApiPost('saveShowAttendees', { showId: showId, rows: out }); if (!res.success) throw new Error(res.error); showToast(res.saved + ' attendees, ' + res.matched + ' matched to Close', 'success'); await cmLoad(showId, true); if (!intelLoaded) await loadIntel(false); cmRefresh(); } catch(e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v45)' : ''), 'error'); } }
+    window.cmFromClose = async function(showId, btn) {
+      var s = tsList.find(function(x) { return x.id === showId; }) || {};
+      var pick = null; try { pick = await ppApi('attendeeSources', {}, 60000); } catch (e) { pick = null; }
+      var choices = (pick && pick.success && pick.choices) || [], guess = s.attendeeSource || choices.find(function(c) { return s.shortName && c.toLowerCase().indexOf(String(s.shortName).toLowerCase()) >= 0; }) || choices.find(function(c) { return String(s.name || '').split(/\s+/).some(function(w) { return w.length > 3 && c.toLowerCase().indexOf(w.toLowerCase()) >= 0; }); }) || '';
+      var fields = choices.length ? [{ key: 'source', label: 'Contact Lead Source that marks the attendees', type: 'select', options: choices.map(function(c) { return { val: c, label: c }; }).concat(guess && choices.indexOf(guess) < 0 ? [{ val: guess, label: guess }] : []), value: guess || choices[0] }] : [{ key: 'source', label: 'Contact Lead Source that marks the attendees', value: guess, placeholder: 'Attendee List - ASBO International' }];
+      ppFormPopover(btn || document.body, fields, async function(v) { if (!v.source) return; try { var r = await ppApi('importShowAttendees', { showId: showId, source: v.source }, 290000); if (!r.success) throw new Error(r.error); showToast(r.attendees + ' attendees on ' + r.leads + ' Close CRM leads' + (r.withEmail < r.attendees ? ' (' + (r.attendees - r.withEmail) + ' without an email)' : ''), 'success', 8000); s.attendeeSource = r.source; s.attendeesSyncedAt = new Date().toISOString(); await cmLoad(showId, true); cmRefresh(); } catch (e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v123)' : ''), 'error'); } }, { title: 'Attendees from Close CRM', note: 'One pull: every contact in Close CRM carrying this Lead Source becomes an attendee here, with its lead and contact ids. Pull again only if the list in Close changes.', submitLabel: 'Pull' });
+    };
     function cmMeet(id) { var r = cmRows.find(function(x) { return x.id === id; }); if (!r) return; ppFormPopover(document.activeElement || document.body, [{ key: 'notes', label: 'What did you talk about?', type: 'textarea', value: '' }], async function(v) { try { var res = await ppApi('logBoothMeet', { id: id, notes: v.notes || '' }); if (!res.success) throw new Error(res.error); r.met = 'yes'; r.notes = v.notes || ''; cmRefresh(); showToast('Logged' + (res.close === 'noted' ? ' and noted in Close CRM' : ''), 'success'); } catch(e) { showToast(e.message, 'error'); } }, { title: 'Met ' + (r.name || r.org) }); }
     (function() { var _sec = tsCollateralSection; tsCollateralSection = function(s) { var html = _sec(s); if (!s._isPast || (s._daysUntil !== null && s._daysUntil > -30)) { cmLoad(s.id).then(function() { var host = document.getElementById('cmSection'); if (host) host.outerHTML = cmSection(s); }); html = '<div class="detail-section" id="cmSection"><h3>Conference mode</h3><div class="pp-empty">Loading attendees</div></div>' + html; } return html; }; })();
     // booth view: a phone screen for the show, reached by link
@@ -9662,7 +9669,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       document.getElementById('boothQ').addEventListener('input', function() { clearTimeout(window._boothT); window._boothT = setTimeout(function() { renderBooth(showId); }, 120); });
     }
     function boothLog(id, showId) { var r = cmRows.find(function(x) { return x.id === id; }); if (!r) return; var notes = prompt('Met ' + (r.name || r.org) + '. Notes (optional):', r.notes || ''); if (notes === null) return; ppApi('logBoothMeet', { id: id, notes: notes }).then(function(res) { if (!res.success) throw new Error(res.error); r.met = 'yes'; r.notes = notes; renderBooth(showId); }).catch(function(e) { alert(e.message); }); }
-    async function boothNew(showId) { var org = prompt('District or organization:'); if (!org) return; var name = prompt('Their name:') || ''; var email = prompt('Email (optional):') || ''; var title = prompt('Title (optional):') || ''; try { var res = await ppApiPost('saveShowAttendees', { showId: showId, rows: cmRows.map(function(r) { return { org: r.org, name: r.name, title: r.title, email: r.email }; }).concat([{ org: org, name: name, title: title, email: email }]) }); if (!res.success) throw new Error(res.error); await cmLoad(showId, true); var added = cmRows.find(function(r) { return r.org === org && r.name === name; }); if (added) boothLog(added.id, showId); else renderBooth(showId); } catch(e) { alert(e.message); } }
+    async function boothNew(showId) { var org = prompt('District or organization:'); if (!org) return; var name = prompt('Their name:') || ''; var email = prompt('Email (optional):') || ''; var title = prompt('Title (optional):') || ''; try { var res = await ppApiPost('saveShowAttendees', { showId: showId, rows: [{ org: org, name: name, title: title, email: email }] }); if (!res.success) throw new Error(res.error); await cmLoad(showId, true); var added = cmRows.find(function(r) { return r.org === org && r.name === name; }); if (added) boothLog(added.id, showId); else renderBooth(showId); } catch(e) { alert(e.message); } }
     (function() { var m = location.search.match(/[?&]booth=([^&]+)/); if (!m) return; var id = decodeURIComponent(m[1]); var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() { renderBooth(id); }, 300); }; })();
 
     // =====================================================================
@@ -10751,7 +10758,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v150 · Oct 15i';
+    var PP_BUILD = 'v150 · Oct 15j';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -12230,9 +12237,24 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
   </script>
 
   <style>
-    /* v150: Inbound Leads row. Find column after the name; Touch is gone; CRM link is a check or an x; secondary actions live in one menu */
+    /* v150: Inbound Leads row. Email and phone sit under the name; Find column after it; Touch is gone; CRM link is a check or an x; secondary actions live in one menu */
+    #leadTable{min-width:1180px}
+    body.pp-sidebar #leadTable{min-width:1180px}
     #leadTable th:nth-child(7),#leadTable td:nth-child(7){display:table-cell}
-    #leadTable th:nth-child(1){width:19%}#leadTable th:nth-child(2){width:106px}#leadTable th:nth-child(3){width:16%}#leadTable th:nth-child(4){width:10%}#leadTable th:nth-child(5){width:7%}#leadTable th:nth-child(6){width:12%}#leadTable th:nth-child(7){width:10%}#leadTable th:nth-child(8){width:13%}#leadTable th:nth-child(9){width:86px;text-align:center}
+    #leadTable th:nth-child(1){width:24%}#leadTable th:nth-child(2){width:100px}#leadTable th:nth-child(3){width:10%}#leadTable th:nth-child(4){width:74px}#leadTable th:nth-child(5){width:124px}#leadTable th:nth-child(6){width:112px}#leadTable th:nth-child(7){width:auto}#leadTable th:nth-child(8){width:72px;text-align:center}#leadTable th:last-child,#leadsView table.pp-table th:last-child{width:214px}
+    #leadTable th,#leadTable td{padding-left:10px;padding-right:10px}
+    #leadTable td:first-child{padding-right:8px}
+    #leadTableBody .pp-org-cell{align-items:flex-start}
+    #leadTableBody .pp-org-cell>div:last-child{min-width:0;flex:1}
+    #leadTableBody .pp-org-name{white-space:normal;line-height:1.25}
+    #leadTableBody .pp-org-sub{white-space:normal !important;overflow:visible !important;text-overflow:clip !important;line-height:1.35}
+    .la-contact{display:flex;flex-wrap:wrap;align-items:center;gap:1px 10px;margin-top:3px;font-size:11.5px;color:var(--text2);line-height:1.4}
+    .la-contact .lead-contact{display:contents}
+    .la-contact .pp-copyable{cursor:copy;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+    .la-contact .pp-copyable.sub{color:var(--text3)}
+    .la-contact .pp-placeholder{font-style:italic;color:var(--text3)}
+    .la-reg{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:50px;font-size:10px;font-weight:700;background:rgba(0,168,79,0.1);color:#0f7a4a;vertical-align:middle}
+    #leadTable td:nth-child(3) .pp-chip{white-space:normal;line-height:1.25;text-align:left;max-width:100%;letter-spacing:.02em;font-size:10px;padding:3px 8px}
     #leadTable td.la-li-td{overflow:visible;padding-left:6px !important;padding-right:6px !important}
     .la-find{display:inline-flex;flex-direction:row;gap:4px;align-items:center}
     .la-find a{display:inline-flex;align-items:center;justify-content:center;gap:4px;height:22px;padding:0 8px;border-radius:7px;font-size:10.5px;font-weight:700;text-decoration:none;white-space:nowrap;border:1px solid rgba(10,102,194,0.35);color:#0a66c2;background:rgba(10,102,194,0.06)}
@@ -12247,13 +12269,14 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     .la-crm.wait{background:var(--bg);color:var(--text2);border-color:var(--border)}
     .la-crm .f2-srt{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
     .la-crm-td .lead-plus{margin-left:4px;vertical-align:middle}
+    #leadTable td[data-edit="assignedTo"] span{white-space:nowrap}
+    #leadTable td[data-edit="internalNotes"] .lead-note{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:normal;line-height:1.35}
     .la-wrap{flex-direction:row !important;flex-wrap:nowrap !important;justify-content:flex-end !important;align-items:center !important;max-width:none !important;gap:4px !important}
     .la-wrap .la-btn{width:auto !important;height:24px;font-size:11px;white-space:nowrap}
     .la-wrap .la-btn:first-child{background:var(--pp-blue);border-color:var(--pp-blue);color:#fff}
     .la-wrap .la-btn.la-menu-btn{background:var(--card) !important;border-color:var(--border) !important;color:var(--text2) !important;padding:0 8px;display:inline-flex;align-items:center;gap:3px}
     .la-wrap .la-btn.la-menu-btn svg{width:12px;height:12px}
     .la-wrap .la-pocket{display:none !important}
-    #leadTable th:last-child{width:176px}
     .la-menu{position:fixed;z-index:3200;min-width:250px;max-width:320px;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,0.16);padding:6px;animation:laMenuIn .12s ease-out}
     @keyframes laMenuIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
     .la-menu-h{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);padding:6px 10px 4px}
@@ -12311,7 +12334,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       };
       function fixHead() {
         var tr = document.querySelector('#leadTable thead tr'); if (!tr || tr.getAttribute('data-v150')) return; tr.setAttribute('data-v150', '1');
-        [].slice.call(tr.children).forEach(function(th) { var t = th.textContent.trim(); if (t === 'Touch') th.remove(); else if (t === 'CRM') { th.textContent = 'CRM link'; th.title = 'Linked to a Close CRM lead (check) or not (x). Click the check to open it.'; th.style.textAlign = 'center'; } });
+        [].slice.call(tr.children).forEach(function(th) { var t = th.textContent.trim(); if (t === 'Touch' || t === 'Contact') th.remove(); else if (t === 'CRM') { th.textContent = 'CRM link'; th.title = 'Linked to a Close CRM lead (check) or not (x). Click the check to open it.'; th.style.textAlign = 'center'; } });
         tr.children[0].insertAdjacentHTML('afterend', '<th title="Find this person on LinkedIn, or on Google">Find</th>');
       }
       var _rl = renderLeads; renderLeads = function() {
@@ -12322,7 +12345,13 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
           var tds = [].slice.call(tr.children); if (tds.length !== 10) return;
           tr.setAttribute('data-v150', '1');
           var plus = tds[8].querySelector('.lead-plus'); plus = plus ? plus.outerHTML : '';
+          // email and phone move under the name (the email-check badge comes along); editing them lives in the lead's details
+          var nameEl = tds[0].querySelector('.pp-org-name'), textCol = nameEl ? nameEl.parentElement : null, contact = tds[1].querySelector('.lead-contact');
+          if (textCol) { var holder = document.createElement('div'); holder.className = 'la-contact'; if (contact) holder.appendChild(contact); else holder.innerHTML = '<span class="pp-placeholder">Email?</span>'; textCol.appendChild(holder); }
+          if (l.attendeeId) { var sub = tds[0].querySelector('.pp-org-sub'); if (sub && !sub.querySelector('.la-reg')) sub.insertAdjacentHTML('beforeend', '<span class="la-reg" title="Matched to the show\'s pre-registered attendee list in Close CRM">registered</span>'); }
+          var chip = tds[2].querySelector('.pp-chip'); if (chip && l.source) { chip.textContent = String(l.source).replace(/[-_]+/g, ' '); chip.title = l.source; }
           tds[6].remove();                                   // Touch: the status column already says when we reached them
+          tds[1].remove();                                   // Contact: now under the name
           tds[8].outerHTML = crmCell(l, plus);               // CRM link: check or x
           tds[0].insertAdjacentHTML('afterend', findCell(l)); // Find: LinkedIn and Google
           // actions: the first button stays, everything else goes into one menu
@@ -12341,6 +12370,86 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         });
       };
       fixHead();
+    })();
+  </script>
+
+  <style>
+    /* v150: Close CRM Intel table. Why folds into Next play; the opportunity reads as value, confidence, stage, date */
+    .tp-table th:nth-child(1){width:24%}.tp-table th:nth-child(2){width:104px}.tp-table th:nth-child(3){width:auto}.tp-table th:nth-child(4){width:15%}.tp-table th:nth-child(5){width:196px}.tp-table th:nth-child(6){width:48px}.tp-table th:nth-child(7){width:104px}
+    .tp-table th,.tp-table td{padding:11px 10px}
+    .tp-play{max-width:none;min-width:0}
+    .tp-why-line{margin-top:3px;font-size:11px;font-weight:400;color:var(--text3);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .tp-why-line b{font-weight:600;color:var(--text2)}
+    .tp-why-line .more{color:var(--pp-blue);font-weight:600;white-space:nowrap}
+    .op{font-size:11.5px;line-height:1.35;min-width:0}
+    .op-l1{display:flex;align-items:center;gap:8px;min-width:0}
+    .op-l1 b{font-size:13px;font-weight:800;color:var(--text);white-space:nowrap}
+    .op-l1 b.none{font-weight:600;color:var(--text3);font-size:11.5px}
+    .op-conf{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;color:var(--text2);white-space:nowrap}
+    .op-conf i{display:block;width:38px;height:5px;border-radius:3px;background:var(--border);overflow:hidden}
+    .op-conf i s{display:block;height:100%;background:var(--pp-blue);border-radius:3px}
+    .op-l2{margin-top:2px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+    .op-l3{margin-top:1px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .op-l3.late{color:#b4312a;font-weight:700}.op-l3.soon{color:#0f7a4a;font-weight:700}
+    .op.closed .op-l1 b{font-size:11.5px;text-transform:uppercase;letter-spacing:.03em}
+    .op.closed .op-l1 b.won{color:#0f7a4a}.op.closed .op-l1 b.lost{color:var(--text3)}
+    .op.closed .op-l2{font-weight:400;color:var(--text3)}
+    .op-none{color:var(--text3);font-size:11.5px}
+    .tp-row-acts{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+    @media(max-width:1240px){.tp-table th:nth-child(4),.tp-table td:nth-child(4){display:none}}
+  </style>
+  <script>
+    (function() {
+      if (typeof window.intelTableHtml !== 'function' || typeof window.ppOppCell !== 'function') return;
+      function money(n) { n = Number(n) || 0; return n >= 1000 ? '$' + (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, '') + 'k' : '$' + n.toLocaleString(); }
+      function whyLine(why) {
+        var parts = String(why || '').split(/,\s*|;\s*/).map(function(x) { return x.trim(); }).filter(Boolean);
+        if (!parts.length) return '';
+        var show = parts.slice(0, 3), rest = parts.slice(3);
+        return '<div class="tp-why-line" title="' + ppEsc(parts.join('\n')) + '"><b>Why:</b> ' + show.map(ppEsc).join(' · ') + (rest.length ? ' <span class="more">+' + rest.length + '</span>' : '') + '</div>';
+      }
+      window.ppOppCell = function(o) {
+        if (!o) return '<span class="op-none">none yet</span>';
+        if (o.type === 'unknown') return '<span class="op-none" title="Press Sync now above">not synced</span>';
+        var per = o.period === 'annual' ? '/yr' : o.period === 'monthly' ? '/mo' : '', val = o.value ? money(o.value) + per : '', when = o.close ? ppFmtDate(o.close, { month: 'short', day: 'numeric' }) : '', today = new Date().toISOString().slice(0, 10);
+        if (o.type === 'active') {
+          var late = o.close && o.close < today, soon = o.close && !late && (new Date(o.close + 'T12:00:00').getTime() - Date.now()) < 14 * 86400000;
+          var conf = o.conf !== null && o.conf !== undefined ? '<span class="op-conf" title="Confidence"><i><s style="width:' + Math.max(0, Math.min(100, o.conf)) + '%"></s></i>' + o.conf + '%</span>' : '';
+          return '<div class="op" title="' + ppEsc((o.label || 'Open') + (o.note ? '\n' + o.note : '') + (o.owner ? '\nOwner: ' + o.owner : '')) + '">'
+            + '<div class="op-l1">' + (val ? '<b>' + val + '</b>' : '<b class="none">no value</b>') + conf + '</div>'
+            + '<div class="op-l2">' + ppEsc(o.label || 'Open') + (o.n > 1 ? ' <span style="font-weight:400;color:var(--text3)">+' + (o.n - 1) + ' more</span>' : '') + '</div>'
+            + '<div class="op-l3' + (late ? ' late' : soon ? ' soon' : '') + '">' + (when ? (late ? 'was due ' : 'closes ') + when : 'no close date') + '</div></div>';
+        }
+        return '<div class="op closed" title="' + ppEsc((o.label || '') + (o.note ? '\n' + o.note : '')) + '"><div class="op-l1"><b class="' + (o.type === 'won' ? 'won' : 'lost') + '">' + (o.type === 'won' ? 'Won' : 'Lost') + '</b>' + (val && o.type === 'won' ? '<span style="font-weight:700">' + val + '</span>' : '') + (when ? '<span style="color:var(--text3)">' + when + '</span>' : '') + '</div>'
+          + (o.label && o.label !== 'Lost' && o.label !== 'Won' ? '<div class="op-l2">' + ppEsc(o.label) + '</div>' : '') + '</div>';
+      };
+      var scoreCellRef = null, nearestRef = null;
+      // borrow the existing score and nearest renderers by rendering one row through the old table and reading them back is fragile; rebuild the two small ones here instead
+      function num(v) { var n = Number(v); return v === '' || v === null || v === undefined || isNaN(n) ? null : n; }
+      function scoreCell(l) {
+        var fit = num(l.fit), heat = num(l.heat), bar = '';
+        if (fit !== null || heat !== null) bar = '<div class="tp-bar" title="Fit ' + (fit === null ? '?' : fit) + ' · Heat ' + (heat === null ? '?' : heat) + '"><i class="fit" style="width:' + Math.round((fit || 0) * 0.65) + '%"></i><i class="heat" style="width:' + Math.round((heat || 0) * 0.35) + '%"></i></div><div class="tp-bar-l">fit <b>' + (fit === null ? '?' : fit) + '</b> · heat <b>' + (heat === null ? '?' : heat) + '</b></div>';
+        return '<div class="tp-score">' + intelTierChip(l.tier, l.score) + bar + '</div>';
+      }
+      function nearest(txt) {
+        var parts = String(txt || '').split(/,\s*(?=[A-Z])/).map(function(x) { return x.trim(); }).filter(Boolean);
+        if (!parts.length) return '<span class="tp-empty">none within 200 mi</span>';
+        return '<div class="tp-near" title="' + ppEsc(parts.join('\n')) + '"><b>' + ppEsc(parts[0]) + '</b>' + (parts.length > 1 ? '<span>+' + (parts.length - 1) + ' more nearby</span>' : '') + '</div>';
+      }
+      window.intelTableHtml = function(rows) {
+        return '<div class="table-wrapper" style="border-radius:12px"><table class="pp-table tp-table" style="min-width:960px;width:100%"><thead><tr><th>District</th><th>Score</th><th>Next play</th><th>Nearest</th><th>Opportunity</th><th>Rep</th><th></th></tr></thead><tbody>'
+          + (rows.length ? rows.slice(0, 150).map(function(l) {
+              var sub = [l.city, l.state].filter(Boolean).join(', ') + (l.size ? ' · ' + l.size : '') + (l.conference || l.source ? ' · ' + (l.conference || l.source) : '');
+              return '<tr><td><div class="pp-org-name" title="' + ppEsc(l.name) + '">' + ppEsc(l.name) + '</div><div class="pp-org-sub" title="' + ppEsc(sub) + '">' + (l.status ? '<span class="tp-status" title="Status in Close CRM">' + ppEsc(l.status) + '</span> ' : '') + ppEsc(sub) + '</div></td>'
+                + '<td>' + scoreCell(l) + '</td>'
+                + '<td><div class="tp-play">' + (l.nextPlay ? ppEsc(l.nextPlay) : '<span class="tp-empty">no play yet</span>') + (l.lastInbound ? '<div class="ca-sub">they wrote ' + ppAgo(l.lastInbound) + '</div>' : l.lastTouch ? '<div class="ca-sub">last touch ' + ppAgo(l.lastTouch) + '</div>' : '') + whyLine(l.why) + '</div></td>'
+                + '<td>' + nearest(l.nearest) + '</td>'
+                + '<td>' + ppOppCell(l.opp) + '</td>'
+                + '<td>' + (l.owner ? ppRepAvatars(l.owner, 24) : '<span class="pp-placeholder">-</span>') + '</td>'
+                + '<td class="n">' + (l.url ? '<a class="pp-mini-btn" href="' + ppEsc(l.url) + '" target="_blank" rel="noopener" title="Open in Close CRM">' + ppSvg('expand') + '</a>' : '') + '</td></tr>'; }).join('')
+            : '<tr><td colspan="7"><div class="pp-empty"><strong>Nothing scored yet</strong>Click Score now. The first run geocodes cities and scores in batches every few minutes until every lead is covered.</div></td></tr>')
+          + '</tbody></table></div>';
+      };
     })();
   </script>
 </body>
