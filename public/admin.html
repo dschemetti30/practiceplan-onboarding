@@ -10758,7 +10758,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v150 · Oct 15l';
+    var PP_BUILD = 'v151 · Oct 15m';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -12254,7 +12254,27 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     #leadTable .la-contact .lead-contact{display:contents !important}
     #leadTable .la-contact .lead-contact>span.pp-copyable{cursor:copy;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100% !important;display:inline-flex !important;align-items:center;gap:5px;flex-direction:row-reverse;justify-content:flex-end}
     .la-contact .pp-copyable .em-ok,.la-contact .pp-copyable .em-fix,.la-contact .pp-copyable .em-unk{flex:none}
-    #leadTable td:nth-child(3) .pp-chip{display:inline-block;white-space:normal;line-height:1.3;text-align:left;max-width:100%;letter-spacing:.03em;font-size:11px;font-weight:800;padding:4px 10px;background:rgba(0,118,187,0.10);color:var(--pp-blue);border:1px solid rgba(0,118,187,0.18)}
+    /* one type scale for the row: 13.5/700 name, 12/500 second line, 12/400 details, 11 sub-labels, 10.5 chips */
+    #leadTableBody td{font-size:12.5px}
+    #leadTableBody .pp-org-name{font-size:13.5px;font-weight:700;letter-spacing:-.005em}
+    #leadTableBody .pp-org-name .lead-origin{font-size:11px;opacity:.7}
+    #leadTableBody .pp-org-sub{font-size:12px;font-weight:500;color:var(--text2);margin-top:1px}
+    #leadTableBody .pp-org-sub .lead-title{font:inherit;font-size:12px;font-weight:400;color:var(--text2);background:none;border:0;padding:0;margin:0;cursor:pointer;font-style:normal}
+    #leadTableBody .pp-org-sub .lead-title::before{content:' \00b7  ';color:var(--text3)}
+    #leadTableBody .pp-org-sub .lead-title.empty{color:var(--text3);font-style:italic;opacity:0;transition:opacity .15s}
+    #leadTableBody .pp-org-sub .lead-title.empty::before{content:''}
+    #leadTableBody tr:hover .pp-org-sub .lead-title.empty{opacity:1}
+    #leadTableBody .pp-org-sub .lead-title:hover{color:var(--pp-blue)}
+    .la-contact{font-size:12px;color:var(--text2);margin-top:2px}
+    .la-contact .pp-copyable.sub{font-size:12px;color:var(--text3)}
+    #leadTable .la-src{display:-webkit-box;width:-webkit-fit-content;width:fit-content;max-width:100%;padding:4px 9px;border-radius:6px;background:rgba(0,118,187,0.08);color:#0b5f93;font-size:11.5px;font-weight:600;line-height:1.3;text-align:left;white-space:normal;letter-spacing:0;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    #leadTable .la-src.web{background:rgba(0,168,79,0.1);color:#0f7a4a}
+    #leadTable .la-src.none{background:var(--bg);color:var(--text3);font-weight:500}
+    #leadTable td .ts-date{font-size:12.5px;font-weight:600}
+    #leadTable td .ts-date .sub{font-size:11px;font-weight:400;color:var(--text3)}
+    #leadTable td[data-edit="assignedTo"]>div>span:not(.pp-chip){font-size:12.5px !important;color:var(--text) !important;line-height:1.3}
+    #leadTable td[data-edit="assignedTo"] .ca-sub{font-size:11px !important;color:var(--text3) !important;display:block;font-weight:400}
+    #leadTable .pp-chip.pick{font-size:10.5px;letter-spacing:.04em}
     #leadTable td.la-note-td{text-align:center;padding-left:4px;padding-right:4px;cursor:pointer}
     .la-note{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;color:var(--text3);border:1px dashed var(--border)}
     .la-note svg{width:14px;height:14px}
@@ -12302,9 +12322,37 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       var CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
       var NOTE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8M8 17h5"/></svg>';
       function clean(v) { return String(v || '').replace(/\s+/g, ' ').trim(); }
+      // proper case for names and organizations however the form was typed; mirrors ppProperCase_ in Extras
+      var CASE_UPPER = /^(isd|cisd|uisd|ccsd|csd|usd|sd|hs|ms|es|jh|jhs|k12|k-12|umc|fbc|llc|inc|pta|pto|ymca|ywca|ii|iii|iv|usa|cte|stem)$/i, CASE_LOWER = /^(of|the|and|at|in|on|for|de|la|del|van|von|da|di|du|y|&)$/i;
+      window.ppProperCase = function(str) {
+        var sv = clean(str); if (!sv) return sv;
+        var allLower = sv === sv.toLowerCase(), allUpper = sv === sv.toUpperCase() && /[A-Z]/.test(sv);
+        if (allUpper && sv.indexOf(' ') < 0) return sv;
+        var cap = function(part) { if (!part) return part; var l = part.toLowerCase(); if (/^mc[a-z]{2,}/.test(l)) return 'Mc' + l.charAt(2).toUpperCase() + l.slice(3); if (/^mac[a-z]{3,}/.test(l) && !/^mac(h|k|e)/.test(l)) return 'Mac' + l.charAt(3).toUpperCase() + l.slice(4); return l.charAt(0).toUpperCase() + l.slice(1); };
+        return sv.split(' ').map(function(w, i) {
+          if (!w) return w; var core = w.replace(/[^A-Za-z]/g, '');
+          if (CASE_UPPER.test(w.replace(/[.,]/g, '')) && (allLower || allUpper || core === core.toUpperCase() || core === core.toLowerCase())) return w.toUpperCase();
+          if (!allLower && !allUpper && core !== core.toLowerCase() && core !== core.toUpperCase()) return w;
+          if (!allLower && !allUpper && core === core.toUpperCase() && core.length <= 3) return w;
+          if (i > 0 && CASE_LOWER.test(w)) return w.toLowerCase();
+          return w.split('-').map(function(h) { return h.split("'").map(function(q, k) { return k === 0 ? cap(q) : (q.length > 1 ? cap(q) : q.toLowerCase()); }).join("'"); }).join('-');
+        }).join(' ');
+      };
+      // once per browser: write proper case back to the stored leads too, so exports and Close CRM pushes match what the page shows
+      try { if (ppIsSuperAdmin() && !localStorage.getItem('pp.casefix.v151')) { localStorage.setItem('pp.casefix.v151', '1'); setTimeout(function() { ppApi('fixLeadCase', {}, 170000).then(function(r) { if (r && r.success && r.fixed) showToast(r.fixed + ' lead name' + (r.fixed === 1 ? '' : 's') + ' set to proper case', 'success'); }).catch(function() {}); }, 8000); } } catch (e) {}
+      if (typeof leadNormalize === 'function') { var _ln = leadNormalize; leadNormalize = function(r) { var o = _ln(r); try { o.name = ppProperCase(o.name); o.org = ppProperCase(o.org); } catch (e) {} return o; }; (leadList || []).forEach(function(l) { try { l.name = ppProperCase(l.name); l.org = ppProperCase(l.org); } catch (e) {} }); }
       // LinkedIn people search by name and organization (the title and city are too noisy for LinkedIn's keyword box); Google gets everything we know, aimed at LinkedIn profiles
       window.leadLinkedInUrl = function(l) { var q = [clean(l.name), clean(l.org)].filter(Boolean).join(' '); return q ? 'https://www.linkedin.com/search/results/people/?keywords=' + encodeURIComponent(q) + '&origin=GLOBAL_SEARCH_HEADER' : ''; };
       window.leadGoogleUrl = function(l) { var name = clean(l.name), parts = [name ? '"' + name + '"' : '', clean(l.title), clean(l.org), [clean(l.city), clean(l.state)].filter(Boolean).join(' '), 'site:linkedin.com/in'].filter(Boolean); return name || l.org ? 'https://www.google.com/search?q=' + encodeURIComponent(parts.join(' ')) : ''; };
+      // the source as a person would say it: the show's name when the slug maps to a show on the calendar, "Website" for direct leads, else the slug as words
+      function srcLabel(l) {
+        var src = String(l.source || '').trim(); if (!src) return '<span class="la-src none">Source?</span>';
+        var norm = function(v) { return String(v || '').toLowerCase().replace(/(19|20)\d{2}/g, '').replace(/[^a-z0-9]/g, ''); }, k = norm(src), show = null;
+        if (k && typeof tsList !== 'undefined') (tsList || []).forEach(function(t) { if (show) return; if ([t.slug, t.shortName, t.name].some(function(c) { var n = norm(c); return n && n.length > 2 && (n === k || k.indexOf(n) >= 0 || (n.length > 5 && n.indexOf(k) >= 0)); })) show = t; });
+        if (/^(website|web|direct|inbound|contact form|site)$/i.test(src)) return '<span class="la-src web" title="Came in through the website">Website</span>';
+        var label = show ? (show.shortName || show.name) : src.replace(/[-_]+/g, ' ').replace(/\b([a-z])/g, function(m) { return m.toUpperCase(); });
+        return '<span class="la-src" title="' + ppEsc('Source: ' + src + (show ? '\n' + show.name : '')) + '">' + ppEsc(label) + '</span>';
+      }
       function findCell(l) {
         var li = leadLinkedInUrl(l), g = leadGoogleUrl(l), who = [clean(l.name), clean(l.title), clean(l.org), [clean(l.city), clean(l.state)].filter(Boolean).join(', ')].filter(Boolean).join(' · ');
         return '<td class="la-li-td"><div class="la-find">'
@@ -12357,7 +12405,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
           var nameEl = tds[0].querySelector('.pp-org-name'), textCol = nameEl ? nameEl.parentElement : null, contact = tds[1].querySelector('.lead-contact');
           if (textCol) { var holder = document.createElement('div'); holder.className = 'la-contact'; if (contact) holder.appendChild(contact); else holder.innerHTML = '<span class="pp-placeholder">Email?</span>'; textCol.appendChild(holder); }
           if (l.attendeeId) { var sub = tds[0].querySelector('.pp-org-sub'); if (sub && !sub.querySelector('.la-reg')) sub.insertAdjacentHTML('beforeend', '<span class="la-reg" title="Matched to the show\'s pre-registered attendee list in Close CRM">registered</span>'); }
-          var chip = tds[2].querySelector('.pp-chip'); if (chip && l.source) { chip.textContent = String(l.source).replace(/[-_]+/g, ' '); chip.title = 'Source: ' + l.source; }
+          tds[2].innerHTML = srcLabel(l);
           // notes: an icon that says whether there is one (hover reads it, click edits it)
           var noteTd = tds[7], mine = String(l.internalNotes || '').trim(), form = String(l.notes || '').trim();
           noteTd.classList.add('la-note-td'); noteTd.innerHTML = '<span class="la-note' + (mine ? ' has' : form ? ' form' : '') + '" title="' + ppEsc(mine ? mine : form ? 'From the form: ' + form : 'No note yet. Click to add one.') + '">' + NOTE_ICON + '</span>';
@@ -12419,6 +12467,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       if (typeof window.intelTableHtml !== 'function' || typeof window.ppOppCell !== 'function') return;
       function money(n) { n = Number(n) || 0; return n >= 1000 ? '$' + (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, '') + 'k' : '$' + n.toLocaleString(); }
       function whyLine(why) {
+        return '';
         var parts = String(why || '').split(/,\s*|;\s*/).map(function(x) { return x.trim(); }).filter(Boolean);
         if (!parts.length) return '';
         var show = parts.slice(0, 3), rest = parts.slice(3);
