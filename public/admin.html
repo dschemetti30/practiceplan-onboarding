@@ -7464,7 +7464,7 @@
         ppSnap.savedAt = Date.now(); ppSnapSave();
         // re-run each loader; they hit the primed bundle, so this is CPU only
         var jobs = [];
-        if (typeof loadTradeShows === 'function') jobs.push(loadTradeShows(true)); if (typeof loadCredList === 'function') jobs.push(loadCredList(true)); if (typeof loadLandingPages === 'function') jobs.push(loadLandingPages(true)); if (typeof loadLeads === 'function') jobs.push(loadLeads(true)); if (typeof loadCloseAccounts === 'function') jobs.push(loadCloseAccounts(true)); if (typeof loadCloseMeetings === 'function') jobs.push(loadCloseMeetings(true)); if (typeof loadSignedDocs === 'function') jobs.push(loadSignedDocs(true)); if (typeof loadResources === 'function') jobs.push(loadResources(true)); if (typeof loadContentPosts === 'function') jobs.push(loadContentPosts(true)); if (typeof loadFollowers === 'function') jobs.push(loadFollowers(true));
+        if (typeof loadTradeShows === 'function') jobs.push(loadTradeShows(true)); if (typeof loadCredList === 'function') jobs.push(loadCredList(true)); if (typeof loadLandingPages === 'function') jobs.push(loadLandingPages(true)); if (typeof loadLeads === 'function') jobs.push(loadLeads(true)); if (typeof loadCloseAccounts === 'function') jobs.push(loadCloseAccounts(true)); if (typeof loadCloseMeetings === 'function') jobs.push(loadCloseMeetings(true)); if (typeof loadSignedDocs === 'function') jobs.push(loadSignedDocs(true)); if (typeof loadResources === 'function') jobs.push(loadResources(true)); if (typeof loadContentPosts === 'function') jobs.push(loadContentPosts(true)); if (typeof loadFollowers === 'function') jobs.push(loadFollowers(true)); if (typeof loadRequests === 'function' && typeof rqLoaded !== 'undefined' && rqLoaded) jobs.push(loadRequests(true));
         await Promise.all(jobs.map(function(j) { return Promise.resolve(j).catch(function() {}); }));
         var active = document.querySelector('.view-content.active'); if (active) { var v = active.id.replace('View', ''); if (typeof ppRerender === 'function') ppRerender(v); }
         if (typeof renderUpcoming === 'function') renderUpcoming();
@@ -8691,7 +8691,7 @@
     // inbound leads: tier chip next to the Close CRM status for matched leads
     (function() {
       var _cell = leadCloseCell; leadCloseCell = function(l) { var html = _cell(l); if (l.closeLeadId && intel && intel.byId && intel.byId[l.closeLeadId]) { var t = intel.byId[l.closeLeadId]; html += ' ' + intelTierChip(t[1], t[0]).replace('<span class="pp-chip', '<span class="pp-chip intel-mini'); } return html; };
-      var _rl = renderLeads; renderLeads = function() { _rl(); if (!intelLoaded && leadsLoaded && leadList.some(function(l) { return l.closeLeadId; })) loadIntel(false).then(function() { if (intel && !intel.error) _rl(); }); };
+      var _rl = renderLeads; renderLeads = function() { _rl(); if (!intelLoaded && leadsLoaded && leadList.some(function(l) { return l.closeLeadId; })) loadIntel(false).then(function() { if (intel && !intel.error) renderLeads(); }); };
     })();
     (function() {
       var leadsV = document.getElementById('leadsView'); if (!leadsV) return;
@@ -8843,7 +8843,7 @@
     // wire: third mode in Client Overview, revenue trend on the Accounts list, health signal on cards
     (function() {
       var _tog = caViewToggle; caViewToggle = function() { return _tog().replace('</div>', '<button class="' + (caView === 'revenue' ? 'on' : '') + '" onclick="caSetView(\'revenue\')">Revenue</button></div>'); };
-      var _rca = renderCloseAccounts; renderCloseAccounts = function() { if (caView === 'revenue') { renderRevenue(); if (document.getElementById('customersView').classList.contains('active')) ppPageHead('customers'); return; } _rca(); if (!rvLoaded) { loadRevenue(false).then(function() { if (caView !== 'revenue' && rvList.length) _rca(); }); return; }
+      var _rca = renderCloseAccounts; renderCloseAccounts = function() { if (caView === 'revenue') { renderRevenue(); if (document.getElementById('customersView').classList.contains('active')) ppPageHead('customers'); return; } _rca(); if (!rvLoaded) { loadRevenue(false).then(function() { if (caView !== 'revenue' && rvList.length) renderCloseAccounts(); }); return; }
         // accounts list: a trend chip per account when we have revenue for it
         document.querySelectorAll('#closeAccounts tr[data-key], #closeAccounts .ca-row').forEach(function(tr) { var key = tr.getAttribute('data-key'); var r = rvList.find(function(x) { return x.accountKey === key; }); if (!r || tr.querySelector('.rv-chip')) return; var t = rvTrend(r); var cell = tr.querySelector('td:nth-child(2), .ca-row-sub'); if (cell) cell.insertAdjacentHTML('beforeend', ' <span class="pp-chip rv-chip ' + t.cls + '" title="' + (r.res2026 || 0) + ' reservations in 2026' + (r.yoy2026 !== null ? ', ' + Math.round(r.yoy2026 * 100) + '% vs 2025' : '') + '">' + t.label + '</span>'); });
       };
@@ -10688,6 +10688,9 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         if (!rqLoaded && !force) { var c = ppSwr.read('getRequests', {}, 12 * 3600000); if (c && c.rows) { rqList = c.rows; rqLoaded = true; try { renderRequests(); } catch(e) {} _lr(true).then(function() { try { renderRequests(); } catch(e) {} }); return rqList; } }
         var out = await _lr(force); if (rqLoaded) ppSwr.write('getRequests', {}, { rows: rqList }); return out;
       };
+      // a saved request must survive a reload: refresh every cache a reload reads from (local SWR copy, the IndexedDB snapshot bundle, and the primed bundle)
+      window.rqSyncCaches = function() { setTimeout(function() { try { ppSwr.write('getRequests', {}, { rows: rqList }); if (typeof ppSnap !== 'undefined' && ppSnap && ppSnap.bundle) { ppSnap.bundle.getRequests = { success: true, rows: rqList.map(function(q) { return Object.assign({}, q); }) }; if (typeof ppSnapSave === 'function') ppSnapSave(); } if (typeof ppPrimed !== 'undefined') delete ppPrimed.getRequests; } catch (e) {} }, 0); };
+      var _apiRq = ppApi; ppApi = function(action, params, timeoutMs) { var pr = _apiRq(action, params, timeoutMs); if (action === 'saveRequest') pr.then(function(r) { if (r && r.success) rqSyncCaches(); }).catch(function() {}); return pr; };
     })();
     // the second refresh pass for the bootstrap bundle only runs when the tab is actually in front and idle
     (function() { var _b = ppBootstrapRefresh; if (typeof _b !== 'function') return; ppBootstrapRefresh = function() { if (document.visibilityState !== 'visible') return; if (window.requestIdleCallback) return requestIdleCallback(function() { _b(); }, { timeout: 4000 }); return _b(); }; })();
@@ -10748,13 +10751,13 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v149 · Oct 15h';
+    var PP_BUILD = 'v150 · Oct 15i';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
         ppApi('ppPing', {}, 30000).then(function(r) { var v = Number(r && r.version) || 0; window._ppServerVersion = v; if (v && v < 120) { tag.classList.add('warn'); tag.textContent = PP_BUILD + ' · Extras v' + v + ' (needs v120)'; tag.title = 'The server is behind this page: install the current Extras.gs and deploy a new version.'; } else if (v) tag.textContent = PP_BUILD + ' · Extras v' + v; }).catch(function() {});
       }, 1500); };
-      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 122 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
+      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 123 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
     })();
     // =====================================================================
     // TEAM: titles and headshots, editable in Settings
@@ -11432,7 +11435,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       window.ppPipelineLine = function(rows) {
         var open = rows.filter(function(l) { return l.opp && l.opp.type === 'active'; }), total = 0, weighted = 0, dated = 0, late = 0, today = new Date().toISOString().slice(0, 10), won = rows.filter(function(l) { return l.opp && l.opp.type === 'won'; }).length;
         open.forEach(function(l) { var o = l.opp; total += o.total || o.value || 0; weighted += Math.round((o.total || o.value || 0) * ((o.conf === null || o.conf === undefined ? 50 : o.conf) / 100)); if (o.close) { dated++; if (o.close < today) late++; } });
-        var lr = intel && intel.opps; var syncNote = ' <span class="ca-sub">' + (lr ? 'Last sync ' + ppAgo(lr.at) + ': Close CRM returned ' + lr.opportunities + ' opportunit' + (lr.opportunities === 1 ? 'y' : 'ies') + (lr.active !== undefined ? ' (' + lr.active + ' open)' : '') + ' on ' + lr.leads + ' leads; ' + (lr.matched || 0) + ' of those leads are in the index' + (lr.stored !== undefined ? '; ' + lr.stored + ' index rows carry opportunities after the write' : '') + (lr.headerHasOpps === false ? '; <b style="color:#b4312a">the index sheet has no opportunities column</b>' : '') + (lr.opportunities === 0 ? ' <b style="color:#b4312a">(Close returned none: the API key cannot see opportunities)</b>' : lr.matched === 0 ? ' <b style="color:#b4312a">(none of those leads are in the index: run Sync on the Intel page)</b>' : lr.stored === 0 ? ' <b style="color:#b4312a">(the write did not land; tell Donnie)</b>' : '') + '.' : 'Opportunities have not been synced since this version was installed.') + '</span> <button class="text-action-btn" onclick="intelSyncOpps(this)">Sync now</button> <button class="text-action-btn" onclick="intelDiagOpps()" title="Compares the index with what Close CRM returns, and copies the result">Check a lead</button>';
+        var lr = intel && intel.opps; var syncNote = ' <span class="ca-sub">' + (lr ? 'Last sync ' + ppAgo(lr.at) + ': Close CRM returned ' + lr.opportunities + ' opportunit' + (lr.opportunities === 1 ? 'y' : 'ies') + (lr.active !== undefined ? ' (' + lr.active + ' open)' : '') + ' on ' + lr.leads + ' leads; ' + (lr.matched || 0) + ' of those leads are in the index' + (lr.stored !== undefined ? '; ' + lr.stored + ' index rows carry opportunities after the write' : '') + (lr.headerHasOpps === false ? '; <b style="color:#b4312a">the index sheet has no opportunities column</b>' : '') + (lr.opportunities === 0 ? ' <b style="color:#b4312a">(Close returned none: the API key cannot see opportunities)</b>' : lr.matched === 0 ? ' <b style="color:#b4312a">(none of those leads are in the index: run Sync on the Intel page)</b>' : lr.stored === 0 ? ' <b style="color:#b4312a">(the write did not land' + (lr.writeError ? ': ' + ppEsc(String(lr.writeError).slice(0, 160)) : '') + ')</b>' : '') + '.' : 'Opportunities have not been synced since this version was installed.') + '</span> <button class="text-action-btn" onclick="intelSyncOpps(this)">Sync now</button> <button class="text-action-btn" onclick="intelDiagOpps()" title="Compares the index with what Close CRM returns, and copies the result">Check a lead</button>';
         if (!open.length) return '<div class="tp-pipe"><b>No open opportunities</b> among these ' + rows.length + ' prospects' + (won ? ' \u00b7 ' + won + ' already won' : '') + '.' + syncNote + '</div>';
         return '<div class="tp-pipe"><b>' + open.length + ' open opportunit' + (open.length === 1 ? 'y' : 'ies') + '</b> worth <b>' + money(total) + '</b> (<b>' + money(weighted) + '</b> weighted by confidence) \u00b7 ' + (open.length - dated ? '<span class="warn">' + (open.length - dated) + ' with no close date</span>' : 'all have a close date') + (late ? ' \u00b7 <span class="late">' + late + ' past the expected close date</span>' : '') + ' \u00b7 ' + rows.filter(function(l) { return !l.opp; }).length + ' prospects with no opportunity yet' + syncNote + '</div>';
       };
@@ -11918,7 +11921,8 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     .f2-kpi .s{font-size:10.5px;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .f2-kpi.bad{border-color:#e39a94;background:rgba(180,49,42,0.05)}.f2-kpi.bad .v{color:#b4312a}.f2-kpi.warn{border-color:#f0b35a;background:rgba(245,158,11,0.06)}
     .f2-story{font-size:12.5px;line-height:1.55;color:var(--text2)}.f2-story b{color:var(--text);font-weight:800}.f2-story .bad{color:#b4312a}.f2-story .good{color:#0f7a4a}
-    .f2-pulse-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+    .fqr-cov{margin:10px 0 2px;border-top:1px dashed var(--border,#e5e7eb);padding-top:8px;font-size:12.5px;color:var(--muted,#6b7280)}.fqr-cov summary{cursor:pointer;font-weight:600;color:var(--text,#374151);display:flex;align-items:center;gap:6px}.fqr-cov-dot{width:8px;height:8px;border-radius:50%;background:#d97706;display:inline-block}.fqr-cov-row{margin:8px 0 0;line-height:1.6}.fqr-cov-row b{color:var(--text,#374151);margin-right:4px}.fqr-cov-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.fqr-cov-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border,#e5e7eb);border-radius:999px;padding:2px 6px 2px 10px;background:#fff}.fqr-cov-chip em{font-style:normal;color:#9ca3af;font-size:11px}.fqr-cov-chip select{font-size:11.5px;border:0;background:#f3f4f6;border-radius:999px;padding:2px 6px;max-width:190px}
+.f2-pulse-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
     .f2-pulse-foot .text-action-btn{height:28px}.f2-pulse-foot .ca-sub{margin-left:auto}
     .f2-report{margin-top:12px}.f2-report .fqr-ctl{margin-bottom:10px}
     .f2-seg{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 12px}
@@ -12073,8 +12077,23 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
           var byWeek = fqrAgg(rows, function(r) { return fqrWeek(String(r.received || '')) || null; }, function(k) { return 'Week of ' + ppFmtDate(k, { month: 'short', day: 'numeric' }); }).sort(function(a, b) { return b.key.localeCompare(a.key); }).slice(0, 12);
           var body = fqrTab === 'rep' ? fqrPeople(rows) : fqrTab === 'sequence' ? fqrTable(bySeq, { first: 'Sequence' }) : fqrTab === 'sender' ? fqrTable(bySender, { first: 'Who sends' }) : fqrTab === 'week' ? fqrTable(byWeek, { first: 'Leads received' }) : fqrTab === 'step' ? fqrSteps(rows) : fqrTab === 'activity' ? fqrActivity(rows) : fqrTable(byShow, { first: 'Show' });
           report = '<div class="f2-report"><div class="fqr-tabs">' + tabs.map(function(t) { return '<button class="' + (fqrTab === t[0] ? 'on' : '') + '" onclick="fqrTab=\'' + t[0] + '\';fqrSave();renderFollowUp()">' + t[1] + '</button>'; }).join('') + '</div>' + body + (fqrTab === 'step' || fqrTab === 'activity' ? '' : '<div class="fqr-foot">Leads leaves out dismissed and stopped ones, so Leads = Contacted + Not contacted. Contacted = any email, call, reply or meeting since the lead arrived. Opened and Replied are per lead, as a share of leads contacted; a reply only counts if it came after our first email. Waiting on us = the last email on the thread came from them. Click a column to sort.</div>') + '</div>'; }
-        return '<div class="f2-pulse"><div class="f2-pulse-top"><div><h3>How follow-up is performing</h3><div class="f2-pulse-sub">' + (loading ? 'Reading the email, call and meeting history…' : 'Measured against the email, call and meeting history in Close CRM' + (fqStats.at ? ' · as of ' + new Date(fqStats.at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '')) + '</div></div><div class="fqr-ctl">' + filters + '</div></div>' + kpis + story + '<div class="f2-pulse-foot"><button class="text-action-btn" onclick="fqrOpen=!fqrOpen;fqrSave();renderFollowUp()">' + (fqrOpen ? 'Hide the breakdown' : 'Breakdown by show, rep, sequence and step') + '</button>' + (!loading && fqStats.sourceBackfill && (fqStats.sourceBackfill.pending || fqStats.sourceBackfill.running) && ppIsSuperAdmin() ? '<button class="text-action-btn" style="color:#92400e" title="Writes the show into Lead Source on the matching Close CRM lead and contact, 40 leads every couple of minutes until done, so earlier show leads show up in Close reports and here" onclick="fqSourceBackfill(this)">' + (fqStats.sourceBackfill.running ? 'Tagging earlier leads in Close CRM\u2026 ' + fqStats.sourceBackfill.pending + ' left' : 'Tag ' + fqStats.sourceBackfill.pending + ' earlier lead' + (fqStats.sourceBackfill.pending === 1 ? '' : 's') + ' in Close CRM') + '</button>' : '') + '<span class="ca-sub">Click any number to see the leads behind it</span></div>' + report + '</div>';
+        return '<div class="f2-pulse"><div class="f2-pulse-top"><div><h3>How follow-up is performing</h3><div class="f2-pulse-sub">' + (loading ? 'Reading the email, call and meeting history…' : 'Measured against the email, call and meeting history in Close CRM' + (fqStats.at ? ' · as of ' + new Date(fqStats.at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '')) + '</div></div><div class="fqr-ctl">' + filters + '</div></div>' + kpis + story + '<div class="f2-pulse-foot"><button class="text-action-btn" onclick="fqrOpen=!fqrOpen;fqrSave();renderFollowUp()">' + (fqrOpen ? 'Hide the breakdown' : 'Breakdown by show, rep, sequence and step') + '</button>' + (!loading && fqStats.sourceBackfill && (fqStats.sourceBackfill.pending || fqStats.sourceBackfill.running) && ppIsSuperAdmin() ? '<button class="text-action-btn" style="color:#92400e" title="Writes the show into Lead Source on the matching Close CRM lead and contact, 40 leads every couple of minutes until done, so earlier show leads show up in Close reports and here" onclick="fqSourceBackfill(this)">' + (fqStats.sourceBackfill.running ? 'Tagging earlier leads in Close CRM\u2026 ' + fqStats.sourceBackfill.pending + ' left' : 'Tag ' + fqStats.sourceBackfill.pending + ' earlier lead' + (fqStats.sourceBackfill.pending === 1 ? '' : 's') + ' in Close CRM') + '</button>' : '') + '<span class="ca-sub">Click any number to see the leads behind it</span></div>' + (loading ? '' : fqrCoverageHtml()) + report + '</div>';
       }
+      // Where the history comes from, and what it is missing: the email log's reach, and Lead Source values in Close CRM that name no show on the calendar (map them, and those leads join the show)
+      function fqrCoverageHtml() {
+        var c = fqStats && fqStats.coverage; if (!c || !ppIsSuperAdmin()) return '';
+        var un = (c.unmatched || []).filter(function(u) { return u.leads >= 2; }), bf = c.backfill || {}, since = fqStats.since || '';
+        var fmt = function(d) { return d ? new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; };
+        var gap = since && c.emailsFrom && c.emailsFrom > since;
+        var emails = '<div class="fqr-cov-row"><b>Email history</b> ' + (c.emails ? Number(c.emails).toLocaleString('en-US') + ' emails from ' + fmt(c.emailsFrom) + ' to ' + fmt(c.emailsTo) : 'none loaded yet') + (gap ? ' <span style="color:#b4312a">(the report starts ' + fmt(since) + ': earlier shows have no email activity here)</span>' : '') + ' ' + (bf.running ? '<span class="ca-sub">Rebuilding from Close CRM… at ' + fmt(bf.cursor) + '</span>' : (ppIsSuperAdmin() ? '<button class="text-action-btn" onclick="fqEmailBackfill(this)" title="Re-reads every email in Close CRM from Jan 1, a few weeks every 2 minutes, in the background">' + (gap || !bf.done ? 'Load the full year from Close CRM' : 'Re-read the year') + '</button>' : '')) + '</div>';
+        var shows = (c.showList || []);
+        var opts = '<option value="">Map to a show…</option>' + shows.map(function(sh) { return '<option value="' + ppEsc(sh.id) + '">' + ppEsc(sh.name) + (sh.date ? ' (' + sh.date.slice(0, 7) + ')' : '') + '</option>'; }).join('');
+        var unHtml = un.length ? '<div class="fqr-cov-row"><b>Lead Source values in Close CRM that match no show</b> <span class="ca-sub">' + un.length + ' value' + (un.length === 1 ? '' : 's') + ' · pick the show each one belongs to and those leads join that show\'s numbers</span><div class="fqr-cov-chips">' + un.slice(0, fqrCovAll ? 999 : 8).map(function(u) { return '<span class="fqr-cov-chip"><span>' + ppEsc(u.source) + ' <em>' + u.leads + '</em></span><select onchange="fqMapSource(this, \'' + ppEsc(u.source).replace(/'/g, '&#39;') + '\')">' + opts + '</select></span>'; }).join('') + (un.length > 8 ? '<button class="text-action-btn" onclick="fqrCovAll=!fqrCovAll;renderFollowUp()">' + (fqrCovAll ? 'Fewer' : (un.length - 8) + ' more') + '</button>' : '') + '</div></div>' : '';
+        return '<details class="fqr-cov"' + (fqrCovOpen ? ' open' : '') + ' ontoggle="fqrCovOpen=this.open"><summary>Where this data comes from' + (gap || un.length ? ' <span class="fqr-cov-dot" title="Something is missing"></span>' : '') + '</summary>' + emails + unHtml + '</details>';
+      }
+      window.fqrCovOpen = false; window.fqrCovAll = false;
+      window.fqEmailBackfill = async function(btn) { btn.disabled = true; btn.textContent = 'Starting…'; try { var r = await ppApi('emailBackfill', {}, 60000); if (!r.success) throw new Error(r.error); showToast('Reading the year\'s emails from Close CRM in the background; the report fills in as it goes', 'success', 7000); setTimeout(function() { fqStatsLoad(true); }, 1500); } catch (e) { showToast(e.message, 'error'); btn.disabled = false; btn.textContent = 'Load the full year from Close CRM'; } };
+      window.fqMapSource = async function(sel, source) { var showId = sel.value; if (!showId) return; sel.disabled = true; try { var r = await ppApi('setShowAliases', { showId: showId, add: source }, 60000); if (!r.success) throw new Error(r.error); showToast('“' + source + '” now counts as that show', 'success'); fqStatsLoad(true); } catch (e) { showToast(e.message, 'error'); sel.disabled = false; sel.value = ''; } };
       var chev = '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
       window.fqToggleGroup = function(key) { fqOpenGroups[key] = fqOpenGroups[key] === false ? true : false; try { localStorage.setItem('pp.fq.groups', JSON.stringify(fqOpenGroups)); } catch (e) {} renderFollowUp(); };
       window.fqSetQ = function(v) { fqQ = v; clearTimeout(window._fqQT); window._fqQT = setTimeout(renderFollowUp, 120); };
@@ -12207,6 +12226,121 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         if (!document.getElementById('chOwners') && ppIsSuperAdmin()) host.insertAdjacentHTML('beforeend', '<div class="stat-card out-card" id="chOwners"><h3>Lead owner from the opportunity owner<span class="out-legend">Leads with an opportunity but no Lead Owner in Close CRM</span></h3><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="pp-btn" onclick="chOwnersPreview(this)">Preview</button><button class="pp-btn primary" onclick="chOwnersApply(this)">Assign in Close CRM</button><span class="ca-sub">Whoever owns the opportunity becomes the lead owner. Two different owners: Leslie, then Donnie, Kevin, John, Jessica. 80 per run.</span></div><div id="chOwnersOut" style="margin-top:8px"></div></div>');
         if (!document.getElementById('chMerge') && ppIsSuperAdmin()) { var counts = c.sourceCounts || {}, srcs = (c.source || []).slice().sort(function(a, b) { return (counts[b] || 0) - (counts[a] || 0) || a.localeCompare(b); }); host.insertAdjacentHTML('beforeend', '<div class="stat-card out-card" id="chMerge"><h3>Merge duplicate lead sources<span class="out-legend">Two spellings of the same show become one, in Close CRM and here</span></h3><div class="ch-merge"><select data-from>' + '<option value="">Retire this value…</option>' + srcs.map(function(x) { return '<option value="' + ppEsc(x) + '">' + ppEsc(x) + ' (' + (counts[x] || 0) + ')</option>'; }).join('') + '</select><span style="color:var(--text3)">→</span><select data-to>' + '<option value="">Keep this one…</option>' + srcs.map(function(x) { return '<option value="' + ppEsc(x) + '">' + ppEsc(x) + ' (' + (counts[x] || 0) + ')</option>'; }).join('') + '</select><button class="pp-btn primary" onclick="chMerge(this)">Merge</button></div><div class="ca-sub" style="margin-top:8px">Every lead carrying the retired value is moved to the kept one (120 per run; run again if it says more are left), then the retired choice is removed from the Lead Source field so nothing can pick it again. Counts are leads in the index. If a show card uses the retired spelling, set its short name to the kept one so new leads map there.</div></div>'); }
       };
+    })();
+  </script>
+
+  <style>
+    /* v150: Inbound Leads row. Find column after the name; Touch is gone; CRM link is a check or an x; secondary actions live in one menu */
+    #leadTable th:nth-child(7),#leadTable td:nth-child(7){display:table-cell}
+    #leadTable th:nth-child(1){width:19%}#leadTable th:nth-child(2){width:106px}#leadTable th:nth-child(3){width:16%}#leadTable th:nth-child(4){width:10%}#leadTable th:nth-child(5){width:7%}#leadTable th:nth-child(6){width:12%}#leadTable th:nth-child(7){width:10%}#leadTable th:nth-child(8){width:13%}#leadTable th:nth-child(9){width:86px;text-align:center}
+    #leadTable td.la-li-td{overflow:visible;padding-left:6px !important;padding-right:6px !important}
+    .la-find{display:inline-flex;flex-direction:row;gap:4px;align-items:center}
+    .la-find a{display:inline-flex;align-items:center;justify-content:center;gap:4px;height:22px;padding:0 8px;border-radius:7px;font-size:10.5px;font-weight:700;text-decoration:none;white-space:nowrap;border:1px solid rgba(10,102,194,0.35);color:#0a66c2;background:rgba(10,102,194,0.06)}
+    .la-find a:hover{background:rgba(10,102,194,0.14)}
+    .la-find a.g{color:var(--text2);border-color:var(--border);background:var(--card);font-weight:800;width:22px;padding:0;font-size:11px}
+    .la-find a.g:hover{background:var(--bg)}
+    .la-find a.off{opacity:.45;pointer-events:none}
+    #leadTable td.la-crm-td{text-align:center;overflow:visible}
+    .la-crm{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-size:13px;font-weight:800;text-decoration:none;border:1px solid transparent;cursor:pointer;font-family:inherit;line-height:1;vertical-align:middle}
+    .la-crm.ok{background:rgba(22,163,74,0.12);color:#15803d;border-color:rgba(22,163,74,0.35)}.la-crm.ok:hover{background:rgba(22,163,74,0.22)}
+    .la-crm.no{background:rgba(220,38,38,0.10);color:#b91c1c;border-color:rgba(220,38,38,0.35)}.la-crm.no:hover{background:rgba(220,38,38,0.2)}
+    .la-crm.wait{background:var(--bg);color:var(--text2);border-color:var(--border)}
+    .la-crm .f2-srt{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+    .la-crm-td .lead-plus{margin-left:4px;vertical-align:middle}
+    .la-wrap{flex-direction:row !important;flex-wrap:nowrap !important;justify-content:flex-end !important;align-items:center !important;max-width:none !important;gap:4px !important}
+    .la-wrap .la-btn{width:auto !important;height:24px;font-size:11px;white-space:nowrap}
+    .la-wrap .la-btn:first-child{background:var(--pp-blue);border-color:var(--pp-blue);color:#fff}
+    .la-wrap .la-btn.la-menu-btn{background:var(--card) !important;border-color:var(--border) !important;color:var(--text2) !important;padding:0 8px;display:inline-flex;align-items:center;gap:3px}
+    .la-wrap .la-btn.la-menu-btn svg{width:12px;height:12px}
+    .la-wrap .la-pocket{display:none !important}
+    #leadTable th:last-child{width:176px}
+    .la-menu{position:fixed;z-index:3200;min-width:250px;max-width:320px;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,0.16);padding:6px;animation:laMenuIn .12s ease-out}
+    @keyframes laMenuIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+    .la-menu-h{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);padding:6px 10px 4px}
+    .la-menu-item{display:block;width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:8px 10px;cursor:pointer;font-family:inherit;color:var(--text)}
+    .la-menu-item:hover,.la-menu-item:focus{background:var(--bg);outline:none}
+    .la-menu-item b{display:block;font-size:12.5px;font-weight:700}
+    .la-menu-item span{display:block;font-size:11px;color:var(--text2);line-height:1.4;margin-top:1px}
+    .la-menu-item.danger b{color:#b91c1c}
+    .la-menu-sep{height:1px;background:var(--border);margin:4px 6px}
+    @media(max-width:900px){.la-find a.li .lbl{display:none}.la-find a.li{padding:0 7px}#leadTable th:nth-child(2){width:64px}}
+  </style>
+  <script>
+    (function() {
+      if (typeof renderLeads !== 'function') return;
+      var LI_ICON = '<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 21l-4.3-4.3"/><circle cx="11" cy="11" r="7"/></svg>';
+      var CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+      function clean(v) { return String(v || '').replace(/\s+/g, ' ').trim(); }
+      // LinkedIn people search by name and organization (the title and city are too noisy for LinkedIn's keyword box); Google gets everything we know, aimed at LinkedIn profiles
+      window.leadLinkedInUrl = function(l) { var q = [clean(l.name), clean(l.org)].filter(Boolean).join(' '); return q ? 'https://www.linkedin.com/search/results/people/?keywords=' + encodeURIComponent(q) + '&origin=GLOBAL_SEARCH_HEADER' : ''; };
+      window.leadGoogleUrl = function(l) { var name = clean(l.name), parts = [name ? '"' + name + '"' : '', clean(l.title), clean(l.org), [clean(l.city), clean(l.state)].filter(Boolean).join(' '), 'site:linkedin.com/in'].filter(Boolean); return name || l.org ? 'https://www.google.com/search?q=' + encodeURIComponent(parts.join(' ')) : ''; };
+      function findCell(l) {
+        var li = leadLinkedInUrl(l), g = leadGoogleUrl(l), who = [clean(l.name), clean(l.title), clean(l.org), [clean(l.city), clean(l.state)].filter(Boolean).join(', ')].filter(Boolean).join(' · ');
+        return '<td class="la-li-td"><div class="la-find">'
+          + '<a class="li' + (li ? '' : ' off') + '" href="' + ppEsc(li || '#') + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Find on LinkedIn: ' + ppEsc(who || 'no name yet') + '">' + LI_ICON + '<span class="lbl">LinkedIn</span></a>'
+          + '<a class="g' + (g ? '' : ' off') + '" href="' + ppEsc(g || '#') + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Search Google for ' + ppEsc(who || 'this lead') + ', limited to LinkedIn profiles">G</a>'
+          + '</div></td>';
+      }
+      function crmCell(l, plus) {
+        var inner;
+        if (l.closeLeadId) inner = '<a class="la-crm ok" href="' + ppEsc(l.closeUrl || ('https://app.close.com/lead/' + l.closeLeadId + '/')) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="In Close CRM' + (l.closeStatus ? ': ' + ppEsc(l.closeStatus) : '') + (l.closeLastTouch ? ' · ' + ppEsc(l.closeLastTouchType || 'activity') + ' ' + ppAgo(l.closeLastTouch) : ' · no activity yet') + '. Opens the lead in Close CRM">✓<span class="f2-srt">In Close CRM</span></a>';
+        else if (!l.closeCheckedAt) inner = '<span class="la-crm wait" title="Not checked against Close CRM yet">·</span>';
+        else inner = '<button type="button" class="la-crm no" title="Not in Close CRM. Click to link a Close CRM lead by URL, or use Add to CRM" onclick="event.stopPropagation();leadLinkClose(\'' + ppEsc(l.id) + '\',this)">✕</button>';
+        return '<td class="la-crm-td">' + inner + (plus || '') + '</td>';
+      }
+      // one menu for the secondary actions: Merge, Find info, Disconnect, and whatever else a row carries
+      var openMenu = null;
+      function closeMenu() { if (openMenu) { openMenu.remove(); openMenu = null; } }
+      document.addEventListener('click', function(ev) { if (openMenu && !openMenu.contains(ev.target)) closeMenu(); }, true);
+      document.addEventListener('keydown', function(ev) { if (ev.key === 'Escape') closeMenu(); });
+      window.addEventListener('scroll', closeMenu, true);
+      window.leadMenuOpen = function(btn, id) {
+        if (openMenu && openMenu.getAttribute('data-id') === id) { closeMenu(); return; }
+        closeMenu();
+        var wrap = btn.closest('.la-wrap'), pocket = wrap && wrap.querySelector('.la-pocket'); if (!pocket) return;
+        var items = [].slice.call(pocket.children), l = leadList.find(function(x) { return x.id === id; }) || {};
+        var m = document.createElement('div'); m.className = 'la-menu'; m.setAttribute('data-id', id);
+        var html = '<div class="la-menu-h">' + ppEsc(l.org || l.name || 'This lead') + '</div>';
+        items.forEach(function(b, i) { var label = b.textContent.trim(), why = b.getAttribute('title') || ''; html += (label === 'Disconnect' ? '<div class="la-menu-sep"></div>' : '') + '<button type="button" class="la-menu-item' + (label === 'Disconnect' ? ' danger' : '') + '" data-i="' + i + '"><b>' + ppEsc(label) + '</b>' + (why ? '<span>' + ppEsc(why) + '</span>' : '') + '</button>'; });
+        html += '<div class="la-menu-sep"></div><button type="button" class="la-menu-item" data-open="1"><b>Open the lead</b><span>Details, notes, follow-up and the Close CRM record</span></button>';
+        m.innerHTML = html; document.body.appendChild(m);
+        var r = btn.getBoundingClientRect(), w = m.offsetWidth, h = m.offsetHeight, left = Math.max(8, Math.min(r.right - w, window.innerWidth - w - 8)), top = r.bottom + 6; if (top + h > window.innerHeight - 8) top = Math.max(8, r.top - h - 6);
+        m.style.left = left + 'px'; m.style.top = top + 'px';
+        m.addEventListener('click', function(ev) { var it = ev.target.closest('.la-menu-item'); if (!it) return; ev.stopPropagation(); closeMenu(); if (it.getAttribute('data-open')) { openLeadModal(id); return; } var b = items[Number(it.getAttribute('data-i'))]; if (b) b.click(); });
+        openMenu = m; var first = m.querySelector('.la-menu-item'); if (first) first.focus();
+      };
+      function fixHead() {
+        var tr = document.querySelector('#leadTable thead tr'); if (!tr || tr.getAttribute('data-v150')) return; tr.setAttribute('data-v150', '1');
+        [].slice.call(tr.children).forEach(function(th) { var t = th.textContent.trim(); if (t === 'Touch') th.remove(); else if (t === 'CRM') { th.textContent = 'CRM link'; th.title = 'Linked to a Close CRM lead (check) or not (x). Click the check to open it.'; th.style.textAlign = 'center'; } });
+        tr.children[0].insertAdjacentHTML('afterend', '<th title="Find this person on LinkedIn, or on Google">Find</th>');
+      }
+      var _rl = renderLeads; renderLeads = function() {
+        _rl(); fixHead(); closeMenu();
+        document.querySelectorAll('#leadTableBody tr[data-id]').forEach(function(tr) {
+          if (tr.getAttribute('data-v150')) return;
+          var l = leadList.find(function(x) { return x.id === tr.getAttribute('data-id'); }); if (!l) return;
+          var tds = [].slice.call(tr.children); if (tds.length !== 10) return;
+          tr.setAttribute('data-v150', '1');
+          var plus = tds[8].querySelector('.lead-plus'); plus = plus ? plus.outerHTML : '';
+          tds[6].remove();                                   // Touch: the status column already says when we reached them
+          tds[8].outerHTML = crmCell(l, plus);               // CRM link: check or x
+          tds[0].insertAdjacentHTML('afterend', findCell(l)); // Find: LinkedIn and Google
+          // actions: the first button stays, everything else goes into one menu
+          var wrap = tr.querySelector('.la-wrap'); if (!wrap) return;
+          var old = wrap.querySelector('.la-more'); if (old) old.remove();
+          wrap.querySelectorAll('.la-hidden').forEach(function(b) { b.classList.remove('la-hidden'); });
+          var btns = [].slice.call(wrap.children).filter(function(b) { return /^(BUTTON|A)$/.test(b.tagName) && !b.classList.contains('pp-mini-btn'); });
+          var order = ['Add to CRM', 'Find info', 'Merge'], rank = function(b) { var t = b.textContent.trim(); for (var i = 0; i < order.length; i++) if (t.indexOf(order[i]) === 0) return i; return 50; };
+          btns.sort(function(a, b) { return rank(a) - rank(b); });
+          var primary = btns.find(function(b) { return rank(b) < 2; }) || null, rest = btns.filter(function(b) { return b !== primary; });
+          var pocket = document.createElement('div'); pocket.className = 'la-pocket'; rest.forEach(function(b) { pocket.appendChild(b); });
+          var mini = wrap.querySelector('.pp-mini-btn');
+          if (primary) wrap.insertBefore(primary, wrap.firstChild);
+          if (rest.length) { var more = document.createElement('button'); more.type = 'button'; more.className = 'la-btn la-menu-btn'; more.innerHTML = 'More' + CHEV; more.title = rest.map(function(b) { return b.textContent.trim(); }).join(', '); more.onclick = function(ev) { ev.stopPropagation(); leadMenuOpen(more, l.id); }; wrap.insertBefore(more, mini || null); }
+          wrap.appendChild(pocket);
+        });
+      };
+      fixHead();
     })();
   </script>
 </body>
