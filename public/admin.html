@@ -10758,7 +10758,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v150 · Oct 15j';
+    var PP_BUILD = 'v150 · Oct 15k';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -12241,7 +12241,8 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     #leadTable{min-width:1180px}
     body.pp-sidebar #leadTable{min-width:1180px}
     #leadTable th:nth-child(7),#leadTable td:nth-child(7){display:table-cell}
-    #leadTable th:nth-child(1){width:24%}#leadTable th:nth-child(2){width:100px}#leadTable th:nth-child(3){width:10%}#leadTable th:nth-child(4){width:74px}#leadTable th:nth-child(5){width:124px}#leadTable th:nth-child(6){width:112px}#leadTable th:nth-child(7){width:auto}#leadTable th:nth-child(8){width:72px;text-align:center}#leadTable th:last-child,#leadsView table.pp-table th:last-child{width:214px}
+    #leadTable th:nth-child(1){width:auto}#leadTable th:nth-child(2){width:122px}#leadTable th:nth-child(3){width:15%}#leadTable th:nth-child(4){width:78px}#leadTable th:nth-child(5){width:132px}#leadTable th:nth-child(6){width:116px}#leadTable th:nth-child(7){width:54px;text-align:center;padding-left:4px;padding-right:4px}#leadTable th:nth-child(8){width:92px;text-align:center;overflow:visible;text-overflow:clip;padding-left:4px;padding-right:4px}#leadTable th:last-child,#leadsView table.pp-table th:last-child{width:214px}
+    #leadTable th:nth-child(1),#leadTable td:nth-child(1){min-width:300px}
     #leadTable th,#leadTable td{padding-left:10px;padding-right:10px}
     #leadTable td:first-child{padding-right:8px}
     #leadTableBody .pp-org-cell{align-items:flex-start}
@@ -12250,11 +12251,18 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     #leadTableBody .pp-org-sub{white-space:normal !important;overflow:visible !important;text-overflow:clip !important;line-height:1.35}
     .la-contact{display:flex;flex-wrap:wrap;align-items:center;gap:1px 10px;margin-top:3px;font-size:11.5px;color:var(--text2);line-height:1.4}
     .la-contact .lead-contact{display:contents}
-    .la-contact .pp-copyable{cursor:copy;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+    #leadTable .la-contact .lead-contact{display:contents !important}
+    #leadTable .la-contact .lead-contact>span.pp-copyable{cursor:copy;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100% !important;display:inline-flex !important;align-items:center;gap:5px;flex-direction:row-reverse;justify-content:flex-end}
+    .la-contact .pp-copyable .em-ok,.la-contact .pp-copyable .em-fix,.la-contact .pp-copyable .em-unk{flex:none}
+    #leadTable td:nth-child(3) .pp-chip{display:inline-block;white-space:normal;line-height:1.3;text-align:left;max-width:100%;letter-spacing:.03em;font-size:11px;font-weight:800;padding:4px 10px;background:rgba(0,118,187,0.10);color:var(--pp-blue);border:1px solid rgba(0,118,187,0.18)}
+    #leadTable td.la-note-td{text-align:center;padding-left:4px;padding-right:4px;cursor:pointer}
+    .la-note{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;color:var(--text3);border:1px dashed var(--border)}
+    .la-note svg{width:14px;height:14px}
+    .la-note.has{color:#92400e;background:rgba(217,119,6,0.12);border:1px solid rgba(217,119,6,0.25)}
+    .la-note.form{color:var(--pp-blue);background:rgba(0,118,187,0.08);border:1px solid rgba(0,118,187,0.2)}
     .la-contact .pp-copyable.sub{color:var(--text3)}
     .la-contact .pp-placeholder{font-style:italic;color:var(--text3)}
     .la-reg{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:50px;font-size:10px;font-weight:700;background:rgba(0,168,79,0.1);color:#0f7a4a;vertical-align:middle}
-    #leadTable td:nth-child(3) .pp-chip{white-space:normal;line-height:1.25;text-align:left;max-width:100%;letter-spacing:.02em;font-size:10px;padding:3px 8px}
     #leadTable td.la-li-td{overflow:visible;padding-left:6px !important;padding-right:6px !important}
     .la-find{display:inline-flex;flex-direction:row;gap:4px;align-items:center}
     .la-find a{display:inline-flex;align-items:center;justify-content:center;gap:4px;height:22px;padding:0 8px;border-radius:7px;font-size:10.5px;font-weight:700;text-decoration:none;white-space:nowrap;border:1px solid rgba(10,102,194,0.35);color:#0a66c2;background:rgba(10,102,194,0.06)}
@@ -12270,7 +12278,6 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     .la-crm .f2-srt{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
     .la-crm-td .lead-plus{margin-left:4px;vertical-align:middle}
     #leadTable td[data-edit="assignedTo"] span{white-space:nowrap}
-    #leadTable td[data-edit="internalNotes"] .lead-note{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:normal;line-height:1.35}
     .la-wrap{flex-direction:row !important;flex-wrap:nowrap !important;justify-content:flex-end !important;align-items:center !important;max-width:none !important;gap:4px !important}
     .la-wrap .la-btn{width:auto !important;height:24px;font-size:11px;white-space:nowrap}
     .la-wrap .la-btn:first-child{background:var(--pp-blue);border-color:var(--pp-blue);color:#fff}
@@ -12293,6 +12300,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       if (typeof renderLeads !== 'function') return;
       var LI_ICON = '<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 21l-4.3-4.3"/><circle cx="11" cy="11" r="7"/></svg>';
       var CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+      var NOTE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8M8 17h5"/></svg>';
       function clean(v) { return String(v || '').replace(/\s+/g, ' ').trim(); }
       // LinkedIn people search by name and organization (the title and city are too noisy for LinkedIn's keyword box); Google gets everything we know, aimed at LinkedIn profiles
       window.leadLinkedInUrl = function(l) { var q = [clean(l.name), clean(l.org)].filter(Boolean).join(' '); return q ? 'https://www.linkedin.com/search/results/people/?keywords=' + encodeURIComponent(q) + '&origin=GLOBAL_SEARCH_HEADER' : ''; };
@@ -12334,7 +12342,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       };
       function fixHead() {
         var tr = document.querySelector('#leadTable thead tr'); if (!tr || tr.getAttribute('data-v150')) return; tr.setAttribute('data-v150', '1');
-        [].slice.call(tr.children).forEach(function(th) { var t = th.textContent.trim(); if (t === 'Touch' || t === 'Contact') th.remove(); else if (t === 'CRM') { th.textContent = 'CRM link'; th.title = 'Linked to a Close CRM lead (check) or not (x). Click the check to open it.'; th.style.textAlign = 'center'; } });
+        [].slice.call(tr.children).forEach(function(th) { var t = th.textContent.trim(); if (t === 'Touch' || t === 'Contact') th.remove(); else if (t === 'CRM') { th.textContent = 'CRM link'; th.title = 'Linked to a Close CRM lead (check) or not (x). Click the check to open it.'; th.style.textAlign = 'center'; } else if (t === 'Notes') { th.textContent = 'Note'; th.title = 'Amber: a note from the team. Blue: what they wrote on the form. Hover to read, click to edit.'; } });
         tr.children[0].insertAdjacentHTML('afterend', '<th title="Find this person on LinkedIn, or on Google">Find</th>');
       }
       var _rl = renderLeads; renderLeads = function() {
@@ -12349,7 +12357,10 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
           var nameEl = tds[0].querySelector('.pp-org-name'), textCol = nameEl ? nameEl.parentElement : null, contact = tds[1].querySelector('.lead-contact');
           if (textCol) { var holder = document.createElement('div'); holder.className = 'la-contact'; if (contact) holder.appendChild(contact); else holder.innerHTML = '<span class="pp-placeholder">Email?</span>'; textCol.appendChild(holder); }
           if (l.attendeeId) { var sub = tds[0].querySelector('.pp-org-sub'); if (sub && !sub.querySelector('.la-reg')) sub.insertAdjacentHTML('beforeend', '<span class="la-reg" title="Matched to the show\'s pre-registered attendee list in Close CRM">registered</span>'); }
-          var chip = tds[2].querySelector('.pp-chip'); if (chip && l.source) { chip.textContent = String(l.source).replace(/[-_]+/g, ' '); chip.title = l.source; }
+          var chip = tds[2].querySelector('.pp-chip'); if (chip && l.source) { chip.textContent = String(l.source).replace(/[-_]+/g, ' '); chip.title = 'Source: ' + l.source; }
+          // notes: an icon that says whether there is one (hover reads it, click edits it)
+          var noteTd = tds[7], mine = String(l.internalNotes || '').trim(), form = String(l.notes || '').trim();
+          noteTd.classList.add('la-note-td'); noteTd.innerHTML = '<span class="la-note' + (mine ? ' has' : form ? ' form' : '') + '" title="' + ppEsc(mine ? mine : form ? 'From the form: ' + form : 'No note yet. Click to add one.') + '">' + NOTE_ICON + '</span>';
           tds[6].remove();                                   // Touch: the status column already says when we reached them
           tds[1].remove();                                   // Contact: now under the name
           tds[8].outerHTML = crmCell(l, plus);               // CRM link: check or x
@@ -12375,7 +12386,12 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
 
   <style>
     /* v150: Close CRM Intel table. Why folds into Next play; the opportunity reads as value, confidence, stage, date */
-    .tp-table th:nth-child(1){width:24%}.tp-table th:nth-child(2){width:104px}.tp-table th:nth-child(3){width:auto}.tp-table th:nth-child(4){width:15%}.tp-table th:nth-child(5){width:196px}.tp-table th:nth-child(6){width:48px}.tp-table th:nth-child(7){width:104px}
+    .tp-table{width:100%}
+    .tp-table th:nth-child(1){width:auto}.tp-table th:nth-child(2){width:104px}.tp-table th:nth-child(3){width:36%}.tp-table th:nth-child(4){width:16%}.tp-table th:nth-child(5){width:200px}.tp-table th:nth-child(6){width:48px}.tp-table th:nth-child(7){width:112px}
+    .tp-table td:nth-child(1){min-width:220px}
+    .tp-table td:nth-child(7){text-align:right}
+    .tp-table .pp-org-sub{white-space:normal;line-height:1.4}
+    .tp-near b{white-space:normal;line-height:1.3}
     .tp-table th,.tp-table td{padding:11px 10px}
     .tp-play{max-width:none;min-width:0}
     .tp-why-line{margin-top:3px;font-size:11px;font-weight:400;color:var(--text3);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
