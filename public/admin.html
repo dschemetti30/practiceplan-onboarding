@@ -5641,7 +5641,7 @@
     var LEAD_STATUSES = [{ val: 'new', label: 'New', cls: 'lead-new' }, { val: 'contacted', label: 'Contacted', cls: 'need-to-book' }, { val: 'replied', label: 'Replied', cls: 'aud-k12' }, { val: 'meeting', label: 'Meeting', cls: 'aud-supers' }, { val: 'qualified', label: 'Qualified', cls: 'booked' }, { val: 'won', label: 'Won', cls: 'active' }, { val: 'lost', label: 'Lost', cls: 'inactive' }];
     var LEAD_COLS = ['id', 'receivedAt', 'name', 'org', 'email', 'phone', 'source', 'notes', 'status', 'assignedTo', 'assignedAt', 'assignedBy', 'firstTouchAt', 'internalNotes', 'origin', 'sourceKey', 'closeLeadId', 'closeUrl', 'closeStatus', 'closeLastTouch', 'closeLastTouchType', 'closeCheckedAt', 'updatedAt', 'updatedBy'];
     var leadList = [], leadsLoaded = false, leadsError = '', leadRotation = { order: [], next: '', paused: [] }, leadNotify = true, leadSearch = '', leadStatusFilter = 'open', leadRepFilter = 'all', leadSourceFilter = 'all';
-    function leadNormalize(r) { var o = {}; LEAD_COLS.forEach(function(c) { o[c] = (r[c] === undefined || r[c] === null) ? '' : String(r[c]); }); if (LEAD_STATUSES.every(function(s) { return s.val !== o.status; })) o.status = 'new'; o.assignedTo = o.assignedTo.toLowerCase(); return o; }
+    function leadNormalize(r) { var o = {}; Object.keys(r || {}).forEach(function(c) { if (LEAD_COLS.indexOf(c) < 0 && c.charAt(0) !== '_') o[c] = (r[c] === undefined || r[c] === null) ? '' : String(r[c]); }); LEAD_COLS.forEach(function(c) { o[c] = (r[c] === undefined || r[c] === null) ? '' : String(r[c]); }); if (LEAD_STATUSES.every(function(s) { return s.val !== o.status; })) o.status = 'new'; o.assignedTo = o.assignedTo.toLowerCase(); return o; }
     async function loadLeads(force) {
       if (leadsLoaded && !force) return leadList;
       try { var r = await ppApi('getLeads'); if (r.success) { leadList = (r.rows || []).map(leadNormalize); leadRotation = r.rotation || leadRotation; leadNotify = r.notify !== false; leadsLoaded = true; leadsError = ''; } else leadsError = r.error || 'Unknown error'; }
@@ -10758,7 +10758,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v151 · Oct 15m';
+    var PP_BUILD = 'v151 · Oct 15n';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
