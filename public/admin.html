@@ -9978,7 +9978,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // FOLLOW-UP (Sales): the sequence queue, what is running, exceptions, and the funnel
     // =====================================================================
     var fq = null, fqBusy = false, fqSel = {}, fqView = 'queue', seqCfg = null;
-    var FU_STATES = { history: ['Before the tool', 'unset'], won: ['Customer', 'booked'], queued: ['Queued', 'unset'], scheduled: ['Scheduled', 'need-to-book'], review: ['Needs approval', 'need-to-book'], launching: ['Starting', 'booked'], enrolled: ['In sequence', 'booked'], replied: ['Replied', 'booked'], meeting: ['Meeting booked', 'booked'], finished: ['Finished', 'unset'], held: ['Held', 'unset'], stopped: ['Stopped', 'unset'], skipped: ['Skipped', 'unset'], blocked: ['Blocked', 'need-to-book'], ineligible: ['No email', 'unset'], manual: ['By hand', 'aud-supers'] };
+    var FU_STATES = { history: ['Before the tool', 'unset'], won: ['Customer', 'booked'], queued: ['Queued', 'unset'], scheduled: ['Scheduled', 'need-to-book'], review: ['Needs approval', 'need-to-book'], launching: ['Starting', 'booked'], enrolled: ['In sequence', 'booked'], replied: ['Replied', 'booked'], meeting: ['Meeting booked', 'booked'], met: ['Met', 'booked'], finished: ['Finished', 'unset'], held: ['Held', 'unset'], stopped: ['Stopped', 'unset'], skipped: ['Skipped', 'unset'], blocked: ['Blocked', 'need-to-book'], ineligible: ['No email', 'unset'], manual: ['By hand', 'aud-supers'] };
     async function fqLoad(force, quiet) { if (fq && !force) return; if (!quiet) { fqBusy = true; renderFollowUp(); } try { var r = await ppApi('getFollowUpQueue', {}, 170000); if (!r.success) throw new Error(r.error); fq = r; if (!seqCfg || seqCfg.partial) { try { var c = await ppApi('getSequenceConfig', {}, 120000); if (c.success) seqCfg = c; } catch(e) {} } } catch(e) { fq = { error: e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v55)' : '') }; } fqBusy = false; renderFollowUp(); }
     function fqChip(st) { var d = FU_STATES[st] || [st, 'unset']; return '<span class="pp-chip ' + d[1] + '">' + d[0] + '</span>'; }
     function renderFollowUp() {
@@ -10277,7 +10277,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       var seqOk = !!(l.fuSequenceId || plan.sequenceId);
       steps.push({ key: 'seq', label: 'Sequence', ok: seqOk, why: seqOk ? 'Sequence chosen for ' + (plan.scope === 'show' ? plan.showName : 'website leads') : 'No sequence chosen for ' + (plan.scope === 'show' ? plan.showName : 'website leads'), action: seqOk ? null : { label: 'Choose', fn: plan.scope === 'show' && plan.showId ? 'switchView(\'tradeshows\');setTimeout(function(){openTsModal(\'' + ppEsc(plan.showId) + '\')},300)' : 'switchView(\'settings\')' } });
       var state = l.state || l.fuState || '';
-      var done = ['enrolled', 'replied', 'meeting', 'finished'].indexOf(state) >= 0;
+      var done = ['enrolled', 'replied', 'meeting', 'met', 'finished'].indexOf(state) >= 0;
       return { steps: steps, ready: steps.every(function(s) { return s.ok; }), done: done, plan: plan };
     }
     function ppReadinessStrip(l, opts) {
@@ -10758,7 +10758,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v151 · Oct 15o';
+    var PP_BUILD = 'v153 · Oct 19a';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -11666,7 +11666,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       if (fqrF.period === 'all') since = ''; else if (fqrF.period) since = new Date(Date.now() - Number(fqrF.period) * 86400000).toISOString().slice(0, 10); else if (fqStats && fqStats.since) since = fqStats.since;
       return rows.filter(function(r) { if (fqrF.show && (r.show || 'Website and other') !== fqrF.show) return false; if (fqrF.rep && String(r.rep || '').toLowerCase() !== fqrF.rep) return false; if (since && String(r.received || '').slice(0, 10) < since) return false; return true; });
     }
-    function fqrContacted(r, s) { return !!(s.sent || s.calls || s.replies || s.meetings || (['enrolled', 'replied', 'meeting', 'finished'].indexOf(r.state) >= 0 && s.started)); }
+    function fqrContacted(r, s) { return !!(s.sent || s.calls || s.replies || s.meetings || (['enrolled', 'replied', 'meeting', 'met', 'finished'].indexOf(r.state) >= 0 && s.started)); }
     function fqrCounts(r) { return ['skipped', 'stopped'].indexOf(r.state) < 0; }   // dismissed or stopped leads are out of the numbers entirely, so Leads = Contacted + Not contacted
     function fqrAgg(rows, keyFn, labelFn) {
       var g = {}, now = Date.now();
@@ -12003,7 +12003,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         if (['enrolled', 'launching'].indexOf(st) >= 0 && nx && nx < today) return 'needs';
         if (st === 'manual' && /no touch in|no email seen/.test(r.note || '')) return 'needs';
         if (['queued', 'scheduled'].indexOf(st) >= 0) return 'queue';
-        if (['enrolled', 'launching', 'manual'].indexOf(st) >= 0) return 'running';
+        if (['enrolled', 'launching', 'manual', 'meeting'].indexOf(st) >= 0) return 'running';
         return 'done'; }
       function whyNeeds(r) { var s = fqS(r.id), st = r.state, today = new Date().toISOString().slice(0, 10), nx = String(r.next || '').slice(0, 10);
         if (s.unanswered) { var dd = Math.round((Date.now() - new Date(s.lastReply).getTime()) / 86400000); return { cls: 'bad', text: 'They wrote back ' + (dd ? dd + ' day' + (dd === 1 ? '' : 's') + ' ago' : 'today') + ' and nobody has answered.' }; }
@@ -12025,6 +12025,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       function primary(r) { var st = r.state, b = function(act, label, go, title) { return '<button class="pp-mini-btn' + (go ? ' go' : '') + '"' + (title ? ' title="' + ppEsc(title) + '"' : '') + ' onclick="event.stopPropagation();fqDo(\'' + ppEsc(r.id) + '\',\'' + act + '\')">' + label + '</button>'; };
         if (st === 'review') return b('approve', 'Approve', 1);
         if (st === 'queued' || st === 'scheduled' || st === 'held') { var rd = ppReadiness(Object.assign({ leadId: r.id }, r)); if (!rd.ready) { var first = rd.steps.find(function(x) { return !x.ok; }); return first && first.action ? '<button class="pp-mini-btn" onclick="event.stopPropagation();' + first.action.fn + '">' + first.action.label + '</button>' : '<button class="pp-mini-btn off" disabled title="' + ppEsc(first ? first.why : '') + '">Start now</button>'; } return b('start', 'Start now', 1); }
+        if ((st === 'meeting' || st === 'met' || (st === 'replied' && fqS(r.id).nextMeeting)) && r.closeUrl) return '<a class="pp-mini-btn" href="' + ppEsc(r.closeUrl) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="' + (st === 'met' ? 'The meeting happened; the deal lives in Close CRM now' : 'A meeting is on the calendar; the rep takes it from here') + '">' + (st === 'met' ? 'Open in Close CRM' : 'Prep in Close CRM') + ' &#8599;</a>';
         if (st === 'replied') return fqS(r.id).unanswered && r.closeUrl ? '<a class="pp-mini-btn go" href="' + ppEsc(r.closeUrl) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">Answer in Close CRM &#8599;</a>' : b('resume', 'Auto-reply, resume', 0, 'The reply was an out-of-office or an auto-responder: ignore it, un-pause the run in Close CRM and send the next step as planned');
         if (st === 'blocked' || st === 'ineligible') { var ns = fqNextStep(r); if (ns && ns.fn) return '<button class="pp-mini-btn" onclick="event.stopPropagation();' + ns.fn + '">' + ns.label + '</button>'; if (ns && ns.act) return b(ns.act, ns.label, 1); return b('requeue', 'Re-queue'); }
         if (st === 'stopped' || st === 'skipped') return b('requeue', 'Re-queue');
@@ -12514,6 +12515,160 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
                 + '<td class="n">' + (l.url ? '<a class="pp-mini-btn" href="' + ppEsc(l.url) + '" target="_blank" rel="noopener" title="Open in Close CRM">' + ppSvg('expand') + '</a>' : '') + '</td></tr>'; }).join('')
             : '<tr><td colspan="7"><div class="pp-empty"><strong>Nothing scored yet</strong>Click Score now. The first run geocodes cities and scores in batches every few minutes until every lead is covered.</div></td></tr>')
           + '</tbody></table></div>';
+      };
+    })();
+  </script>
+
+  <style>
+    /* v152: Follow-up tracker. Every touch on every lead, by hand or by sequence, and what each one needs next */
+    .tk{margin-top:4px}
+    .tk-sigs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+    .tk-sig{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 12px;border-radius:50px;border:1px solid var(--border);background:var(--card);font-size:12.5px;font-weight:700;color:var(--text2);cursor:pointer;white-space:nowrap}
+    .tk-sig b{font-size:11.5px;min-width:18px;height:18px;padding:0 5px;border-radius:50px;display:inline-flex;align-items:center;justify-content:center;background:var(--bg)}
+    .tk-sig i{width:8px;height:8px;border-radius:50%;display:inline-block;background:var(--c,#94a3b8)}
+    .tk-sig.on{background:var(--text);color:#fff;border-color:var(--text)}.tk-sig.on b{background:rgba(255,255,255,0.18);color:#fff}
+    .tk-sec{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:14px;overflow:hidden}
+    .tk-sech{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer}
+    .tk-sech h4{margin:0;font-size:14px;font-weight:800}.tk-sech .n{font-size:12px;color:var(--text2);font-weight:600}.tk-sech .d{font-size:12px;color:var(--text3);font-weight:400;margin-left:2px}
+    .tk-sech .chev{width:16px;height:16px;color:var(--text3);transition:transform .15s}.tk-sec.closed .tk-sech .chev{transform:rotate(-90deg)}.tk-sec.closed .tk-rows{display:none}
+    .tk-row{display:grid;grid-template-columns:minmax(0,1.25fr) 150px minmax(0,1.45fr) minmax(0,1fr) 200px;gap:14px;align-items:center;padding:11px 16px;border-top:1px solid var(--border);font-size:12.5px}
+    .tk-row:first-child{border-top:0}.tk-row:hover{background:rgba(0,118,187,0.025)}
+    .tk-row.sev3{box-shadow:inset 3px 0 0 #b4312a}.tk-row.sev2{box-shadow:inset 3px 0 0 #d97706}
+    .tk-lead b{display:block;font-size:13.5px;font-weight:700;line-height:1.25}
+    .tk-lead b a{color:inherit;text-decoration:none}.tk-lead b a:hover{color:var(--pp-blue)}
+    .tk-lead span{display:block;font-size:12px;color:var(--text2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .tk-lead small{display:block;font-size:11px;color:var(--text3);margin-top:2px}
+    .tk-st .pp-chip{font-size:10.5px}.tk-st div{font-size:11.5px;color:var(--text2);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .tk-strip{position:relative;height:22px;margin:2px 0 4px}
+    .tk-strip .ln{position:absolute;left:0;right:0;top:10px;height:2px;background:var(--border);border-radius:2px}
+    .tk-strip .dot{position:absolute;top:5px;width:12px;height:12px;border-radius:50%;background:var(--c);border:2px solid var(--card);box-shadow:0 0 0 1px var(--c);transform:translateX(-6px);cursor:default}
+    .tk-strip .dot.hollow{background:var(--card)}
+    .tk-strip .dot.u{background:var(--card);box-shadow:0 0 0 1.5px var(--c);border-style:dashed}
+    .tk-strip .today{position:absolute;top:3px;width:1px;height:16px;background:var(--text3);opacity:.6}
+    .tk-sum{font-size:11.5px;color:var(--text2);line-height:1.4}.tk-sum b{color:var(--text);font-weight:700}
+    .tk-sum .k{display:inline-block;width:7px;height:7px;border-radius:50%;margin:0 3px 0 0;vertical-align:1px;background:var(--c)}
+    .tk-last b{display:block;font-size:12.5px;font-weight:700}.tk-last span{display:block;font-size:11.5px;color:var(--text2);line-height:1.4}
+    .tk-last .in{color:#0f7a4a}
+    .tk-act{display:flex;flex-direction:column;align-items:flex-end;gap:6px;text-align:right}
+    .tk-badge{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:3px 9px;border-radius:50px;font-size:11px;font-weight:700;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .tk-badge.sev3{background:rgba(180,49,42,0.1);color:#b4312a}.tk-badge.sev2{background:rgba(217,119,6,0.12);color:#92400e}.tk-badge.sev1{background:var(--bg);color:var(--text2)}.tk-badge.sev0{background:rgba(15,122,74,0.1);color:#0f7a4a}
+    .tk-btns{display:flex;gap:4px;align-items:center}
+    .tk-btns .pp-mini-btn{height:24px;font-size:11px;padding:0 9px;width:auto}
+    .tk-btns .pp-mini-btn.go{background:var(--pp-blue);border-color:var(--pp-blue);color:#fff}
+    .tk-empty{padding:18px 16px;font-size:12.5px;color:var(--text2)}
+    .tk-legend{display:flex;flex-wrap:wrap;gap:12px;font-size:11px;color:var(--text2);margin:-4px 0 12px 2px}.tk-legend span{display:inline-flex;align-items:center;gap:5px}
+    @media(max-width:1100px){.tk-row{grid-template-columns:minmax(0,1.2fr) 130px minmax(0,1.4fr) 190px}.tk-last{display:none}}
+    @media(max-width:768px){.tk-row{grid-template-columns:1fr;gap:8px;padding:12px 14px}.tk-act{align-items:flex-start;text-align:left}.tk-last{display:block}.tk-sigs{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}}
+  </style>
+  <script>
+    (function() {
+      if (typeof renderFollowUp !== 'function') return;
+      window.fqTrackOn = false; window.fqTrackSig = ''; var tkClosed = {}; try { tkClosed = JSON.parse(localStorage.getItem('pp.tk.closed') || '{}'); } catch (e) {}
+      var KIND = { s: ['Sequence email', '#0076bb'], h: ['Email by hand', '#0f9d8a'], b: ['Bulk email', '#64748b'], c: ['Call', '#6b7280'], i: ['They wrote to us', '#0f7a4a'], m: ['Meeting held', '#7c3aed'], u: ['Meeting coming up', '#7c3aed'] };
+      var SIGS = [['waiting', 'Waiting on us', '#b4312a'], ['slipping', 'Slipping', '#b4312a'], ['overdue', 'Overdue step', '#d97706'], ['ripe', 'Ripe for a nudge', '#d97706'], ['quiet', 'Went quiet', '#d97706'], ['untouched', 'Not contacted', '#d97706'], ['meeting', 'Meeting', '#7c3aed'], ['ontrack', 'On track', '#0f7a4a'], ['done', 'Closed out', '#94a3b8']];
+      var today = function() { return new Date().toISOString().slice(0, 10); };
+      function dsince(d) { if (!d) return null; var t = new Date(String(d).slice(0, 10) + 'T12:00:00').getTime(); return isNaN(t) ? null : Math.max(0, Math.round((Date.now() - t) / 86400000)); }
+      function ago(d) { var n = dsince(d); return n === null ? '' : n === 0 ? 'today' : n === 1 ? 'yesterday' : n + 'd ago'; }
+      function fd(d) { return d ? ppFmtDate(String(d).slice(0, 10), { month: 'short', day: 'numeric' }) : ''; }
+      function cap(w) { return w ? w.charAt(0).toUpperCase() + w.slice(1) : ''; }
+      // the last thing WE did, from the timeline (sequence or hand email, call)
+      function lastOurs(s) { var tl = s.timeline || [], last = null; tl.forEach(function(e) { if ('shbc'.indexOf(e[1]) >= 0 && e[0] <= today()) last = e; }); return last; }
+      function lastTheirs(s) { var tl = s.timeline || [], last = null; tl.forEach(function(e) { if (e[1] === 'i') last = e; }); return last; }
+      // what this lead needs, in one line, and how loud
+      window.fqSignal = function(r, s) {
+        var st = r.state, t = today(), rec = dsince(r.received), lo = lastOurs(s), dOut = lo ? dsince(lo[0]) : null, nx = String(r.next || '').slice(0, 10);
+        if (st === 'won') return { k: 'done', sev: 0, label: 'Customer', why: 'Now a customer in Close CRM' };
+        if (['skipped', 'stopped', 'ineligible'].indexOf(st) >= 0) return { k: 'done', sev: 0, label: st === 'ineligible' ? 'No email' : cap(st), why: r.note || '' };
+        if (s.unanswered) { var dIn = dsince(s.lastReply); return { k: 'waiting', sev: 3, label: 'They wrote ' + ago(s.lastReply) + ', no answer', why: 'Their last email (' + fd(s.lastReply) + ') has not been answered. Reply today.' }; }
+        if (s.nextMeeting && s.nextMeeting >= t) return { k: 'meeting', sev: 0, label: 'Meeting ' + fd(s.nextMeeting), why: 'A meeting is on the calendar; prep, do not email.' };
+        if (st === 'met' || (s.lastMeeting && s.lastMeeting <= t && s.lastMeeting >= (r.received || '') && (!lo || lo[0] <= s.lastMeeting))) { var dm = dsince(s.lastMeeting); if (dm !== null && dm >= 5 && (!lo || lo[0] <= s.lastMeeting)) return { k: 'slipping', sev: 3, label: 'Met ' + ago(s.lastMeeting) + ', no follow-up since', why: 'The meeting happened ' + fd(s.lastMeeting) + ' and nobody has written since. Send the recap and the next step.' }; return { k: 'meeting', sev: 1, label: 'Met ' + fd(s.lastMeeting), why: (r.closeStatus ? r.closeStatus + ' in Close CRM. ' : '') + 'Keep the thread warm.' }; }
+        if (!s.contacted && !lo) {
+          if (st === 'review') return { k: 'untouched', sev: 2, label: 'Waiting for approval', why: 'The first email is written and waiting for someone to approve it.' };
+          if (st === 'scheduled' || st === 'queued') return { k: 'ontrack', sev: 0, label: r.date && r.date > t ? 'Starts ' + fd(r.date) : 'Starts next pass', why: 'Queued for the sequence.' };
+          if (st === 'blocked') return { k: 'untouched', sev: 2, label: 'Blocked: ' + (r.note || 'cannot start'), why: r.note || '' };
+          return { k: 'untouched', sev: rec > 3 ? 3 : rec > 1 ? 2 : 1, label: 'Not contacted' + (rec !== null ? ', ' + rec + 'd' : ''), why: 'Came in ' + fd(r.received) + ' and nobody has emailed or called yet.' };
+        }
+        if ((st === 'enrolled' || st === 'launching') && nx && nx < t) return { k: 'overdue', sev: 2, label: 'Step due ' + fd(nx) + ' not sent', why: 'The next sequence email was due ' + fd(nx) + ' and has not gone out. Refresh, or check the run in Close CRM.' };
+        if (st === 'enrolled' || st === 'launching') { if (s.opened >= 2 && !s.replies && dOut !== null && dOut >= 3) return { k: 'ripe', sev: 2, label: 'Opened ' + s.opened + '×, never replied', why: 'They keep opening but do not answer. A call or a short personal note beats the next step.' }; return { k: 'ontrack', sev: 0, label: nx ? 'Next email ' + fd(nx) : 'In sequence', why: 'The sequence is doing its job.' }; }
+        if (st === 'replied' || (s.replies && lo && lo[0] >= s.lastReply)) { if (dOut !== null && dOut >= 7) return { k: 'quiet', sev: 2, label: 'Quiet ' + dOut + 'd after the reply', why: 'They replied, we answered ' + fd(lo[0]) + ', and nothing since. Time for the next step or a nudge.' }; return { k: 'ontrack', sev: 0, label: 'In conversation', why: 'Replied; the rep is on it.' }; }
+        if (st === 'finished') { if (!s.replies && (dOut === null || dOut >= 5)) return { k: 'ripe', sev: 2, label: 'Sequence done, no reply', why: 'Every automated step went out' + (s.opened ? ' (' + s.opened + ' opened)' : '') + ' with no reply. Only a call or a personal note moves it now.' }; return { k: 'ontrack', sev: 0, label: 'Sequence finished', why: '' }; }
+        if (st === 'manual' || s.handSent || lo) { if (dOut === null) return { k: 'untouched', sev: 2, label: 'By hand, no email seen', why: 'Marked as worked by hand but no email or call shows in Close CRM.' }; if (dOut >= 14) return { k: 'slipping', sev: 3, label: 'No touch in ' + dOut + 'd', why: 'Last touch ' + fd(lo[0]) + '. Nothing planned. This one is slipping.' }; if (dOut >= 7) return { k: 'quiet', sev: 2, label: 'No touch in ' + dOut + 'd', why: 'Last touch ' + fd(lo[0]) + '. Plan the next step.' }; if (s.opened >= 2 && !s.replies && dOut >= 3) return { k: 'ripe', sev: 2, label: 'Opened ' + s.opened + '×, never replied', why: 'Reading but not answering; try the phone.' }; return { k: 'ontrack', sev: 0, label: 'Worked by hand, ' + ago(lo[0]), why: 'Last touch ' + fd(lo[0]) + '.' }; }
+        return { k: 'ontrack', sev: 0, label: cap(st), why: r.note || '' };
+      };
+      function strip(r, s) {
+        var tl = (s.timeline || []).slice(), t = today(), from = String(r.received || (tl[0] && tl[0][0]) || t).slice(0, 10), to = t;
+        tl.forEach(function(e) { if (e[0] > to) to = e[0]; });
+        var span = Math.max(1, (new Date(to + 'T12:00:00') - new Date(from + 'T12:00:00')) / 86400000);
+        var x = function(d) { return Math.min(100, Math.max(0, ((new Date(String(d).slice(0, 10) + 'T12:00:00') - new Date(from + 'T12:00:00')) / 86400000) / span * 100)); };
+        var dots = tl.map(function(e, i) { var k = KIND[e[1]] || KIND.h, who = e[2] ? ' by ' + cap(e[2]) : '', tip = fd(e[0]) + ': ' + k[0] + who + (e[1] === 's' || e[1] === 'h' || e[1] === 'b' ? (e[3] ? ', opened' : ', not opened') + (e[4] ? ' — ' + e[4] : '') : e[1] === 'm' && e[4] ? ' — ' + e[4] : ''); return '<span class="dot ' + e[1] + (('shb'.indexOf(e[1]) >= 0 && !e[3]) ? ' hollow' : '') + '" style="--c:' + k[1] + ';left:' + x(e[0]).toFixed(1) + '%;z-index:' + (10 + i) + '" title="' + ppEsc(tip) + '"></span>'; }).join('');
+        var todayX = x(t);
+        var out = s.sent || 0, hand = s.handSent || 0, seq = s.seqSent || 0;
+        var parts = [];
+        if (out) parts.push('<b>' + out + '</b> sent' + (seq && hand ? ' (' + seq + ' sequence, ' + hand + ' by hand)' : hand ? ' by hand' : seq ? ' by sequence' : ''));
+        if (s.calls) parts.push('<b>' + s.calls + '</b> call' + (s.calls === 1 ? '' : 's'));
+        if (s.opened) parts.push('<b>' + s.opened + '</b> opened');
+        if (s.replies) parts.push('<span class="k" style="--c:#0f7a4a"></span><b>' + s.replies + '</b> repl' + (s.replies === 1 ? 'y' : 'ies'));
+        if (s.meetings) parts.push('<span class="k" style="--c:#7c3aed"></span><b>' + s.meetings + '</b> meeting' + (s.meetings === 1 ? '' : 's'));
+        var sum = parts.length ? parts.join(' · ') : '<span style="color:var(--text3)">no touches yet</span>';
+        return '<div class="tk-strip" title="' + fd(from) + ' to ' + fd(to) + '"><div class="ln"></div>' + (todayX < 100 ? '<span class="today" style="left:' + todayX.toFixed(1) + '%" title="Today"></span>' : '') + dots + '</div><div class="tk-sum">' + sum + (s.started ? ' · first ' + fd(s.started) : '') + '</div>';
+      }
+      function lastCell(r, s) {
+        var lo = lastOurs(s), lt = lastTheirs(s), out = '';
+        if (lt && (!lo || lt[0] >= lo[0])) out += '<b class="in">They wrote ' + ago(lt[0]) + '</b>';
+        else if (lo) { var k = KIND[lo[1]] || KIND.h; out += '<b>' + (lo[1] === 'c' ? 'Call' : lo[1] === 's' ? 'Sequence email' : 'Email by hand') + ' ' + ago(lo[0]) + '</b><span>' + (lo[2] ? 'by ' + cap(lo[2]) : '') + ('shb'.indexOf(lo[1]) >= 0 ? (lo[2] ? ', ' : '') + (lo[3] ? 'opened' : 'not opened') : '') + '</span>'; }
+        else out += '<b style="color:var(--text3)">No touch yet</b>';
+        if (lt && lo && lt[0] < lo[0]) out += '<span class="in">they last wrote ' + ago(lt[0]) + '</span>';
+        var nx = String(r.next || '').slice(0, 10), t = today();
+        if (s.nextMeeting && s.nextMeeting >= t) out += '<span style="color:#7c3aed;font-weight:600">Meeting ' + fd(s.nextMeeting) + '</span>';
+        else if ((r.state === 'enrolled' || r.state === 'launching') && nx) out += '<span>Next email ' + (nx < t ? '<span style="color:#b4312a;font-weight:700">was due ' + fd(nx) + '</span>' : fd(nx)) + (r.step ? ' · step ' + ppEsc(r.step) : '') + '</span>';
+        else if (['queued', 'scheduled'].indexOf(r.state) >= 0) out += '<span>Starts ' + (r.date ? fd(r.date) : 'next pass') + '</span>';
+        else if (['won', 'skipped', 'stopped', 'ineligible'].indexOf(r.state) < 0) out += '<span style="color:#92400e">Nothing planned</span>';
+        return out;
+      }
+      function rowHtml(r, s, sig) {
+        var st = FU_STATES[r.state] || [r.state, 'unset'], rep = r.rep ? ((typeof PP_FULL_NAMES !== 'undefined' && PP_FULL_NAMES[r.rep]) || ppRepName(r.rep) || r.rep).split(' ')[0] : 'Unassigned';
+        var close = r.closeUrl ? '<a class="pp-mini-btn' + (sig.k === 'waiting' ? ' go' : '') + '" href="' + ppEsc(r.closeUrl) + '" target="_blank" rel="noopener" title="Open in Close CRM">' + (sig.k === 'waiting' ? 'Answer' : 'Close CRM') + ' &#8599;</a>' : '';
+        return '<div class="tk-row sev' + sig.sev + '" data-id="' + ppEsc(r.id) + '">'
+          + '<div class="tk-lead"><b>' + (r.closeUrl ? '<a href="' + ppEsc(r.closeUrl) + '" target="_blank" rel="noopener">' + ppEsc(r.org || r.name || '(no name)') + '</a>' : ppEsc(r.org || r.name || '(no name)')) + '</b><span>' + ppEsc([r.name, r.title].filter(Boolean).join(' · ') || r.email || '') + '</span><small>' + ppEsc(r.show || 'Website') + ' · ' + ppEsc(rep) + ' · came in ' + fd(r.received) + '</small></div>'
+          + '<div class="tk-st"><span class="pp-chip ' + st[1] + '">' + ppEsc(st[0]) + '</span><div title="Status in Close CRM">' + (r.closeStatus ? ppEsc(r.closeStatus) : '<span style="color:var(--text3)">no Close status</span>') + '</div></div>'
+          + '<div>' + strip(r, s) + '</div>'
+          + '<div class="tk-last">' + lastCell(r, s) + '</div>'
+          + '<div class="tk-act"><span class="tk-badge sev' + sig.sev + '" title="' + ppEsc(sig.why || '') + '">' + ppEsc(sig.label) + '</span><div class="tk-btns">' + close + '<button class="pp-mini-btn" onclick="event.stopPropagation();fqMenu(this,\'' + ppEsc(r.id) + '\')" title="Actions">⋯</button></div></div>'
+          + '</div>';
+      }
+      function section(key, title, desc, rows) {
+        var closed = !!tkClosed[key];
+        return '<div class="tk-sec' + (closed ? ' closed' : '') + '"><div class="tk-sech" onclick="fqTrackToggle(\'' + key + '\')"><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg><h4>' + title + '</h4><span class="n">' + rows.length + '</span><span class="d">' + desc + '</span></div><div class="tk-rows">' + (rows.length ? rows.map(function(x) { return rowHtml(x.r, x.s, x.sig); }).join('') : '<div class="tk-empty">Nothing here' + (fqTrackSig ? ' with that signal' : '') + '.</div>') + '</div></div>';
+      }
+      window.fqTrackToggle = function(k) { tkClosed[k] = !tkClosed[k]; try { localStorage.setItem('pp.tk.closed', JSON.stringify(tkClosed)); } catch (e) {} renderFollowUp(); };
+      window.fqTrackSet = function(k) { fqTrackSig = fqTrackSig === k ? '' : k; renderFollowUp(); };
+      function trackerHtml() {
+        if (!fqStats) return '<div class="tk-sec"><div class="tk-empty">' + ppLoader('Reading the email, call and meeting history', { rows: 2 }) + '</div></div>';
+        var qEl = document.querySelector('#fqHost .f2-seg input.q'), q = String(qEl ? qEl.value : '').trim().toLowerCase(), rows = fqrRows().filter(function(r) { return !r.history && !r.mergedInto && (!q || (String(r.org || '') + ' ' + String(r.name || '') + ' ' + String(r.email || '') + ' ' + String(r.show || '')).toLowerCase().indexOf(q) >= 0); });
+        var items = rows.map(function(r) { var s = fqS(r.id); return { r: r, s: s, sig: fqSignal(r, s) }; });
+        var counts = {}; items.forEach(function(x) { counts[x.sig.k] = (counts[x.sig.k] || 0) + 1; });
+        var sigs = '<div class="tk-sigs">' + SIGS.filter(function(g) { return counts[g[0]]; }).map(function(g) { return '<button class="tk-sig' + (fqTrackSig === g[0] ? ' on' : '') + '" style="--c:' + g[2] + '" onclick="fqTrackSet(\'' + g[0] + '\')"><i></i>' + g[1] + '<b>' + counts[g[0]] + '</b></button>'; }).join('') + '</div>';
+        var legend = '<div class="tk-legend">' + ['s', 'h', 'c', 'i', 'm'].map(function(k) { return '<span><i class="k" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:' + KIND[k][1] + '"></i>' + KIND[k][0] + '</span>'; }).join('') + '<span><i style="display:inline-block;width:9px;height:9px;border-radius:50%;border:2px solid #0076bb;box-sizing:border-box"></i>not opened</span><span><i style="display:inline-block;width:1px;height:10px;background:var(--text3)"></i>today</span></div>';
+        var shown = fqTrackSig ? items.filter(function(x) { return x.sig.k === fqTrackSig; }) : items;
+        shown.sort(function(a, b) { return b.sig.sev - a.sig.sev || (a.r.show || 'zzz').localeCompare(b.r.show || 'zzz') || (a.r.org || '').localeCompare(b.r.org || ''); });
+        var auto = [], hand = [], none = [];
+        shown.forEach(function(x) { var st = x.r.state, s = x.s; if (st === 'manual' || s.handSent || s.calls || ['replied', 'meeting', 'met', 'won'].indexOf(st) >= 0) hand.push(x); else if (['enrolled', 'launching', 'review', 'queued', 'scheduled', 'held', 'blocked', 'finished'].indexOf(st) >= 0 || s.seqSent) auto.push(x); else none.push(x); });
+        return '<div class="tk">' + sigs + legend
+          + section('auto', 'Automated sequence', 'the sequence is doing the touching; nothing to do unless a step is overdue or they keep opening without replying', auto)
+          + section('hand', 'Rep follow-up', 'in a person\'s hands: replies, calls, meetings and by-hand emails. This is where leads slip.', hand)
+          + (none.length || fqTrackSig === 'untouched' ? section('none', 'Nobody has touched', 'no email, call or sequence yet', none) : '')
+          + '</div>';
+      }
+      var _rf = renderFollowUp; renderFollowUp = function() {
+        _rf(); var host = document.getElementById('fqHost'); if (!host || !fq || !fq.rows) return;
+        var seg = host.querySelector('.f2-seg'); if (!seg) return;
+        // the Tracker tab sits with the other segments; picking any other segment leaves the tracker
+        if (!seg.querySelector('.seg.tk-tab')) { var right = seg.querySelector('.right'); var b = document.createElement('button'); b.className = 'seg tk-tab' + (fqTrackOn ? ' on' : ''); b.innerHTML = 'Tracker'; b.title = 'Every touch on every lead, by sequence or by hand, and what each one needs next'; b.onclick = function() { fqTrackOn = true; fqFocus = ''; fqSel = {}; renderFollowUp(); }; seg.insertBefore(b, right || null); }
+        seg.querySelectorAll('.seg:not(.tk-tab)').forEach(function(x) { if (x.getAttribute('data-tk')) return; x.setAttribute('data-tk', '1'); var prev = x.onclick; x.onclick = function(ev) { fqTrackOn = false; if (prev) return prev.call(this, ev); }; });
+        if (!fqTrackOn) return;
+        seg.querySelectorAll('.seg').forEach(function(x) { x.classList.toggle('on', x.classList.contains('tk-tab')); });
+        host.querySelectorAll('.f2-group, .f2-focus, .f2-bulk, .f2-today').forEach(function(el) { el.remove(); });
+        seg.insertAdjacentHTML('afterend', trackerHtml());
       };
     })();
   </script>
