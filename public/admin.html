@@ -10758,7 +10758,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v154 · Oct 20e';
+    var PP_BUILD = 'v154 · Oct 20f';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -12705,9 +12705,9 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
           if ((tsList || []).some(function(t) { return slugify(t.slug || t.name) === slug; })) { showToast('A show already uses /s/' + slug + '. Open it on Trade Shows instead.', 'error'); return; }
           var st = String(v.state || '').trim().toUpperCase().slice(0, 2), loc = [String(v.city || '').trim(), st].filter(Boolean).join(', ');
           var url = 'https://conferences.practice-plan.com/s/' + slug;
-          var row = { name: name, slug: slug, eventDate: v.start || '', exhibitStart: v.start || '', exhibitEnd: v.end || v.start || '', location: loc, audience: v.audience || 'other', reps: v.rep || '', assignMode: v.rep ? 'rep' : 'rotation', offer: v.offer || '', boothSize: v.booth || '', sourceKey: slug.toUpperCase(), pageUrl: url, notes: '' };
+          var row = { id: ppNewId('ts'), name: name, slug: slug, eventDate: v.start || '', exhibitStart: v.start || '', exhibitEnd: v.end || v.start || '', location: loc, audience: v.audience || 'other', reps: v.rep || '', assignMode: v.rep ? 'rep' : 'rotation', offer: v.offer || '', boothSize: v.booth || '', sourceKey: slug.toUpperCase(), pageUrl: url, notes: '' };
           try {
-            var r = await ppApi('saveTradeShow', { row: JSON.stringify(row) }, 60000); if (!r.success) throw new Error(r.error || 'Could not save the show');
+            var r = await ppApi('saveTradeShow', { row: row }, 60000); if (!r.success) throw new Error(r.error || 'Could not save the show');
             var show = r.row || row;
             var lp = { id: 'lp_official_' + show.id, title: name, url: url, showId: show.id, sourceKey: slug.toUpperCase(), audience: (TS_AUDIENCES.find(function(a) { return a.val === row.audience; }) || {}).label || '', notes: 'Official page (auto)', reps: v.rep || '' };
             try { var r2 = await ppApi('saveLandingPage', { row: lp }, 60000); if (r2 && r2.success && r2.id) lp.id = r2.id; } catch (e) {}
