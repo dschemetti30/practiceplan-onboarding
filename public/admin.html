@@ -6109,12 +6109,20 @@
       input.disabled = true;
       try { var r = await ppApi('saveLandingPage', { row: p }); if (!r.success) throw new Error(r.error); p.id = r.id; lpList.push(p); renderLandingPages(); renderTradeShows(); showToast('Added ' + p.title + (guessShow ? ' (linked to ' + guessShow.name + ')' : ''), 'success'); } catch(e) { input.disabled = false; showToast('Could not add: ' + e.message, 'error'); }
     }
+    // an auto page lives at /s/<slug> only because a show carries that slug: when the page's URL is changed to a new /s/ address, the show's slug moves with it, so the page exists at the new address within minutes
+    async function lpFollowSlug(p, url) {
+      var m = String(url || '').match(/conferences\.practice-plan\.com\/s\/([a-z0-9-]+)\/?$/i); if (!m) return;
+      var slug = m[1].toLowerCase(), show = p.showId ? tsList.find(function(x) { return x.id === p.showId; }) : null; if (!show) { showToast('Changed. This page is not linked to a show, so /s/' + slug + ' only exists if a show on the board uses that slug.', 'info'); return; }
+      var cur = String(show.slug || '').toLowerCase(); if (cur === slug) return;
+      var clash = tsList.find(function(x) { return x.id !== show.id && String(x.slug || '').toLowerCase() === slug; }); if (clash) { showToast('/s/' + slug + ' already belongs to ' + clash.name + '; pick another address', 'error'); return; }
+      try { var r = await ppApi('saveTradeShow', { row: { id: show.id, slug: slug, pageUrl: url } }); if (!r.success) throw new Error(r.error); show.slug = slug; show.pageUrl = url; if (typeof renderTradeShows === 'function') renderTradeShows(); showToast(show.name + ' now lives at /s/' + slug + ' (live in a few minutes; put the new link on the QR)', 'success'); } catch (e) { showToast('URL saved here, but the show\'s slug did not change: ' + e.message, 'error'); }
+    }
     function lpCellEdit(id, field, cell) {
       var p = lpList.find(function(x) { return x.id === id; }); if (!p) return;
       var save = function(patch) { var prev = {}; Object.keys(patch).forEach(function(k) { prev[k] = p[k]; p[k] = patch[k]; }); renderLandingPages(); renderTradeShows(); ppApi('saveLandingPage', { row: p }).then(function(r) { if (!r.success) throw new Error(r.error || 'Save failed'); showToast('Saved', 'success'); }).catch(function(err) { Object.keys(prev).forEach(function(k) { p[k] = prev[k]; }); renderLandingPages(); showToast('Could not save: ' + err.message, 'error'); }); };
       switch (field) {
         case 'title': ppFormPopover(cell, [{ key: 'title', label: 'Page title', value: p.title }, { key: 'audience', label: 'Audience', value: p.audience, placeholder: 'e.g. Athletic Directors' }], function(v) { save(v); }, { title: 'Landing page' }); break;
-        case 'url': ppInlineEdit(cell, { value: p.url, type: 'url', placeholder: 'https://', onSave: function(v) { save({ url: v }); } }); break;
+        case 'url': ppInlineEdit(cell, { value: p.url, type: 'url', placeholder: 'https://', onSave: function(v) { save({ url: v }); lpFollowSlug(p, v); } }); break;
         case 'sourceKey': ppInlineEdit(cell, { value: p.sourceKey, placeholder: 'What the form sends as Source', onSave: function(v) { save({ sourceKey: v }); } }); break;
         case 'notes': ppInlineEdit(cell, { value: p.notes, placeholder: 'Note', onSave: function(v) { save({ notes: v }); } }); break;
         case 'reps': ppRepPicker(cell, ppSplitReps(p.reps), function(list) { save({ reps: list.join(', ') }); }); break;
@@ -10758,7 +10766,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v154 · Oct 20g';
+    var PP_BUILD = 'v154 · Oct 20h';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
