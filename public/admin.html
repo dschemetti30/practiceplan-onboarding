@@ -10758,7 +10758,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v153 · Oct 20c';
+    var PP_BUILD = 'v153 · Oct 20d';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -12033,6 +12033,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         if (st === 'manual') return b('requeue', 'Back to sequence');
         return ''; }
       window.fqNotLead = function(id) { var r = fq.rows.concat((fqStats && fqStats.history) || []).find(function(x) { return x.id === id; }); if (!r) return; ppFormPopover(document.activeElement || document.body, [{ key: 'kind', label: 'What they are', type: 'select', options: [{ val: 'partner', label: 'Partner or vendor' }, { val: 'association', label: 'Association or state office' }, { val: 'press', label: 'Press, student, other' }], value: 'partner' }], async function(v) { try { var res = await ppApi('fuAction', { id: id, act: 'notlead', kind: v.kind }, 170000); if (!res.success) throw new Error(res.error); showToast((r.org || r.name) + ' no longer counts as a lead', 'success'); fqLoad(true, true); } catch (e) { showToast(e.message, 'error'); } }, { title: 'Not a prospect: ' + (r.org || r.name), note: 'Leaves the queue and every count. Still in Inbound Leads under Everything, where it can be turned back into a prospect.' }); };
+      window.fqDismissDup = function(id) { document.querySelectorAll('.f2-menu').forEach(function(m) { m.remove(); }); fqDo(id, 'skip', { reason: 'duplicate of another inbound lead' }); };
       window.fqMenu = function(btn, id) {
         document.querySelectorAll('.f2-menu').forEach(function(m) { m.remove(); }); var r = fq.rows.find(function(x) { return x.id === id; }); if (!r) return; var st = r.state, items = [];
         var it = function(act, label, hint, cls) { items.push('<button class="' + (cls || '') + '" onclick="fqDo(\'' + ppEsc(id) + '\',\'' + act + '\')">' + label + (hint ? '<small>' + hint + '</small>' : '') + '</button>'); };
@@ -12047,7 +12048,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         if (['enrolled', 'replied', 'meeting', 'launching'].indexOf(st) >= 0) it('refresh', 'Refresh from Close CRM');
         items.push('<div class="sep"></div>'); if (r.closeUrl) items.push('<a href="' + ppEsc(r.closeUrl) + '" target="_blank" rel="noopener">Open in Close CRM &#8599;</a>');
         items.push('<button onclick="fqNotLead(\'' + ppEsc(id) + '\')">Not a prospect<small>partner, vendor, association</small></button>');
-        if (st !== 'skipped' && st !== 'finished') it('skip', 'Dismiss', 'no sequence for this lead', 'danger');
+        if (st !== 'skipped' && st !== 'finished') { items.push('<button class="danger" onclick="fqDismissDup(\'' + ppEsc(id) + '\')">Dismiss as a duplicate<small>another row is the same person</small></button>'); it('skip', 'Dismiss', 'no sequence for this lead', 'danger'); }
         var m = document.createElement('div'); m.className = 'f2-menu'; m.innerHTML = items.join(''); document.body.appendChild(m);
         var b = btn.getBoundingClientRect(), w = m.offsetWidth, h = m.offsetHeight, left = Math.min(b.right - w + window.scrollX, window.scrollX + window.innerWidth - w - 8), top = b.bottom + 6 + window.scrollY; if (b.bottom + h + 12 > window.innerHeight) top = b.top - h - 6 + window.scrollY;
         m.style.left = Math.max(8, left) + 'px'; m.style.top = top + 'px';
