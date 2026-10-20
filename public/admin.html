@@ -10758,7 +10758,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v153 · Oct 20d';
+    var PP_BUILD = 'v154 · Oct 20e';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -12671,6 +12671,54 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         host.querySelectorAll('.f2-group, .f2-focus, .f2-bulk, .f2-today').forEach(function(el) { el.remove(); });
         seg.insertAdjacentHTML('afterend', trackerHtml());
       };
+    })();
+  </script>
+
+  <style>
+    .lp-new-btn{background:var(--pp-blue) !important;border-color:var(--pp-blue) !important;color:#fff !important}
+    .lp-new-btn svg{stroke:#fff}
+    .lp-new-done{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12.5px}
+    .lp-new-done code{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:2px 7px;font-size:12px}
+  </style>
+  <script>
+    // v154: New show page. One form (name, dates, city and state, audience, rep, offer) creates the show on the board and its auto page at /s/<slug>, registered on this list for lead attribution.
+    (function() {
+      if (typeof renderLandingPages !== 'function') return;
+      var slugify = function(v) { return String(v || '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); };
+      window.lpNewShowPage = function(btn) {
+        var reps = (typeof TEAM_MEMBERS !== 'undefined' ? TEAM_MEMBERS : []).filter(function(m) { return !/john\.brochu/.test(m.email); });
+        var year = new Date().getFullYear();
+        ppFormPopover(btn || document.body, [
+          { key: 'name', label: 'Conference name', value: '', placeholder: 'MSBA Annual Conference ' + year },
+          { key: 'slug', label: 'Page address: conferences.practice-plan.com/s/', value: '', placeholder: 'msba-' + year + ' (blank: made from the name)' },
+          { key: 'start', label: 'First day', type: 'date', value: '' },
+          { key: 'end', label: 'Last day', type: 'date', value: '' },
+          { key: 'city', label: 'City', value: '', placeholder: 'Minneapolis' },
+          { key: 'state', label: 'State (two letters)', value: '', placeholder: 'MN' },
+          { key: 'audience', label: 'Audience (sets the page copy)', type: 'select', options: TS_AUDIENCES.map(function(a) { return { val: a.val, label: a.label }; }), value: 'sbo' },
+          { key: 'rep', label: 'Leads go to', type: 'select', options: [{ val: '', label: 'The rotation' }].concat(reps.map(function(m) { return { val: m.email, label: m.name }; })), value: '' },
+          { key: 'offer', label: 'Offer line (optional, green in the hero)', value: '', placeholder: 'Stop by booth 212 for a free facility revenue audit' },
+          { key: 'booth', label: 'Booth (optional)', value: '', placeholder: '212' }
+        ], async function(v) {
+          var name = String(v.name || '').trim(); if (!name) { showToast('Give the conference a name', 'error'); return; }
+          var slug = slugify(v.slug || name); if (!slug) { showToast('That name makes an empty address; type a slug', 'error'); return; }
+          if ((tsList || []).some(function(t) { return slugify(t.slug || t.name) === slug; })) { showToast('A show already uses /s/' + slug + '. Open it on Trade Shows instead.', 'error'); return; }
+          var st = String(v.state || '').trim().toUpperCase().slice(0, 2), loc = [String(v.city || '').trim(), st].filter(Boolean).join(', ');
+          var url = 'https://conferences.practice-plan.com/s/' + slug;
+          var row = { name: name, slug: slug, eventDate: v.start || '', exhibitStart: v.start || '', exhibitEnd: v.end || v.start || '', location: loc, audience: v.audience || 'other', reps: v.rep || '', assignMode: v.rep ? 'rep' : 'rotation', offer: v.offer || '', boothSize: v.booth || '', sourceKey: slug.toUpperCase(), pageUrl: url, notes: '' };
+          try {
+            var r = await ppApi('saveTradeShow', { row: JSON.stringify(row) }, 60000); if (!r.success) throw new Error(r.error || 'Could not save the show');
+            var show = r.row || row;
+            var lp = { id: 'lp_official_' + show.id, title: name, url: url, showId: show.id, sourceKey: slug.toUpperCase(), audience: (TS_AUDIENCES.find(function(a) { return a.val === row.audience; }) || {}).label || '', notes: 'Official page (auto)', reps: v.rep || '' };
+            try { var r2 = await ppApi('saveLandingPage', { row: lp }, 60000); if (r2 && r2.success && r2.id) lp.id = r2.id; } catch (e) {}
+            try { await loadTradeShows(true); } catch (e) {}
+            try { await loadLandingPages(true); } catch (e) { if (!lpList.some(function(x) { return x.id === lp.id; })) lpList.push(lp); }
+            renderLandingPages(); if (typeof renderTradeShows === 'function') renderTradeShows();
+            ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + ppEsc(name) + '</h2><div class="modal-subtitle">On the Trade Shows board, and the page is being built</div></div><div class="modal-body"><div class="lp-new-done" style="margin-bottom:12px"><code>' + ppEsc(url) + '</code><button class="pp-btn" onclick="ppCopy(\'' + ppEsc(url) + '\',\'Page link\')">Copy link</button><a class="pp-btn primary" href="' + ppEsc(url) + '" target="_blank" rel="noopener">Open the page</a></div><div class="ca-sub" style="line-height:1.5">The page is live within about five minutes (the first visit builds it). Put this link on the QR code. Dates, booth, offer and audience copy follow the show record: edit the show on Trade Shows and the page updates on its own. Leads from the page land on Inbound Leads under this show' + (v.rep ? ' and go to ' + ppEsc((reps.find(function(m) { return m.email === v.rep; }) || {}).name || v.rep) : ' and go to the rotation') + '.</div></div>');
+          } catch (e) { showToast(e.message, 'error'); }
+        }, { title: 'New show page', note: 'Creates the show on the Trade Shows board and its page at conferences.practice-plan.com/s/<slug>, live within a few minutes. Leads from the page come in under this show and go to the rep you pick. Dates, booth, offer and copy can be changed any time by editing the show; the page follows.', submitLabel: 'Create the page' });
+      };
+      var _rlp = renderLandingPages; renderLandingPages = function() { _rlp(); var acts = document.querySelector('#landingView .actions-group, #landingPagesView .actions-group'); if (acts && !acts.querySelector('.lp-new-btn')) { var b = document.createElement('button'); b.className = 'text-action-btn lp-new-btn'; b.title = 'Create a show and its auto page from a few details'; b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> New show page'; b.onclick = function() { lpNewShowPage(b); }; acts.insertBefore(b, acts.firstChild); } };
     })();
   </script>
 </body>
