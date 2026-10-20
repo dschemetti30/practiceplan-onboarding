@@ -6111,6 +6111,9 @@
     }
     // an auto page lives at /s/<slug> only because a show carries that slug: when the page's URL is changed to a new /s/ address, the show's slug moves with it, so the page exists at the new address within minutes
     async function lpFollowSlug(p, url) {
+      // the admin tool's own domain never hosts a show page; a URL typed there becomes the matching auto page address
+      var wrong = String(url || '').match(/^https?:\/\/(onboarding\.practice-plan\.com|conferences\.practice-plan\.com)\/(?!s\/)([a-z0-9-]+)\/?$/i);
+      if (wrong && p.showId) { var fixed = 'https://conferences.practice-plan.com/s/' + wrong[2].toLowerCase(); if (confirm('Show pages live at conferences.practice-plan.com/s/<slug>, not at ' + wrong[1] + '.\n\nUse ' + fixed + ' instead?')) { p.url = fixed; renderLandingPages(); try { await ppApi('saveLandingPage', { row: p }); } catch (e) {} url = fixed; } }
       var m = String(url || '').match(/conferences\.practice-plan\.com\/s\/([a-z0-9-]+)\/?$/i); if (!m) return;
       var slug = m[1].toLowerCase(), show = p.showId ? tsList.find(function(x) { return x.id === p.showId; }) : null; if (!show) { showToast('Changed. This page is not linked to a show, so /s/' + slug + ' only exists if a show on the board uses that slug.', 'info'); return; }
       var cur = String(show.slug || '').toLowerCase(); if (cur === slug) return;
@@ -10766,7 +10769,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v154 · Oct 20h';
+    var PP_BUILD = 'v154 · Oct 20i';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
