@@ -10273,7 +10273,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       var emailOk = !!l.email && l.emailCheck !== 'bad';
       steps.push({ key: 'email', label: 'Email', ok: emailOk, warn: !!l.email && l.emailCheck === 'suspect', why: !l.email ? 'No email address' : l.emailCheck === 'bad' ? 'Email cannot receive mail' + (l.emailSuggest ? ' (try ' + l.emailSuggest + ')' : '') : l.emailCheck === 'suspect' ? 'Email looks like a typo; worth a glance' : 'Email verified', action: !emailOk || l.emailCheck === 'suspect' ? { label: l.email ? 'Fix email' : 'Add email', fn: 'leadFixEmail(\'' + ppEsc(l.leadId || l.id) + '\')' } : null });
       var crmOk = !!(l.closeLeadId && (l.closeContactId || l.closeOppId));
-      steps.push({ key: 'crm', label: 'In Close CRM', ok: crmOk, why: crmOk ? 'Lead and contact exist in Close CRM' : l.closeLeadId ? 'Linked, but the contact is not on the Close CRM lead yet' : 'Not in Close CRM yet', action: crmOk ? null : { label: 'Add to CRM', fn: 'leadPushClose(\'' + ppEsc(l.leadId || l.id) + '\',this)', needs: emailOk } });
+      steps.push({ key: 'crm', label: 'In Close CRM', ok: crmOk, why: crmOk ? 'Lead and contact exist in Close CRM' : l.closeLeadId ? 'Linked to the Close CRM lead; the person has not been matched to a contact on it yet. Complete in CRM finds them by email or name (never adds a duplicate), tags the source and opens the opportunity.' : 'Not in Close CRM yet', action: crmOk ? null : { label: l.closeLeadId ? 'Complete in CRM' : 'Add to CRM', fn: 'leadPushClose(\'' + ppEsc(l.leadId || l.id) + '\',this)', needs: emailOk } });
       var seqOk = !!(l.fuSequenceId || plan.sequenceId);
       steps.push({ key: 'seq', label: 'Sequence', ok: seqOk, why: seqOk ? 'Sequence chosen for ' + (plan.scope === 'show' ? plan.showName : 'website leads') : 'No sequence chosen for ' + (plan.scope === 'show' ? plan.showName : 'website leads'), action: seqOk ? null : { label: 'Choose', fn: plan.scope === 'show' && plan.showId ? 'switchView(\'tradeshows\');setTimeout(function(){openTsModal(\'' + ppEsc(plan.showId) + '\')},300)' : 'switchView(\'settings\')' } });
       var state = l.state || l.fuState || '';
@@ -10758,7 +10758,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v153 · Oct 19a';
+    var PP_BUILD = 'v153 · Oct 20b';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -11177,7 +11177,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
   <style>.pp-chip.booked[data-state="launching"]{animation:ppPulse 1.2s ease-in-out infinite}@keyframes ppPulse{50%{opacity:.55}}</style>
   <script>
     // Follow-up: a one-press full sync with Close CRM
-    window.fqSyncClose = async function(btn) { if (btn) btn.disabled = true; try { var r = await ppApi('reconcileFollowUps', {}, 170000); if (!r.success) throw new Error(r.error); showToast(r.changed ? r.changed + ' lead' + (r.changed > 1 ? 's' : '') + ' corrected from Close CRM' : 'Everything already matched Close CRM', 'success'); fqLoad(true); } catch(e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v101)' : ''), 'error'); } if (btn) btn.disabled = false; };
+    window.fqSyncClose = async function(btn) { if (btn) btn.disabled = true; try { var r = await ppApi('reconcileFollowUps', {}, 170000); if (!r.success) throw new Error(r.error); showToast((r.changed ? r.changed + ' lead' + (r.changed > 1 ? 's' : '') + ' corrected from Close CRM' : 'Everything already matched Close CRM') + (r.contacts ? ' \u00b7 ' + r.contacts + ' contact' + (r.contacts > 1 ? 's' : '') + ' found on linked leads' : r.contactsTried ? ' \u00b7 no contact matched on ' + r.contactsTried + ' linked lead' + (r.contactsTried > 1 ? 's' : '') : ''), 'success', 7000); fqLoad(true); } catch(e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v101)' : ''), 'error'); } if (btn) btn.disabled = false; };
   </script>
   <script>
     // polls are marked so the server skips the Close CRM reconcile for them
