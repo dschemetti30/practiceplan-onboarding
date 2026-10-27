@@ -10785,7 +10785,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v158 · Oct 27d';
+    var PP_BUILD = 'v158 · Oct 27e';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -12889,6 +12889,16 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       };
       window.nudgeSave = async function(btn) { var card = document.getElementById('nudgeCard'), cfg = { on: card.querySelector('[data-nk="on"]').checked ? 'on' : 'off', cadenceDays: Number(card.querySelector('[data-nk="cadenceDays"]').value) || 14, maxSends: Number(card.querySelector('[data-nk="maxSends"]').value) || 4, templates: {} }; ['photos', 'website'].forEach(function(k) { cfg.templates[k] = { subject: card.querySelector('[data-nk="' + k + '.subject"]').value, body: card.querySelector('[data-nk="' + k + '.body"]').value }; }); if (btn) btn.disabled = true; try { var r = await ppApi('setNudgeConfig', { config: cfg }, 60000); if (!r.success) throw new Error(r.error); window._nudgeCfg = null; showToast('Saved', 'success'); } catch (e) { showToast(e.message, 'error'); } if (btn) btn.disabled = false; };
       window.nudgeRunNow = async function(btn) { if (btn) btn.disabled = true; try { var r = await ppApi('nudgeRunNow', {}, 170000); if (!r.success) throw new Error(r.error); showToast((r.sent || []).length ? 'Sent: ' + r.sent.join('; ') : 'Nothing due today', 'success', 8000); } catch (e) { showToast(e.message, 'error'); } if (btn) btn.disabled = false; };
+    })();
+  </script>
+
+  <script>
+    // v158: archive or delete an onboarding from the Playbook header (the Submissions table and the record modal keep their own Archive/Delete)
+    (function() {
+      if (typeof renderPlaybook !== 'function' || typeof subArchive !== 'function') return;
+      window.pbArchive = async function(email) { var d = subFind(email); if (!d) return; if (!confirm('Archive ' + (d.organization || email) + '? It leaves the board and the playbook; find it under the Archived filter on Submissions to restore.')) return; await subArchive(email, false); pbClient = ''; renderPlaybook(); };
+      window.pbDelete = async function(email) { if (typeof subDelete !== 'function') return; await subDelete(email); pbClient = ''; renderPlaybook(); };
+      var _rp = renderPlaybook; renderPlaybook = function() { _rp(); var right = document.querySelector('#pbMain .pb-head-right'); if (!right || right.querySelector('.pb-archive') || !pbClient) return; right.insertAdjacentHTML('beforeend', '<button class="pp-mini-btn pb-archive" style="width:auto;padding:0 9px" title="Hide this onboarding (restore any time from Submissions > Archived)" onclick="pbArchive(\'' + ppEsc(pbClient) + '\')">Archive</button>' + (ppIsSuperAdmin() ? '<button class="pp-mini-btn pb-archive" style="width:auto;padding:0 9px;color:#b91c1c" title="Remove the record, its checklist and comments for good" onclick="pbDelete(\'' + ppEsc(pbClient) + '\')">Delete</button>' : '')); };
     })();
   </script>
 </body>
