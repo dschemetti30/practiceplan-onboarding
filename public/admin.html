@@ -12809,7 +12809,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         } catch (e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v127)' : ''), 'error'); }
         if (btn) btn.disabled = false;
       };
-      window.obFolders = async function(btn) { if (btn) btn.disabled = true; try { var r = await ppApi('ensureClientFolders', {}, 290000); if (!r.success) throw new Error(r.error); showToast(r.created + ' folder' + (r.created === 1 ? '' : 's') + ' created, ' + r.existing + ' already there (' + r.total + ' onboardings)', 'success', 7000); if (typeof loadData === 'function') loadData(); } catch (e) { showToast(e.message, 'error'); } if (btn) btn.disabled = false; };
+      window.obFolders = async function(btn) { if (btn) btn.disabled = true; try { var r = await ppApi('ensureClientFolders', {}, 290000); if (!r.success) throw new Error(r.error); showToast(r.created + ' folder' + (r.created === 1 ? '' : 's') + ' created, ' + r.existing + ' already there (' + r.total + ' onboardings)' + (r.shared ? ' \u00b7 shared with ' + r.shared : ''), 'success', 8000); if (typeof loadData === 'function') loadData(); } catch (e) { showToast(e.message, 'error'); } if (btn) btn.disabled = false; };
       var mo = new MutationObserver(function() { clearTimeout(window._obBtnT); window._obBtnT = setTimeout(addBoardButtons, 60); }); mo.observe(document.body, { childList: true, subtree: true }); addBoardButtons();
 
       // ---- Playbook: documents from the client's folder, upload by button or drop ----
