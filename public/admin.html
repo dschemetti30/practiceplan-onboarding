@@ -1716,6 +1716,10 @@
     .pb-client-main{flex:1;min-width:0}
     .pb-client-main b{display:block;font-size:12.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .pb-client-main span{display:block;font-size:10.5px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pb-side-filter{display:flex;gap:4px;margin-top:8px}
+    .pb-side-filter button{flex:1;height:28px;border-radius:50px;border:1px solid var(--border);background:var(--card);font:inherit;font-size:11.5px;font-weight:700;color:var(--text2);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:5px}
+    .pb-side-filter button b{font-size:10.5px;min-width:16px;height:16px;padding:0 4px;border-radius:50px;background:var(--bg);display:inline-flex;align-items:center;justify-content:center}
+    .pb-side-filter button.on{background:var(--text);color:#fff;border-color:var(--text)}.pb-side-filter button.on b{background:rgba(255,255,255,0.18);color:#fff}
     .pb-head{display:flex;align-items:center;gap:14px;margin-bottom:12px}
     .pb-head-main{flex:1;min-width:0}
     .pb-title{font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--text)}
@@ -2458,7 +2462,7 @@
       <!-- ===== Onboarding Playbook ===== -->
       <div class="view-content" id="playbookView">
         <div class="pb-layout">
-          <div class="pb-side"><div class="pb-side-h"><b>Onboardings</b><input class="search-input" id="pbSearch" placeholder="Find a district..." oninput="renderPlaybook()"></div><div id="pbClients"></div></div>
+          <div class="pb-side"><div class="pb-side-h"><b>Onboardings</b><input class="search-input" id="pbSearch" placeholder="Find a district..." oninput="renderPlaybook()"><div class="pb-side-filter" id="pbSideFilter"></div></div><div id="pbClients"></div></div>
           <div id="pbMain"></div>
         </div>
       </div>
@@ -6762,12 +6766,18 @@
     function pbPhaseProgress(email, ph) { var steps = pbSteps(email, ph), d = steps.filter(function(s) { return pbDone(email, s.id); }).length; return { done: d, total: steps.length }; }
     function pbCurrentPhase(email) { for (var i = 0; i < PB_PHASES.length; i++) { var p = pbPhaseProgress(email, PB_PHASES[i]); if (p.done < p.total) return PB_PHASES[i]; } return null; }
     function pbClients() { return allData.filter(function(d) { return ['on-hold'].indexOf(d.pipelineStatus) < 0; }).sort(function(a, b) { return (b.updatedDate || 0) - (a.updatedDate || 0); }); }
+    var pbSideView = (function() { try { return localStorage.getItem('pp.pb.side') || 'active'; } catch (e) { return 'active'; } })();
     function renderPlaybook() {
       var side = document.getElementById('pbClients'), main = document.getElementById('pbMain'); if (!side) return;
       var clients = pbClients();
       if (!pbClient || !clients.some(function(c) { return c.email === pbClient; })) pbClient = (clients.find(function(c) { return ['in-progress', 'onboarding', 'review', 'complete'].indexOf(c.pipelineStatus) >= 0; }) || clients[0] || {}).email || '';
       var q = ((document.getElementById('pbSearch') || {}).value || '').toLowerCase();
-      side.innerHTML = clients.filter(function(c) { return !q || (c.organization || '').toLowerCase().indexOf(q) >= 0; }).map(function(c) { var p = pbProgress(c.email), cur = pbCurrentPhase(c.email); return '<div class="pb-client' + (c.email === pbClient ? ' on' : '') + '" onclick="pbClient=\'' + ppEsc(c.email) + '\';renderPlaybook()">' + ppAvatar(c.organization, c.email, 30) + '<div class="pb-client-main"><b>' + ppEsc(c.organization || 'Unknown') + '</b><span>' + (PP_STATUS_LABELS[c.pipelineStatus] || c.pipelineStatus) + (cur ? ' &middot; ' + cur.num + '. ' + cur.title : ' &middot; complete') + '</span><div class="sub-bar" style="margin-top:4px"><div class="sub-bar-track"><i style="width:' + p.pct + '%;background:' + (p.pct === 100 ? 'var(--pp-green)' : 'var(--pp-blue)') + '"></i></div><span>' + p.pct + '%</span></div></div></div>'; }).join('') || '<div class="pp-up-empty">No onboardings match.</div>';
+      // least progressed first, complete at the bottom; Active hides the 100% ones, Complete shows only them
+      var withP = clients.map(function(c) { return { c: c, p: pbProgress(c.email) }; }), nActive = withP.filter(function(x) { return x.p.pct < 100; }).length, nDone = withP.length - nActive;
+      var fEl = document.getElementById('pbSideFilter'); if (fEl) fEl.innerHTML = [['active', 'Active', nActive], ['done', 'Complete', nDone], ['all', 'All', withP.length]].map(function(f) { return '<button class="' + (pbSideView === f[0] ? 'on' : '') + '" onclick="pbSideView=\'' + f[0] + '\';try{localStorage.setItem(\'pp.pb.side\',pbSideView)}catch(e){};renderPlaybook()">' + f[1] + '<b>' + f[2] + '</b></button>'; }).join('');
+      var shown = withP.filter(function(x) { if (q && (x.c.organization || '').toLowerCase().indexOf(q) < 0) return false; if (pbSideView === 'active') return x.p.pct < 100; if (pbSideView === 'done') return x.p.pct >= 100; return true; }).sort(function(a, b) { return a.p.pct - b.p.pct || String(a.c.organization || '').localeCompare(String(b.c.organization || '')); }).map(function(x) { return x.c; });
+      if (!q && shown.length && !shown.some(function(c) { return c.email === pbClient; })) pbClient = shown[0].email;
+      side.innerHTML = shown.map(function(c) { var p = pbProgress(c.email), cur = pbCurrentPhase(c.email); return '<div class="pb-client' + (c.email === pbClient ? ' on' : '') + '" onclick="pbClient=\'' + ppEsc(c.email) + '\';renderPlaybook()">' + ppAvatar(c.organization, c.email, 30) + '<div class="pb-client-main"><b>' + ppEsc(c.organization || 'Unknown') + '</b><span>' + (PP_STATUS_LABELS[c.pipelineStatus] || c.pipelineStatus) + (cur ? ' &middot; ' + cur.num + '. ' + cur.title : ' &middot; complete') + '</span><div class="sub-bar" style="margin-top:4px"><div class="sub-bar-track"><i style="width:' + p.pct + '%;background:' + (p.pct === 100 ? 'var(--pp-green)' : 'var(--pp-blue)') + '"></i></div><span>' + p.pct + '%</span></div></div></div>'; }).join('') || '<div class="pp-up-empty">No onboardings match.</div>';
       var d = clients.find(function(c) { return c.email === pbClient; });
       if (!d) { main.innerHTML = '<div class="pp-empty"><strong>No onboarding selected</strong>Pick a district on the left. Records come from the form or a workbook import.</div>'; return; }
       var email = d.email, prog = pbProgress(email), cur = pbCurrentPhase(email);
@@ -10772,7 +10782,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v156 · Oct 27a';
+    var PP_BUILD = 'v156 · Oct 27b';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
