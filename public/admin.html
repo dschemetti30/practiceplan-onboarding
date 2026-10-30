@@ -10809,7 +10809,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v171 · Oct 29d';
+    var PP_BUILD = 'v173 · Oct 30b';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -13067,6 +13067,9 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
           try { var r = await ppApi('setAvailability', { orgEmail: email, organization: d.organization || '', season: season, status: v.status, openThrough: v.openThrough || '', note: v.note || '' }, 60000); if (!r.success) throw new Error(r.error); var i = avData.findIndex(function(x) { return x.id === r.row.id; }); if (i >= 0) avData[i] = r.row; else avData.push(r.row); try { if (typeof ppIdbSet === 'function') ppIdbSet('availability', { success: true, rows: avData, seasons: avSeasons, clients: avClients, gaps: window.avGaps, email: currentUser && currentUser.email }); } catch (e3) {} } catch (e) { avData = before; renderAvailability(); showToast('Not saved: ' + e.message, 'error'); } }, { title: (d.label || d.organization || email) + ' · ' + (s.label || season), submitLabel: 'Save' });
       };
       window.avNote = function(el, email, season) { avEdit(el, email, season); };
+      // v172: the Set availability modal (a later block) reads and writes this block's state through these
+      window.avState = function() { return { data: avData, seasons: avSeasons, clients: avClients }; };
+      window.avSetData = function(rows) { avData = rows; };
       var _ls = (typeof loadData === 'function') ? null : null;
     })();
   </script>
@@ -13250,9 +13253,18 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     .hl-link b{color:var(--text)}
     .hl-v.nolink{color:#b45309;font-weight:600}
     .hl-trend{white-space:nowrap}.hl-trend .hl-spark{display:inline-block;vertical-align:middle;margin-left:8px}
+    /* v173: seven columns, room on the left, a Close CRM button on the right */
+    #healthHost .hl-v3 th:nth-child(1){width:24%}#healthHost .hl-v3 th:nth-child(2){width:13%}#healthHost .hl-v3 th:nth-child(3){width:11%}#healthHost .hl-v3 th:nth-child(4){width:11%}#healthHost .hl-v3 th:nth-child(5){width:15%}#healthHost .hl-v3 th:nth-child(6){width:10%}#healthHost .hl-v3 th:nth-child(7){width:9%}#healthHost .hl-v3 th:nth-child(8){width:7%}
+    #healthHost .hl-v3 th,#healthHost .hl-v3 td{padding:14px 12px}#healthHost .hl-v3 th:first-child,#healthHost .hl-v3 td:first-child{padding-left:22px}
+    #healthHost .hl-v3 tr.hl-row td:first-child{border-left-width:4px}#healthHost .hl-v3 .hl-org b{font-size:13.5px;margin-bottom:2px}#healthHost .hl-v3 .hl-org span{font-size:11.5px}
+    #healthHost .hl-v3 .hl-sc{white-space:nowrap}#healthHost .hl-v3 .hl-sc .hl-band{font-size:9.5px;padding:3px 8px}
+    #healthHost .hl-v3 td.hl-crm{text-align:right;padding-right:18px}.hl-crm-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:9px;border:1px solid var(--border);background:var(--card);font-size:12px;font-weight:600;color:var(--pp-blue);text-decoration:none;white-space:nowrap;transition:all var(--t-fast)}.hl-crm-btn:hover{border-color:var(--pp-blue);background:rgba(0,118,187,.06)}.hl-crm-btn svg{width:13px;height:13px}.hl-crm-none{color:var(--text3)}
+    #healthHost .hl-v3 tr.hl-row:hover td{background:rgba(0,118,187,.025)}
+    #healthHost .hl-v3 td small{margin-top:3px}
     /* v169: the table fits the screen (columns share the width, small text wraps) and the open panel pins to the visible width */
     #healthHost .hl-v2{table-layout:fixed;width:100%;min-width:0}
-    #healthHost .hl-v2 th:nth-child(1){width:16%}#healthHost .hl-v2 th:nth-child(2){width:9%}#healthHost .hl-v2 th:nth-child(3){width:8%}#healthHost .hl-v2 th:nth-child(4){width:8%}#healthHost .hl-v2 th:nth-child(5){width:11%}#healthHost .hl-v2 th:nth-child(6){width:8%}#healthHost .hl-v2 th:nth-child(7){width:7%}#healthHost .hl-v2 th:nth-child(8){width:7%}#healthHost .hl-v2 th:nth-child(9){width:8%}#healthHost .hl-v2 th:nth-child(10){width:5%}
+    #healthHost .hl-v2 th:nth-child(1){width:15%}#healthHost .hl-v2 th:nth-child(2){width:10%}#healthHost .hl-v2 th:nth-child(3){width:9%}#healthHost .hl-v2 th:nth-child(4){width:8%}#healthHost .hl-v2 th:nth-child(5){width:11%}#healthHost .hl-v2 th:nth-child(6){width:8%}#healthHost .hl-v2 th:nth-child(7){width:7%}#healthHost .hl-v2 th:nth-child(8){width:7%}#healthHost .hl-v2 th:nth-child(9){width:7%}#healthHost .hl-v2 th:nth-child(10){width:5%}
+    #healthHost .hl-sc{white-space:normal}#healthHost .hl-sc .hl-ring{margin-right:6px}#healthHost .hl-sc .hl-band{font-size:9px;padding:2px 6px;vertical-align:middle}
     #healthHost .hl-v2 th{padding:10px 8px;font-size:10px;letter-spacing:.04em;white-space:normal;line-height:1.2}#healthHost .hl-v2 td{padding:10px 8px}
     #healthHost .hl-v2 td{overflow:hidden}#healthHost .hl-v2 td small{white-space:normal;line-height:1.3}#healthHost .hl-v2 td.hl-org b{white-space:normal}
     #healthHost .hl-v2 .hl-why{min-width:0;max-width:none}#healthHost .hl-w{max-width:100%}
@@ -13432,6 +13444,88 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       } catch (e) {} }; }
       var acct = {};   // filled per build; kept for the stale rows' label
       var _b = build; build = function() { var r = _b(); try { acct = {}; (typeof closeAccounts !== 'undefined' ? closeAccounts : []).forEach(function(a) { [a.organization, a.closeName].forEach(function(nm) { var k = key(nm); if (k && a.statusLabel && (!acct[k] || isCust(a.statusLabel))) acct[k] = a; }); }); } catch (e) {} return r; };
+    })();
+  </script>
+  <style>
+    /* v172: trend arrows on Health, one Set availability button per row on Availability */
+    .hl-tr{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:12.5px;white-space:nowrap}.hl-tr i{display:inline-flex;flex-direction:row;align-items:center;line-height:0}.hl-tr svg{width:11px;height:11px;display:block}.hl-tr.up svg{fill:#0f7a4a}.hl-tr.down svg{fill:#b4312a}.hl-tr.up{color:#0f7a4a}.hl-tr.down{color:#b4312a}.hl-tr.steady{color:var(--text2);font-weight:600}.hl-tr.steady .dot{width:9px;height:9px;border-radius:50%;background:#cbd5e1;display:inline-block}.hl-tr.new{color:var(--text3);font-weight:500}
+    .hl-tr i svg+svg{margin-left:1px}
+    .av-set{display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--card);font:inherit;font-size:11.5px;font-weight:600;color:var(--pp-blue);cursor:pointer;white-space:nowrap}.av-set:hover{border-color:var(--pp-blue);background:rgba(0,118,187,.05)}.av-set.empty{color:#b45309;border-color:rgba(217,119,6,.4)}.av-set svg{width:12px;height:12px}
+    .av-bar,.av-cell{cursor:default!important}.av-bar:hover{filter:none!important;transform:none!important}
+    .avm-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.avm-field label{display:block;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:6px}.avm-field input,.avm-field select,.avm-field textarea{width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:9px;background:var(--bg);font:inherit;font-size:13px;color:var(--text)}.avm-field textarea{min-height:64px;resize:vertical}
+    .avm-h{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:baseline}.avm-h span{text-transform:none;letter-spacing:0;font-weight:500;font-size:11.5px;color:var(--text3)}
+    .avm-row{display:grid;grid-template-columns:150px 150px 1fr;gap:10px;align-items:center;padding:7px 0;border-bottom:1px dashed var(--border)}.avm-row:last-child{border-bottom:none}.avm-row b{font-size:13px;color:var(--text)}.avm-row small{display:block;font-size:11px;color:var(--text3);font-weight:500}.avm-row select,.avm-row input{padding:7px 9px;border:1px solid var(--border);border-radius:8px;background:var(--bg);font:inherit;font-size:12.5px;color:var(--text);width:100%}.avm-row .avm-derived{font-size:12px;color:var(--text2)}
+    .avm-foot{display:flex;gap:8px;justify-content:flex-end;align-items:center;margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}
+  </style>
+  <script>
+    // v172: Health trend as arrows. Two green up for a strong rise, one for a rise, "Steady" for a flat score (which is good),
+    // one red down for a drop, two for a sharp one; "new" until there is 30 days of history.
+    (function() {
+      var UP = '<svg viewBox="0 0 24 24"><path d="M12 5l9 14H3z"/></svg>', DOWN = '<svg viewBox="0 0 24 24"><path d="M12 19L3 5h18z"/></svg>';
+      window.ppTrendMark = function(d30, d7) {
+        if (d30 === null || d30 === undefined) return '<span class="hl-tr new" title="Scores are kept daily; the trend shows once there is 30 days of history">new</span>';
+        var tip = (d30 > 0 ? '+' : '') + d30 + ' over 30 days' + (d7 !== null && d7 !== undefined ? ', ' + (d7 > 0 ? '+' : '') + d7 + ' over 7' : '');
+        if (d30 >= 12) return '<span class="hl-tr up" title="' + tip + '"><i>' + UP + UP + '</i>Rising</span>';
+        if (d30 >= 4) return '<span class="hl-tr up" title="' + tip + '"><i>' + UP + '</i>Rising</span>';
+        if (d30 <= -12) return '<span class="hl-tr down" title="' + tip + '"><i>' + DOWN + DOWN + '</i>Falling</span>';
+        if (d30 <= -4) return '<span class="hl-tr down" title="' + tip + '"><i>' + DOWN + '</i>Falling</span>';
+        return '<span class="hl-tr steady" title="' + tip + '"><span class="dot"></span>Steady</span>';
+      };
+      if (typeof renderHealth === 'function') { var _rh = renderHealth; renderHealth = function() { _rh.apply(this, arguments); try {
+        var data = window._hlLast, host = document.getElementById('healthHost'); if (!data || !host) return; var byKey = {}; (data.rows || []).forEach(function(r) { byKey[r.email] = r; });
+        // v173: fewer columns. Check-in, Reminders and Why live in the expanded row now; a Close CRM button takes the last column.
+        var tbl = host.querySelector('table.hl-v2'); if (tbl && !tbl.classList.contains('hl-v3')) { tbl.classList.add('hl-v3'); var ths = tbl.querySelectorAll('thead th'); var drop = []; ths.forEach(function(th, i) { var t = th.textContent.replace(/[\u25b2\u25bc]/g, '').trim(); if (/^(Check-in|Reminders|Why)$/i.test(t)) drop.push(i); });
+          var closeIdx = drop.length ? drop[drop.length - 1] : -1;
+          tbl.querySelectorAll('tr').forEach(function(tr) { if (tr.querySelector('td[colspan]')) { tr.querySelector('td[colspan]').setAttribute('colspan', String(ths.length - drop.length + 1)); return; } var cells = Array.prototype.slice.call(tr.children); drop.slice().reverse().forEach(function(i) { if (cells[i]) cells[i].remove(); }); if (tr.parentNode.tagName === 'THEAD') { var th = document.createElement('th'); th.className = 'hl-th-crm'; th.textContent = ''; tr.appendChild(th); } else if (tr.classList.contains('hl-row')) { var m = String(tr.getAttribute('onclick') || '').match(/hlToggle\('(.*)'\)/), r = m ? byKey[m[1]] : null, td = document.createElement('td'); td.className = 'hl-crm'; td.innerHTML = r && r.closeUrl ? '<a class="hl-crm-btn" href="' + ppEsc(r.closeUrl) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Open the lead in Close CRM"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Close</a>' : '<span class="hl-crm-none" title="Not linked to a Close CRM lead">-</span>'; tr.appendChild(td); } }); }
+        host.querySelectorAll('tr.hl-row').forEach(function(tr) { var m = String(tr.getAttribute('onclick') || '').match(/hlToggle\('(.*)'\)/), r = m ? byKey[m[1]] : null, td = tr.querySelector('td.hl-trend'); if (!r || !td || td.querySelector('.hl-tr')) return; var t = r.trend || {}; td.innerHTML = ppTrendMark(t.d30, t.d7); });
+        host.querySelectorAll('.hlp-score').forEach(function(sc) { var tr = sc.closest('tr'), prev = tr && tr.previousElementSibling, m = prev && String(prev.getAttribute('onclick') || '').match(/hlToggle\('(.*)'\)/), r = m ? byKey[m[1]] : null; if (!r) return; var old = sc.querySelector('.hlp-trend'), sp = sc.querySelector('.hl-spark'); if (sp) sp.remove(); if (old && !old.querySelector('.hl-tr')) { old.className = 'hlp-trend'; old.innerHTML = ppTrendMark((r.trend || {}).d30, (r.trend || {}).d7); } });
+        var th = host.querySelector('th.hl-th-trend'); if (th) th.title = 'Change in the score over 30 days: two arrows for 12 points or more, one for 4 or more, Steady in between';
+        var ks = host.querySelectorAll('.hl-k-trend'); if (ks.length === 2) { ks[0].querySelector('span').textContent = 'rising'; ks[1].querySelector('span').textContent = 'falling'; ks[0].title = 'Score up 4 or more over 30 days'; ks[1].title = 'Score down 4 or more over 30 days'; }
+      } catch (e) {} }; }
+    })();
+  </script>
+  <script>
+    // v172: Availability. The timeline and the season grid are read-only; one "Set availability" button per client opens a
+    // modal with the open-through date (the one thing most clients need) and, under it, a per-season override list for the
+    // few that differ season by season. Replaces the click-a-bar and click-a-cell editing.
+    (function() {
+      if (typeof renderAvailability !== 'function') return;
+      var STATUS = [['open', 'Open'], ['partial', 'Partially open'], ['closed', 'Closed']];
+      function fd(d) { return d ? ppFmtDate(String(d).slice(0, 10), { month: 'short', day: 'numeric', year: 'numeric' }) : ''; }
+      var S = function() { return (typeof avState === 'function') ? avState() : { data: [], seasons: [], clients: [] }; };
+      function raw(email, season) { return (S().data || []).find(function(r) { return String(r.orgEmail || '').toLowerCase() === email && r.season === season; }) || null; }
+      function client(email) { return (S().clients || []).map(function(c) { return { email: c.key, organization: c.organization, label: c.label }; }).concat((allData || []).map(function(x) { return { email: String(x.email || '').toLowerCase(), organization: x.organization }; })).find(function(x) { return x.email === email; }) || { email: email }; }
+      window.avOpen = function(email) {
+        var d = client(email), all = raw(email, '*') || {}, seasons = (S().seasons || []).slice(0, 5), today = ppTodayISO();
+        var rows = seasons.map(function(s) { var ex = raw(email, s.key), told = ex && ['open', 'partial', 'closed'].indexOf(String(ex.status || '').toLowerCase()) >= 0; var der = all.openThrough ? (String(all.openThrough).slice(0, 10) >= s.start ? (all.status === 'partial' ? 'Partially open' : 'Open') + (String(all.openThrough).slice(0, 10) < s.end ? ' through ' + fd(all.openThrough) : '') : 'Closed') : 'Not entered';
+          return '<div class="avm-row" data-season="' + ppEsc(s.key) + '"><div><b>' + ppEsc(s.label) + '</b><small>' + ppEsc(s.start.slice(5).replace('-', '/') + ' to ' + s.end.slice(5).replace('-', '/')) + '</small></div><select data-f="status"><option value="">Follow the date' + (all.openThrough ? ' (' + der + ')' : '') + '</option>' + STATUS.map(function(x) { return '<option value="' + x[0] + '"' + (told && ex.status === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') + '</select><input type="date" data-f="openThrough" value="' + ppEsc(told ? (ex.openThrough || '') : '') + '" placeholder="Through" title="Last bookable date in this season, if it differs"' + (told ? '' : ' disabled') + '></div>'; }).join('');
+        ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + ppEsc(d.label || d.organization || email) + '</h2><div class="modal-subtitle">Availability as the client has it set in PracticePlan. One date covers most clients; use the seasons below only when one differs.</div></div><div class="modal-body" style="padding:22px 26px">'
+          + '<div class="avm-grid"><div class="avm-field"><label>Open for rental through</label><input type="date" id="avmThrough" value="' + ppEsc(all.openThrough || '') + '"><div class="ca-sub" style="margin-top:6px">The last date renters can book. Every season up to it shows as open, later ones as closed.</div></div><div class="avm-field"><label>Up to that date they are</label><select id="avmStatus"><option value="open"' + (all.status !== 'partial' ? ' selected' : '') + '>Open</option><option value="partial"' + (all.status === 'partial' ? ' selected' : '') + '>Partially open</option></select></div></div>'
+          + '<div class="avm-field" style="margin-top:14px"><label>Note</label><textarea id="avmNote" placeholder="e.g. gyms only; no fields in summer">' + ppEsc(all.note || '') + '</textarea></div>'
+          + '<div class="avm-h">Season by season <span>only when a season differs from the date above</span></div>' + rows
+          + '<div class="avm-foot"><button class="pp-btn" onclick="closeModal()">Cancel</button><button class="pp-btn primary" onclick="avSave(\'' + ppEsc(email) + '\',this)">Save</button></div></div>');
+        document.querySelectorAll('#modalContent .avm-row select').forEach(function(sel) { sel.addEventListener('change', function() { var inp = sel.parentNode.querySelector('input'); inp.disabled = !sel.value; if (!sel.value) inp.value = ''; }); });
+      };
+      window.avSave = async function(email, btn) {
+        var d = client(email), through = (document.getElementById('avmThrough') || {}).value || '', status = (document.getElementById('avmStatus') || {}).value || 'open', note = (document.getElementById('avmNote') || {}).value || '';
+        var changes = [{ season: '*', status: status, openThrough: through, note: note }];
+        document.querySelectorAll('#modalContent .avm-row').forEach(function(row) { var s = row.getAttribute('data-season'), st = row.querySelector('select').value, ot = row.querySelector('input').value, ex = raw(email, s), had = ex && ['open', 'partial', 'closed'].indexOf(String(ex.status || '').toLowerCase()) >= 0; if (st) changes.push({ season: s, status: st, openThrough: ot || '' }); else if (had) changes.push({ season: s, status: 'unknown', openThrough: '' }); });
+        if (btn) { btn.disabled = true; btn.textContent = 'Saving'; }
+        var avData = S().data, before = avData.slice();
+        changes.forEach(function(c) { var id = email + '|' + c.season, i0 = avData.findIndex(function(x) { return x.id === id; }), guess = Object.assign({}, (i0 >= 0 ? avData[i0] : {}), { id: id, orgEmail: email, season: c.season, status: c.status, openThrough: c.openThrough || '', note: c.note !== undefined ? c.note : ((i0 >= 0 && avData[i0].note) || '') }); if (i0 >= 0) avData[i0] = guess; else avData.push(guess); });
+        closeModal(); renderAvailability();
+        try { for (var i = 0; i < changes.length; i++) { var c = changes[i], params = { orgEmail: email, organization: d.organization || '', season: c.season, status: c.status, openThrough: c.openThrough || '' }; if (c.note !== undefined) params.note = c.note; var r = await ppApi('setAvailability', params, 60000); if (!r.success) throw new Error(r.error); var j = avData.findIndex(function(x) { return x.id === r.row.id; }); if (j >= 0) avData[j] = r.row; else avData.push(r.row); }
+          try { if (typeof ppIdbSet === 'function') ppIdbSet('availability', { success: true, rows: avData, seasons: S().seasons, clients: S().clients, gaps: window.avGaps, email: currentUser && currentUser.email }); } catch (e3) {} showToast('Availability saved', 'success'); renderAvailability(); try { if (typeof pbClient !== 'undefined' && pbClient && document.getElementById('pbMain')) renderPlaybook(); } catch (e4) {} }
+        catch (e) { avSetData(before); renderAvailability(); showToast('Not saved: ' + e.message, 'error'); }
+      };
+      var _ra = renderAvailability;
+      renderAvailability = function() { _ra.apply(this, arguments); try {
+        var host = document.getElementById('avHost'); if (!host) return;
+        // one button per row in place of the inline open-through line; bars and cells lose their click handlers
+        host.querySelectorAll('.av-org').forEach(function(org) { var ot = org.querySelector('.av-ot'); if (!ot) return; var m = String(ot.getAttribute('onclick') || '').match(/avEditAll\(this,'(.*)'\)/), email = m ? m[1] : ''; var txt = ot.classList.contains('empty') ? 'Set availability' : ot.textContent.replace(/\s+/g, ' ').trim(); var b = document.createElement('button'); b.type = 'button'; b.className = 'av-set' + (ot.classList.contains('empty') ? ' empty' : ''); b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' + ppEsc(txt); b.setAttribute('onclick', "event.stopPropagation();avOpen('" + email.replace(/'/g, "\\'") + "')"); ot.replaceWith(b); });
+        host.querySelectorAll('.av-bar, .av-cell, .av-note').forEach(function(el) { el.removeAttribute('onclick'); el.title = el.title.replace(/ \(click to set\)| ?Click to set/g, ''); });
+        var foot = host.querySelector('.ca-sub:last-child'); if (foot && /Set each client/.test(foot.textContent)) foot.textContent = 'Set availability on a client once: the open-through date is the last date renters can book as the client has it set in PracticePlan. Every season up to it shows as open and later ones as closed; a season that differs is set in the same window. When the date is inside 30 days the client shows up above as a window running out.';
+      } catch (e) {} };
     })();
   </script>
 </body>
