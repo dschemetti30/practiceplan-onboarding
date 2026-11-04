@@ -10820,13 +10820,13 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v186 · Nov 4e';
+    var PP_BUILD = 'v187 · Nov 4f';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
         ppApi('ppPing', {}, 30000).then(function(r) { var v = Number(r && r.version) || 0; window._ppServerVersion = v; if (v && v < 120) { tag.classList.add('warn'); tag.textContent = PP_BUILD + ' · Extras v' + v + ' (needs v120)'; tag.title = 'The server is behind this page: install the current Extras.gs and deploy a new version.'; } else if (v) tag.textContent = PP_BUILD + ' · Extras v' + v; }).catch(function() {});
       }, 1500); };
-      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 152 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
+      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 153 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
     })();
     // =====================================================================
     // TEAM: titles and headshots, editable in Settings
@@ -14407,7 +14407,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
           + '<div class="sp-tiles">' + tile('new', counts.today, 'New today', 'not looked at yet', counts.today ? 'hot' : '') + tile('rfp', counts.rfp, 'RFPs and bids', 'procurement we could answer', 'hot') + tile('trigger', counts.trigger, 'Buying triggers', 'new ADs, bonds, policy changes', 'green') + tile('competitor', counts.competitor, 'Competitor news', 'where they are, what they ship', 'violet') + tile('starred', counts.starred, 'Starred', 'worth following up', 'gold') + '</div>'
           + '<div class="sp-bar"><div class="f2-seg" style="margin:0">' + [['new', 'New'], ['rfp', 'RFPs'], ['trigger', 'Triggers'], ['competitor', 'Competitors'], ['news', 'News'], ['starred', 'Starred'], ['mine', 'Mine'], ['all', 'All']].map(function(x) { return '<button class="seg' + (sgFilter === x[0] ? ' on' : '') + '" onclick="sgSetFilter(\'' + x[0] + '\')">' + x[1] + '</button>'; }).join('') + '</div>'
           + '<input class="q" placeholder="Find a district, a competitor, a word" value="' + ppEsc(sgQ) + '" oninput="sgSetQ(this.value)">'
-          + '<div class="right"><span class="ca-sub">' + (d.last ? ppEsc(String(d.last).replace(/ at \d{4}-.*$/, '')) : 'never run') + (d.ai && !d.ai.key ? ' · <b style="color:#b4312a">no model key</b>' : '') + '</span><button class="text-action-btn" onclick="sgRun(this)">Check now</button>' + (ppIsSuperAdmin() ? '<button class="text-action-btn" onclick="sgCfgToggle()">What we watch</button>' : '') + '</div></div>'
+          + '<div class="right"><span class="ca-sub">' + (d.last ? ppEsc(String(d.last).replace(/ at \d{4}-.*$/, '')) : 'never run') + (d.ai && !d.ai.key ? ' · <a href="#" style="color:#b4312a;font-weight:800" onclick="switchView(\'settings\');setTimeout(function(){var c=document.getElementById(\'ppPropsCard\');if(c)c.scrollIntoView({behavior:\'smooth\',block:\'start\'})},400);return false" title="Paste the Anthropic key under Settings; the editor cannot take it past 50 properties">no model key: add it in Settings &rsaquo;</a>' : '') + '</span><button class="text-action-btn" onclick="sgRun(this)">Check now</button>' + (ppIsSuperAdmin() ? '<button class="text-action-btn" onclick="sgCfgToggle()">What we watch</button>' : '') + '</div></div>'
           + stateStrip + (sgCfgOpen ? sgCfg(d) : '');
         var list = rows.filter(function(r) { if (sgState && (r.state || '??') !== sgState) return false; if (sgQ && (r.title + ' ' + r.snippet + ' ' + r.org + ' ' + r.competitor + ' ' + r.why + ' ' + r.state).toLowerCase().indexOf(sgQ.toLowerCase()) < 0) return false; if (sgFilter === 'all') return live(r); if (sgFilter === 'new') return r.status === 'new'; if (sgFilter === 'starred') return r.status === 'starred'; if (sgFilter === 'mine') return r.assignedTo === me && live(r); return r.kind === sgFilter && live(r); });
         list.sort(function(a, b) { return (b.score - a.score) || String(b.at).localeCompare(String(a.at)); });
@@ -14517,6 +14517,71 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       window.ppPropsSet = async function(key, value, btn) { if (!String(value || '').trim()) { showToast('Paste the value first', 'error'); return; } if (btn) btn.disabled = true; try { var r = await ppApiPost('setScriptProp', { key: key, value: String(value).trim() }, 60000); if (!r.success) throw new Error(r.error); showToast('Saved ' + key, 'success'); ppPropsDraw(r); } catch (e) { showToast(e.message, 'error'); } if (btn) btn.disabled = false; };
       window.ppPropsEdit = function(key) { var k = key || prompt('Property name:', ''); if (!k) return; var v = prompt('Value for ' + k + ':', ''); if (v === null) return; ppPropsSet(k, v); };
       window.ppPropsDel = async function(key) { if (!confirm('Delete the property ' + key + '? The tool recreates the ones it needs; a key or secret would have to be pasted again.')) return; try { var r = await ppApi('deleteScriptProp', { key: key }, 60000); if (!r.success) throw new Error(r.error); ppPropsDraw(r); } catch (e) { showToast(e.message, 'error'); } };
+    })();
+  </script>
+  <style>
+    /* v187: the sidebar's sections fold */
+    .nav-sec{display:contents}
+    body.pp-sidebar .nav-sec{display:block;margin:0 0 2px}
+    body.pp-sidebar .nav-sec .nav-group{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;padding:12px 10px 5px;margin:0;border-radius:8px;transition:color var(--t-fast)}
+    body.pp-sidebar .nav-sec .nav-group:hover{color:var(--text)}
+    body.pp-sidebar .nav-sec .nav-group .nv-chev{margin-left:auto;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;color:var(--text3);opacity:.7}.nav-sec .nav-group .nv-chev svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;transition:transform var(--t-base) var(--spring)}
+    body.pp-sidebar .nav-sec.closed .nav-group .nv-chev svg{transform:rotate(-90deg)}
+    body.pp-sidebar .nav-sec .nav-group .nv-n{font-size:9.5px;font-weight:800;background:var(--bg);color:var(--text3);border-radius:50px;padding:1px 6px;letter-spacing:0;display:none}
+    body.pp-sidebar .nav-sec.closed .nav-group .nv-n{display:inline-block}
+    body.pp-sidebar .nav-sec .nv-body{display:grid;grid-template-rows:1fr;transition:grid-template-rows .3s var(--ease)}
+    body.pp-sidebar .nav-sec.closed .nv-body{grid-template-rows:0fr}
+    body.pp-sidebar .nav-sec .nv-in{min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:1px}
+    body.pp-sidebar .nav-sec .view-tab{padding:7px 10px;font-size:12.5px;border-radius:9px}
+    body.pp-sidebar .nav-sec.closed .view-tab.active{display:none}
+    body.pp-sidebar .nav-sec.closed .nav-group.has-active{color:var(--pp-blue)}
+    body.pp-sidebar .nav-sec.bottom-sec{margin-top:auto;padding-top:8px;border-top:1px solid var(--border)}
+    body.pp-sidebar .pp-side.compact .nav-sec .view-tab,body.pp-sidebar .pp-side.tight .nav-sec .view-tab{padding:6px 10px}
+    .nv-tools{display:flex;gap:6px;padding:8px 10px 2px}.nv-tools button{flex:1;height:24px;border-radius:7px;border:1px solid var(--border);background:var(--card);font-size:10.5px;font-weight:700;color:var(--text3);cursor:pointer;font-family:inherit;transition:all var(--t-fast)}.nv-tools button:hover{color:var(--text);border-color:var(--border-2)}
+    body:not(.pp-sidebar) .nv-tools{display:none}
+    body:not(.pp-sidebar) .nv-body,body:not(.pp-sidebar) .nv-in{display:contents}
+  </style>
+  <script>
+    (function() {
+      // ============================================================================
+      // v187: the sidebar's groups fold. Each heading toggles its section; the choice is remembered; the section holding
+      // the active page always opens. Tabs added later by other blocks (Follow-up, CRM Health, Close CRM Intel) are swept
+      // into the right section as they appear.
+      // ============================================================================
+      var KEY = 'pp.nav.closed', CH = '<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>';
+      function closedSet() { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } }
+      function saveClosed(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
+      function keyOf(label) { return String(label || '').toLowerCase().replace(/[^a-z]/g, ''); }
+      window.ppNavSections = function() {
+        var tabs = document.querySelector('.view-tabs'); if (!tabs) return;
+        var closed = closedSet(), kids = Array.prototype.slice.call(tabs.children), sec = null, body = null;
+        kids.forEach(function(el) {
+          if (el.classList.contains('nav-sec')) { sec = el; body = el.querySelector('.nv-in'); return; }
+          if (el.classList.contains('nav-group')) {
+            var label = el.textContent.trim(), k = keyOf(label); sec = document.createElement('div'); sec.className = 'nav-sec' + (closed[k] ? ' closed' : '') + (el.classList.contains('bottom') ? ' bottom-sec' : ''); sec.setAttribute('data-key', k);
+            tabs.insertBefore(sec, el); sec.appendChild(el);
+            if (!el.querySelector('.nv-chev')) { el.innerHTML = '<span class="nv-label">' + ppEsc(label) + '</span><span class="nv-n"></span><span class="nv-chev">' + CH + '</span>'; el.setAttribute('role', 'button'); el.onclick = function(ev) { ev.stopPropagation(); ppNavToggle(k); }; }
+            body = document.createElement('div'); body.className = 'nv-body'; var inner = document.createElement('div'); inner.className = 'nv-in'; body.appendChild(inner); sec.appendChild(body); body = inner; return;
+          }
+          if (el.classList.contains('view-tab') && body) body.appendChild(el);
+          else if (el.id === 'ppBuildTag' && sec) sec.appendChild(el);
+        });
+        tabs.querySelectorAll('.nav-sec').forEach(function(sc) { var n = sc.querySelectorAll('.view-tab:not(.soon)').length, badge = sc.querySelector('.nv-n'); if (badge) badge.textContent = n; var hasActive = !!sc.querySelector('.view-tab.active'); var g = sc.querySelector('.nav-group'); if (g) g.classList.toggle('has-active', hasActive); if (hasActive) sc.classList.remove('closed'); });
+        var tag = document.getElementById('ppBuildTag'); if (tag) { var tsc = tag.closest('.nav-sec'); if (tsc && tsc.lastElementChild !== tag) tsc.appendChild(tag); }
+        if (!tabs.querySelector('.nv-tools')) { var tools = document.createElement('div'); tools.className = 'nv-tools'; tools.innerHTML = '<button onclick="ppNavAll(false)" title="Open every section">Expand all</button><button onclick="ppNavAll(true)" title="Fold every section but the current one">Collapse all</button>'; tabs.insertBefore(tools, tabs.firstChild); }
+        if (typeof ppNavFit === 'function') setTimeout(ppNavFit, 40);
+      };
+      window.ppNavToggle = function(k) { var sc = document.querySelector('.nav-sec[data-key="' + k + '"]'); if (!sc) return; var closed = closedSet(); if (sc.classList.contains('closed')) { sc.classList.remove('closed'); delete closed[k]; } else { if (sc.querySelector('.view-tab.active')) { showToast('That section holds the page you are on', 'success'); return; } sc.classList.add('closed'); closed[k] = 1; } saveClosed(closed); if (typeof ppNavFit === 'function') setTimeout(ppNavFit, 340); };
+      window.ppNavAll = function(close) { var closed = {}; document.querySelectorAll('.nav-sec').forEach(function(sc) { var k = sc.getAttribute('data-key'); if (close && !sc.querySelector('.view-tab.active')) { sc.classList.add('closed'); closed[k] = 1; } else sc.classList.remove('closed'); }); saveClosed(closed); if (typeof ppNavFit === 'function') setTimeout(ppNavFit, 340); };
+      // keep the section of the current page open
+      if (typeof switchView === 'function') { var _sv = switchView; switchView = function(view) { _sv.apply(this, arguments); try { var t = document.querySelector('.view-tab.active'), sc = t && t.closest('.nav-sec'); document.querySelectorAll('.nav-sec .nav-group.has-active').forEach(function(g) { g.classList.remove('has-active'); }); if (sc) { sc.classList.remove('closed'); var g = sc.querySelector('.nav-group'); if (g) g.classList.add('has-active'); } } catch (e) {} }; }
+      // tabs that other blocks add straight into .view-tabs get swept into their section
+      function arm() { var tabs = document.querySelector('.view-tabs'); if (!tabs || tabs._nvArmed) return; tabs._nvArmed = true; try { new MutationObserver(function() { if (Array.prototype.some.call(tabs.children, function(c) { return c.classList && (c.classList.contains('view-tab') || (c.classList.contains('nav-group') && !c.closest('.nav-sec'))); })) ppNavSections(); }).observe(tabs, { childList: true }); } catch (e) {} }
+      function go() { ppNavSections(); arm(); }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
+      if (typeof finishLoading === 'function') { var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(ppNavSections, 500); setTimeout(ppNavSections, 1800); }; }
+      // the nav fit: with sections that fold, compact mode only when the open ones still overflow
+      if (typeof ppLayoutInit === 'function') { var _li = ppLayoutInit; ppLayoutInit = function() { _li.apply(this, arguments); setTimeout(ppNavSections, 60); }; }
     })();
   </script>
 </body>
