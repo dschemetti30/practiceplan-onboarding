@@ -10859,7 +10859,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v205 · Nov 6b';
+    var PP_BUILD = 'v205 · Nov 6d';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -14034,6 +14034,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     @media(max-width:640px){.mk-lh{display:none!important}.mk-l{grid-template-columns:52px minmax(0,1fr) 84px;grid-template-areas:"d what amt" "d cat acts";row-gap:4px}.mk-l .d{grid-area:d}.mk-l .what{grid-area:what}.mk-l .amt{grid-area:amt}.mk-l .cat{grid-area:cat;display:block}.mk-l .acts{grid-area:acts}.mk-led-head{flex-wrap:wrap}.mk-led-meta{order:3;flex-basis:100%}}
     .mk-collapsible .sp-chev svg{transition:transform var(--t-base) var(--spring)}.mk-collapsible.open .sp-chev svg{transform:rotate(90deg)}
     /* signals as cards */
+    .sg-when{display:flex;gap:4px;align-items:center;flex-wrap:wrap;padding:0 2px 8px}.sg-when .lbl{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-right:4px}.sg-when button{height:28px;padding:0 11px;border-radius:50px;border:1px solid var(--border);background:var(--card);font:inherit;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer}.sg-when button.on{background:var(--text);color:#fff;border-color:var(--text)}
     .sg-states{display:flex;gap:6px;flex-wrap:wrap;padding:2px 2px}.sg-st{height:28px;padding:0 10px 0 8px;border-radius:50px;border:1px solid var(--border);background:var(--card);font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:all var(--t-fast)}.sg-st i{width:8px;height:8px;border-radius:50%;background:hsl(var(--h,210),60%,50%)}.sg-st b{font-weight:800;color:var(--text3)}.sg-st:hover{border-color:var(--border-2);transform:translateY(-1px)}.sg-st.on{background:var(--text);color:#fff;border-color:var(--text)}.sg-st.on b{color:rgba(255,255,255,.7)}
     .sg-group{display:flex;flex-direction:column;gap:10px}.sg-gh{display:flex;align-items:center;gap:10px;padding:4px 2px 0}.sg-gh .sg-ic{width:30px;height:30px;border-radius:9px}.sg-gh .sg-ic svg{width:16px;height:16px}.sg-gh h3{margin:0;font-family:var(--font-display);font-size:15px;font-weight:800;letter-spacing:-.01em}.sg-gh .n{font-size:11px;font-weight:800;background:var(--bg);border-radius:50px;padding:2px 8px;color:var(--text2)}
     .sg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px;align-items:start}
@@ -14064,7 +14065,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       // weighed (inbox, evaluating, pass, revisit) are split out of tsList here so the Trade Shows page, calendar, team and
       // dashboard only see shows we are going to. A Go hands the row back to tsList and opens the usual show modal.
       // ============================================================================
-      var PIPE = ['inbox', 'evaluating', 'pass', 'revisit'];
+      var PIPE = ['inbox', 'evaluating', 'pass', 'revisit', 'past']; // v205: 'past' (the nightly tidy's stage for ended pipeline shows) belongs to the pipeline, not Trade Shows
       var CRIT = [
         ['scoreAudience', 'Audience fit', 'Are the attendees the people who book facilities: athletic directors, facilities, business office'],
         ['scoreTerritory', 'Territory fit', 'A state we are live in or targeting'],
@@ -14487,6 +14488,9 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       // reader on Partners, and the finer spend categories.
       // ============================================================================
       var sgData = null, sgLoading = null, sgFilter = 'new', sgState = '', sgQ = '', sgCfgOpen = false, sgPainted = false;
+      // v205: how far back the list reaches (days); 14 by default, up to a year. The server keeps a year; the page asks for the window it shows.
+      window.sgDays = (function() { try { return Number(localStorage.getItem('pp.sg.days')) || 14; } catch (e) { return 14; } })();
+      window.sgSetDays = function(n) { sgDays = n; try { localStorage.setItem('pp.sg.days', String(n)); } catch (e) {} sgData = null; sgRender(); sgLoad(true).then(sgRender); };
       var ICON = { rfp: '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg>', trigger: '<svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>', competitor: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>', news: '<svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8z"/></svg>' };
       function t() { return ppTodayISO(); }
       function ago(iso) { try { return timeAgo(iso); } catch (e) { return ''; } }
@@ -14497,7 +14501,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       if (typeof finishLoading === 'function') { var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(moveIntel, 400); setTimeout(moveIntel, 1500); }; }
       setTimeout(moveIntel, 800);
 
-      window.sgLoad = function(force) { if (sgData && !force) return Promise.resolve(sgData); if (sgLoading && !force) return sgLoading; sgLoading = (async function() { try { var r = await ppApi('getSignals', {}, 120000); if (!r.success) throw new Error(r.error || 'Could not read signals'); sgData = r; } catch (e) { sgData = { error: e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v149)' : ''), rows: [], config: {}, kinds: {} }; } sgLoading = null; return sgData; })(); return sgLoading; };
+      window.sgLoad = function(force) { if (sgData && !force) return Promise.resolve(sgData); if (sgLoading && !force) return sgLoading; sgLoading = (async function() { try { var r = await ppApi('getSignals', { days: String(sgDays || 14) }, 120000); if (!r.success) throw new Error(r.error || 'Could not read signals'); sgData = r; } catch (e) { sgData = { error: e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v149)' : ''), rows: [], config: {}, kinds: {} }; } sgLoading = null; return sgData; })(); return sgLoading; };
       var STATE_HUE = {}; function stateHue(st) { if (!st) return 210; if (STATE_HUE[st] === undefined) { var h = 0; for (var i = 0; i < st.length; i++) h = (h * 53 + st.charCodeAt(i)) % 360; STATE_HUE[st] = h; } return STATE_HUE[st]; }
       window.sgRender = function() {
         var host = document.getElementById('sgHost'); if (!host) return;
@@ -14512,11 +14516,12 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         var stateStrip = states.length ? '<div class="sg-states"><button class="sg-st' + (!sgState ? ' on' : '') + '" onclick="sgSetState(\'\')">All states <b>' + rows.filter(live).length + '</b></button>' + states.map(function(st) { return '<button class="sg-st' + (sgState === st ? ' on' : '') + '" style="--h:' + stateHue(st) + '" onclick="sgSetState(\'' + st + '\')"><i></i>' + st + ' <b>' + byState[st] + '</b></button>'; }).join('') + (byState['??'] ? '<button class="sg-st' + (sgState === '??' ? ' on' : '') + '" onclick="sgSetState(\'??\')">No state <b>' + byState['??'] + '</b></button>' : '') + '</div>' : '';
         var html = '<div class="sp-wrap">' + (d.error ? '<div class="sp-empty">' + ppEsc(d.error) + '</div>' : '')
           + '<div class="sp-tiles">' + tile('new', counts.today, 'New today', 'not looked at yet', counts.today ? 'hot' : '') + tile('rfp', counts.rfp, 'RFPs and bids', 'procurement we could answer', 'hot') + tile('trigger', counts.trigger, 'Buying triggers', 'new ADs, bonds, policy changes', 'green') + tile('competitor', counts.competitor, 'Competitor news', 'where they are, what they ship', 'violet') + tile('starred', counts.starred, 'Starred', 'worth following up', 'gold') + '</div>'
-          + '<div class="sp-bar"><div class="f2-seg" style="margin:0">' + [['new', 'New'], ['rfp', 'RFPs'], ['trigger', 'Triggers'], ['competitor', 'Competitors'], ['news', 'News'], ['starred', 'Starred'], ['mine', 'Mine'], ['all', 'All']].map(function(x) { return '<button class="seg' + (sgFilter === x[0] ? ' on' : '') + '" onclick="sgSetFilter(\'' + x[0] + '\')">' + x[1] + '</button>'; }).join('') + '</div>'
+          + '<div class="sp-bar"><div class="f2-seg" style="margin:0">' + [['new', 'New'], ['rfp', 'RFPs'], ['trigger', 'Triggers'], ['competitor', 'Competitors'], ['news', 'News'], ['starred', 'Starred'], ['mine', 'Mine'], ['all', 'All'], ['dismissed', 'Dismissed']].map(function(x) { return '<button class="seg' + (sgFilter === x[0] ? ' on' : '') + '" onclick="sgSetFilter(\'' + x[0] + '\')">' + x[1] + (x[0] === 'dismissed' && rows.some(function(r) { return r.status === 'dismissed'; }) ? ' <small>' + rows.filter(function(r) { return r.status === 'dismissed'; }).length + '</small>' : '') + '</button>'; }).join('') + '</div>'
           + '<input class="q" placeholder="Find a district, a competitor, a word" value="' + ppEsc(sgQ) + '" oninput="sgSetQ(this.value)">'
           + '<div class="right"><span class="ca-sub">' + (d.last ? ppEsc(String(d.last).replace(/ at \d{4}-.*$/, '')) : 'never run') + (d.ai && !d.ai.key ? ' · <a href="#" style="color:#b4312a;font-weight:800" onclick="switchView(\'settings\');setTimeout(function(){var c=document.getElementById(\'ppPropsCard\');if(c)c.scrollIntoView({behavior:\'smooth\',block:\'start\'})},400);return false" title="Paste the Anthropic key under Settings; the editor cannot take it past 50 properties">no model key: add it in Settings &rsaquo;</a>' : '') + '</span><button class="text-action-btn" onclick="sgRun(this)">Check now</button>' + (ppIsSuperAdmin() ? '<button class="text-action-btn" onclick="sgCfgToggle()">What we watch</button>' : '') + '</div></div>'
+          + '<div class="sg-when"><span class="lbl">Showing</span>' + [[14, 'Last 14 days'], [30, '30 days'], [90, '90 days'], [365, '12 months']].map(function(x) { return '<button class="' + (sgDays === x[0] ? 'on' : '') + '" onclick="sgSetDays(' + x[0] + ')">' + x[1] + '</button>'; }).join('') + '<span class="ca-sub" style="text-transform:none;letter-spacing:0;margin-left:6px">' + rows.length + ' item' + (rows.length === 1 ? '' : 's') + (d.total && d.total > rows.length ? ' of ' + d.total + ' kept' : '') + (d.days && d.days !== sgDays ? ' (older Extras: showing ' + d.days + ' days)' : '') + '</span></div>'
           + stateStrip + (sgCfgOpen ? sgCfg(d) : '');
-        var list = rows.filter(function(r) { if (sgState && (r.state || '??') !== sgState) return false; if (sgQ && (r.title + ' ' + r.snippet + ' ' + r.org + ' ' + r.competitor + ' ' + r.why + ' ' + r.state).toLowerCase().indexOf(sgQ.toLowerCase()) < 0) return false; if (sgFilter === 'all') return live(r); if (sgFilter === 'new') return r.status === 'new'; if (sgFilter === 'starred') return r.status === 'starred'; if (sgFilter === 'mine') return r.assignedTo === me && live(r); return r.kind === sgFilter && live(r); });
+        var list = rows.filter(function(r) { if (sgFilter === 'dismissed') return r.status === 'dismissed' && (!sgState || (r.state || '??') === sgState) && (!sgQ || (r.title + ' ' + r.snippet + ' ' + r.org).toLowerCase().indexOf(sgQ.toLowerCase()) >= 0); if (sgState && (r.state || '??') !== sgState) return false; if (sgQ && (r.title + ' ' + r.snippet + ' ' + r.org + ' ' + r.competitor + ' ' + r.why + ' ' + r.state).toLowerCase().indexOf(sgQ.toLowerCase()) < 0) return false; if (sgFilter === 'all') return live(r); if (sgFilter === 'new') return r.status === 'new'; if (sgFilter === 'starred') return r.status === 'starred'; if (sgFilter === 'mine') return r.assignedTo === me && live(r); return r.kind === sgFilter && live(r); });
         list.sort(function(a, b) { return (b.score - a.score) || String(b.at).localeCompare(String(a.at)); });
         if (!list.length) html += '<div class="sp-empty">' + (rows.length ? 'Nothing here.' : 'Nothing found yet. Press Check now; the watch runs every four hours on its own' + (d.ai && d.ai.key ? '' : ', and reads better once an ANTHROPIC_API_KEY is in the script properties') + '.') + '</div>';
         else {
@@ -14546,7 +14551,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
           + (r.assignedTo === me ? '' : ib('sgAct(\'' + id + '\',{assignedTo:\'' + ppEsc(me) + '\'})', 'Mine: assign it to me', I.me))
           + ib('sgLead(\'' + id + '\')', 'Add as lead: start an inbound lead from this', I.lead)
           + ib('sgNote(\'' + id + '\',this)', 'Note: what we did or plan to do', I.note)
-          + ib('sgAct(\'' + id + '\',{status:\'dismissed\'})', 'Dismiss: hide it for everyone', I.x) + '</span></div></div>';
+          + (r.status === 'dismissed' ? '<button class="pp-btn" style="height:28px;padding:0 10px;font-size:11.5px" onclick="sgAct(\'' + id + '\',{status:\'seen\'})" title="Put it back on the list for everyone">Restore</button>' : ib('sgAct(\'' + id + '\',{status:\'dismissed\'})', 'Dismiss: hide it for everyone', I.x)) + '</span></div></div>';
       }
       window.sgSetFilter = function(k) { sgFilter = k; sgRender(); }; window.sgSetState = function(v) { sgState = v; sgRender(); }; window.sgSetQ = function(v) { sgQ = v; sgRender(); }; window.sgCfgToggle = function() { sgCfgOpen = !sgCfgOpen; sgRender(); };
       window.sgAct = async function(id, f) { var r = (sgData.rows || []).find(function(x) { return x.id === id; }); if (!r) return; Object.assign(r, f); sgRender(); try { var res = await ppApi('signalAct', Object.assign({ id: id }, f), 60000); if (!res.success) throw new Error(res.error); if (f.state !== undefined && res.row && String(res.row.state || '') !== String(f.state || '')) throw new Error('The state did not save (needs Extras v169)'); if (f.state !== undefined && res.row) { ['state', 'org', 'matchLeadId', 'matchName', 'matchUrl', 'assignedTo'].forEach(function(k) { if (res.row[k] !== undefined) r[k] = res.row[k]; }); sgRender(); if (res.row.matchName) showToast('State set to ' + res.row.state + '. Matched to ' + res.row.matchName, 'success'); } } catch (e) { showToast(e.message, 'error'); } };
@@ -14917,10 +14922,19 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     .ch-own .own{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}.ch-own .own.blank{color:#b45309;font-weight:700}.ch-own .arrow{color:var(--text3);padding:0 6px}
     .ch-own-foot{padding:10px 18px;font-size:12px;color:var(--text3);border-top:1px solid var(--border)}
     @media(max-width:768px){.ch-own th:nth-child(4),.ch-own td:nth-child(4){display:none}}
-    /* v205: Close CRM Intel, needs attention and sort */
-    .tp-ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 10px}.tp-ctl .seg{display:inline-flex;gap:4px;flex-wrap:wrap}.tp-ctl .seg button{height:30px;padding:0 11px;border-radius:50px;border:1px solid var(--border);background:var(--card);font:inherit;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;white-space:nowrap}.tp-ctl .seg button b{font-size:11px;margin-left:4px;opacity:.7}.tp-ctl .seg button.on{background:var(--text);color:#fff;border-color:var(--text)}.tp-ctl .seg button.warn:not(.on){color:#92400e;border-color:rgba(217,119,6,.4)}
-    .tp-ctl label{font-size:11.5px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.04em}.tp-ctl select{height:30px;border:1px solid var(--border);border-radius:8px;background:var(--card);font:inherit;font-size:12px;padding:0 8px;color:var(--text)}.tp-ctl .right{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-    .tp-attn{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border-radius:50px;background:rgba(180,49,42,.1);color:#b4312a;margin-left:6px;white-space:nowrap}.tp-attn.reply{background:rgba(0,118,187,.1);color:#0b5fa5}.tp-attn.quiet{background:var(--pp-gold-bg);color:var(--pp-gold-dk)}.tp-attn.norep{background:var(--bg);color:var(--text3);border:1px solid var(--border)}
+    /* v205: Close CRM Intel toolbar (board-style: flat controls, person filter, quick filters, solid status labels) */
+    .tp-card>h3{display:none}
+    .tp-tb{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:2px 0 10px}.tp-tb-l{display:flex;align-items:center;gap:10px;margin-right:auto}.tp-tb-title{font-family:var(--font-display);font-size:17px;font-weight:800;letter-spacing:-.01em;color:var(--text)}.tp-tb-count{font-size:11.5px;font-weight:800;color:var(--text2);background:var(--bg);border:1px solid var(--border);border-radius:50px;padding:2px 8px}
+    .tp-tb-r{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    .tp-tool{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border-radius:6px;border:1px solid transparent;background:transparent;font:inherit;font-size:13px;font-weight:600;color:var(--text);cursor:pointer;position:relative;white-space:nowrap}.tp-tool:hover{background:var(--bg)}.tp-tool.on{background:rgba(0,115,234,.1);color:#0073ea}.tp-tool svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.8}
+    .tp-tool select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font:inherit}.tp-tool .val{color:var(--text2);font-weight:600}.tp-tool.on .val{color:#0073ea}.tp-tool .chev{width:12px;height:12px;opacity:.6}
+    .tp-search{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border-radius:6px;border:1px solid transparent;color:var(--text2);min-width:40px}.tp-search:hover,.tp-search:focus-within{border-color:var(--border);background:var(--card)}.tp-search input{border:none;background:transparent;font:inherit;font-size:13px;outline:none;width:150px;color:var(--text)}.tp-search svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0}
+    .tp-persons{display:inline-flex;align-items:center;gap:2px;height:32px;padding:0 8px;border-radius:6px}.tp-persons:hover{background:var(--bg)}.tp-persons .lbl{font-size:13px;font-weight:600;color:var(--text);margin-right:4px}.tp-person{border-radius:50%;margin-left:-5px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:transform var(--t-fast);position:relative;box-shadow:0 0 0 2px var(--card)}.tp-person>*{pointer-events:none}.tp-person:first-of-type{margin-left:0}.tp-person:hover{transform:translateY(-2px);z-index:2}.tp-person.on{box-shadow:0 0 0 2px #0073ea;z-index:3}.tp-person.dim{opacity:.35}
+    .tp-quick{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:0 0 10px}.tp-quick button{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 11px;border-radius:6px;border:1px solid var(--border);background:var(--card);font:inherit;font-size:12.5px;font-weight:600;color:var(--text);cursor:pointer;white-space:nowrap}.tp-quick button i{width:8px;height:8px;border-radius:2px;background:var(--c,#c4c4c4);flex-shrink:0}.tp-quick button b{font-weight:800;color:var(--text2);font-size:11.5px}.tp-quick button:hover{background:var(--bg)}.tp-quick button.on{background:var(--text);color:#fff;border-color:var(--text)}.tp-quick button.on b{color:rgba(255,255,255,.8)}.tp-quick .sep{width:1px;height:18px;background:var(--border);margin:0 2px}
+    .tp-flag{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:4px;font-size:10.5px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;color:#fff;background:var(--c,#c4c4c4);margin:0 4px 4px 0;white-space:nowrap}
+    .tp-pipe{background:var(--bg);border:1px solid var(--border);border-radius:8px}
+    .tp-card .tp-table th{font-size:10.5px;color:var(--text3);background:var(--card-2,var(--bg))}
+    @media(max-width:768px){.tp-tb-r{width:100%}.tp-search input{width:110px}}
   </style>
   <script>
     // ---- v205: CRM Health: Lead Owner versus the opportunity owner, with a bulk fix; Close CRM Intel: needs-attention filter and sorting ----
@@ -14955,42 +14969,87 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     })();
     (function() {
       if (typeof renderIntel !== 'function' || typeof intelTableHtml !== 'function') return;
-      window.intelAttn = 'all'; window.intelSort = (function() { try { return localStorage.getItem('pp.intel.sort') || 'score'; } catch (e) { return 'score'; } })();
+      window.intelNeed = 'all'; window.intelSort = (function() { try { return localStorage.getItem('pp.intel.sort') || 'score'; } catch (e) { return 'score'; } })();
       var DAY = 86400000;
-      // what a lead needs: an opportunity past its close date, a reply nobody answered, an open opportunity gone quiet, no rep on the lead
-      window.intelAttnOf = function(l) {
+      var FLAG = { late: ['Past due', '#e2445c'], reply: ['Unanswered reply', '#579bfc'], quiet: ['Gone quiet', '#fdab3d'], touch: ['Needs a touch', '#a25ddc'], norep: ['No rep', '#9aa0a6'] };
+      // what a lead needs: an opportunity past its close date, a reply nobody answered, an open opportunity gone quiet, the follow-up scan's "needs a touch", no rep on the lead
+      window.intelNeedOf = function(l, fu) {
         var out = [], o = l.opp, today = new Date().toISOString().slice(0, 10), now = Date.now();
         if (o && o.type === 'active' && o.close && o.close < today) out.push('late');
         if (l.lastInbound && (!l.lastTouch || l.lastInbound > l.lastTouch)) out.push('reply');
-        if (o && o.type === 'active' && l.lastTouch && (now - new Date(l.lastTouch).getTime()) > 21 * DAY) out.push('quiet');
-        if (o && o.type === 'active' && !l.lastTouch) out.push('quiet');
+        if (o && o.type === 'active' && (!l.lastTouch || (now - new Date(l.lastTouch).getTime()) > 21 * DAY)) out.push('quiet');
+        if (fu && fu[l.id]) out.push('touch');
         if (!l.owner) out.push('norep');
         return out;
       };
-      var LBL = { late: ['Opportunity past due', 'late'], reply: ['Unanswered reply', 'reply'], quiet: ['Open, gone quiet', 'quiet'], norep: ['No rep', 'norep'] };
       window.intelSortRows = function(rows) {
         var k = intelSort, num = function(v) { var n = Number(v); return isNaN(n) ? -1 : n; };
         var key = function(l) { var o = l.opp || {}; switch (k) { case 'heat': return [-num(l.heat), -num(l.score)]; case 'fit': return [-num(l.fit), -num(l.score)]; case 'touch': return [l.lastTouch ? l.lastTouch : '0000', l.name]; case 'recent': return [l.lastTouch ? '~' + l.lastTouch : '0000']; case 'close': return [o.type === 'active' && o.close ? o.close : '9999', -num(l.score)]; case 'value': return [-(o.type === 'active' ? (o.total || o.value || 0) : 0), -num(l.score)]; case 'name': return [String(l.name || '').toLowerCase()]; case 'state': return [l.state || 'zz', -num(l.score)]; case 'rep': return [l.owner ? (ppRepName(l.owner) || l.owner) : 'zz', -num(l.score)]; default: return [-num(l.score)]; } };
         return rows.slice().sort(function(a, b) { var ka = key(a), kb = key(b); for (var i = 0; i < ka.length; i++) { if (ka[i] < kb[i]) return k === 'recent' && i === 0 ? 1 : -1; if (ka[i] > kb[i]) return k === 'recent' && i === 0 ? -1 : 1; } return 0; });
       };
-      window.intelSetAttn = function(v) { intelAttn = v; renderIntel(); };
+      window.intelSetNeed = function(v) { intelNeed = v; renderIntel(); };
       window.intelSetSort = function(v) { intelSort = v; try { localStorage.setItem('pp.intel.sort', v); } catch (e) {} renderIntel(); };
+      window.intelSetOwner = function(v) { intelOwner = intelOwner === v ? 'all' : v; renderIntel(); };
+      var hue = function(str) { var h = 0; for (var i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) % 360; return h; };
+      var ICO = { search: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>', filter: '<svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg>', sort: '<svg viewBox="0 0 24 24"><path d="M4 7h11M4 12h7M4 17h4M18 6v12m0 0l-3-3m3 3l3-3"/></svg>', pin: '<svg viewBox="0 0 24 24"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>', tier: '<svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>', chev: '<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>' };
       var _ri = renderIntel; renderIntel = function() {
+        intelAttn = false; // the older "Needs a touch" toggle is folded into the quick filters below; it must not drop rows on its own
         _ri(); var host = document.getElementById('intelHost'); if (!host || !intelLoaded || !intel || intel.error) return;
-        var card = host.querySelector('.out-card table') && host.querySelector('.out-card table').closest('.out-card'); if (!card) return;
-        var top = intel.top || [], base = top.filter(function(l) { return (intelTier === 'all' || l.tier === intelTier) && (intelState === 'all' || l.state === intelState) && (intelOwner === 'all' || l.owner === intelOwner) && (!intelQ || (l.name + ' ' + l.city + ' ' + l.nearest).toLowerCase().indexOf(intelQ.toLowerCase()) >= 0); });
-        var counts = { all: base.length, attn: 0, late: 0, reply: 0, quiet: 0, norep: 0 }; base.forEach(function(l) { var a = intelAttnOf(l); l._attn = a; if (a.length) counts.attn++; a.forEach(function(x) { counts[x]++; }); });
-        var rows = base.filter(function(l) { return intelAttn === 'all' || (intelAttn === 'attn' ? l._attn.length > 0 : l._attn.indexOf(intelAttn) >= 0); });
-        rows = intelSortRows(rows);
+        var card = host.querySelector('.out-card table') && host.querySelector('.out-card table').closest('.out-card'); if (!card) return; card.classList.add('tp-card');
+        var fu = {}; ((typeof fuList !== 'undefined' && fuList && fuList.items) || []).forEach(function(f) { fu[f.id] = f; });
+        var top = intel.top || [], states = {}, owners = {}; top.forEach(function(l) { if (l.state) states[l.state] = 1; if (l.owner) owners[l.owner] = (owners[l.owner] || 0) + 1; });
+        var base = top.filter(function(l) { return (intelTier === 'all' || l.tier === intelTier) && (intelState === 'all' || l.state === intelState) && (intelOwner === 'all' || l.owner === intelOwner) && (!intelQ || (l.name + ' ' + l.city + ' ' + l.nearest).toLowerCase().indexOf(intelQ.toLowerCase()) >= 0); });
+        var counts = { all: base.length, attn: 0, late: 0, reply: 0, quiet: 0, touch: 0, norep: 0 }; base.forEach(function(l) { var a = intelNeedOf(l, fu); l._need = a; if (a.length) counts.attn++; a.forEach(function(x) { counts[x]++; }); });
+        var rows = intelSortRows(base.filter(function(l) { return intelNeed === 'all' || (intelNeed === 'attn' ? l._need.length > 0 : l._need.indexOf(intelNeed) >= 0); }));
         var wrap = card.querySelector('.table-wrapper'); if (!wrap) return;
         wrap.outerHTML = intelTableHtml(rows); wrap = card.querySelector('.table-wrapper');
-        // the attention chips on each row
-        wrap.querySelectorAll('tbody tr').forEach(function(tr, i) { var l = rows[i]; if (!l || !l._attn || !l._attn.length) return; var cell = tr.querySelector('.tp-play'); if (!cell) return; cell.insertAdjacentHTML('afterbegin', l._attn.map(function(x) { return '<span class="tp-attn ' + LBL[x][1] + '">' + LBL[x][0] + '</span>'; }).join('') + '<br>'); });
-        var seg = [['all', 'Everyone', counts.all], ['attn', 'Needs attention', counts.attn], ['late', 'Past due', counts.late], ['reply', 'Unanswered', counts.reply], ['quiet', 'Gone quiet', counts.quiet], ['norep', 'No rep', counts.norep]];
-        var ctl = '<div class="tp-ctl"><div class="seg">' + seg.map(function(x) { return '<button class="' + (intelAttn === x[0] ? 'on' : '') + (x[0] === 'attn' && x[2] ? ' warn' : '') + '" onclick="intelSetAttn(\'' + x[0] + '\')">' + x[1] + '<b>' + x[2] + '</b></button>'; }).join('') + '</div><div class="right"><label>Sort</label><select onchange="intelSetSort(this.value)">' + [['score', 'PP Score'], ['heat', 'Heat'], ['fit', 'Fit'], ['close', 'Opportunity close date'], ['value', 'Opportunity value'], ['touch', 'Last touch, oldest first'], ['recent', 'Last touch, newest first'], ['rep', 'Rep'], ['state', 'State'], ['name', 'Name']].map(function(x) { return '<option value="' + x[0] + '"' + (intelSort === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') + '</select></div></div>';
-        var old = card.querySelector('.tp-ctl'); if (old) old.remove(); var pipe = card.querySelector('.tp-pipe'); (pipe || wrap).insertAdjacentHTML('beforebegin', ctl);
+        wrap.querySelectorAll('tbody tr').forEach(function(tr, i) { var l = rows[i]; if (!l || !l._need || !l._need.length) return; var cell = tr.querySelector('.tp-play'); if (!cell) return; cell.insertAdjacentHTML('afterbegin', '<div>' + l._need.map(function(x) { return '<span class="tp-flag" style="--c:' + FLAG[x][1] + '" title="' + (x === 'touch' && fu[l.id] ? ppEsc(fu[l.id].reason || '') : '') + '">' + FLAG[x][0] + '</span>'; }).join('') + '</div>'); });
+        // the toolbar: title and count, search, person filter, state, tier, sort; then the quick filters
+        var ownerKeys = Object.keys(owners).sort(function(a, b) { return owners[b] - owners[a]; });
+        var persons = ownerKeys.map(function(o) { var nm = ppRepName(o) || o, ini = nm.split(/\s+/).map(function(w) { return w.charAt(0); }).join('').slice(0, 2).toUpperCase(); return '<span class="tp-person' + (intelOwner === o ? ' on' : intelOwner !== 'all' ? ' dim' : '') + '" title="' + ppEsc(nm) + ' · ' + owners[o] + ' lead' + (owners[o] === 1 ? '' : 's') + '. Click to filter" onclick="intelSetOwner(\'' + ppEsc(o) + '\')">' + (typeof ppRepAvatars === 'function' ? ppRepAvatars(o, 24) : ppEsc(ini)) + '</span>'; }).join('');
+        var sel = function(cls, ico, label, val, opts, onchange, on) { return '<label class="tp-tool' + (on ? ' on' : '') + '">' + ico + label + (val ? ' <span class="val">' + ppEsc(val) + '</span>' : '') + ICO.chev + '<select onchange="' + onchange + '">' + opts + '</select></label>'; };
+        var stOpts = '<option value="all">All states</option>' + Object.keys(states).sort().map(function(x) { return '<option value="' + x + '"' + (intelState === x ? ' selected' : '') + '>' + x + '</option>'; }).join('');
+        var tierOpts = [['all', 'All tiers'], ['A', 'Tier A'], ['B', 'Tier B'], ['C', 'Tier C'], ['D', 'Tier D']].map(function(x) { return '<option value="' + x[0] + '"' + (intelTier === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('');
+        var SORTS = [['score', 'PP Score'], ['heat', 'Heat'], ['fit', 'Fit'], ['close', 'Opportunity close date'], ['value', 'Opportunity value'], ['touch', 'Last touch, oldest first'], ['recent', 'Last touch, newest first'], ['rep', 'Rep'], ['state', 'State'], ['name', 'Name']];
+        var sortOpts = SORTS.map(function(x) { return '<option value="' + x[0] + '"' + (intelSort === x[0] ? ' selected' : '') + '>' + x[1] + '</option>'; }).join(''), sortLbl = (SORTS.find(function(x) { return x[0] === intelSort; }) || SORTS[0])[1];
+        var tb = '<div class="tp-tb"><div class="tp-tb-l"><span class="tp-tb-title">Top prospects</span><span class="tp-tb-count">' + rows.length + (rows.length !== top.length ? ' of ' + top.length : '') + '</span></div><div class="tp-tb-r">'
+          + '<span class="tp-search">' + ICO.search + '<input placeholder="Search" value="' + ppEsc(intelQ) + '" oninput="intelQ=this.value;renderIntel()"></span>'
+          + (ownerKeys.length ? '<span class="tp-persons" title="Filter by rep"><span class="lbl">Person</span>' + persons + '</span>' : '')
+          + sel('', ICO.pin, 'State', intelState === 'all' ? '' : intelState, stOpts, 'intelState=this.value;renderIntel()', intelState !== 'all')
+          + sel('', ICO.tier, 'Tier', intelTier === 'all' ? '' : intelTier, tierOpts, 'intelTier=this.value;renderIntel()', intelTier !== 'all')
+          + sel('', ICO.sort, 'Sort', intelSort === 'score' ? '' : sortLbl, sortOpts, 'intelSetSort(this.value)', intelSort !== 'score')
+          + '</div></div>';
+        var quick = [['all', 'All', '', counts.all], ['attn', 'Needs attention', '#e2445c', counts.attn], null, ['late', FLAG.late[0], FLAG.late[1], counts.late], ['reply', FLAG.reply[0], FLAG.reply[1], counts.reply], ['quiet', FLAG.quiet[0], FLAG.quiet[1], counts.quiet], ['touch', FLAG.touch[0], FLAG.touch[1], counts.touch], ['norep', FLAG.norep[0], FLAG.norep[1], counts.norep]];
+        var qk = '<div class="tp-quick">' + quick.map(function(x) { if (!x) return '<span class="sep"></span>'; return '<button class="' + (intelNeed === x[0] ? 'on' : '') + '" onclick="intelSetNeed(\'' + x[0] + '\')">' + (x[2] ? '<i style="--c:' + x[2] + '"></i>' : '') + x[1] + '<b>' + x[3] + '</b></button>'; }).join('') + '</div>';
+        card.querySelectorAll('.tp-tb, .tp-quick').forEach(function(el) { el.remove(); });
+        var pipe = card.querySelector('.tp-pipe'); (pipe || wrap).insertAdjacentHTML('beforebegin', tb + qk);
         var n = card.querySelector('h3 .n'); if (n) n.textContent = rows.length;
       };
+    })();
+  </script>
+
+  <script>
+    // ---- v205: Trade Shows writes keep every local cache in step, so a reload cannot bring back a deleted show or an old name ----
+    (function() {
+      var DKEY = 'pp.ts.deleted';
+      function deleted() { try { var m = JSON.parse(localStorage.getItem(DKEY) || '{}'), cut = Date.now() - 7 * 86400000, out = {}; Object.keys(m).forEach(function(id) { if (m[id] > cut) out[id] = m[id]; }); return out; } catch (e) { return {}; } }
+      function markDeleted(id) { try { var m = deleted(); m[id] = Date.now(); localStorage.setItem(DKEY, JSON.stringify(m)); } catch (e) {} }
+      window.tsSyncCaches = function() {
+        try {
+          var pipe = typeof spList !== 'undefined' ? (spList || []) : [], gone = deleted();
+          // the pipeline list is filled a beat after the show list on some loads; never save a bundle that lost it
+          if (!pipe.length && typeof ppSnap !== 'undefined' && ppSnap && ppSnap.bundle && ppSnap.bundle.getTradeShows) { var have = {}; (tsList || []).forEach(function(s) { have[s.id] = 1; }); pipe = (ppSnap.bundle.getTradeShows.rows || []).filter(function(s) { return !have[s.id] && !gone[s.id] && /^(inbox|evaluating|pass|revisit|past)$/.test(String(s.stage || '').toLowerCase()); }); }
+          var rows = (tsList || []).concat(pipe).map(function(s) { var o = {}; Object.keys(s).forEach(function(k) { if (k.charAt(0) !== '_') o[k] = s[k]; }); return o; });
+          if (typeof ppSnap !== 'undefined' && ppSnap && ppSnap.bundle) { ppSnap.bundle.getTradeShows = { success: true, rows: rows }; ppSnap.savedAt = Date.now(); if (typeof ppSnapSave === 'function') ppSnapSave(); }
+          if (typeof ppSwr !== 'undefined' && ppSwr && ppSwr.write) { try { ppSwr.write('getTradeShows', {}, { success: true, rows: rows }); } catch (e) {} }
+        } catch (e) {}
+      };
+      // every write that touches a show row, then the caches; a delete is also remembered for a week so a stale copy of the list cannot show it
+      var WRITE = /^(saveTradeShow|patchTradeShow|deleteTradeShow|bulkSaveTradeShows|setShowAliases|pipelineMerge|pipelineNotDup|pipelineImport|pipelineDedupe|pipelinePastTidy|showFindDeadline|showVerifyApply|showFileUpload|showRollover|showSourcesPull|showMailScan)$/;
+      if (typeof ppApi === 'function') { var _api = ppApi; ppApi = function(action, params, timeoutMs) { var pr = _api.apply(this, arguments); if (WRITE.test(action)) { pr.then(function(r) { if (r && r.success) { if (action === 'deleteTradeShow' && params && params.id) markDeleted(params.id); setTimeout(tsSyncCaches, 500); } }).catch(function() {}); } return pr; }; }
+      if (typeof ppApiPost === 'function') { var _post = ppApiPost; ppApiPost = function(action, params) { var pr = _post.apply(this, arguments); if (WRITE.test(action)) pr.then(function(r) { if (r && r.success) setTimeout(tsSyncCaches, 500); }).catch(function() {}); return pr; }; }
+      // rows deleted here in the last week never come back from a cached list
+      if (typeof loadTradeShows === 'function') { var _lt = loadTradeShows; loadTradeShows = async function(force) { var r = await _lt.apply(this, arguments); try { var gone = deleted(), ids = Object.keys(gone); if (ids.length) { var drop = function(s) { return !gone[s.id]; }; var n0 = (tsList || []).length + (typeof spList !== 'undefined' ? spList.length : 0); tsList = (tsList || []).filter(drop); if (typeof spList !== 'undefined') spList = (spList || []).filter(drop); if (n0 !== tsList.length + (typeof spList !== 'undefined' ? spList.length : 0)) tsSyncCaches(); } } catch (e) {} return tsList; }; }
     })();
   </script>
 </body>
