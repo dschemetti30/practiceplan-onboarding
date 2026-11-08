@@ -10859,13 +10859,13 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v205 · Nov 6e';
+    var PP_BUILD = 'v206 · Nov 8a';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
         ppApi('ppPing', {}, 30000).then(function(r) { var v = Number(r && r.version) || 0; window._ppServerVersion = v; if (v && v < 120) { tag.classList.add('warn'); tag.textContent = PP_BUILD + ' · Extras v' + v + ' (needs v120)'; tag.title = 'The server is behind this page: install the current Extras.gs and deploy a new version.'; } else if (v) tag.textContent = PP_BUILD + ' · Extras v' + v; }).catch(function() {});
       }, 1500); };
-      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 169 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
+      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 170 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
     })();
     // =====================================================================
     // TEAM: titles and headshots, editable in Settings
@@ -13208,6 +13208,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       window.hlLoad = async function(force) { if (hlData && !force) return; hlLoading = true;
         if (!hlData && typeof ppIdbGet === 'function') { try { var snap = await ppIdbGet('health'); if (snap && snap.rows && snap.email === (currentUser && currentUser.email)) { hlData = snap; hlData.cached = true; renderHealth(); } } catch (e) {} }
         try { var r = await ppApi('clientHealth', force ? { nocache: '1' } : {}, 120000); if (!r.success) throw new Error(r.error); hlData = r; try { r.email = currentUser && currentUser.email; if (typeof ppIdbSet === 'function') ppIdbSet('health', r); } catch (e2) {} } catch (e) { hlData = hlData || { rows: [], error: e.message }; showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v145)' : ''), 'error'); } hlLoading = false; renderHealth(); };
+      window.hlState = function() { return hlData; }; // v206: the studio reads the scores
       window.hlBandSet = function(b) { hlBand = hlBand === b ? 'all' : b; renderHealth(); };
       window.hlToggle = function(email) { hlOpen[email] = !hlOpen[email]; renderHealth(); };
       window.hlNps = async function(email, btn) { if (!confirm('Send the NPS survey to this client\'s named recipients now?')) return; if (btn) btn.disabled = true; try { var r = await ppApi('npsSend', { orgEmail: email }, 120000); if (!r.success) throw new Error(r.error); showToast('Survey sent to ' + (r.to || []).join(', '), 'success'); hlLoad(true); } catch (e) { showToast(e.message, 'error'); if (btn) btn.disabled = false; } };
@@ -15066,6 +15067,288 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       if (typeof ppApiPost === 'function') { var _post = ppApiPost; ppApiPost = function(action, params) { var pr = _post.apply(this, arguments); if (WRITE.test(action)) pr.then(function(r) { if (r && r.success) setTimeout(tsSyncCaches, 500); }).catch(function() {}); return pr; }; }
       // rows deleted here in the last week never come back from a cached list
       if (typeof loadTradeShows === 'function') { var _lt = loadTradeShows; loadTradeShows = async function(force) { var r = await _lt.apply(this, arguments); try { var gone = deleted(), ids = Object.keys(gone); if (ids.length) { var drop = function(s) { return !gone[s.id]; }; var n0 = (tsList || []).length + (typeof spList !== 'undefined' ? spList.length : 0); tsList = (tsList || []).filter(drop); if (typeof spList !== 'undefined') spList = (spList || []).filter(drop); if (n0 !== tsList.length + (typeof spList !== 'undefined' ? spList.length : 0)) tsSyncCaches(); } } catch (e) {} return tsList; }; }
+    })();
+  </script>
+
+  <style>
+    /* v206: Content Studio */
+    .st-wrap{display:flex;flex-direction:column;gap:14px}
+    .st-tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}@media(max-width:1100px){.st-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:640px){.st-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    .st-card{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--sh-sm);overflow:hidden}
+    .st-head{display:flex;align-items:center;gap:10px;padding:14px 18px;flex-wrap:wrap}.st-head h3{margin:0;font-family:var(--font-display);font-size:16px;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}.st-head h3 .n{font-size:11px;min-width:20px;height:20px;padding:0 6px;border-radius:50px;background:var(--bg);border:1px solid var(--border);color:var(--text2);display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-family:var(--font)}.st-head .sub{font-size:12.5px;color:var(--text2);flex:1 1 280px;min-width:0}.st-head .acts{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+    .st-body{padding:0 18px 16px}
+    .st-seg{display:inline-flex;gap:4px;flex-wrap:wrap}.st-seg button{height:30px;padding:0 11px;border-radius:6px;border:1px solid var(--border);background:var(--card);font:inherit;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;white-space:nowrap}.st-seg button b{margin-left:5px;font-size:11px;opacity:.75}.st-seg button.on{background:var(--text);color:#fff;border-color:var(--text)}
+    .st-pill{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:4px;font-size:10.5px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;color:#fff;background:var(--c,#94a3b8);white-space:nowrap}
+    /* story starters */
+    .st-starters{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
+    .st-starter{border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:7px;background:var(--card);border-left:4px solid var(--c,var(--pp-blue));min-width:0}.st-starter .t{font-weight:800;font-size:13.5px;line-height:1.3}.st-starter .b{font-size:12px;color:var(--text2);line-height:1.45}.st-starter .f{display:flex;gap:6px;align-items:center;margin-top:auto;flex-wrap:wrap}.st-starter .f .pp-btn{height:28px;padding:0 10px;font-size:11.5px}.st-starter .src{font-size:10.5px;color:var(--text3);margin-left:auto}
+    /* testimonials */
+    .st-tm{width:100%;border-collapse:collapse}.st-tm th{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);background:var(--card-2,var(--bg))}.st-tm td{padding:9px 10px;border-bottom:1px solid var(--border);font-size:12.5px;vertical-align:middle}.st-tm tr:last-child td{border-bottom:0}
+    .st-tm .score{display:inline-flex;align-items:center;gap:6px;font-weight:800}.st-tm .score i{width:34px;height:6px;border-radius:3px;background:var(--bg);overflow:hidden;display:inline-block}.st-tm .score i s{display:block;height:100%;background:var(--c,#0f7a4a)}
+    .st-tm .nps{display:inline-flex;align-items:center;justify-content:center;width:26px;height:22px;border-radius:6px;font-weight:800;font-size:11.5px;background:var(--bg);color:var(--text2)}.st-tm .nps.p{background:rgba(15,122,74,.12);color:#0f7a4a}
+    .st-tm .quote{font-size:12px;color:var(--text2);font-style:italic;max-width:360px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .st-tm .acts{display:flex;gap:4px;justify-content:flex-end;flex-wrap:wrap}.st-tm .acts button{height:28px;padding:0 10px;border-radius:7px;border:1px solid var(--border);background:var(--card);font:inherit;font-size:11.5px;font-weight:700;color:var(--text2);cursor:pointer;white-space:nowrap}.st-tm .acts button:hover{border-color:var(--pp-blue);color:var(--pp-blue)}.st-tm .acts button.go{background:var(--pp-blue);color:#fff;border-color:var(--pp-blue)}
+    .st-gaps{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--text2);padding:10px 0 2px}.st-gaps .g{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px;border-radius:50px;border:1px solid var(--border);font-weight:700;font-size:11.5px}.st-gaps .g.have{background:rgba(15,122,74,.1);color:#0f7a4a;border-color:transparent}.st-gaps .g.none{color:#92400e;border-color:rgba(217,119,6,.4)}
+    /* idea board */
+    .st-board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;align-items:start}@media(max-width:1100px){.st-board{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:640px){.st-board{grid-template-columns:1fr}}
+    .st-col{background:var(--bg);border-radius:12px;padding:8px;min-height:120px}.st-col-h{display:flex;align-items:center;gap:6px;padding:4px 6px 8px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--text3)}.st-col-h i{width:8px;height:8px;border-radius:2px;background:var(--c,#c4c4c4)}.st-col-h b{margin-left:auto;color:var(--text2)}
+    .st-idea{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 11px;margin-bottom:8px;cursor:pointer;display:flex;flex-direction:column;gap:6px;box-shadow:var(--sh-xs);transition:box-shadow var(--t-fast),transform var(--t-fast)}.st-idea:hover{box-shadow:var(--sh-md);transform:translateY(-1px)}.st-idea .t{font-weight:700;font-size:13px;line-height:1.3}.st-idea .m{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);flex-wrap:wrap}.st-idea .m .due{margin-left:auto;white-space:nowrap}.st-idea .m .due.late{color:#b4312a;font-weight:700}
+    .st-add{display:flex;gap:8px;align-items:center;margin-bottom:10px}.st-add input{flex:1;height:36px;border:1px solid var(--border);border-radius:10px;padding:0 12px;font:inherit;font-size:13px;background:var(--bg);color:var(--text)}.st-add input:focus{outline:none;border-color:var(--pp-blue);background:var(--card)}
+    /* pillars */
+    .st-pillars{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+    .st-pillar{border:1px solid var(--border);border-radius:12px;padding:12px 14px;min-width:0}.st-pillar .h{display:flex;align-items:center;gap:8px;font-weight:800;font-size:13px;margin-bottom:6px}.st-pillar .h i{width:10px;height:10px;border-radius:3px;background:var(--c)}.st-pillar .why{font-size:11.5px;color:var(--text3);margin-bottom:8px;line-height:1.4}.st-pillar ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}.st-pillar li{font-size:12px;color:var(--text2);display:flex;gap:6px;align-items:flex-start;line-height:1.35}.st-pillar li button{flex-shrink:0;height:20px;padding:0 7px;border-radius:5px;border:1px solid var(--border);background:var(--card);font:inherit;font-size:10.5px;font-weight:700;color:var(--pp-blue);cursor:pointer;margin-left:auto}.st-pillar li button:hover{border-color:var(--pp-blue)}
+    .st-empty{padding:16px;text-align:center;font-size:12.5px;color:var(--text3)}
+    /* requests cleanup */
+    .rq-sus{width:100%;border-collapse:collapse;font-size:12.5px}.rq-sus th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:6px 8px;border-bottom:1px solid var(--border)}.rq-sus td{padding:8px;border-bottom:1px solid var(--border);vertical-align:middle}.rq-sus .why{color:#92400e;font-weight:600;font-size:12px}
+    #rqTable td.rq-sel,#rqTable th.rq-sel{width:30px;padding-right:0}#rqTable.bulk{table-layout:auto}#rqTable.bulk th:nth-child(n){width:auto}#rqTable.bulk th.rq-sel{width:30px}.rq-bulkbar{display:flex;gap:8px;align-items:center;padding:8px 12px;border:1px solid rgba(0,118,187,.3);background:rgba(0,118,187,.05);border-radius:10px;margin:0 0 10px;font-size:12.5px;font-weight:700}
+  </style>
+  <script>
+    // =====================================================================
+    // v206: CONTENT STUDIO (Marketing): story starters from the data we already have, the testimonial pipeline,
+    // an idea board, and the content pillars. Plus a cleanup for creative requests the show importer made.
+    // =====================================================================
+    (function() {
+      var rq = document.getElementById('requestsView'); if (!rq) return;
+      var v = document.createElement('div'); v.className = 'view-content'; v.id = 'studioView'; v.innerHTML = '<div id="stHost" class="st-wrap"></div>'; rq.insertAdjacentElement('afterend', v);
+      try { PP_VIEW_TITLES.studio = ['Marketing', 'Content Studio']; PP_PAGE_META.studio = ['Marketing', 'Content Studio', 'What to make next besides show posts and partner welcomes: stories the data is already telling, the testimonial pipeline, an idea board, and the pillars we post on.']; } catch (e) {}
+      var PILLARS = [
+        { key: 'thought', label: 'Thought leadership', c: '#0073ea', why: 'Our point of view on community use of school space; the things only we see across 25 states.', prompts: ['The three things every district gets wrong about facility rental pricing', 'Why "free to the district" is a policy question, not a software question', 'What the busiest calendars have in common (and it is not the size of the district)'] },
+        { key: 'data', label: 'Data story', c: '#00a84f', why: 'A number nobody else has, told plainly. These travel furthest.', prompts: ['By the numbers: bookings across our districts this year', 'The hour of the week gyms are most booked (and the hour they sit empty)', 'How quickly a new district fills its first month'] },
+        { key: 'video', label: 'Video', c: '#e2445c', why: 'Short, phone-shot, one point each. A rep on camera beats a motion graphic.', prompts: ['60 seconds: how a renter books a gym on PracticePlan', 'A walk through a client\'s calendar on a Saturday', 'Rep on camera: the question we get at every booth'] },
+        { key: 'testimonial', label: 'Testimonial', c: '#a25ddc', why: 'A client in their own words. The pipeline below keeps these coming.', prompts: ['Two sentences from an AD on staff time saved', 'A business official on where the revenue goes', 'A parks director on sharing school fields'] },
+        { key: 'case', label: 'Case study', c: '#fdab3d', why: 'One district, before and after, with the numbers.', prompts: ['How a district went from paper requests to online bookings', 'A district that opened fields to youth leagues and what came back', 'The first 90 days after go-live'] },
+        { key: 'howto', label: 'Tip / How-to', c: '#579bfc', why: 'Useful to a client whether or not they ever share it.', prompts: ['How to set seasonal availability so you never get surprised', 'Photos that get a space booked', 'Who to tell when the calendar opens for a new season'] },
+        { key: 'culture', label: 'Team and culture', c: '#ff7575', why: 'People follow people. Booth days, road trips, a new hire.', prompts: ['Behind the booth: a day at a show', 'Meet the rep covering your state', 'Why we started PracticePlan'] }
+      ];
+      var PILLAR = {}; PILLARS.forEach(function(p) { PILLAR[p.key] = p; });
+      var FORMATS = ['Post', 'Carousel', 'Short video', 'Article', 'Email', 'One-pager', 'Webinar'];
+      var STATUSES = [['idea', 'Ideas', '#c4c4c4'], ['drafting', 'Drafting', '#fdab3d'], ['ready', 'Ready', '#579bfc'], ['scheduled', 'Scheduled', '#a25ddc'], ['posted', 'Posted', '#00c875']];
+      var stData = null, stLoading = null, stTmFilter = 'ask', stPainted = false, stShowAll = false;
+      function t() { return ppTodayISO(); }
+      function esc(x) { return ppEsc(x); }
+      function pillarPill(k) { var p = PILLAR[k] || { label: k || 'Idea', c: '#94a3b8' }; return '<span class="st-pill" style="--c:' + p.c + '">' + esc(p.label) + '</span>'; }
+      function orgKey(s) { return String(s || '').toLowerCase().replace(/\s*\([a-z]{2}\)\s*$/, '').replace(/[^a-z0-9]/g, ''); }
+      window.stLoad = function(force) {
+        if (stData && !force) return Promise.resolve(stData); if (stLoading && !force) return stLoading;
+        stLoading = (async function() {
+          try { var r = await ppApi('getStudio', {}, 60000); if (!r.success) throw new Error(r.error || 'Could not read the studio'); stData = r; }
+          catch (e) { stData = { error: e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v170)' : ''), ideas: [], testimonials: [] }; }
+          stLoading = null; return stData;
+        })();
+        return stLoading;
+      };
+      // the other pages' data, loaded quietly: health (scores, NPS, usage), revenue, clients, shows, posts, signals
+      async function stPrime() {
+        var jobs = [];
+        if (typeof hlLoad === 'function') jobs.push(hlLoad(false).catch(function() {}));
+        if (typeof loadRevenue === 'function') jobs.push(Promise.resolve(loadRevenue(false)).catch(function() {}));
+        if (typeof loadContentPosts === 'function') jobs.push(Promise.resolve(loadContentPosts(false)).catch(function() {}));
+        if (typeof loadTradeShows === 'function') jobs.push(Promise.resolve(loadTradeShows(false)).catch(function() {}));
+        if (typeof sgLoad === 'function' && !window.sgData) jobs.push(Promise.resolve(sgLoad(false)).catch(function() {}));
+        await Promise.all(jobs);
+      }
+      function health() { var d = typeof hlState === 'function' ? hlState() : null; return d && d.rows ? d.rows : []; }
+      function revFor(org) { var k = orgKey(org); if (typeof rvList === 'undefined' || !rvList) return null; return rvList.find(function(r) { return orgKey(r.org) === k; }) || null; }
+      function yearKey() { return String(new Date().getFullYear()); }
+      function usageOf(h) { var u = h.usage || {}, rv = revFor(h.organization), Y = yearKey(), res = u.resYear || (rv ? Number(rv['res' + Y]) || 0 : 0) || (u.res90 || 0), yoy = (u.yoy !== undefined && u.yoy !== null) ? u.yoy : (rv && rv['yoy' + Y] !== '' && rv['yoy' + Y] !== undefined ? Number(rv['yoy' + Y]) : (u.res90 && u.resPrior ? (u.res90 - u.resPrior) / u.resPrior : null)); return { res: res, yoy: yoy, rev: u.revYear || (rv ? Number(rv['rev' + Y]) || 0 : 0), src: u.source || (rv ? 'yearly' : '') }; }
+      function tmFor(key) { return ((stData && stData.testimonials) || []).find(function(x) { return String(x.clientKey).toLowerCase() === String(key).toLowerCase(); }) || null; }
+      function postedTestimonialFor(org) { if (typeof cpList === 'undefined' || !cpList) return null; var k = orgKey(org); if (!k) return null; return cpList.find(function(p) { return p.type === 'Testimonial' && (orgKey(p.title).indexOf(k) >= 0 || orgKey(p.copy).indexOf(k) >= 0 || orgKey(p.campaign) === k); }) || null; }
+      // ---- the testimonial pipeline: who to ask, in the order worth asking
+      function tmCandidates() {
+        var rows = health(), out = [];
+        rows.forEach(function(h) {
+          var tm = tmFor(h.email), posted = !tm && postedTestimonialFor(h.organization), u = usageOf(h), nps = h.nps && h.nps.score !== undefined && h.nps.score !== null && h.nps.score !== '' ? Number(h.nps.score) : null;
+          var status = tm ? tm.status : posted ? 'posted' : 'candidate';
+          // the ask score: promoters first, then health, then growth; a thin calendar is not worth a quote
+          var why = []; var pts = Number(h.score) || 0; if (nps !== null && nps >= 9) { pts += 40; why.push('NPS ' + nps); } else if (nps !== null && nps <= 6) pts -= 40;
+          if (u.yoy !== null && u.yoy >= 0.25) { pts += 20; why.push('bookings up ' + Math.round(u.yoy * 100) + '%'); } if (u.res >= 100) { pts += 10; why.push(u.res + ' bookings this year'); } if (u.res && u.res < 10) pts -= 30;
+          if (h.nps && h.nps.comment) why.push('left a comment');
+          out.push({ h: h, tm: tm, posted: posted, status: status, nps: nps, u: u, pts: pts, why: why });
+        });
+        return out.sort(function(a, b) { return b.pts - a.pts; });
+      }
+      // ---- story starters: what the data already says
+      function starters() {
+        var out = [], Y = yearKey(), today = t(), hs = health();
+        var add = function(key, pillar, title, blurb, src, extra) { out.push(Object.assign({ key: key, pillar: pillar, title: title, blurb: blurb, src: src }, extra || {})); };
+        // quote-ready promoters
+        hs.filter(function(h) { return h.nps && Number(h.nps.score) >= 9 && h.nps.comment && !tmFor(h.email); }).slice(0, 3).forEach(function(h) { add('nps:' + h.email, 'testimonial', 'Quote in hand: ' + h.organization, '"' + String(h.nps.comment).slice(0, 140) + (String(h.nps.comment).length > 140 ? '...' : '') + '" (NPS ' + h.nps.score + '). Ask permission to use it as is.', 'NPS survey', { client: h.email }); });
+        // growth stories
+        hs.map(function(h) { return { h: h, u: usageOf(h) }; }).filter(function(x) { return x.u.yoy !== null && x.u.yoy >= 0.3 && x.u.res >= 40; }).sort(function(a, b) { return b.u.yoy - a.u.yoy; }).slice(0, 3).forEach(function(x) { add('growth:' + x.h.email, 'data', x.h.organization + ': bookings up ' + Math.round(x.u.yoy * 100) + '%', x.u.res + ' community bookings so far this year' + (x.u.rev ? ', ' + money0(x.u.rev) + ' back to the district' : '') + '. A one-chart post or the opening of a case study.', 'Revenue import', { client: x.h.email }); });
+        // milestones
+        hs.map(function(h) { return { h: h, u: usageOf(h) }; }).filter(function(x) { return x.u.res >= 100; }).sort(function(a, b) { return b.u.res - a.u.res; }).slice(0, 2).forEach(function(x) { var m = x.u.res >= 1000 ? 1000 : x.u.res >= 500 ? 500 : x.u.res >= 250 ? 250 : 100; add('milestone:' + x.h.email, 'data', x.h.organization + ' passed ' + m + ' bookings', x.u.res + ' this year. A congratulations post the district will share, with a line on what that means for the community.', 'Revenue import', { client: x.h.email }); });
+        // the whole-network number
+        if (typeof rvList !== 'undefined' && rvList && rvList.length) { var tot = 0, n = 0, rev = 0; rvList.forEach(function(r) { var v = Number(r['res' + Y]) || 0; if (v) { tot += v; n++; } rev += Number(r['rev' + Y]) || 0; }); if (tot) add('network:' + Y, 'data', 'By the numbers: ' + tot.toLocaleString() + ' bookings across ' + n + ' districts in ' + Y, (rev ? money0(rev) + ' in rental revenue kept by districts. ' : '') + 'The number that says what we do better than any sentence.', 'Revenue import'); }
+        // go-lives
+        if (typeof allData !== 'undefined' && allData) { var recent = allData.filter(function(d) { return d.goLiveDate && ppDaysBetween(today, d.goLiveDate) >= 0 && ppDaysBetween(today, d.goLiveDate) <= 30; }).slice(0, 3); recent.forEach(function(d) { add('golive:' + d.email, 'culture', 'Welcome ' + d.organization, 'Went live ' + ppFmtDate(d.goLiveDate, { month: 'short', day: 'numeric' }) + '. A welcome post, and in 90 days the first-month numbers.', 'Clients', { client: d.email }); }); }
+        // availability openings
+        try { var S = typeof avState === 'function' ? avState() : null; if (S && S.seasons && S.seasons[1] && S.data) { var nxt = S.seasons[1], opened = {}; (S.data || []).forEach(function(r) { if ((r.season === nxt.key || r.season === '*') && (r.status === 'open' || r.status === 'partial')) opened[r.orgEmail] = 1; }); var k = Object.keys(opened).length; if (k >= 3) add('opened:' + nxt.key, 'data', k + ' districts have opened ' + nxt.label + ' rentals', 'Renters are booking next season already. A post that tells the community to look now, and a nudge to the districts that have not opened yet.', 'Availability'); } } catch (e) {}
+        // signals worth a take
+        try { var sg = (window.sgData && sgData.rows) || []; sg.filter(function(r) { return (r.kind === 'trigger' || r.kind === 'news') && r.status !== 'dismissed' && Number(r.score) >= 3; }).slice(0, 2).forEach(function(r) { add('signal:' + r.id, 'thought', 'Our take: ' + String(r.title).slice(0, 80), (r.why || 'In the news this week.') + ' A short point-of-view post, no pitch.', r.source || 'Signals'); }); } catch (e) {}
+        // shows in the next 45 days: the recap is the content, not the announcement
+        try { (tsList || []).filter(function(s) { return !s.archived && s._start && ppDaysBetween(s._start, today) >= 0 && ppDaysBetween(s._start, today) <= 45; }).slice(0, 2).forEach(function(s) { add('recap:' + s.id, 'video', 'Shoot for ' + s.name, 'Three clips to get while there: the booth, one AD answering "what do you rent out", one line from the team on the drive home. The recap writes itself.', 'Trade Shows'); }); } catch (e) {}
+        // evergreen when the data is quiet
+        if (out.length < 4) PILLARS.slice(0, 4 - out.length).forEach(function(p) { add('evergreen:' + p.key, p.key, p.prompts[0], p.why, 'Pillar'); });
+        return out.filter(function(x) { return !((stData && stData.ideas) || []).some(function(i) { return i.sourceKey === x.key; }); });
+      }
+      function money0(n) { n = Number(n) || 0; return n >= 1e6 ? '$' + (n / 1e6).toFixed(1) + 'M' : n >= 1000 ? '$' + Math.round(n / 1000) + 'k' : '$' + Math.round(n); }
+      // ---- render
+      window.stRender = function() {
+        var host = document.getElementById('stHost'); if (!host) return;
+        if (!stData) { host.innerHTML = ppLoader('Opening the studio', { rows: 4 }); return; }
+        if (stData.error) { host.innerHTML = '<div class="st-card"><div class="st-empty"><strong>Content Studio is not available</strong><br>' + esc(stData.error) + '</div></div>'; return; }
+        var ideas = stData.ideas || [], cands = tmCandidates(), sts = starters();
+        var inMotion = ideas.filter(function(i) { return /drafting|ready|scheduled/.test(i.status); }).length, ready = ideas.filter(function(i) { return i.status === 'ready'; }).length, inHand = cands.filter(function(c) { return c.status === 'received'; }).length, toAsk = cands.filter(function(c) { return c.status === 'candidate' && c.pts >= 60; }).length, asked = cands.filter(function(c) { return c.status === 'asked'; }).length;
+        var tile = function(v, l, s, cls) { return '<div class="sp-tile' + (cls ? ' ' + cls : '') + '" style="cursor:default"><div class="v">' + v + '</div><div class="l">' + l + '</div><div class="s">' + s + '</div></div>'; };
+        var html = '<div class="st-tiles">' + tile(sts.length, 'Story starters', 'from this week\'s data', '') + tile(inMotion, 'Ideas in motion', ready + ' ready to post', inMotion ? 'gold' : '') + tile(inHand, 'Testimonials in hand', 'received, not posted yet', inHand ? 'violet' : '') + tile(toAsk, 'Worth asking', asked ? asked + ' asked, waiting' : 'strong clients, no quote yet', toAsk ? 'green' : '') + tile(ideas.filter(function(i) { return i.status === 'posted'; }).length, 'Posted from ideas', 'this board, all time', '') + '</div>';
+        // story starters
+        html += '<div class="st-card"><div class="st-head"><h3>Story starters<span class="n">' + sts.length + '</span></h3><div class="sub">Things the data already says. Save one to the board, or send it straight to Creative Requests.</div></div><div class="st-body">' + (sts.length ? '<div class="st-starters">' + sts.map(function(x) { var p = PILLAR[x.pillar] || PILLAR.thought; return '<div class="st-starter" style="--c:' + p.c + '"><div style="display:flex;gap:6px;align-items:center">' + pillarPill(x.pillar) + '<span class="src">' + esc(x.src) + '</span></div><div class="t">' + esc(x.title) + '</div><div class="b">' + esc(x.blurb) + '</div><div class="f"><button class="pp-btn primary" onclick="stStarterSave(\'' + esc(x.key) + '\',this)">Save as idea</button><button class="pp-btn" onclick="stStarterRequest(\'' + esc(x.key) + '\',this)">Request it</button>' + (x.client ? '<button class="pp-btn" onclick="openPlaybookFor(\'' + esc(x.client) + '\')" title="Open the client">Client</button>' : '') + '</div></div>'; }).join('') + '</div>' : '<div class="st-empty">Nothing new this week. Open Health and Revenue once so the studio has numbers to work from.</div>') + '</div></div>';
+        // testimonials
+        var tmRows = cands.filter(function(c) { return stTmFilter === 'all' ? true : stTmFilter === 'ask' ? c.status === 'candidate' : c.status === stTmFilter; });
+        if (stTmFilter === 'ask' && !stShowAll) tmRows = tmRows.slice(0, 12);
+        var counts = { ask: cands.filter(function(c) { return c.status === 'candidate'; }).length, asked: asked, received: inHand, posted: cands.filter(function(c) { return c.status === 'posted'; }).length, declined: cands.filter(function(c) { return c.status === 'declined'; }).length };
+        var byState = {}; cands.forEach(function(c) { var st = c.h.state || '??'; byState[st] = byState[st] || { have: 0, n: 0 }; byState[st].n++; if (c.status === 'posted' || c.status === 'received') byState[st].have++; });
+        var gaps = Object.keys(byState).filter(function(s) { return s !== '??'; }).sort(function(a, b) { return byState[b].n - byState[a].n; }).map(function(s) { var g = byState[s]; return '<span class="g ' + (g.have ? 'have' : 'none') + '" title="' + g.have + ' testimonial' + (g.have === 1 ? '' : 's') + ' from ' + g.n + ' client' + (g.n === 1 ? '' : 's') + '">' + s + ' ' + g.have + '/' + g.n + '</span>'; }).join('');
+        html += '<div class="st-card"><div class="st-head"><h3>Testimonial pipeline<span class="n">' + counts.ask + '</span></h3><div class="sub">Strongest clients without a quote yet, ranked by NPS, health and growth. The ask goes out through the approval queue as the lead owner, like every district email.</div><div class="acts"><div class="st-seg">' + [['ask', 'Worth asking', counts.ask], ['asked', 'Asked', counts.asked], ['received', 'In hand', counts.received], ['posted', 'Posted', counts.posted], ['declined', 'Passed', counts.declined], ['all', 'Everyone', cands.length]].map(function(x) { return '<button class="' + (stTmFilter === x[0] ? 'on' : '') + '" onclick="stTmSet(\'' + x[0] + '\')">' + x[1] + '<b>' + x[2] + '</b></button>'; }).join('') + '</div><button class="text-action-btn" onclick="stTmTemplate()">Edit the ask</button></div></div>'
+          + '<div class="st-body">' + (gaps ? '<div class="st-gaps"><span>Coverage by state</span>' + gaps + '</div>' : '')
+          + (tmRows.length ? '<div class="table-wrapper" style="border:none;border-radius:0"><table class="st-tm"><thead><tr><th>Client</th><th>Health</th><th>NPS</th><th>This year</th><th>Rep</th><th>Status</th><th></th></tr></thead><tbody>' + tmRows.map(tmRow).join('') + '</tbody></table></div>' + (stTmFilter === 'ask' && !stShowAll && counts.ask > 12 ? '<div style="padding:10px 0 0"><button class="text-action-btn" onclick="stShowAll=true;stRender()">Show all ' + counts.ask + '</button></div>' : '') : '<div class="st-empty">' + (health().length ? 'Nothing here.' : 'Open Health once so the studio can rank clients.') + '</div>') + '</div></div>';
+        // idea board
+        html += '<div class="st-card"><div class="st-head"><h3>Idea board<span class="n">' + ideas.length + '</span></h3><div class="sub">Anything worth making. Click a card to edit it, move it along, or turn it into a request or a calendar post.</div></div><div class="st-body"><div class="st-add"><input placeholder="+ An idea, e.g. Short video: how a renter books a gym in 60 seconds" onkeydown="if(event.key===\'Enter\'){stQuickAdd(this)}"><select id="stQuickPillar" class="pp-inline-select">' + PILLARS.map(function(p) { return '<option value="' + p.key + '">' + esc(p.label) + '</option>'; }).join('') + '</select></div><div class="st-board">' + STATUSES.map(function(s) { var col = ideas.filter(function(i) { return (i.status || 'idea') === s[0]; }).sort(function(a, b) { return String(a.dueDate || '9999').localeCompare(String(b.dueDate || '9999')) || String(b.updatedAt).localeCompare(String(a.updatedAt)); }); return '<div class="st-col"><div class="st-col-h"><i style="--c:' + s[2] + '"></i>' + s[1] + '<b>' + col.length + '</b></div>' + (col.length ? col.map(ideaCard).join('') : '<div class="st-empty" style="padding:10px;font-size:11.5px">Nothing here</div>') + '</div>'; }).join('') + '</div></div></div>';
+        // pillars
+        html += '<div class="st-card"><div class="st-head"><h3>Pillars and prompts</h3><div class="sub">The seven things we post about. A healthy month touches at least four. Use a prompt to drop it on the board.</div></div><div class="st-body"><div class="st-pillars">' + PILLARS.map(function(p) { var n30 = ideas.filter(function(i) { return i.pillar === p.key && i.status === 'posted' && i.updatedAt > new Date(Date.now() - 30 * 864e5).toISOString(); }).length; return '<div class="st-pillar" style="--c:' + p.c + '"><div class="h"><i></i>' + esc(p.label) + '<span class="ca-sub" style="margin-left:auto;text-transform:none;letter-spacing:0">' + (n30 ? n30 + ' posted in 30d' : 'none in 30d') + '</span></div><div class="why">' + esc(p.why) + '</div><ul>' + p.prompts.map(function(q, i) { return '<li><span>' + esc(q) + '</span><button onclick="stUsePrompt(\'' + p.key + '\',' + i + ')">Use</button></li>'; }).join('') + '</ul></div>'; }).join('') + '</div></div></div>';
+        host.innerHTML = html; stPainted = true;
+      };
+      function tmRow(c) {
+        var h = c.h, score = Number(h.score) || 0, col = score >= 70 ? '#0f7a4a' : score >= 45 ? '#c9a227' : '#b4312a', u = c.u, tm = c.tm;
+        var status = c.status, chip = status === 'candidate' ? '<span class="pp-chip unset">Not asked</span>' : status === 'asked' ? '<span class="pp-chip need-to-book" title="' + (tm && tm.askedAt ? 'Asked ' + ppAgo(tm.askedAt) + (tm.askedBy ? ' by ' + esc(ppRepName(tm.askedBy)) : '') : '') + '">Asked' + (tm && tm.askedAt ? ' ' + ppAgo(tm.askedAt) : '') + '</span>' : status === 'received' ? '<span class="pp-chip aud-supers">In hand</span>' : status === 'posted' ? '<span class="pp-chip booked">Posted</span>' : '<span class="pp-chip inactive">Passed</span>';
+        var acts = status === 'candidate' ? '<button class="go" onclick="stAsk(\'' + esc(h.email) + '\',this)" title="Queue the ask for approval; it goes out as the lead owner through Close">Ask</button><button onclick="stTmSetStatus(\'' + esc(h.email) + '\',\'received\',this)" title="Already have a quote? Paste it in">Have one</button><button onclick="stTmSetStatus(\'' + esc(h.email) + '\',\'declined\')" title="Leave them out">Skip</button>'
+          : status === 'asked' ? '<button class="go" onclick="stTmSetStatus(\'' + esc(h.email) + '\',\'received\',this)">Got it</button><button onclick="stAsk(\'' + esc(h.email) + '\',this)" title="Queue another ask">Ask again</button><button onclick="stTmSetStatus(\'' + esc(h.email) + '\',\'declined\')">No answer</button>'
+          : status === 'received' ? '<button class="go" onclick="stTmPost(\'' + esc(h.email) + '\')" title="Create the Content Calendar post from the quote">Make the post</button><button onclick="stTmSetStatus(\'' + esc(h.email) + '\',\'received\',this)">Edit quote</button>'
+          : status === 'posted' ? (tm && tm.postId ? '<button onclick="switchView(\'content\');setTimeout(function(){openContentModal(\'' + esc(tm.postId) + '\')},300)">Open post</button>' : '') + '<button onclick="stTmSetStatus(\'' + esc(h.email) + '\',\'candidate\')" title="Ask for a fresh one later">Ask again later</button>'
+          : '<button onclick="stTmSetStatus(\'' + esc(h.email) + '\',\'candidate\')">Back in</button>';
+        return '<tr><td><div class="pp-org-name" style="white-space:normal">' + esc(h.organization) + '</div>' + (c.why.length ? '<div class="pp-org-sub">' + esc(c.why.join(' · ')) + '</div>' : '') + (tm && tm.quote ? '<div class="quote" title="' + esc(tm.quote) + '">"' + esc(tm.quote) + '"' + (tm.author ? ' <span style="font-style:normal">' + esc(tm.author) + '</span>' : '') + '</div>' : '') + '</td>'
+          + '<td><span class="score" style="--c:' + col + '"><i><s style="width:' + score + '%"></s></i>' + score + '</span></td>'
+          + '<td>' + (c.nps !== null ? '<span class="nps' + (c.nps >= 9 ? ' p' : '') + '" title="' + esc((h.nps && h.nps.comment) || '') + '">' + c.nps + '</span>' : '<span class="pp-placeholder">-</span>') + '</td>'
+          + '<td>' + (u.res ? '<b>' + u.res.toLocaleString() + '</b> <span class="ca-sub" style="text-transform:none;letter-spacing:0">bookings' + (u.yoy !== null ? ' · ' + (u.yoy >= 0 ? '+' : '') + Math.round(u.yoy * 100) + '%' : '') + '</span>' : '<span class="pp-placeholder">no data</span>') + '</td>'
+          + '<td>' + (h.rep || h.owner ? ppRepAvatars(h.rep || h.owner, 22) : '<span class="pp-placeholder">-</span>') + '</td><td>' + chip + '</td><td><div class="acts">' + acts + '</div></td></tr>';
+      }
+      function ideaCard(i) { var due = i.dueDate ? ppDaysBetween(i.dueDate, t()) : null; return '<div class="st-idea" onclick="stIdeaOpen(\'' + esc(i.id) + '\')"><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">' + pillarPill(i.pillar) + (i.format ? '<span class="ca-sub" style="text-transform:none;letter-spacing:0">' + esc(i.format) + '</span>' : '') + '</div><div class="t">' + esc(i.title) + '</div><div class="m">' + (i.owner ? ppRepAvatars(i.owner, 18) : '') + (i.requestId ? '<span title="Has a creative request">&#9998; request</span>' : '') + (i.postId ? '<span title="On the Content Calendar">&#9741; post</span>' : '') + (i.dueDate ? '<span class="due' + (due !== null && due < 0 && i.status !== 'posted' ? ' late' : '') + '">' + ppFmtDate(i.dueDate, { month: 'short', day: 'numeric' }) + '</span>' : '') + '</div></div>'; }
+      // ---- actions
+      window.stTmSet = function(v) { stTmFilter = v; stShowAll = false; stRender(); };
+      async function ideaSave(row, toast) { try { var r = await ppApi('saveIdea', { row: JSON.stringify(row) }, 60000); if (!r.success) throw new Error(r.error); var list = stData.ideas, i = list.findIndex(function(x) { return x.id === r.row.id; }); if (i >= 0) list[i] = r.row; else list.push(r.row); stRender(); if (toast) showToast(toast, 'success'); return r.row; } catch (e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v170)' : ''), 'error'); return null; } }
+      window.stQuickAdd = async function(inp) { var title = inp.value.trim(); if (!title) return; inp.disabled = true; var pillar = (document.getElementById('stQuickPillar') || {}).value || 'thought'; await ideaSave({ title: title, pillar: pillar, status: 'idea', owner: currentUser && currentUser.email || '' }, 'On the board'); };
+      window.stUsePrompt = function(key, i) { var p = PILLAR[key]; if (!p) return; ideaSave({ title: p.prompts[i], pillar: key, status: 'idea', source: 'pillar', owner: currentUser && currentUser.email || '' }, 'On the board'); };
+      window.stStarterSave = function(key, btn) { var x = starters().find(function(s) { return s.key === key; }); if (!x) return; btn.disabled = true; ideaSave({ title: x.title, pillar: x.pillar, hook: x.blurb, status: 'idea', source: x.src, sourceKey: key, owner: currentUser && currentUser.email || '' }, 'Saved to the board'); };
+      window.stStarterRequest = async function(key, btn) { var x = starters().find(function(s) { return s.key === key; }); if (!x) return; btn.disabled = true; var idea = await ideaSave({ title: x.title, pillar: x.pillar, hook: x.blurb, status: 'drafting', source: x.src, sourceKey: key, owner: currentUser && currentUser.email || '' }); if (idea) stIdeaRequest(idea.id); };
+      var TYPE_OF = { thought: 'Other', data: 'Other', video: 'Other', testimonial: 'Testimonial', 'case': 'Other', howto: 'Product Update', culture: 'Other' };
+      window.stIdeaRequest = async function(id) {
+        var i = (stData.ideas || []).find(function(x) { return x.id === id; }); if (!i) return;
+        var q = { title: i.title, type: TYPE_OF[i.pillar] || 'Other', details: (i.hook ? i.hook + '\n\n' : '') + (i.notes ? i.notes + '\n\n' : '') + 'Pillar: ' + ((PILLAR[i.pillar] || {}).label || i.pillar) + (i.format ? '\nFormat: ' + i.format : '') + '\nFrom the Content Studio idea board.', neededBy: i.dueDate || '', related: 'idea:' + i.id, links: '', priority: 'Normal', status: 'New', assignee: 'donnie.schemetti@practiceplan.io', notes: '', postId: '', requestedBy: currentUser && currentUser.email || '' };
+        try { var r = await ppApi('saveRequest', { row: q }, 60000); if (!r.success) throw new Error(r.error); if (typeof rqList !== 'undefined') { q.id = r.id; q.createdAt = new Date().toISOString(); rqList.push(q); } await ideaSave({ id: i.id, requestId: r.id, status: i.status === 'idea' ? 'drafting' : i.status }, 'Creative request filed'); closeModal(); } catch (e) { showToast(e.message, 'error'); }
+      };
+      window.stIdeaPost = async function(id) {
+        var i = (stData.ideas || []).find(function(x) { return x.id === id; }); if (!i || typeof loadContentPosts !== 'function') return;
+        await loadContentPosts(false);
+        var typeMap = { testimonial: 'Testimonial', howto: 'Tip / How-to', culture: 'Company News' }, row = { id: '', title: i.title, date: i.dueDate || '', channel: 'LinkedIn, X, Facebook, Instagram', status: 'drafted', owner: i.owner || currentUser && currentUser.email || '', campaign: 'idea:' + i.id, copy: i.hook || '', assetUrl: '', postUrl: '', notes: (i.notes || '') + '\nFrom the Content Studio.', format: i.format || '', results: '{}', type: typeMap[i.pillar] || 'Other', impressions: '' };
+        try { var r = await ppApi('saveContentPost', { row: row }, 60000); if (!r.success) throw new Error(r.error); row.id = r.id; if (typeof cpList !== 'undefined') cpList.push(row); await ideaSave({ id: i.id, postId: row.id, status: 'scheduled' }, 'Post created on the Content Calendar'); closeModal(); switchView('content'); setTimeout(function() { openContentModal(row.id); }, 300); } catch (e) { showToast(e.message, 'error'); }
+      };
+      window.stIdeaDelete = async function(id) { if (!confirm('Remove this idea from the board?')) return; try { var r = await ppApi('deleteIdea', { id: id }, 60000); if (!r.success) throw new Error(r.error); stData.ideas = stData.ideas.filter(function(x) { return x.id !== id; }); closeModal(); stRender(); } catch (e) { showToast(e.message, 'error'); } };
+      window.stIdeaOpen = function(id) {
+        var i = (stData.ideas || []).find(function(x) { return x.id === id; }); if (!i) return;
+        var opt = function(list, cur, lab) { return list.map(function(x) { var v = Array.isArray(x) ? x[0] : x, l = Array.isArray(x) ? x[1] : (lab ? lab(x) : x); return '<option value="' + esc(v) + '"' + (v === cur ? ' selected' : '') + '>' + esc(l) + '</option>'; }).join(''); };
+        ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + esc(i.title) + '</h2><div class="modal-subtitle">' + (i.source ? 'From ' + esc(i.source) + ' · ' : '') + 'added ' + ppAgo(i.createdAt) + (i.createdBy ? ' by ' + esc(ppRepName(i.createdBy) || i.createdBy) : '') + '</div></div><div class="modal-body"><div class="detail-section" style="margin-top:20px"><div class="pp-form">'
+          + '<div class="full"><label>Title</label><input id="stF_title" value="' + esc(i.title) + '"></div>'
+          + '<div><label>Pillar</label><select id="stF_pillar">' + opt(PILLARS.map(function(p) { return [p.key, p.label]; }), i.pillar || 'thought') + '</select></div>'
+          + '<div><label>Format</label><select id="stF_format"><option value="">Not decided</option>' + opt(FORMATS, i.format || '') + '</select></div>'
+          + '<div><label>Status</label><select id="stF_status">' + opt(STATUSES.map(function(s) { return [s[0], s[1]]; }), i.status || 'idea') + '</select></div>'
+          + '<div><label>Owner</label><select id="stF_owner"><option value="">Nobody yet</option>' + opt(TEAM_MEMBERS.map(function(m) { return [m.email, m.name]; }), i.owner || '') + '</select></div>'
+          + '<div><label>Due</label><input type="date" id="stF_due" value="' + esc(i.dueDate || '') + '"></div>'
+          + '<div><label>Audience</label><input id="stF_aud" value="' + esc(i.audience || '') + '" placeholder="ADs in Texas, business officials, parks"></div>'
+          + '<div class="full"><label>The hook (what the post opens with)</label><textarea id="stF_hook">' + esc(i.hook || '') + '</textarea></div>'
+          + '<div class="full"><label>Notes</label><textarea id="stF_notes">' + esc(i.notes || '') + '</textarea></div>'
+          + '</div></div><div class="pp-modal-actions"><div class="left"><button class="pp-btn danger" onclick="stIdeaDelete(\'' + esc(i.id) + '\')">Remove</button></div><div class="right">' + (i.requestId ? '<button class="pp-btn" onclick="closeModal();switchView(\'requests\')">Open request</button>' : '<button class="pp-btn" onclick="stIdeaRequest(\'' + esc(i.id) + '\')" title="File a creative request from this idea">Request it</button>') + (i.postId ? '<button class="pp-btn" onclick="closeModal();switchView(\'content\');setTimeout(function(){openContentModal(\'' + esc(i.postId) + '\')},300)">Open post</button>' : '<button class="pp-btn" onclick="stIdeaPost(\'' + esc(i.id) + '\')" title="Create a Content Calendar post from this idea">Schedule</button>') + '<button class="pp-btn primary" onclick="stIdeaSaveForm(\'' + esc(i.id) + '\')">Save</button></div></div></div>');
+      };
+      window.stIdeaSaveForm = async function(id) { var g = function(k) { var el = document.getElementById('stF_' + k); return el ? el.value.trim() : ''; }; var row = { id: id, title: g('title'), pillar: g('pillar'), format: g('format'), status: g('status'), owner: g('owner'), dueDate: g('due'), audience: g('aud'), hook: g('hook'), notes: g('notes') }; if (!row.title) { showToast('Give it a title', 'error'); return; } var ok = await ideaSave(row, 'Saved'); if (ok) closeModal(); };
+      // testimonials
+      async function tmSave(row, toast) { try { var r = await ppApi('saveTestimonial', { row: JSON.stringify(row) }, 60000); if (!r.success) throw new Error(r.error); var list = stData.testimonials, i = list.findIndex(function(x) { return x.id === r.row.id; }); if (i >= 0) list[i] = r.row; else list.push(r.row); stRender(); if (toast) showToast(toast, 'success'); return r.row; } catch (e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v170)' : ''), 'error'); return null; } }
+      window.stTmSetStatus = function(key, status, btn) {
+        var h = health().find(function(x) { return x.email === key; }), tm = tmFor(key) || {}, org = h ? h.organization : (tm.org || key);
+        if (status === 'received') {
+          ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + esc(org) + '</h2><div class="modal-subtitle">The quote, as they wrote it. We show them the final wording before it goes anywhere.</div></div><div class="modal-body"><div class="detail-section" style="margin-top:20px"><div class="pp-form">'
+            + '<div class="full"><label>Quote</label><textarea id="stT_quote" style="min-height:110px">' + esc(tm.quote || (h && h.nps && h.nps.comment) || '') + '</textarea></div>'
+            + '<div><label>Who said it</label><input id="stT_author" value="' + esc(tm.author || '') + '" placeholder="Pat Lee"></div><div><label>Title</label><input id="stT_title" value="' + esc(tm.authorTitle || '') + '" placeholder="Athletic Director"></div>'
+            + '<div class="full"><label>Link (email, doc, recording)</label><input id="stT_link" value="' + esc(tm.link || '') + '"></div><div class="full"><label>Note</label><input id="stT_note" value="' + esc(tm.note || '') + '" placeholder="OK to use name and logo"></div>'
+            + '</div></div><div class="pp-modal-actions"><div class="left"></div><div class="right"><button class="pp-btn" onclick="closeModal()">Cancel</button><button class="pp-btn primary" onclick="stTmSaveQuote(\'' + esc(key) + '\')">Save</button></div></div></div>');
+          return;
+        }
+        tmSave({ clientKey: key, org: org, state: h ? h.state : '', status: status }, status === 'declined' ? 'Left out' : status === 'candidate' ? 'Back on the list' : 'Saved');
+      };
+      window.stTmSaveQuote = async function(key) { var g = function(k) { var el = document.getElementById('stT_' + k); return el ? el.value.trim() : ''; }; var h = health().find(function(x) { return x.email === key; }); if (!g('quote')) { showToast('Paste the quote first', 'error'); return; } var ok = await tmSave({ clientKey: key, org: h ? h.organization : key, state: h ? h.state : '', status: 'received', quote: g('quote'), author: g('author'), authorTitle: g('title'), link: g('link'), note: g('note') }, 'Testimonial saved'); if (ok) closeModal(); };
+      window.stTmPost = async function(key) {
+        var tm = tmFor(key); if (!tm || typeof loadContentPosts !== 'function') return; await loadContentPosts(false);
+        var row = { id: '', title: 'Testimonial: ' + tm.org, date: '', channel: 'LinkedIn, X, Facebook, Instagram', status: 'drafted', owner: currentUser && currentUser.email || '', campaign: tm.org, copy: '"' + tm.quote + '"' + (tm.author ? '\n\n' + tm.author + (tm.authorTitle ? ', ' + tm.authorTitle : '') + ', ' + tm.org : ''), assetUrl: '', postUrl: '', notes: 'From the Content Studio testimonial pipeline.' + (tm.link ? '\nSource: ' + tm.link : ''), format: 'Quote card', results: '{}', type: 'Testimonial', impressions: '' };
+        try { var r = await ppApi('saveContentPost', { row: row }, 60000); if (!r.success) throw new Error(r.error); row.id = r.id; if (typeof cpList !== 'undefined') cpList.push(row); await tmSave({ id: tm.id, status: 'posted', postId: row.id }, 'Post created'); switchView('content'); setTimeout(function() { openContentModal(row.id); }, 300); } catch (e) { showToast(e.message, 'error'); }
+      };
+      window.stAsk = async function(key, btn) {
+        var h = health().find(function(x) { return x.email === key; }); if (!h) return;
+        var to = (h.to || []).filter(function(x) { return /@/.test(x); });
+        if (!confirm('Queue a testimonial ask for ' + h.organization + '?\n\nIt goes to the approval queue on Availability and leaves through Close as ' + (h.from && h.from.name ? h.from.name : 'the lead owner') + (to.length ? ', to ' + to.join(', ') : '. No contact is named yet; pick one when you approve it') + '. Nothing is sent until someone presses Send there' + (stData.mode === 'auto' ? ' (auto mode is on, so it goes on the next run)' : '') + '.')) return;
+        btn.disabled = true; btn.textContent = 'Queuing...';
+        try { var r = await ppApi('testimonialAsk', { key: key, state: h.state || '' }, 60000); if (!r.success) throw new Error(r.error); var list = stData.testimonials, i = list.findIndex(function(x) { return x.id === r.testimonial.id; }); if (i >= 0) list[i] = r.testimonial; else list.push(r.testimonial); stRender(); showToast('Queued for approval' + (r.noTo ? ' (pick the contact when you send it)' : ' to ' + r.to.join(', ')), 'success'); if (typeof oqRefresh === 'function') oqRefresh(); }
+        catch (e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v170)' : ''), 'error'); btn.disabled = false; btn.textContent = 'Ask'; }
+      };
+      window.stTmTemplate = function() {
+        var tpl = (stData && stData.template) || {};
+        ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>The testimonial ask</h2><div class="modal-subtitle">Sent as the lead owner through Close. Tags: {{first_name}}, {{org}}, {{rep}}, {{rep_first}}</div></div><div class="modal-body"><div class="detail-section" style="margin-top:20px"><div class="pp-form"><div class="full"><label>Subject</label><input id="stTpl_s" value="' + esc(tpl.subject || '') + '"></div><div class="full"><label>Body</label><textarea id="stTpl_b" style="min-height:220px">' + esc(tpl.body || '') + '</textarea></div></div></div><div class="pp-modal-actions"><div class="left"></div><div class="right"><button class="pp-btn" onclick="closeModal()">Cancel</button><button class="pp-btn primary" onclick="stTmTemplateSave()">Save</button></div></div></div>');
+      };
+      window.stTmTemplateSave = async function() { var sub = document.getElementById('stTpl_s').value, body = document.getElementById('stTpl_b').value; try { var r = await ppApi('testimonialTemplate', { subject: sub, body: body }, 60000); if (!r.success) throw new Error(r.error || 'Could not save'); stData.template = { subject: sub, body: body }; closeModal(); showToast('Saved', 'success'); } catch (e) { showToast(e.message, 'error'); } };
+      // ---- nav
+      var _sv = switchView; switchView = function(x) { _sv.apply(this, arguments); if (x === 'studio') { setTimeout(async function() { stRender(); await Promise.all([stLoad(false), stPrime()]); stRender(); }, 20); } };
+      function addTab() { if (document.querySelector('.view-tab[onclick="switchView(\'studio\')"]')) return; var tr = document.querySelector('.view-tab[onclick="switchView(\'requests\')"]'); if (!tr) return; var b = document.createElement('button'); b.className = 'view-tab'; b.setAttribute('onclick', "switchView('studio')"); b.setAttribute('data-short', 'Studio'); b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 5.6L20 9l-4.4 3.9L17 19l-5-3-5 3 1.4-6.1L4 9l5.6-1.4z"/></svg> Content Studio'; tr.insertAdjacentElement('afterend', b); if (typeof ppNavFit === 'function') setTimeout(ppNavFit, 50); if (typeof navApply === 'function') setTimeout(navApply, 60); }
+      var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(addTab, 280); };
+      if (typeof ppRerender === 'function') { var _rr = ppRerender; ppRerender = function(x) { _rr(x); if (x === 'studio') stRender(); }; }
+    })();
+
+    // ---- v206: Creative Requests cleanup. The show importer made requests for things that were never shows; find and remove them in one go,
+    // and a Select mode for anything else that should go in bulk.
+    (function() {
+      if (typeof renderRequests !== 'function') return;
+      window.rqBulk = false; var rqSel = {};
+      window.rqBulkToggle = function() { rqBulk = !rqBulk; rqSel = {}; renderRequests(); };
+      window.rqSelToggle = function(id, on) { if (on) rqSel[id] = 1; else delete rqSel[id]; rqBulkBar(); };
+      window.rqSelAll = function(on) { rqSel = {}; if (on) document.querySelectorAll('#rqTableBody tr[data-id]').forEach(function(tr) { rqSel[tr.getAttribute('data-id')] = 1; }); renderRequests(); };
+      function rqBulkBar() { var bar = document.getElementById('rqBulkBar'); if (!bar) return; var n = Object.keys(rqSel).length; bar.querySelector('.n').textContent = n ? n + ' selected' : 'Tick the requests to remove'; bar.querySelector('.del').disabled = !n; }
+      window.rqBulkDelete = async function(ids, btn, label) {
+        ids = ids || Object.keys(rqSel); if (!ids.length) return;
+        if (!confirm('Remove ' + ids.length + ' request' + (ids.length === 1 ? '' : 's') + (label ? ' ' + label : '') + '? This cannot be undone.')) return;
+        if (btn) { btn.disabled = true; btn.textContent = 'Removing...'; }
+        try { var r = await ppApi('requestsBulkDelete', { ids: ids.join(',') }, 120000); if (!r.success) throw new Error(r.error); var gone = {}; ids.forEach(function(id) { gone[id] = 1; }); rqList = rqList.filter(function(q) { return !gone[q.id]; }); rqSel = {}; rqBulk = false; closeModal(); renderRequests(); if (typeof rqSyncCaches === 'function') rqSyncCaches(); showToast(r.removed + ' request' + (r.removed === 1 ? '' : 's') + ' removed', 'success'); }
+        catch (e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v170)' : ''), 'error'); if (btn) { btn.disabled = false; btn.textContent = 'Remove'; } }
+      };
+      window.rqCleanup = async function(btn) {
+        btn.disabled = true; var was = btn.textContent; btn.textContent = 'Checking...';
+        try {
+          var r = await ppApi('requestsSuspects', {}, 120000); if (!r.success) throw new Error(r.error); var rows = r.rows || [];
+          if (!rows.length) { showToast('Nothing suspicious: every open request points at a real show or none at all', 'success'); return; }
+          ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>Requests that should not be here</h2><div class="modal-subtitle">' + rows.length + ' open request' + (rows.length === 1 ? '' : 's') + ' tied to something that is not a show we are going to: an import that was deleted, a pipeline row, or a name that does not read as a conference. Untick any to keep.</div></div><div class="modal-body"><div class="detail-section" style="margin-top:16px"><div class="table-wrapper" style="border-radius:12px;max-height:50vh;overflow:auto"><table class="rq-sus"><thead><tr><th style="width:28px"><input type="checkbox" checked onchange="document.querySelectorAll(\'.rq-sus tbody input\').forEach(function(c){c.checked=this.checked}.bind(this))"></th><th>Request</th><th>Show</th><th>Why</th></tr></thead><tbody>' + rows.map(function(x) { return '<tr><td><input type="checkbox" value="' + ppEsc(x.id) + '" checked></td><td><div class="pp-org-name" style="white-space:normal">' + ppEsc(x.title) + '</div><div class="pp-org-sub">' + ppEsc(x.type || '') + (x.auto ? ' · made by the generator' : ' · filed by hand') + '</div></td><td style="font-size:12px">' + ppEsc(x.show || '(gone)') + '</td><td class="why">' + ppEsc(x.why) + '</td></tr>'; }).join('') + '</tbody></table></div></div><div class="pp-modal-actions"><div class="left"></div><div class="right"><button class="pp-btn" onclick="closeModal()">Keep them</button><button class="pp-btn danger" onclick="rqBulkDelete(Array.prototype.map.call(document.querySelectorAll(\'.rq-sus tbody input:checked\'),function(c){return c.value}),this,\'from the cleanup list\')">Remove the ticked ones</button></div></div></div>');
+        } catch (e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v170)' : ''), 'error'); }
+        btn.disabled = false; btn.textContent = was;
+      };
+      var _rr = renderRequests; renderRequests = function() {
+        _rr();
+        var view = document.getElementById('requestsView'); if (!view) return;
+        var ctl = view.querySelector('.controls-row .controls-right, .controls-row .actions-group, .controls-row > div:last-child');
+        if (ctl && !ctl.querySelector('.rq-cleanup')) { ctl.insertAdjacentHTML('afterbegin', '<button class="text-action-btn rq-cleanup" onclick="rqCleanup(this)" title="Find requests tied to deleted or never-decided shows and remove them in one go">Clean up</button><button class="text-action-btn rq-select" onclick="rqBulkToggle()" title="Tick several requests and remove them together">Select</button>'); }
+        var sel = view.querySelector('.rq-select'); if (sel) sel.classList.toggle('on', !!rqBulk);
+        var old = document.getElementById('rqBulkBar'); if (old) old.remove();
+        var tbl = document.getElementById('rqTable'); if (!tbl) return;
+        tbl.classList.toggle('bulk', !!rqBulk);
+        var th0 = tbl.querySelector('thead th.rq-sel'); if (rqBulk && !th0) tbl.querySelector('thead tr').insertAdjacentHTML('afterbegin', '<th class="rq-sel"><input type="checkbox" onchange="rqSelAll(this.checked)"></th>'); if (!rqBulk && th0) th0.remove();
+        if (rqBulk) {
+          tbl.querySelectorAll('tbody tr[data-id]').forEach(function(tr) { var id = tr.getAttribute('data-id'); tr.insertAdjacentHTML('afterbegin', '<td class="rq-sel"><input type="checkbox"' + (rqSel[id] ? ' checked' : '') + ' onclick="event.stopPropagation()" onchange="rqSelToggle(\'' + ppEsc(id) + '\',this.checked)"></td>'); });
+          tbl.closest('.table-wrapper').insertAdjacentHTML('beforebegin', '<div class="rq-bulkbar" id="rqBulkBar"><span class="n"></span><span style="flex:1"></span><button class="pp-btn danger del" style="height:30px;padding:0 12px;font-size:12px" onclick="rqBulkDelete(null,this)">Remove</button><button class="pp-btn" style="height:30px;padding:0 12px;font-size:12px" onclick="rqBulkToggle()">Done</button></div>'); rqBulkBar();
+        }
+      };
     })();
   </script>
 </body>
