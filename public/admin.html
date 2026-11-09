@@ -6046,7 +6046,7 @@
     // =====================================================================
     // LANDING PAGES (conference pages -> leads source -> conference rep)
     // =====================================================================
-    var LP_COLS = ['id', 'title', 'url', 'showId', 'sourceKey', 'audience', 'notes', 'reps', 'dates', 'utmLinks', 'live', 'liveCheckedAt', 'updatedAt', 'updatedBy'];
+    var LP_COLS = ['id', 'title', 'url', 'showId', 'sourceKey', 'audience', 'notes', 'reps', 'dates', 'utmLinks', 'live', 'liveCheckedAt', 'updatedAt', 'updatedBy', 'state'];
     var lpList = [], lpLoaded = false, lpError = '', lpSearch = '';
     async function loadLandingPages(force) {
       if (lpLoaded && !force) return lpList;
@@ -6101,7 +6101,7 @@
       var cell = function(field, inner, cls) { return '<td class="pp-cell' + (cls ? ' ' + cls : '') + '" data-edit="' + field + '" data-id="' + ppEsc(p.id) + '" title="Click to edit">' + inner + '</td>'; };
       var show = lpShow(p), leads = lpLeads(p), reps = lpRepFor(p), last = leads.slice().sort(function(a, b) { return a.receivedAt < b.receivedAt ? 1 : -1; })[0];
       return '<tr data-id="' + ppEsc(p.id) + '">'
-        + cell('title', '<div class="pp-org-cell"><div class="pp-org-avatar" style="background:' + getOrgColor(p.title || p.url) + '">' + ppEsc(getOrgInitials(p.title || lpSlug(p.url))) + '</div><div><div class="pp-org-name">' + ppEsc(p.title || lpSlug(p.url)) + '</div><div class="pp-org-sub">' + (p.audience ? ppEsc(p.audience) : '<span class="pp-placeholder">audience?</span>') + '</div></div></div>')
+        + cell('title', '<div class="pp-org-cell"><div class="pp-org-avatar" style="background:' + getOrgColor(p.title || p.url) + '">' + ppEsc(getOrgInitials(p.title || lpSlug(p.url))) + '</div><div><div class="pp-org-name">' + ppEsc(p.title || lpSlug(p.url)) + '</div><div class="pp-org-sub">' + (p.audience ? ppEsc(p.audience) : '<span class="pp-placeholder">audience?</span>') + (p.state ? ' <code class="lp-key" title="The state this page speaks to">' + ppEsc(p.state) + '</code>' : '') + '</div></div></div>')
         + cell('url', p.url ? '<span class="lp-url"><a href="' + ppEsc(lpAbs(p.url)) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + ppEsc(lpSlug(p.url) || p.url) + '</a><button class="pp-mini-btn" title="Copy link" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(lpAbs(p.url)) + '\',\'Link\')">' + ppSvg('copy') + '</button><button class="pp-mini-btn" title="QR code" onclick="event.stopPropagation();lpQr(\'' + ppEsc(lpAbs(p.url)) + '\',\'' + ppEsc(p.title) + '\')">&#9641;</button><button class="pp-mini-btn" title="Change the URL" onclick="event.stopPropagation();lpCellEdit(\'' + ppEsc(p.id) + '\',\'url\',this.closest(\'td\'))">&#9998;</button>' + (Object.keys(lpUtm(p)).length ? '<button class="pp-mini-btn" title="Tracked links" onclick="event.stopPropagation();lpQuick(\'' + ppEsc(p.id) + '\',this)"><b style="font-size:9px">' + Object.keys(lpUtm(p)).length + '</b></button>' : '') + (p.live === 'no' ? '<span class="lp-live no" title="This URL did not resolve at the last check. Build and deploy the page.">not live</span>' : '') + '</span>' : '<span class="pp-placeholder">URL?</span>')
         + cell('showId', show ? '<div class="pp-org-name" style="max-width:220px">' + ppEsc(show.name) + '</div><div class="pp-org-sub">' + ppFmtRange(show._start, show._end) + (show._isPast ? ' &middot; past' : show._daysUntil !== null ? ' &middot; ' + ppInDays(show._daysUntil).toLowerCase() : '') + '</div>' : '<span class="pp-chip aud-sbo" title="Not tied to a show. Click to link one if it should be.">Evergreen<i class="caret"></i></span>')
         + cell('reps', reps.length ? '<div style="display:flex;align-items:center;gap:6px">' + ppRepAvatars(reps.join(','), 24) + (show && show._reps.length ? '' : '<span class="ca-sub">from page</span>') + '</div>' : '<span class="pp-chip need-to-book">Rotation<i class="caret"></i></span>')
@@ -6131,11 +6131,13 @@
     }
     document.addEventListener('keydown', function(e) { if (e.key === 'Enter' && e.target && e.target.classList && e.target.classList.contains('lp-add-input')) { e.preventDefault(); lpQuickAdd(e.target); } });
     async function lpQuickAdd(input) {
-      var url = input.value.trim(); if (!url) return; if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-      var slug = lpSlug(url), guessShow = tsList.find(function(s) { var k = lpNormKey(slug); return k && (lpNormKey(s.name) === k || k.indexOf(lpNormKey(s.name)) >= 0); });
-      var p = { id: '', title: slug.split('/').pop().replace(/[-_]+/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); }), url: url, showId: guessShow ? guessShow.id : '', sourceKey: slug.split('/').pop(), audience: guessShow ? tsAudLabel(guessShow.audience) : '', notes: '' };
-      input.disabled = true;
-      try { var r = await ppApi('saveLandingPage', { row: p }); if (!r.success) throw new Error(r.error); p.id = r.id; lpList.push(p); renderLandingPages(); renderTradeShows(); showToast('Added ' + p.title + (guessShow ? ' (linked to ' + guessShow.name + ')' : ''), 'success'); } catch(e) { input.disabled = false; showToast('Could not add: ' + e.message, 'error'); }
+      var url = input.value.trim(); if (!url) return; url = lpAbs(url);
+      var slug = lpSlug(url), last = slug.split('/').pop(), hasYear = /(19|20)\d{2}/.test(last), guessShow = hasYear ? tsList.find(function(s) { var k = lpNormKey(slug); return k && (lpNormKey(s.name) === k || k.indexOf(lpNormKey(s.name)) >= 0); }) : null;
+      var p = { id: '', title: last.replace(/[-_]+/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); }), url: url, showId: guessShow ? guessShow.id : '', sourceKey: last, audience: guessShow ? tsAudLabel(guessShow.audience) : '', notes: '', state: '' };
+      input.disabled = true; input.placeholder = 'Reading the page...';
+      // v207: read the page itself for its title, the source tag its form sends and the state it speaks to, so the list matches what leads will carry
+      try { var info = await ppApi('lpInspect', { url: url }, 45000); if (info && info.success && info.ok) { if (info.title) p.title = info.title; if (info.sourceKey) p.sourceKey = info.sourceKey; if (info.state) p.state = info.state; if (info.audience && !p.audience) p.audience = info.audience; p.live = 'yes'; } else if (info && info.success && !info.ok) p.live = 'no'; } catch (e) {}
+      try { var r = await ppApi('saveLandingPage', { row: p }); if (!r.success) throw new Error(r.error); p.id = r.id; lpList.push(p); renderLandingPages(); renderTradeShows(); showToast('Added ' + p.title + (p.sourceKey ? ' (source tag ' + p.sourceKey + ')' : '') + (guessShow ? ', linked to ' + guessShow.name : p.live === 'no' ? ', not live yet' : ''), 'success'); } catch(e) { input.disabled = false; input.placeholder = '+ Paste a landing page URL and press Enter'; showToast('Could not add: ' + e.message, 'error'); }
     }
     // an auto page lives at /s/<slug> only because a show carries that slug: when the page's URL is changed to a new /s/ address, the show's slug moves with it, so the page exists at the new address within minutes
     async function lpFollowSlug(p, url) {
@@ -6152,7 +6154,7 @@
       var p = lpList.find(function(x) { return x.id === id; }); if (!p) return;
       var save = function(patch) { var prev = {}; Object.keys(patch).forEach(function(k) { prev[k] = p[k]; p[k] = patch[k]; }); renderLandingPages(); renderTradeShows(); ppApi('saveLandingPage', { row: p }).then(function(r) { if (!r.success) throw new Error(r.error || 'Save failed'); showToast('Saved', 'success'); }).catch(function(err) { Object.keys(prev).forEach(function(k) { p[k] = prev[k]; }); renderLandingPages(); showToast('Could not save: ' + err.message, 'error'); }); };
       switch (field) {
-        case 'title': ppFormPopover(cell, [{ key: 'title', label: 'Page title', value: p.title }, { key: 'audience', label: 'Audience', value: p.audience, placeholder: 'e.g. Athletic Directors' }], function(v) { save(v); }, { title: 'Landing page' }); break;
+        case 'title': ppFormPopover(cell, [{ key: 'title', label: 'Page title', value: p.title }, { key: 'audience', label: 'Audience', value: p.audience, placeholder: 'e.g. Athletic Directors' }, { key: 'state', label: 'State the page speaks to (blank for national)', value: p.state, placeholder: 'TX' }], function(v) { if (v.state !== undefined) v.state = String(v.state || '').trim().toUpperCase().slice(0, 2); save(v); }, { title: 'Landing page' }); break;
         case 'url': ppInlineEdit(cell, { value: p.url, type: 'url', placeholder: 'https://', onSave: function(v) { v = lpAbs(v); save({ url: v }); lpFollowSlug(p, v); } }); break;
         case 'sourceKey': ppInlineEdit(cell, { value: p.sourceKey, placeholder: 'What the form sends as Source', onSave: function(v) { save({ sourceKey: v }); } }); break;
         case 'notes': ppInlineEdit(cell, { value: p.notes, placeholder: 'Note', onSave: function(v) { save({ notes: v }); } }); break;
@@ -10859,13 +10861,13 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v206 · Nov 8a';
+    var PP_BUILD = 'v207 · Nov 9a';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
         ppApi('ppPing', {}, 30000).then(function(r) { var v = Number(r && r.version) || 0; window._ppServerVersion = v; if (v && v < 120) { tag.classList.add('warn'); tag.textContent = PP_BUILD + ' · Extras v' + v + ' (needs v120)'; tag.title = 'The server is behind this page: install the current Extras.gs and deploy a new version.'; } else if (v) tag.textContent = PP_BUILD + ' · Extras v' + v; }).catch(function() {});
       }, 1500); };
-      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 170 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
+      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 171 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
     })();
     // =====================================================================
     // TEAM: titles and headshots, editable in Settings
@@ -15351,5 +15353,47 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       };
     })();
   </script>
+<script>
+// v207: evergreen pages are pages too. Sync from site lists the pages in the conferences repo and adds the ones not on this
+// list (reading each page for its source tag and state); Short link makes a practiceplan.rentals link for a page that has none.
+(function() {
+  window.lpSyncSite = async function(btn) {
+    var o = btn ? btn.innerHTML : ''; if (btn) { btn.disabled = true; btn.innerHTML = '<svg class="pp-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></svg> Checking the site...'; }
+    var done = function() { if (btn) { btn.disabled = false; btn.innerHTML = o; } };
+    try {
+      var r = await ppApi('lpSyncSite', { apply: '0' }, 60000); if (!r.success) throw new Error(r.error);
+      if (!r.missing.length) { showToast('Every page on the site (' + r.onSite + ') is on the list', 'success'); done(); return; }
+      if (!confirm(r.missing.length + ' page' + (r.missing.length === 1 ? '' : 's') + ' on conferences.practice-plan.com ' + (r.missing.length === 1 ? 'is' : 'are') + ' not on this list:\n\n' + r.missing.map(function(x) { return '  /' + x; }).join('\n') + '\n\nAdd them? Each page is read for its title, the source tag its form sends and the state it speaks to; pages with a year are linked to that year\'s show when it is on the board. Blank states on pages already listed are filled in too.')) { done(); return; }
+      if (btn) btn.innerHTML = '<svg class="pp-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></svg> Reading ' + r.missing.length + ' pages...';
+      var a = await ppApi('lpSyncSite', { apply: '1' }, 300000); if (!a.success) throw new Error(a.error);
+      await loadLandingPages(true); renderLandingPages(); if (typeof renderTradeShows === 'function') renderTradeShows();
+      var msg = 'Added ' + a.added.length + ' page' + (a.added.length === 1 ? '' : 's') + (a.added.length ? ': ' + a.added.map(function(x) { return x.title + (x.show ? ' (' + x.show + ')' : '') ; }).join(', ') : '') + (a.statesFilled ? '. Filled the state on ' + a.statesFilled + ' listed page' + (a.statesFilled === 1 ? '' : 's') : '') + (a.skipped.length ? '. Skipped: ' + a.skipped.join(', ') : '');
+      showToast(msg, a.skipped.length ? 'info' : 'success');
+    } catch (e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v171)' : ''), 'error'); }
+    done();
+  };
+  window.lpShortLink = async function(id, btn) {
+    var p = (lpList || []).find(function(x) { return x.id === id; }); if (!p) return;
+    var def = String(p.sourceKey || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); if (!def || /(19|20)\d{2}/.test(def)) def = lpSlug(p.url).split('/').pop().replace(/-?(19|20)\d{2}-?/g, '-').replace(/^-+|-+$/g, '') || def;
+    var bh = prompt('Short link for ' + (p.title || lpSlug(p.url)) + '\n\npracticeplan.rentals/', def); if (bh === null) return; bh = String(bh).trim().toLowerCase().replace(/^.*practiceplan\.rentals\//, '').replace(/[^a-z0-9-]/g, ''); if (!bh) { showToast('Type the part after practiceplan.rentals/', 'error'); return; }
+    if (btn) { btn.disabled = true; btn.textContent = 'Making...'; }
+    try { var r = await ppApi('createPageShortLink', { id: id, backHalf: bh }, 60000); if (!r.success) throw new Error(r.error); showToast(r.shortUrl + ' points at ' + lpSlug(p.url), 'success'); try { if (typeof shortRegLoad === 'function') await shortRegLoad(true); } catch (e) {} renderLandingPages(); }
+    catch (e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v171)' : ''), 'error'); if (btn) { btn.disabled = false; btn.textContent = 'Short link'; } }
+  };
+  var _rl7 = renderLandingPages;
+  renderLandingPages = function() {
+    _rl7();
+    var actions = document.querySelector('#landingView .actions-group');
+    if (actions && !document.getElementById('lpSyncBtn')) { var b = document.createElement('button'); b.id = 'lpSyncBtn'; b.className = 'text-action-btn'; b.title = 'List the pages on conferences.practice-plan.com and add any that are missing here, with the source tag each page really sends'; b.setAttribute('onclick', 'lpSyncSite(this)'); b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Sync from site'; actions.insertBefore(b, actions.firstChild); }
+    if (typeof shortReg === 'undefined' || !shortReg) return;
+    document.querySelectorAll('#lpTableBody tr[data-id]').forEach(function(tr) {
+      if (tr.querySelector('.lp-short') || tr.querySelector('.lp-short-make')) return;
+      var p = (lpList || []).find(function(x) { return x.id === tr.getAttribute('data-id'); }); if (!p || !p.url) return;
+      var cell = tr.querySelector('.lp-url'); if (!cell) return;
+      cell.insertAdjacentHTML('beforeend', '<button class="pp-mini-btn lp-short-make" style="width:auto;padding:0 7px;font-size:10px" title="Make a practiceplan.rentals short link for this page" onclick="event.stopPropagation();lpShortLink(\'' + ppEsc(p.id) + '\',this)">Short link</button>');
+    });
+  };
+})();
+</script>
 </body>
 </html>
