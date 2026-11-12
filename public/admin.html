@@ -6046,7 +6046,7 @@
     // =====================================================================
     // LANDING PAGES (conference pages -> leads source -> conference rep)
     // =====================================================================
-    var LP_COLS = ['id', 'title', 'url', 'showId', 'sourceKey', 'audience', 'notes', 'reps', 'dates', 'utmLinks', 'live', 'liveCheckedAt', 'updatedAt', 'updatedBy', 'state'];
+    var LP_COLS = ['id', 'title', 'url', 'showId', 'sourceKey', 'audience', 'notes', 'reps', 'dates', 'utmLinks', 'live', 'liveCheckedAt', 'updatedAt', 'updatedBy'];
     var lpList = [], lpLoaded = false, lpError = '', lpSearch = '';
     async function loadLandingPages(force) {
       if (lpLoaded && !force) return lpList;
@@ -6101,7 +6101,7 @@
       var cell = function(field, inner, cls) { return '<td class="pp-cell' + (cls ? ' ' + cls : '') + '" data-edit="' + field + '" data-id="' + ppEsc(p.id) + '" title="Click to edit">' + inner + '</td>'; };
       var show = lpShow(p), leads = lpLeads(p), reps = lpRepFor(p), last = leads.slice().sort(function(a, b) { return a.receivedAt < b.receivedAt ? 1 : -1; })[0];
       return '<tr data-id="' + ppEsc(p.id) + '">'
-        + cell('title', '<div class="pp-org-cell"><div class="pp-org-avatar" style="background:' + getOrgColor(p.title || p.url) + '">' + ppEsc(getOrgInitials(p.title || lpSlug(p.url))) + '</div><div><div class="pp-org-name">' + ppEsc(p.title || lpSlug(p.url)) + '</div><div class="pp-org-sub">' + (p.audience ? ppEsc(p.audience) : '<span class="pp-placeholder">audience?</span>') + (p.state ? ' <code class="lp-key" title="The state this page speaks to">' + ppEsc(p.state) + '</code>' : '') + '</div></div></div>')
+        + cell('title', '<div class="pp-org-cell"><div class="pp-org-avatar" style="background:' + getOrgColor(p.title || p.url) + '">' + ppEsc(getOrgInitials(p.title || lpSlug(p.url))) + '</div><div><div class="pp-org-name">' + ppEsc(p.title || lpSlug(p.url)) + '</div><div class="pp-org-sub">' + (p.audience ? ppEsc(p.audience) : '<span class="pp-placeholder">audience?</span>') + '</div></div></div>')
         + cell('url', p.url ? '<span class="lp-url"><a href="' + ppEsc(lpAbs(p.url)) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + ppEsc(lpSlug(p.url) || p.url) + '</a><button class="pp-mini-btn" title="Copy link" onclick="event.stopPropagation();ppCopy(\'' + ppEsc(lpAbs(p.url)) + '\',\'Link\')">' + ppSvg('copy') + '</button><button class="pp-mini-btn" title="QR code" onclick="event.stopPropagation();lpQr(\'' + ppEsc(lpAbs(p.url)) + '\',\'' + ppEsc(p.title) + '\')">&#9641;</button><button class="pp-mini-btn" title="Change the URL" onclick="event.stopPropagation();lpCellEdit(\'' + ppEsc(p.id) + '\',\'url\',this.closest(\'td\'))">&#9998;</button>' + (Object.keys(lpUtm(p)).length ? '<button class="pp-mini-btn" title="Tracked links" onclick="event.stopPropagation();lpQuick(\'' + ppEsc(p.id) + '\',this)"><b style="font-size:9px">' + Object.keys(lpUtm(p)).length + '</b></button>' : '') + (p.live === 'no' ? '<span class="lp-live no" title="This URL did not resolve at the last check. Build and deploy the page.">not live</span>' : '') + '</span>' : '<span class="pp-placeholder">URL?</span>')
         + cell('showId', show ? '<div class="pp-org-name" style="max-width:220px">' + ppEsc(show.name) + '</div><div class="pp-org-sub">' + ppFmtRange(show._start, show._end) + (show._isPast ? ' &middot; past' : show._daysUntil !== null ? ' &middot; ' + ppInDays(show._daysUntil).toLowerCase() : '') + '</div>' : '<span class="pp-chip aud-sbo" title="Not tied to a show. Click to link one if it should be.">Evergreen<i class="caret"></i></span>')
         + cell('reps', reps.length ? '<div style="display:flex;align-items:center;gap:6px">' + ppRepAvatars(reps.join(','), 24) + (show && show._reps.length ? '' : '<span class="ca-sub">from page</span>') + '</div>' : '<span class="pp-chip need-to-book">Rotation<i class="caret"></i></span>')
@@ -6131,13 +6131,11 @@
     }
     document.addEventListener('keydown', function(e) { if (e.key === 'Enter' && e.target && e.target.classList && e.target.classList.contains('lp-add-input')) { e.preventDefault(); lpQuickAdd(e.target); } });
     async function lpQuickAdd(input) {
-      var url = input.value.trim(); if (!url) return; url = lpAbs(url);
-      var slug = lpSlug(url), last = slug.split('/').pop(), hasYear = /(19|20)\d{2}/.test(last), guessShow = hasYear ? tsList.find(function(s) { var k = lpNormKey(slug); return k && (lpNormKey(s.name) === k || k.indexOf(lpNormKey(s.name)) >= 0); }) : null;
-      var p = { id: '', title: last.replace(/[-_]+/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); }), url: url, showId: guessShow ? guessShow.id : '', sourceKey: last, audience: guessShow ? tsAudLabel(guessShow.audience) : '', notes: '', state: '' };
-      input.disabled = true; input.placeholder = 'Reading the page...';
-      // v207: read the page itself for its title, the source tag its form sends and the state it speaks to, so the list matches what leads will carry
-      try { var info = await ppApi('lpInspect', { url: url }, 45000); if (info && info.success && info.ok) { if (info.title) p.title = info.title; if (info.sourceKey) p.sourceKey = info.sourceKey; if (info.state) p.state = info.state; if (info.audience && !p.audience) p.audience = info.audience; p.live = 'yes'; } else if (info && info.success && !info.ok) p.live = 'no'; } catch (e) {}
-      try { var r = await ppApi('saveLandingPage', { row: p }); if (!r.success) throw new Error(r.error); p.id = r.id; lpList.push(p); renderLandingPages(); renderTradeShows(); showToast('Added ' + p.title + (p.sourceKey ? ' (source tag ' + p.sourceKey + ')' : '') + (guessShow ? ', linked to ' + guessShow.name : p.live === 'no' ? ', not live yet' : ''), 'success'); } catch(e) { input.disabled = false; input.placeholder = '+ Paste a landing page URL and press Enter'; showToast('Could not add: ' + e.message, 'error'); }
+      var url = input.value.trim(); if (!url) return; if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+      var slug = lpSlug(url), guessShow = tsList.find(function(s) { var k = lpNormKey(slug); return k && (lpNormKey(s.name) === k || k.indexOf(lpNormKey(s.name)) >= 0); });
+      var p = { id: '', title: slug.split('/').pop().replace(/[-_]+/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); }), url: url, showId: guessShow ? guessShow.id : '', sourceKey: slug.split('/').pop(), audience: guessShow ? tsAudLabel(guessShow.audience) : '', notes: '' };
+      input.disabled = true;
+      try { var r = await ppApi('saveLandingPage', { row: p }); if (!r.success) throw new Error(r.error); p.id = r.id; lpList.push(p); renderLandingPages(); renderTradeShows(); showToast('Added ' + p.title + (guessShow ? ' (linked to ' + guessShow.name + ')' : ''), 'success'); } catch(e) { input.disabled = false; showToast('Could not add: ' + e.message, 'error'); }
     }
     // an auto page lives at /s/<slug> only because a show carries that slug: when the page's URL is changed to a new /s/ address, the show's slug moves with it, so the page exists at the new address within minutes
     async function lpFollowSlug(p, url) {
@@ -6154,7 +6152,7 @@
       var p = lpList.find(function(x) { return x.id === id; }); if (!p) return;
       var save = function(patch) { var prev = {}; Object.keys(patch).forEach(function(k) { prev[k] = p[k]; p[k] = patch[k]; }); renderLandingPages(); renderTradeShows(); ppApi('saveLandingPage', { row: p }).then(function(r) { if (!r.success) throw new Error(r.error || 'Save failed'); showToast('Saved', 'success'); }).catch(function(err) { Object.keys(prev).forEach(function(k) { p[k] = prev[k]; }); renderLandingPages(); showToast('Could not save: ' + err.message, 'error'); }); };
       switch (field) {
-        case 'title': ppFormPopover(cell, [{ key: 'title', label: 'Page title', value: p.title }, { key: 'audience', label: 'Audience', value: p.audience, placeholder: 'e.g. Athletic Directors' }, { key: 'state', label: 'State the page speaks to (blank for national)', value: p.state, placeholder: 'TX' }], function(v) { if (v.state !== undefined) v.state = String(v.state || '').trim().toUpperCase().slice(0, 2); save(v); }, { title: 'Landing page' }); break;
+        case 'title': ppFormPopover(cell, [{ key: 'title', label: 'Page title', value: p.title }, { key: 'audience', label: 'Audience', value: p.audience, placeholder: 'e.g. Athletic Directors' }], function(v) { save(v); }, { title: 'Landing page' }); break;
         case 'url': ppInlineEdit(cell, { value: p.url, type: 'url', placeholder: 'https://', onSave: function(v) { v = lpAbs(v); save({ url: v }); lpFollowSlug(p, v); } }); break;
         case 'sourceKey': ppInlineEdit(cell, { value: p.sourceKey, placeholder: 'What the form sends as Source', onSave: function(v) { save({ sourceKey: v }); } }); break;
         case 'notes': ppInlineEdit(cell, { value: p.notes, placeholder: 'Note', onSave: function(v) { save({ notes: v }); } }); break;
@@ -10861,7 +10859,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v207 · Nov 9a';
+    var PP_BUILD = 'v206 · Nov 12a';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -13027,6 +13025,8 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // v159: Availability. Per client and season: open / partial / closed / unknown, how long the open window runs, and a note. Hand-entered for now.
     (function() {
       var avData = null, avSeasons = [], avLoading = false, avScope = (function() { try { return localStorage.getItem('pp.av.scope') || 'live'; } catch (e) { return 'live'; } })(), avQ = '';
+      // v206: the search box writes through a setter; the inline handler used to assign a global of the same name, so the filter never saw it
+      window.avSetQ = function(v) { avQ = String(v || '').toLowerCase(); renderAvailability(); };
       var STATUS = [['open', 'Open'], ['partial', 'Partially open'], ['closed', 'Closed'], ['unknown', 'Unknown']];
       function fd(d) { return d ? ppFmtDate(String(d).slice(0, 10), { month: 'short', day: 'numeric' }) : ''; }
       function key(email, season) { return String(email || '').toLowerCase() + '|' + season; }
@@ -13098,7 +13098,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         var tiles = '<div class="av-ks">' + k(counts.open, 'open for ' + (cur.label || 'this season'), (counts.partial ? counts.partial + ' partially' : '') , 'good') + k(counts.closed, 'closed', counts.unknown + ' not entered yet') + k(expiring.length, 'windows ending in 30d', expired.length ? expired.length + ' already past' : '', expiring.length || expired.length ? 'warn' : '') + (seasons[1] ? (function() { var g = live.filter(function(d) { return !!avNeedFor(d.email); }); return k(g.length, 'nothing for ' + seasons[1].label, g.length ? 'live, not entered yet' : 'every live client entered', g.length ? 'warn' : 'good'); })() : '') + k(live.length, 'clients', Object.keys(states).length + ' state' + (Object.keys(states).length === 1 ? '' : 's')) + k(newLive, 'went live in 90d', '') + k(goLives, 'go-lives in 30d', '') + '</div>';
         var exp = (expiring.length || expired.length) ? '<div class="av-expiring"><b>Open windows running out:</b> ' + expired.map(function(x) { return '<span>' + ppEsc(avLabel(x.d)) + ' <span class="av-sub past">ended ' + fd(x.c.openThrough) + '</span></span>'; }).concat(expiring.sort(function(a, b) { return a.n - b.n; }).map(function(x) { return '<span>' + ppEsc(avLabel(x.d)) + ' <span class="av-sub soon">' + (x.n === 0 ? 'today' : 'in ' + x.n + 'd') + '</span></span>'; })).join('') + '</div>' : '';
         avView = 'timeline';   // v196: the timeline is the one view
-        var ctl = '<div class="av-ctl"><div class="seg">' + [['live', 'Clients'], ['all', 'Plus everyone in onboarding']].map(function(t) { return '<button class="' + (avScope === t[0] ? 'on' : '') + '" onclick="avScopeSet(\'' + t[0] + '\')">' + t[1] + '</button>'; }).join('') + '</div><input class="search-input" style="width:220px" placeholder="Find a client" value="' + ppEsc(avQ) + '" oninput="avQ=this.value.toLowerCase();renderAvailability()"><button class="text-action-btn" onclick="avLoad(true)">Refresh</button><div class="av-legend"><span><i style="background:#0f7a4a"></i>open</span><span><i style="background:#d97706"></i>partial</span><span><i style="background:#b4312a"></i>closed</span><span><i style="background:var(--border)"></i>unknown</span></div></div>';
+        var ctl = '<div class="av-ctl"><div class="seg">' + [['live', 'Clients'], ['all', 'Plus everyone in onboarding']].map(function(t) { return '<button class="' + (avScope === t[0] ? 'on' : '') + '" onclick="avScopeSet(\'' + t[0] + '\')">' + t[1] + '</button>'; }).join('') + '</div><input class="search-input" style="width:220px" placeholder="Find a client" value="' + ppEsc(avQ) + '" oninput="avSetQ(this.value)"><button class="text-action-btn" onclick="avLoad(true)">Refresh</button><div class="av-legend"><span><i style="background:#0f7a4a"></i>open</span><span><i style="background:#d97706"></i>partial</span><span><i style="background:#b4312a"></i>closed</span><span><i style="background:var(--border)"></i>unknown</span></div></div>';
         var head = '<tr><th>Client</th>' + seasons.map(function(s, i) { return '<th class="c' + (i === 0 ? ' now' : '') + '" title="' + ppEsc(s.start + ' to ' + s.end) + '">' + ppEsc(s.label) + (i === 0 ? ' · now' : '') + '</th>'; }).join('') + '<th>Note</th></tr>';
         var rows = list.map(function(d) {
           var rep = d.accountRep ? ppRepName(d.accountRep) : '', note = (function() { var c = seasons.map(function(s) { return cellFor(d.email, s.key); }).find(function(c) { return c && c.note; }); return c ? c.note : ''; })();
@@ -13205,6 +13205,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // v161: Client Success > Health. One score per live client, every reminder sent and due, NPS.
     (function() {
       var hlData = null, hlLoading = false, hlBand = 'all', hlQ = '', hlOpen = {};
+      window.hlSetQ = function(v) { hlQ = String(v || '').toLowerCase(); renderHealth(); }; // v206: same fix as Availability
       function fd(d) { return d ? ppFmtDate(String(d).slice(0, 10), { month: 'short', day: 'numeric' }) : ''; }
       function name(e) { return e ? (PP_FULL_NAMES[e] || (typeof ppRepName === 'function' && ppRepName(e)) || e) : ''; }
       window.hlLoad = async function(force) { if (hlData && !force) return; hlLoading = true;
@@ -13277,7 +13278,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         if (em.since || em.start) { var sinceD = em.since || em.start, running = em.backfillCursor && em.backfillDone !== 'true'; cov = '<div class="hl-cov' + (running ? ' run' : '') + '"><span>Email history from Close covers <b>' + fd(sinceD) + (sinceD ? ', ' + String(sinceD).slice(0, 4) : '') + '</b> on (' + (em.count || 0).toLocaleString() + ' emails)' + (running ? '; pulling older history, currently at ' + fd(em.backfillCursor) : '') + '. Touches, replies and last-contact dates before that are not in the score.</span>' + (!running && typeof ppIsSuperAdmin === 'function' && ppIsSuperAdmin() ? '<button class="text-action-btn" onclick="hlBackfill(this)">Pull older history</button>' : '') + '</div>'; }
         var list = rows.filter(function(r) { return (hlBand === 'all' || r.band === hlBand) && (!hlQ || String(r.organization || '').toLowerCase().indexOf(hlQ) >= 0); });
         list.sort(function(a, b) { var x = sortVal(a, hlSort.key), y = sortVal(b, hlSort.key); var c = x < y ? -1 : x > y ? 1 : String(a.organization).localeCompare(String(b.organization)); return hlSort.dir === 'asc' ? c : -c; });
-        var ctl = '<div class="av-ctl"><input class="search-input" style="width:220px" placeholder="Find a client" value="' + ppEsc(hlQ) + '" oninput="hlQ=this.value.toLowerCase();renderHealth()"><button class="text-action-btn" onclick="hlLoad(true)">Refresh</button>' + (typeof ppIsSuperAdmin === 'function' && ppIsSuperAdmin() ? '<button class="text-action-btn" onclick="hlUsageImport()" title="One row per client per month from PracticePlan: organization, month, reservations, revenue, spaces, spaces with photos, last booking">Import usage</button>' : '') + '<span class="ca-sub">' + (hlData.cached && hlData.generatedAt ? 'As of ' + ppAgo(hlData.generatedAt) + '. ' : '') + 'Click a column to sort, a row for the detail. Hover a name to see why it counts as a client.</span></div>';
+        var ctl = '<div class="av-ctl"><input class="search-input" style="width:220px" placeholder="Find a client" value="' + ppEsc(hlQ) + '" oninput="hlSetQ(this.value)"><button class="text-action-btn" onclick="hlLoad(true)">Refresh</button>' + (typeof ppIsSuperAdmin === 'function' && ppIsSuperAdmin() ? '<button class="text-action-btn" onclick="hlUsageImport()" title="One row per client per month from PracticePlan: organization, month, reservations, revenue, spaces, spaces with photos, last booking">Import usage</button>' : '') + '<span class="ca-sub">' + (hlData.cached && hlData.generatedAt ? 'As of ' + ppAgo(hlData.generatedAt) + '. ' : '') + 'Click a column to sort, a row for the detail. Hover a name to see why it counts as a client.</span></div>';
         var th = function(key, label, title) { var on = hlSort.key === key; return '<th class="' + (on ? 'on' : '') + '" onclick="hlSortSet(\'' + key + '\')" title="' + ppEsc(title || 'Sort') + '">' + label + '<i>' + (on ? (hlSort.dir === 'asc' ? '&#9650;' : '&#9660;') : '&#9650;') + '</i></th>'; };
         var body = list.map(function(r) { var sg = r.signals || {}, c = r.checkin, u = r.usage, n = r.nps, why = (r.why || []);
           var touchCls = sg.touchDays === null || sg.touchDays === undefined ? 'off' : sg.touchDays <= 14 ? 'ok' : sg.touchDays <= 45 ? 'mid' : 'bad';
@@ -15353,47 +15354,46 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       };
     })();
   </script>
-<script>
-// v207: evergreen pages are pages too. Sync from site lists the pages in the conferences repo and adds the ones not on this
-// list (reading each page for its source tag and state); Short link makes a practiceplan.rentals link for a page that has none.
-(function() {
-  window.lpSyncSite = async function(btn) {
-    var o = btn ? btn.innerHTML : ''; if (btn) { btn.disabled = true; btn.innerHTML = '<svg class="pp-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></svg> Checking the site...'; }
-    var done = function() { if (btn) { btn.disabled = false; btn.innerHTML = o; } };
-    try {
-      var r = await ppApi('lpSyncSite', { apply: '0' }, 60000); if (!r.success) throw new Error(r.error);
-      if (!r.missing.length) { showToast('Every page on the site (' + r.onSite + ') is on the list', 'success'); done(); return; }
-      if (!confirm(r.missing.length + ' page' + (r.missing.length === 1 ? '' : 's') + ' on conferences.practice-plan.com ' + (r.missing.length === 1 ? 'is' : 'are') + ' not on this list:\n\n' + r.missing.map(function(x) { return '  /' + x; }).join('\n') + '\n\nAdd them? Each page is read for its title, the source tag its form sends and the state it speaks to; pages with a year are linked to that year\'s show when it is on the board. Blank states on pages already listed are filled in too.')) { done(); return; }
-      if (btn) btn.innerHTML = '<svg class="pp-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></svg> Reading ' + r.missing.length + ' pages...';
-      var a = await ppApi('lpSyncSite', { apply: '1' }, 300000); if (!a.success) throw new Error(a.error);
-      await loadLandingPages(true); renderLandingPages(); if (typeof renderTradeShows === 'function') renderTradeShows();
-      var msg = 'Added ' + a.added.length + ' page' + (a.added.length === 1 ? '' : 's') + (a.added.length ? ': ' + a.added.map(function(x) { return x.title + (x.show ? ' (' + x.show + ')' : '') ; }).join(', ') : '') + (a.statesFilled ? '. Filled the state on ' + a.statesFilled + ' listed page' + (a.statesFilled === 1 ? '' : 's') : '') + (a.skipped.length ? '. Skipped: ' + a.skipped.join(', ') : '');
-      showToast(msg, a.skipped.length ? 'info' : 'success');
-    } catch (e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v171)' : ''), 'error'); }
-    done();
-  };
-  window.lpShortLink = async function(id, btn) {
-    var p = (lpList || []).find(function(x) { return x.id === id; }); if (!p) return;
-    var def = String(p.sourceKey || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); if (!def || /(19|20)\d{2}/.test(def)) def = lpSlug(p.url).split('/').pop().replace(/-?(19|20)\d{2}-?/g, '-').replace(/^-+|-+$/g, '') || def;
-    var bh = prompt('Short link for ' + (p.title || lpSlug(p.url)) + '\n\npracticeplan.rentals/', def); if (bh === null) return; bh = String(bh).trim().toLowerCase().replace(/^.*practiceplan\.rentals\//, '').replace(/[^a-z0-9-]/g, ''); if (!bh) { showToast('Type the part after practiceplan.rentals/', 'error'); return; }
-    if (btn) { btn.disabled = true; btn.textContent = 'Making...'; }
-    try { var r = await ppApi('createPageShortLink', { id: id, backHalf: bh }, 60000); if (!r.success) throw new Error(r.error); showToast(r.shortUrl + ' points at ' + lpSlug(p.url), 'success'); try { if (typeof shortRegLoad === 'function') await shortRegLoad(true); } catch (e) {} renderLandingPages(); }
-    catch (e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v171)' : ''), 'error'); if (btn) { btn.disabled = false; btn.textContent = 'Short link'; } }
-  };
-  var _rl7 = renderLandingPages;
-  renderLandingPages = function() {
-    _rl7();
-    var actions = document.querySelector('#landingView .actions-group');
-    if (actions && !document.getElementById('lpSyncBtn')) { var b = document.createElement('button'); b.id = 'lpSyncBtn'; b.className = 'text-action-btn'; b.title = 'List the pages on conferences.practice-plan.com and add any that are missing here, with the source tag each page really sends'; b.setAttribute('onclick', 'lpSyncSite(this)'); b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Sync from site'; actions.insertBefore(b, actions.firstChild); }
-    if (typeof shortReg === 'undefined' || !shortReg) return;
-    document.querySelectorAll('#lpTableBody tr[data-id]').forEach(function(tr) {
-      if (tr.querySelector('.lp-short') || tr.querySelector('.lp-short-make')) return;
-      var p = (lpList || []).find(function(x) { return x.id === tr.getAttribute('data-id'); }); if (!p || !p.url) return;
-      var cell = tr.querySelector('.lp-url'); if (!cell) return;
-      cell.insertAdjacentHTML('beforeend', '<button class="pp-mini-btn lp-short-make" style="width:auto;padding:0 7px;font-size:10px" title="Make a practiceplan.rentals short link for this page" onclick="event.stopPropagation();lpShortLink(\'' + ppEsc(p.id) + '\',this)">Short link</button>');
-    });
-  };
-})();
-</script>
+
+  <script>
+    // ---- v206: the quick metrics list (name, bookings, revenue for the year so far) pasted on the Revenue view; and the Nov 11 list applied once ----
+    (function() {
+      if (typeof startRevenueImport !== 'function') return;
+      var _sri = startRevenueImport; startRevenueImport = function() {
+        _sri(); var body = document.getElementById('importBody'); if (!body) return;
+        var Y = new Date().getFullYear(), today = ppTodayISO();
+        body.insertAdjacentHTML('beforeend', '<div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border)"><div style="font-weight:800;font-size:13px;margin-bottom:4px">Or paste the metrics list</div><p style="font-size:12.5px;color:var(--text2);margin:0 0 8px">One client per line: the name, then bookings, then revenue (tabs, spaces or commas between them; dollar signs and commas in the numbers are fine). The list from the platform pastes straight in. Bookings and revenue land on the year you pick as the year-to-date figures; run rate and year-over-year are worked out from the as-of date and last year\'s numbers already on file.</p><textarea id="rvPaste" style="width:100%;min-height:150px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;border:1px solid var(--border);border-radius:10px;padding:10px;background:var(--bg)" placeholder="Lovejoy ISD\t1901\t$364,401.50&#10;Little Elm ISD\t2373\t$314,763.50"></textarea><div style="display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap"><label style="font-size:12px;color:var(--text2)">Year <select id="rvPasteYear" class="pp-inline-select">' + [Y, Y - 1].map(function(y) { return '<option value="' + y + '">' + y + '</option>'; }).join('') + '</select></label><label style="font-size:12px;color:var(--text2)">As of <input type="date" id="rvPasteAsOf" class="pp-inline-select" value="' + today + '"></label><span style="flex:1"></span><button class="pp-btn primary" onclick="rvPastePreview()">Read the list</button></div><div id="rvPasteOut"></div></div>');
+      };
+      window.rvParsePaste = function(text) {
+        var out = [], bad = [];
+        String(text || '').split(/\r?\n/).forEach(function(line) {
+          var t = line.replace(/ /g, ' ').trim(); if (!t || /^(org|organization|client|name)\b/i.test(t) && /booking|revenue/i.test(t)) return;
+          var parts = t.indexOf('\t') >= 0 ? t.split(/\t+/) : t.indexOf(',') >= 0 && !/\$[\d,]+,\d{3}/.test(t.replace(/"[^"]*"/g, '')) ? t.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/) : t.split(/\s{2,}|\s(?=[\d$])/);
+          parts = parts.map(function(x) { return x.replace(/^"|"$/g, '').trim(); }).filter(Boolean);
+          if (parts.length < 3) { // "Name 123 $4,567.00" with single spaces: peel the two numbers off the end
+            var m = t.match(/^(.*?)[\s,]+([\d,]+)[\s,]+\$?([\d,]*\.?\d+)\s*$/); if (!m) { bad.push(t); return; } parts = [m[1], m[2], m[3]];
+          }
+          var rev = parts[parts.length - 1], res = parts[parts.length - 2], name = parts.slice(0, parts.length - 2).join(' ').trim();
+          var nRes = parseFloat(String(res).replace(/[^\d.-]/g, '')), nRev = parseFloat(String(rev).replace(/[^\d.-]/g, ''));
+          if (!name || isNaN(nRes) || isNaN(nRev)) { bad.push(t); return; }
+          var dup = out.find(function(x) { return x.org.toLowerCase() === name.toLowerCase(); }); if (dup) { dup.res += Math.round(nRes); dup.rev += nRev; return; }
+          out.push({ org: name, res: Math.round(nRes), rev: Math.round(nRev * 100) / 100 });
+        });
+        return { rows: out, bad: bad };
+      };
+      window.rvPastePreview = function() {
+        var text = (document.getElementById('rvPaste') || {}).value || '', Y = (document.getElementById('rvPasteYear') || {}).value || new Date().getFullYear(), asOf = (document.getElementById('rvPasteAsOf') || {}).value || ppTodayISO();
+        var r = rvParsePaste(text), outEl = document.getElementById('rvPasteOut'); if (!r.rows.length) { outEl.innerHTML = '<div class="pp-empty" style="margin-top:10px">Nothing read. One client per line, name then bookings then revenue.</div>'; return; }
+        var rows = r.rows.map(function(x) { var o = { org: x.org }; o['res' + Y] = x.res; o['rev' + Y] = x.rev; var a = typeof rvAccountFor === 'function' ? rvAccountFor(o) : null; if (a) o.accountKey = a.orgEmail; return o; });
+        var matched = rows.filter(function(x) { return x.accountKey; }).length, tb = r.rows.reduce(function(n, x) { return n + x.res; }, 0), tv = r.rows.reduce(function(n, x) { return n + x.rev; }, 0);
+        outEl.innerHTML = '<div class="tsr-sum" style="margin-top:12px"><span><b>' + rows.length + '</b> clients</span><span><b>' + matched + '</b> matched to an account by name</span><span><b>' + tb.toLocaleString() + '</b> bookings</span><span><b>$' + Math.round(tv).toLocaleString() + '</b> revenue</span><span>' + Y + ' through <b>' + ppEsc(ppFmtDate(asOf, { month: 'short', day: 'numeric' })) + '</b></span></div>' + (r.bad.length ? '<div class="pp-toolbar-note" style="margin:6px 0;color:#b4312a">Could not read ' + r.bad.length + ' line' + (r.bad.length === 1 ? '' : 's') + ': ' + ppEsc(r.bad.slice(0, 3).join(' | ')) + '</div>' : '') + '<div style="max-height:260px;overflow:auto;margin-top:8px">' + rows.map(function(x) { return '<div class="tsr-row ' + (x.accountKey ? 'exists' : 'review') + '"><label><b>' + ppEsc(x.org) + '</b><span>' + x['res' + Y].toLocaleString() + ' bookings · $' + Math.round(x['rev' + Y]).toLocaleString() + (x.accountKey ? '' : ' · no account by this name yet') + '</span></label></div>'; }).join('') + '</div><div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="pp-btn primary" onclick="rvPasteRun()">Save ' + rows.length + ' clients</button></div>';
+        window._rvParsed = { rows: rows, asOf: asOf, cols: ['res' + Y, 'rev' + Y], derive: '1', paste: true };
+      };
+      window.rvPasteRun = async function() { var p = window._rvParsed; if (!p || !p.paste) return; try { var r = await ppApiPost('saveRevenue', { rows: p.rows, asOf: p.asOf, derive: '1' }); if (!r.success) throw new Error(r.error); closeImport(); await loadRevenue(true); caView = 'revenue'; renderRevenue(); var Yn = new Date().getFullYear(), rsum = rvList.reduce(function(n, x) { return n + (Number(x['res' + Yn]) || 0); }, 0), vsum = rvList.reduce(function(n, x) { return n + (Number(x['rev' + Yn]) || 0); }, 0); showToast(r.saved + ' clients saved. The tool now holds ' + rsum.toLocaleString() + ' bookings and $' + Math.round(vsum).toLocaleString() + ' for ' + Yn + (rvAsOf ? ', through ' + ppEsc(ppFmtDate(rvAsOf, { month: 'short', day: 'numeric' })) : '') + '. Press Refresh on Health to rescore.', 'success', 10000); if (typeof renderDashboard2 === 'function') { try { renderDashboard2(); } catch (e) {} } try { logActivityToServer('imported revenue data', r.saved + ' clients', p.asOf, 'other'); } catch (e) {} } catch (e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v171)' : ''), 'error'); } };
+      // the Nov 11, 2026 list ships inside Extras v170 and is applied once, by the first super admin to open the tool after installing it
+      var SEED = 'pp.revseed.2026-11-11';
+      var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(async function() { try { if (localStorage.getItem(SEED) || !ppIsSuperAdmin()) return; var r = await ppApi('revenueSeed', { which: '2026-11-11' }, 120000); if (!r.success) { if (/Unhandled|Unknown/.test(r.error || '')) return; throw new Error(r.error); } localStorage.setItem(SEED, new Date().toISOString()); if (typeof loadRevenue === 'function') await loadRevenue(true); if (typeof renderDashboard2 === 'function') { try { renderDashboard2(); } catch (e) {} } showToast('Client metrics through Nov 11 applied: ' + r.saved + ' clients, 13,738 bookings and $1.77M for 2026. Press Refresh on Health once to rescore.', 'success', 12000); try { logActivityToServer('imported revenue data', r.saved + ' clients', '2026-11-11', 'other'); } catch (e) {} } catch (e) { showToast('Could not apply the Nov 11 metrics: ' + e.message, 'error'); } }, 4000); };
+    })();
+  </script>
 </body>
 </html>
