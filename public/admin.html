@@ -10933,13 +10933,13 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v221 · Nov 17e';
+    var PP_BUILD = 'v222 · Nov 17f';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
         ppApi('ppPing', {}, 30000).then(function(r) { var v = Number(r && r.version) || 0; window._ppServerVersion = v; if (v && v < 120) { tag.classList.add('warn'); tag.textContent = PP_BUILD + ' · Extras v' + v + ' (needs v120)'; tag.title = 'The server is behind this page: install the current Extras.gs and deploy a new version.'; } else if (v) tag.textContent = PP_BUILD + ' · Extras v' + v; }).catch(function() {});
       }, 1500); };
-      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 188 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
+      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 189 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
     })();
     // =====================================================================
     // TEAM: titles and headshots, editable in Settings
@@ -15782,6 +15782,8 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
           { t: 'Follow-up sequences', c: ['Sales', 'Follow-up'], k: ['follow up', 'sequence', 'who sends'], f: function() { go('followup'); } },
           { t: "John's own emails", c: ['Workspace', 'Settings', 'Sequences'], k: ['john emails', 'john cc', 'sequence settings'], f: function() { go('settings'); } }
         ].forEach(function(x) { add({ g: 'Pages', kind: 'page', title: x.t, crumb: x.c, open: x.f }, [x.t], x.k); });
+        // v222: later blocks (Sources, Shared with districts) add their own rows
+        try { (window.PP_SEARCH_EXTRA || []).forEach(function(fn) { fn(function(o, texts, extra) { if (typeof o.crumb === 'string') o.crumb = o.crumb.split(' · '); add(o, texts, extra); }); }); } catch (e) {}
         return out; }
 
       function closeItems(ql) { var rows = (closeFor === ql && closeRows) || []; return rows.map(function(l) { return { g: 'Close CRM', kind: 'close', title: l.name, crumb: ['Prospecting', 'Close CRM Insights'].concat([l.city, l.state].filter(Boolean).join(', ') || []), chip: l.status || '', sub: l.owner ? (ppRepFull(l.owner) || l.owner).split(' ')[0] : '', rank: l.rank, open: function() { gsClose(); window.open(l.url, '_blank', 'noopener'); }, jumps: [['Insights', function() { go('intel', function() { if (typeof intelQ !== 'undefined') { intelQ = String(l.name).toLowerCase(); } setBox('#intelView .search-input', l.name); if (typeof renderIntel === 'function') renderIntel(); }); }]] }; }); }
@@ -15831,5 +15833,355 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       document.addEventListener('mousedown', function(e) { if (!wrap.contains(e.target) && !panel.contains(e.target)) { wrap.classList.remove('open'); panel.classList.remove('open'); } });
     })();
   </script>
+<style>
+/* v222: Sources (non-conference lead sources) under Marketing, plus Shared with districts on Resources */
+.src-wrap{display:flex;flex-direction:column;gap:16px}
+.src-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.src-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.src-bar .search-input{flex:1;min-width:220px;max-width:420px}.src-bar .sp{flex:1}
+.src-table{width:100%;border-collapse:separate;border-spacing:0;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.src-table th{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);background:var(--bg2,transparent)}
+.src-table td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:top;font-size:13px}.src-table tr:last-child td{border-bottom:0}.src-table tr.retired td{opacity:.55}
+.src-table tr:hover td{background:var(--hover,rgba(0,0,0,.02))}
+.src-name b{display:block;font-weight:700;cursor:pointer;color:var(--text)}.src-name b:hover{color:var(--pp-blue)}.src-name small{display:block;color:var(--text3);font-size:11.5px;margin-top:2px}
+.src-kind{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:999px;font-size:10.5px;font-weight:700;background:var(--bg2,#f2f4f7);color:var(--text2);text-transform:capitalize;white-space:nowrap}
+.src-kind.flyer{background:#fff3e0;color:#b45309}.src-kind.audience{background:#e8f1ff;color:#0b5ed7}.src-kind.webinar{background:#ede9fe;color:#6d28d9}.src-kind.referral{background:#e6f7ee;color:#047857}.src-kind.email{background:#fdf2f8;color:#be185d}.src-kind.partner{background:#ecfeff;color:#0e7490}
+.src-code{font:600 12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--bg2,#f2f4f7);border:1px solid var(--border);border-radius:6px;padding:2px 7px;white-space:nowrap}
+.src-link{display:flex;flex-direction:column;gap:5px;min-width:0}.src-link a{color:var(--pp-blue);text-decoration:none;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px;display:block}
+.src-acts{display:flex;gap:4px}.src-acts .pp-mini-btn{width:auto;padding:0 7px;font-size:11px;height:24px;display:inline-flex;align-items:center;gap:4px}.src-acts svg{width:12px;height:12px}
+.src-fu{font-size:12.5px}.src-fu b{display:block;font-weight:700}.src-fu small{color:var(--text3);font-size:11.5px}
+.src-fu.hold b{color:#b45309}.src-fu.none b{color:var(--text3)}.src-fu.sequence b{color:#6d28d9}.src-fu.website b{color:#0b5ed7}
+.src-n{font-weight:800;font-size:15px;color:var(--text);cursor:pointer;background:none;border:0;padding:0;font-family:inherit}.src-n:hover{color:var(--pp-blue)}.src-n.zero{color:var(--text3);font-weight:600;cursor:default}
+.src-last{font-size:11.5px;color:var(--text3);white-space:nowrap}
+.src-empty{padding:28px;text-align:center;color:var(--text3)}
+.src-tag{margin-top:12px;border:1px dashed var(--border);border-radius:10px;padding:12px}.src-tag h4{margin:0 0 6px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)}
+.src-tag .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.src-tag code{font:600 12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--bg2,#f2f4f7);border:1px solid var(--border);border-radius:6px;padding:4px 8px;word-break:break-all;flex:1;min-width:200px}
+.src-reps{display:flex;flex-wrap:wrap;gap:6px}.src-reps label{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer;font-weight:500}.src-reps label.on{border-color:var(--pp-blue);background:#e8f1ff}
+.src-help{font-size:12px;color:var(--text3);line-height:1.5;margin-top:4px}
+.src-sync .r{display:grid;grid-template-columns:1fr auto;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}.src-sync .r:last-child{border-bottom:0}.src-sync .r small{display:block;color:var(--text3)}
+.rq-up{display:inline-flex;align-items:center;gap:6px;position:relative;overflow:hidden}.rq-up input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.rq-row .rq-main small.rq-type{display:inline;margin-left:6px;color:var(--text3)}
+@media(max-width:1000px){.src-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.src-table th:nth-child(5),.src-table td:nth-child(5),.src-table th:nth-child(7),.src-table td:nth-child(7){display:none}}
+</style>
+<script>
+// v222: Sources. One row per lead source that is not a show. Needs Extras v189.
+(function() {
+  var KINDS = [['flyer', 'Flyer'], ['audience page', 'Audience page'], ['email campaign', 'Email campaign'], ['webinar', 'Webinar'], ['referral', 'Referral'], ['partner', 'Partner'], ['other', 'Other']];
+  var FOLLOW = { hold: ['Held to be credited', 'nothing is sent until someone credits the lead to a show or a source'], website: ['Website sequence', 'the website sequence from Settings; review on means someone approves first'], sequence: ['Its own sequence', 'the Close CRM sequence picked on the source'], none: ['Worked by hand', 'the tool sends nothing'] };
+  var COPY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>', QR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM19 14h2v2h-2zM14 19h2v2h-2zM19 19h2v2h-2z"/></svg>', LINK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7L12 19"/></svg>';
+  window.srcList = window.srcList || []; var srcLoaded = false, srcError = '', srcSeqs = [], srcSearch = '', srcHost = PP_CONF_HOST_PAGE();
+  function PP_CONF_HOST_PAGE() { return 'https://conferences.practice-plan.com'; }
+  var norm = function(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ''); };
+  function segs(src) { return String(src || '').split(/\s*\|\s*/).map(function(s) { return s.trim(); }).filter(Boolean); }
+  // the same rule the server applies: a segment equal to a source's code or name; a tag beats the page it rode in on
+  window.srcMatch = function(l) {
+    var act = (window.srcList || []).filter(function(r) { return r.status !== 'retired'; }); if (!act.length || !l || !l.source) return null;
+    var keys = segs(l.source).map(function(s) { return s.replace(/^(role|heard|utm_[a-z]+)\s*:.*$/i, '').trim(); }).filter(Boolean).map(norm), hit = null, pageHit = null;
+    keys.forEach(function(k) { var r = act.find(function(x) { return norm(x.code) === k || norm(x.name) === k || (x.url && norm(String(x.url).replace(/^https?:\/\/[^/]+\//, '').replace(/[?#].*$/, '').replace(/\/+$/, '').split('/').pop()) === k); }); if (!r) return; if (r.kind === 'audience page') { if (!pageHit) pageHit = r; } else if (!hit) hit = r; });
+    return hit || pageHit;
+  };
+  function leadsOf(row) { if (typeof leadList === 'undefined') return []; return leadList.filter(function(l) { if (l.mergedInto || l.origin === 'test') return false; var m = srcMatch(l); return m && m.id === row.id; }); }
+  async function srcLoad(force) {
+    if (srcLoaded && !force) return;
+    try { var r = await ppApi('getSources', {}, 60000); if (!r.success) throw new Error(r.error); window.srcList = r.rows || []; srcSeqs = r.sequences || []; srcHost = r.host || srcHost; srcLoaded = true; srcError = ''; if (r.migrated && (r.migrated.moved || r.migrated.seeded)) { showToast((r.migrated.moved ? r.migrated.moved + ' evergreen page' + (r.migrated.moved === 1 ? '' : 's') + ' moved from Landing Pages to Sources' : '') + (r.migrated.moved && r.migrated.seeded ? '; ' : '') + (r.migrated.seeded ? r.migrated.seeded + ' source' + (r.migrated.seeded === 1 ? '' : 's') + ' added (Flyer, Referral)' : ''), 'success'); if (typeof loadLandingPages === 'function') loadLandingPages(true).then(function() { if (typeof renderLandingPages === 'function') renderLandingPages(); }); } }
+    catch (e) { srcError = e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v189)' : ''); srcLoaded = true; }
+    srcRender(); if (typeof renderLeadSources === 'function') { try { renderLeadSources(); } catch (e) {} }
+  }
+  window.srcReload = function() { srcLoaded = false; return srcLoad(true); };
+  function fmtDate(iso) { if (!iso) return ''; var d = new Date(iso); if (isNaN(d)) return String(iso).slice(0, 10); var days = Math.round((Date.now() - d.getTime()) / 86400000); return days <= 0 ? 'today' : days === 1 ? 'yesterday' : days < 30 ? days + ' days ago' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+  function repName(e) { e = String(e || '').toLowerCase(); return (typeof PP_FULL_NAMES !== 'undefined' && PP_FULL_NAMES[e]) || (typeof TEAM_MEMBERS !== 'undefined' && (TEAM_MEMBERS.find(function(m) { return m.email === e; }) || {}).name) || e; }
+  function repsOf(r) { return String(r.reps || '').split(/[,;]/).map(function(x) { return x.trim().toLowerCase(); }).filter(Boolean); }
+  function kindCls(k) { return k === 'audience page' ? 'audience' : k === 'email campaign' ? 'email' : (k || 'other').replace(/\s+/g, ''); }
+  function linkOf(r) { return r.shortUrl || r.url || ''; }
+  window.srcRender = function() {
+    var host = document.getElementById('srcHost'); if (!host) return;
+    if (!srcLoaded) { host.innerHTML = '<div class="pp-empty">Loading sources...</div>'; return; }
+    if (srcError) { host.innerHTML = ppSetupEmpty('Sources', srcError); return; }
+    var rows = (window.srcList || []).slice(), act = rows.filter(function(r) { return r.status !== 'retired'; }), cut = Date.now() - 90 * 86400000;
+    var counts = {}, last = {}, held = 0, recent = 0; (typeof leadList !== 'undefined' ? leadList : []).forEach(function(l) { if (l.mergedInto || l.origin === 'test') return; var m = srcMatch(l); if (!m) return; counts[m.id] = (counts[m.id] || 0) + 1; var t = String(l.receivedAt || ''); if (t > (last[m.id] || '')) last[m.id] = t; if (Date.parse(t) >= cut) recent++; if (l.fuState === 'held') held++; });
+    var noRep = act.filter(function(r) { return !repsOf(r).length; }).length;
+    var tiles = '<div class="src-stats">'
+      + '<div class="pp-stat" style="cursor:default"><div class="v">' + act.length + '</div><div class="l">Sources</div><div class="s">' + (rows.length - act.length ? (rows.length - act.length) + ' retired' : 'flyer, pages, webinars, referrals') + '</div></div>'
+      + '<div class="pp-stat" style="cursor:default"><div class="v">' + recent + '</div><div class="l">Leads, last 90 days</div><div class="s">from these sources</div></div>'
+      + '<div class="pp-stat ' + (held ? 'warn' : 'good') + '" onclick="if(typeof lsFixOpen===\'function\')lsFixOpen(this)" title="Open Fix sources"><div class="v">' + held + '</div><div class="l">Held, waiting to be credited</div><div class="s">' + (held ? 'open Fix sources to credit them' : 'nothing waiting') + '</div></div>'
+      + '<div class="pp-stat ' + (noRep ? '' : 'good') + '" style="cursor:default"><div class="v">' + noRep + '</div><div class="l">Sources on the rotation</div><div class="s">no rep named; the rotation picks</div></div></div>';
+    var canEdit = (typeof ppIsSuperAdmin === 'function' && ppIsSuperAdmin()) || (typeof currentUser !== 'undefined' && currentUser && (currentUser.isAdmin || currentUser.role === 'admin')) || (typeof ppMarketingAllowed === 'function' && ppMarketingAllowed());
+    var bar = '<div class="src-bar"><input type="text" class="search-input" placeholder="Search sources..." value="' + ppEsc(srcSearch) + '" oninput="window._srcSearch(this.value)"><span class="sp"></span>' + (canEdit ? '<button class="pp-btn" onclick="srcSync(this)" title="Read the pages conferences.practice-plan.com serves and file the ones we are missing">Sync from site</button><button class="pp-btn primary" onclick="srcOpen(\'\')">+ Add source</button>' : '') + '</div>';
+    var q = srcSearch.trim().toLowerCase(), list = rows.filter(function(r) { return !q || [r.name, r.code, r.kind, r.url, r.audience, r.notes, r.closeSource, repsOf(r).map(repName).join(' ')].join(' ').toLowerCase().indexOf(q) >= 0; });
+    list.sort(function(a, b) { return (a.status === 'retired') - (b.status === 'retired') || (counts[b.id] || 0) - (counts[a.id] || 0) || String(a.name).localeCompare(String(b.name)); });
+    var tr = list.map(function(r) {
+      var n = counts[r.id] || 0, reps = repsOf(r), fu = FOLLOW[r.followUp] || FOLLOW.website, link = linkOf(r), seq = r.followUp === 'sequence' ? (srcSeqs.find(function(s) { return s.id === r.sequenceId; }) || {}).name : '';
+      return '<tr class="' + (r.status === 'retired' ? 'retired' : '') + '" data-id="' + ppEsc(r.id) + '"><td class="src-name"><b onclick="srcOpen(\'' + ppEsc(r.id) + '\')">' + ppEsc(r.name) + '</b><span class="src-kind ' + kindCls(r.kind) + '">' + ppEsc(r.kind || 'other') + '</span>' + (r.audience || r.state ? '<small>' + ppEsc([r.audience, r.state].filter(Boolean).join(' · ')) + '</small>' : '') + '</td>'
+        + '<td><span class="src-code">' + ppEsc(r.code) + '</span></td>'
+        + '<td>' + (link ? '<div class="src-link"><a href="' + ppEsc(/^https?:/.test(link) ? link : 'https://' + link) + '" target="_blank" rel="noopener">' + ppEsc(link.replace(/^https?:\/\//, '')) + '</a><div class="src-acts"><button class="pp-mini-btn" onclick="ppCopy(\'' + ppEsc(/^https?:/.test(link) ? link : 'https://' + link) + '\',\'Link\')" title="Copy the link">' + COPY + 'Copy</button><button class="pp-mini-btn" onclick="lpQr(\'' + ppEsc(/^https?:/.test(link) ? link : 'https://' + link) + '\',\'' + ppEsc(r.name) + '\')" title="QR code for print">' + QR + '</button>' + (!r.shortUrl && canEdit ? '<button class="pp-mini-btn" onclick="srcShort(\'' + ppEsc(r.id) + '\',this)" title="Make a short link (pp.rentals style) that points here">' + LINK + 'Short</button>' : '') + '</div></div>' : '<span class="src-last">no link</span>') + '</td>'
+        + '<td><div class="src-fu ' + ppEsc(r.followUp || 'website') + '"><b>' + fu[0] + (r.followUp !== 'hold' && r.followUp !== 'none' && r.review === 'on' ? ' · review' : '') + '</b><small>' + ppEsc(seq ? seq : fu[1]) + '</small></div></td>'
+        + '<td>' + (reps.length ? reps.map(repName).map(ppEsc).join('<br>') : '<span class="src-last">Rotation</span>') + '</td>'
+        + '<td>' + (n ? '<button class="src-n" onclick="srcLeads(\'' + ppEsc(r.id) + '\')" title="Open these leads">' + n + '</button>' : '<span class="src-n zero">0</span>') + '</td>'
+        + '<td class="src-last">' + (last[r.id] ? fmtDate(last[r.id]) : '') + '</td></tr>';
+    }).join('');
+    host.innerHTML = tiles + bar + '<table class="src-table"><thead><tr><th>Source</th><th>Code</th><th>Link</th><th>What happens to its leads</th><th>Who gets them</th><th>Leads</th><th>Last lead</th></tr></thead><tbody>' + (tr || '<tr><td colspan="7"><div class="src-empty">' + (q ? 'No source matches that.' : 'No sources yet. Add the flyer, a webinar, a referral partner, or sync the audience pages from the site.') + '</div></td></tr>') + '</tbody></table>'
+      + '<div class="src-help">How a lead is recognized: its source is split on " | " and a segment equal to a code above wins, before any landing page or show. A tag on a page link (<span class="src-code">?utm_source=CODE</span>) beats the page it rode in on, so a webinar promoted on an audience page is still the webinar. Shows stay on Trade Shows and Landing Pages; this list is everything that is not a show.</div>';
+  };
+  window._srcSearch = function(v) { srcSearch = v; var h = document.getElementById('srcHost'); var el = document.activeElement; srcRender(); var inp = h && h.querySelector('.search-input'); if (inp && el && el.classList && el.classList.contains('search-input')) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); } };
+  window.srcLeads = function(id) { var r = (window.srcList || []).find(function(x) { return x.id === id; }); if (!r) return; try { leadSearch = String(r.code || r.name).toLowerCase(); var inp = document.getElementById('leadSearchInput'); if (inp) inp.value = r.code || r.name; leadStatusFilter = 'all'; var st = document.getElementById('leadStatusFilter'); if (st) st.value = 'all'; } catch (e) {} switchView('leads'); if (typeof renderLeads === 'function') renderLeads(); };
+  // add or edit
+  window.srcOpen = function(id) {
+    var r = id ? (window.srcList || []).find(function(x) { return x.id === id; }) : null, isNew = !r; r = r || { id: '', code: '', name: '', kind: 'other', url: '', audience: '', state: '', reps: '', followUp: 'website', sequenceId: '', review: 'on', closeSource: '', status: 'active', notes: '' };
+    var reps = repsOf(r), team = (typeof TEAM_MEMBERS !== 'undefined' ? TEAM_MEMBERS : []).filter(function(m) { return m.email && !/john\.brochu/.test(m.email); });
+    var opt = function(v, l, sel) { return '<option value="' + ppEsc(v) + '"' + (sel ? ' selected' : '') + '>' + ppEsc(l) + '</option>'; };
+    var pages = [].concat((window.srcList || []).filter(function(x) { return x.url && x.status !== 'retired' && x.id !== r.id; }).map(function(x) { return { url: x.url, name: x.name }; }), (typeof lpList !== 'undefined' ? lpList : []).filter(function(p) { return p.url; }).map(function(p) { return { url: p.url, name: p.title || p.url }; }));
+    var html = '<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + (isNew ? 'Add a source' : ppEsc(r.name)) + '</h2><div class="modal-subtitle">' + (isNew ? 'A place leads come from that is not a show. The code is what arrives in the lead.' : 'Changes apply to new leads; leads already queued keep their plan until re-queued.') + '</div></div><div class="modal-body"><div class="detail-section" style="margin-top:20px"><div class="pp-form">'
+      + '<div><label>Name</label><input id="sf_name" value="' + ppEsc(r.name) + '" placeholder="Flyer, December webinar, Texas athletic directors" autofocus></div>'
+      + '<div><label>Code (arrives in the lead)</label><input id="sf_code" value="' + ppEsc(r.code) + '" placeholder="FLYER, WEBINAR-DEC-2026" style="text-transform:uppercase" oninput="srcTagPreview()"></div>'
+      + '<div><label>Kind</label><select id="sf_kind">' + KINDS.map(function(k) { return opt(k[0], k[1], k[0] === r.kind); }).join('') + '</select></div>'
+      + '<div><label>Status</label><select id="sf_status">' + opt('active', 'Active', r.status !== 'retired') + opt('retired', 'Retired (kept for history, no longer matched)', r.status === 'retired') + '</select></div>'
+      + '<div class="full"><label>Address (the page or form leads come from, if any)</label><input id="sf_url" value="' + ppEsc(r.url) + '" placeholder="https://conferences.practice-plan.com/..." oninput="srcTagPreview()"></div>'
+      + '<div><label>Audience (optional)</label><input id="sf_aud" value="' + ppEsc(r.audience) + '" placeholder="Athletic directors, parks and rec, church facility managers"></div>'
+      + '<div><label>State (optional, 2 letters)</label><input id="sf_state" value="' + ppEsc(r.state) + '" maxlength="2" placeholder="TX" style="text-transform:uppercase"></div>'
+      + '<div class="full"><label>Who gets the leads</label><div class="src-reps" id="sf_reps">' + team.map(function(m) { var on = reps.indexOf(m.email.toLowerCase()) >= 0; return '<label class="' + (on ? 'on' : '') + '"><input type="checkbox" value="' + ppEsc(m.email) + '"' + (on ? ' checked' : '') + ' onchange="this.parentNode.classList.toggle(\'on\',this.checked)" style="margin:0">' + ppEsc(m.name) + '</label>'; }).join('') + '</div><div class="src-help">Nobody checked means the rotation picks, like a website lead. Two or more checked means they take turns.</div></div>'
+      + '<div><label>What happens to its leads</label><select id="sf_follow" onchange="srcFollowUi()">' + opt('hold', 'Hold: wait to be credited to a show or a source by hand', r.followUp === 'hold') + opt('website', 'Website sequence (from Settings)', r.followUp === 'website' || !r.followUp) + opt('sequence', 'Its own Close CRM sequence', r.followUp === 'sequence') + opt('none', 'Nothing from the tool; the rep works it by hand', r.followUp === 'none') + '</select></div>'
+      + '<div id="sf_seq_wrap"><label>Close CRM sequence</label><select id="sf_seq">' + opt('', srcSeqs.length ? 'Pick a sequence...' : 'No sequences loaded from Close CRM', false) + srcSeqs.map(function(s) { return opt(s.id, s.name + (s.status && s.status !== 'active' ? ' (' + s.status + ')' : ''), s.id === r.sequenceId); }).join('') + '</select></div>'
+      + '<div id="sf_review_wrap"><label>Review before the first email</label><select id="sf_review">' + opt('on', 'On: someone approves on Follow-up first', r.review !== 'off') + opt('off', 'Off: starts on schedule', r.review === 'off') + '</select></div>'
+      + '<div><label>Lead Source written to Close CRM</label><input id="sf_close" value="' + ppEsc(r.closeSource) + '" placeholder="defaults to the name"><div class="src-help">The Conference field stays blank for these leads.</div></div>'
+      + '<div class="full"><label>Notes</label><textarea id="sf_notes" rows="2" style="width:100%;font:inherit;border:1px solid var(--border);border-radius:8px;padding:8px">' + ppEsc(r.notes) + '</textarea></div>'
+      + '</div>'
+      + '<div class="src-tag"><h4>Tagged link</h4><div class="src-help" style="margin:0 0 8px">Promote this source on any page and keep the credit: pick the page, copy the link. A lead from it reads "' + ppEsc((pages[0] || {}).name || 'page') + ' | ' + ppEsc(r.code || 'CODE') + '" and is credited here.</div><div class="row"><select id="sf_tagpage" onchange="srcTagPreview()" style="max-width:280px;height:34px;border:1px solid var(--border);border-radius:8px;padding:0 8px;font:inherit">' + opt('', r.url ? 'Its own address' : 'Pick a page...', true) + pages.map(function(p) { return opt(p.url, p.name, false); }).join('') + '</select><code id="sf_tagout"></code><button class="pp-btn" onclick="ppCopy(document.getElementById(\'sf_tagout\').textContent,\'Tagged link\')">' + COPY + ' Copy</button></div></div>'
+      + '</div></div>'
+      + '<div class="modal-footer">' + (isNew ? '' : '<button class="pp-btn" style="color:var(--pp-red)" onclick="srcDelete(\'' + ppEsc(r.id) + '\')">Delete</button>') + '<span style="flex:1"></span><button class="pp-btn" onclick="closeModal()">Cancel</button><button class="pp-btn primary" onclick="srcSave(\'' + ppEsc(r.id) + '\',this)">' + (isNew ? 'Add source' : 'Save') + '</button></div>';
+    ppOpenModal(html); srcFollowUi(); srcTagPreview();
+  };
+  window.srcFollowUi = function() { var f = (document.getElementById('sf_follow') || {}).value; var sw = document.getElementById('sf_seq_wrap'), rw = document.getElementById('sf_review_wrap'); if (sw) sw.style.display = f === 'sequence' ? '' : 'none'; if (rw) rw.style.display = (f === 'sequence' || f === 'website') ? '' : 'none'; };
+  window.srcTagPreview = function() { var out = document.getElementById('sf_tagout'); if (!out) return; var code = String((document.getElementById('sf_code') || {}).value || 'CODE').toUpperCase().replace(/\s+/g, '-'), pg = (document.getElementById('sf_tagpage') || {}).value || '', own = (document.getElementById('sf_url') || {}).value || ''; var base = pg || own; if (!base) { out.textContent = 'Pick a page to build a tagged link, or give the source its own address'; return; } if (!/^https?:/.test(base)) base = 'https://' + base; if (!pg && own) { out.textContent = base; return; } out.textContent = base.replace(/[?#].*$/, '') + '?utm_source=' + encodeURIComponent(code); };
+  window.srcSave = async function(id, btn) {
+    var g = function(k) { var x = document.getElementById(k); return x ? String(x.value || '').trim() : ''; };
+    var row = { id: id || '', name: g('sf_name'), code: g('sf_code').toUpperCase(), kind: g('sf_kind'), status: g('sf_status'), url: g('sf_url'), audience: g('sf_aud'), state: g('sf_state').toUpperCase(), reps: Array.from(document.querySelectorAll('#sf_reps input:checked')).map(function(c) { return c.value; }).join(','), followUp: g('sf_follow'), sequenceId: g('sf_seq'), review: g('sf_review'), closeSource: g('sf_close'), notes: g('sf_notes') };
+    if (!row.code) { showToast('The source needs a code (what arrives in the lead)', 'error'); return; } if (!row.name) row.name = row.code;
+    if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+    try { var r = await ppApi('saveSource', { row: JSON.stringify(row) }, 60000); if (!r.success) throw new Error(r.error); closeModal(); showToast((id ? 'Saved ' : 'Added ') + r.row.name, 'success'); await srcReload(); }
+    catch (e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v189)' : ''), 'error'); if (btn) { btn.disabled = false; btn.textContent = id ? 'Save' : 'Add source'; } }
+  };
+  window.srcDelete = async function(id) { var r0 = (window.srcList || []).find(function(x) { return x.id === id; }); if (!r0) return; var n = leadsOf(r0).length; if (!confirm('Delete ' + r0.name + '?' + (n ? ' ' + n + ' lead' + (n === 1 ? '' : 's') + ' point at it; they keep their source text but will no longer be recognized. Retiring it instead keeps the history.' : ''))) return; try { var r = await ppApi('deleteSource', { id: id }, 60000); if (!r.success) throw new Error(r.error); closeModal(); showToast('Deleted ' + r0.name, 'success'); await srcReload(); } catch (e) { showToast(e.message, 'error'); } };
+  window.srcShort = async function(id, btn) { var r0 = (window.srcList || []).find(function(x) { return x.id === id; }); if (!r0) return; var bh = prompt('Short link back-half (letters, numbers, dashes):', String(r0.code || '').toLowerCase().replace(/[^a-z0-9-]/g, '')); if (bh === null) return; if (btn) btn.disabled = true; try { var r = await ppApi('sourceShortLink', { id: id, backHalf: bh }, 60000); if (!r.success) throw new Error(r.error); showToast('Short link: ' + r.shortUrl, 'success'); await srcReload(); } catch (e) { showToast(e.message, 'error'); if (btn) btn.disabled = false; } };
+  // Sync from site: preview, then apply
+  window.srcSync = async function(btn, apply) {
+    if (btn) { btn.disabled = true; }
+    try { var r = await ppApi('siteSync', { apply: apply ? '1' : '0' }, 120000); if (!r.success) throw new Error(r.error);
+      if (apply) { closeModal(); showToast((r.addedPages.length + r.addedSources.length) ? 'Added ' + (r.addedSources.length ? r.addedSources.length + ' source' + (r.addedSources.length === 1 ? '' : 's') : '') + (r.addedSources.length && r.addedPages.length ? ' and ' : '') + (r.addedPages.length ? r.addedPages.length + ' show page' + (r.addedPages.length === 1 ? '' : 's') : '') : 'Nothing new on the site', 'success'); await srcReload(); if (typeof loadLandingPages === 'function') loadLandingPages(true).then(function() { if (typeof renderLandingPages === 'function') renderLandingPages(); }); return; }
+      var rows = (r.missing || []).map(function(m) { return '<div class="r"><div><b>' + ppEsc(m.title || m.slug) + '</b><small>' + ppEsc(srcHost.replace(/^https?:\/\//, '') + '/' + m.slug) + (m.sourceKey ? ' · tag ' + m.sourceKey : '') + '</small></div><div><span class="src-kind ' + (m.where === 'Sources' ? 'audience' : '') + '">' + ppEsc(m.where) + '</span></div></div>'; }).join('');
+      ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>Sync from site</h2><div class="modal-subtitle">The site serves ' + r.onSite + ' page' + (r.onSite === 1 ? '' : 's') + '. A page with a year in its address is a show page (Landing Pages, linked to that year\'s show when one matches); a page without a year is an audience page (Sources). The flyer page is skipped on purpose; it is the Flyer source.</div></div><div class="modal-body src-sync" style="padding-top:14px">' + (rows || '<div class="pp-empty">Every page on the site is already filed.</div>') + '</div><div class="modal-footer"><span style="flex:1"></span><button class="pp-btn" onclick="closeModal()">Close</button>' + (rows ? '<button class="pp-btn primary" onclick="srcSync(this,true)">Add ' + r.missing.length + '</button>' : '') + '</div>');
+    } catch (e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v189)' : ''), 'error'); }
+    finally { if (btn) btn.disabled = false; }
+  };
+  // the view and its tab, under Marketing after Content Studio
+  var anchor = document.getElementById('studioView') || document.getElementById('requestsView') || document.getElementById('landingView'); if (!anchor) return;
+  var v = document.createElement('div'); v.className = 'view-content'; v.id = 'sourcesView'; v.innerHTML = '<div id="srcHost" class="src-wrap"></div>'; anchor.insertAdjacentElement('afterend', v);
+  try { PP_VIEW_TITLES.sources = ['Marketing', 'Sources']; PP_PAGE_META.sources = ['Marketing', 'Sources', 'Every lead source that is not a show: the flyer, audience pages, webinars, referrals, partners. Each one decides what happens to its leads, who gets them and what Close CRM is told.']; } catch (e) {}
+  try { if (typeof PP_MARKETING_VIEWS !== 'undefined' && PP_MARKETING_VIEWS.indexOf('sources') < 0 && PP_MARKETING_VIEWS.indexOf('studio') >= 0) PP_MARKETING_VIEWS.push('sources'); } catch (e) {}
+  function addTab() { if (document.querySelector('.view-tab[onclick="switchView(\'sources\')"]')) return; var after = document.querySelector('.view-tab[onclick="switchView(\'studio\')"]') || document.querySelector('.view-tab[onclick="switchView(\'requests\')"]'); if (!after) return; var b = document.createElement('button'); b.className = 'view-tab'; b.setAttribute('onclick', "switchView('sources')"); b.setAttribute('data-short', 'Sources'); b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v4H4zM4 10h10v4H4zM4 16h7v4H4z"/><path d="M17 13l3 3-3 3"/></svg> Sources'; after.insertAdjacentElement('afterend', b); if (typeof ppNavFit === 'function') setTimeout(ppNavFit, 50); if (typeof navApply === 'function') setTimeout(navApply, 60); }
+  var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(addTab, 300); setTimeout(function() { srcLoad(false); }, 1200); };
+  var _sv = switchView; switchView = function(view) { var r = _sv.apply(this, arguments); if (view === 'sources') { srcRender(); srcLoad(false); } return r; };
+  if (typeof ppRerender === 'function') { var _rr = ppRerender; ppRerender = function(x) { _rr(x); if (x === 'sources') srcRender(); }; }
+  if (typeof renderLeads === 'function') { var _rl = renderLeads; renderLeads = function() { _rl.apply(this, arguments); if (document.getElementById('sourcesView') && document.getElementById('sourcesView').classList.contains('active')) srcRender(); }; }
+
+  // ---- the rest of the tool learns about sources ----
+  // Add / edit lead: active sources under "Not from a show" (value = code), and a source code already on the lead is recognized, not "Other"
+  if (typeof lfSrcFill === 'function') { var _lf = lfSrcFill; lfSrcFill = function(r, isNew) { _lf.apply(this, arguments); try {
+    var sel = document.getElementById('lf_source_sel'), hid = document.getElementById('lf_source'); if (!sel || sel.dataset.srcDone) return; sel.dataset.srcDone = '1';
+    var srcs = (r && r.sources) || (window.srcList || []).filter(function(x) { return x.status !== 'retired'; }).map(function(x) { return { id: x.id, code: x.code, name: x.name, kind: x.kind, followUp: x.followUp, slug: String(x.url || '').replace(/^https?:\/\/[^/]+\//, '').replace(/[?#].*$/, '').replace(/\/+$/, '').split('/').pop() }; }); if (!srcs.length) return;
+    var cur = String(hid.value || ''), curKey = norm(segs(cur)[0] || cur), grp = Array.from(sel.querySelectorAll('optgroup')).find(function(g) { return /^Not from a show/i.test(g.label); });
+    if (!grp) { grp = document.createElement('optgroup'); grp.label = 'Not from a show'; sel.appendChild(grp); }
+    var hit = null; srcs.slice().sort(function(a, b) { return String(a.name).localeCompare(String(b.name)); }).forEach(function(s) { var o = document.createElement('option'); o.value = s.code; o.textContent = s.name + ' (' + (s.kind || 'source') + (s.followUp === 'hold' ? ', held' : '') + ')'; if (cur && (norm(s.code) === curKey || norm(s.name) === curKey || (s.slug && norm(s.slug) === curKey))) { hit = s; o.selected = true; o.value = cur; } grp.appendChild(o); });
+    if (hit) { var oth = sel.querySelector('option[value="__other"]'); if (oth) oth.selected = false; var inp = document.getElementById('lf_source_other'); if (inp) inp.style.display = 'none'; var keep = sel.querySelector('optgroup[label="Current"]'); if (keep) keep.remove(); }
+  } catch (e) {} }; }
+  // the lead modal shows role, heard and where the lead came in before it was credited
+  if (typeof openLeadModal === 'function') { var _olm = openLeadModal; openLeadModal = function(id) { var out = _olm.apply(this, arguments); try { var l = id && typeof leadList !== 'undefined' ? leadList.find(function(x) { return x.id === id; }) : null; if (!l || !(l.role || l.heard || l.via)) return out; var sel = document.getElementById('lf_source_sel'); var wrap = sel && sel.parentNode; if (!wrap || wrap.querySelector('.src-leadtags')) return out; var bits = []; if (l.role) bits.push('<b>Role:</b> ' + ppEsc(l.role)); if (l.heard) bits.push('<b>Heard about us:</b> ' + ppEsc(l.heard)); if (l.via) bits.push('<b>Came in via:</b> ' + ppEsc(l.via)); wrap.insertAdjacentHTML('beforeend', '<div class="src-help src-leadtags" style="margin-top:6px">' + bits.join(' &middot; ') + '</div>'); } catch (e) {} return out; }; }
+  // Fix sources: a group can be credited to a source, and held source leads are listed with the rest
+  if (typeof window.lsFixOpen === 'function') { var _lfo = window.lsFixOpen; window.lsFixOpen = async function(btn) { await _lfo.apply(this, arguments); try {
+    var r = window._lsFix || {}, srcs = (r.sources || (window.srcList || []).filter(function(x) { return x.status !== 'retired'; })); if (!srcs.length) return;
+    var og = '<optgroup label="A source (not a show)">' + srcs.slice().sort(function(a, b) { return String(a.name).localeCompare(String(b.name)); }).map(function(s) { return '<option value="src:' + ppEsc(s.id) + '">' + ppEsc(s.name) + ' · ' + ppEsc(s.kind || 'source') + (s.followUp === 'hold' ? ' (held)' : '') + '</option>'; }).join('') + '</optgroup>';
+    document.querySelectorAll('select[id^="lsFixSel"]').forEach(function(sel) { if (sel.querySelector('optgroup')) return; sel.insertAdjacentHTML('beforeend', og); var i = Number(sel.id.replace('lsFixSel', '')), g = (r.groups || [])[i]; if (g && g.held) { var td = sel.closest('tr') && sel.closest('tr').querySelector('td .sc-why'); if (td) td.insertAdjacentHTML('afterbegin', '<span class="src-kind flyer" style="margin-right:6px">held</span>'); } });
+    var sub = document.querySelector('.modal-subtitle'); if (sub && !/source list/.test(sub.textContent)) sub.insertAdjacentHTML('beforeend', ' Leads held by a source on the Sources list (the flyer) are here too; crediting them to a show starts their follow-up and keeps where they came in.');
+  } catch (e) {} }; }
+  if (typeof window.lsFixGo === 'function') { var _lfg = window.lsFixGo; window.lsFixGo = async function(i, btn) { var sel = document.getElementById('lsFixSel' + i); if (!sel || !/^src:/.test(sel.value)) return _lfg.apply(this, arguments); var g = window._lsFix.groups[i], sid = sel.value.slice(4); btn.disabled = true; btn.textContent = 'Crediting...'; try { var ids = g.ids.slice(), total = 0, notes = [], name = '', guard = 0; while (ids.length && guard < 20) { var r = await ppApi('leadsCredit', { ids: ids.join(','), sourceId: sid }, 300000); if (!r.success) throw new Error(r.error); total += r.credited; notes = notes.concat(r.notes || []); name = r.show; ids = r.left || []; guard++; } showToast(total + ' lead' + (total === 1 ? '' : 's') + ' credited to ' + name + (notes.length ? '. Check: ' + notes.slice(0, 3).join(' | ') : ''), notes.length ? 'error' : 'success'); if (typeof loadLeads === 'function') loadLeads(true).then(function() { if (typeof renderLeads === 'function') renderLeads(); }); window.lsFixOpen(null); } catch (e) { showToast(e.message, 'error'); btn.disabled = false; btn.textContent = 'Credit ' + g.count; } }; }
+  // Inbound Leads > Sources report: a recognized source is its own group ("Not from a show")
+  if (typeof lsSourceOf === 'function') { var _lso = lsSourceOf; lsSourceOf = function(l) { var s = (typeof leadShowFor === 'function') ? leadShowFor(l) : null; if (!s) { var m = srcMatch(l); if (m) return { key: 'source:' + m.id, label: m.name, kind: m.kind === 'audience page' ? 'audience page' : 'not from a show' }; } return _lso.apply(this, arguments); }; }
+  // site search
+  try { window.PP_SEARCH_EXTRA = window.PP_SEARCH_EXTRA || []; window.PP_SEARCH_EXTRA.push(function(add) { (window.srcList || []).forEach(function(r) { add({ g: 'Landing pages', kind: 'source', title: r.name, crumb: 'Marketing · Sources · ' + (r.kind || 'source'), open: function() { switchView('sources'); setTimeout(function() { srcOpen(r.id); }, 150); } }, [r.name, r.code, r.kind, r.url, r.audience, r.notes]); }); add({ g: 'Pages', kind: 'page', title: 'Sources', crumb: 'Marketing · Sources', open: function() { switchView('sources'); } }, ['sources', 'lead sources', 'flyer', 'referral', 'webinar', 'utm']); }); } catch (e) {}
+})();
+</script>
+<script>
+// v222: Resources > Shared with districts. Files the team sends districts (the fee schedule), uploaded once, shared by link. Needs Extras v189.
+(function() {
+  var CAT = 'Shared with districts';
+  try { if (typeof RES_CATEGORIES !== 'undefined' && RES_CATEGORIES.indexOf(CAT) < 0) RES_CATEGORIES.splice(RES_CATEGORIES.indexOf('Other') >= 0 ? RES_CATEGORIES.indexOf('Other') : RES_CATEGORIES.length, 0, CAT); } catch (e) {}
+  var COPY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>', OPEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>', QR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM19 14h2v2h-2zM14 19h2v2h-2zM19 19h2v2h-2z"/></svg>', UP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>';
+  function rows() { return (typeof resList !== 'undefined' ? resList : []).filter(function(r) { return String(r.category || '').toLowerCase() === CAT.toLowerCase(); }).sort(function(a, b) { return String(a.title).localeCompare(String(b.title)); }); }
+  function tagOf(r) { var u = String(r.url || '').toLowerCase(), t = String(r.title || '').toLowerCase(); if (/\.pdf(\?|$)|pdf/.test(u + ' ' + t)) return ['PDF', '#d93025']; if (/sheet|xlsx|csv/.test(u + ' ' + t)) return ['XLS', '#1e8e3e']; if (/docs\.google|\.docx?/.test(u)) return ['DOC', '#1a73e8']; if (/slides|pptx?/.test(u)) return ['PPT', '#e8710a']; return ['LINK', '#5f6368']; }
+  function card() {
+    var list = rows(), canEdit = true;
+    var body = list.length ? list.map(function(r) { var tg = tagOf(r), url = String(r.url || ''); return '<div class="rq-row"><span class="rq-ic" style="background:' + tg[1] + '">' + tg[0] + '</span><div class="rq-main"><b>' + ppEsc(r.title) + '</b><a href="' + ppEsc(url) + '" target="_blank" rel="noopener">' + ppEsc(url.replace(/^https?:\/\//, '').slice(0, 70)) + '</a>' + (r.description ? '<small>' + ppEsc(r.description) + '</small>' : '') + '</div><div class="rq-acts"><button class="pp-btn" onclick="rqCopy(this,\'' + ppEsc(url) + '\',\'' + ppEsc(r.title) + '\')" title="Copy the link">' + COPY + 'Copy</button><a class="pp-btn" href="' + ppEsc(url) + '" target="_blank" rel="noopener" title="Open">' + OPEN + '</a><button class="pp-btn" onclick="lpQr(\'' + ppEsc(url) + '\',\'' + ppEsc(r.title) + '\')" title="QR code for print">' + QR + '</button><button class="pp-btn" onclick="openResourceModal(\'' + ppEsc(r.id) + '\')" title="Edit the title or description">' + (typeof ppSvg === 'function' ? ppSvg('edit') : 'Edit') + '</button></div></div>'; }).join('') : '<div class="pp-empty" style="padding:18px"><strong>Nothing here yet</strong>Upload the facility rental fee schedule (the comparable-rates PDF districts ask for) and anything else you send districts as an example. One upload; the link never changes.</div>';
+    return '<div class="rq-card" id="rqShared"><div class="rq-head"><h3>Shared with districts</h3><span>Examples and references the team sends districts, like the facility rental fee schedule. Copy the link or print the QR.</span></div><div class="rq-rows">' + body + '</div><div class="rq-foot">' + (canEdit ? '<label class="pp-btn rq-up" title="Upload a PDF or image; it lands in the PracticePlan Resources folder on Drive, shared by link">' + UP + 'Upload a file<input type="file" accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx,.pptx" onchange="rqUpload(this)"></label><span id="rqUpStatus"></span>' : '') + (list.length ? '<button class="pp-btn" onclick="rqCopyShared(this)">' + COPY + 'Copy all as a short note</button>' : '') + '<span>To add a Drive link instead, use + Add a Sales Tool and pick the category "' + CAT + '".</span></div></div>';
+  }
+  window.rqCopyShared = function(btn) { var list = rows(); var txt = 'A few references from PracticePlan:\n\n' + list.map(function(r) { return r.title + ': ' + r.url; }).join('\n') + '\n\nHappy to walk through any of these.'; if (typeof rqCopy === 'function') rqCopy(btn, txt, 'Links'); else ppCopy(txt, 'Links'); };
+  window.rqUpload = async function(inp) {
+    var f = inp && inp.files && inp.files[0]; if (!f) return; if (f.size > 25 * 1024 * 1024) { showToast('Keep it under 25 MB', 'error'); inp.value = ''; return; }
+    var title = prompt('Title for the team (what districts see is the file):', f.name.replace(/\.[a-z0-9]+$/i, '').replace(/[-_]+/g, ' ')); if (title === null) { inp.value = ''; return; }
+    var desc = prompt('One line on when to send it (optional):', '') || '';
+    var st = document.getElementById('rqUpStatus'); if (st) st.textContent = 'Uploading ' + f.name + ' (' + Math.round(f.size / 1024) + ' KB)...';
+    try { var b64 = await new Promise(function(res, rej) { var rd = new FileReader(); rd.onload = function() { res(String(rd.result).split(',')[1] || ''); }; rd.onerror = rej; rd.readAsDataURL(f); });
+      var up = await ppApiPost('resourceFileUpload', { name: f.name, mediaType: f.type || 'application/octet-stream', data: b64, title: title.trim() || f.name, description: desc.trim(), category: CAT }, 180000); if (!up.success) throw new Error(up.error || 'Upload failed');
+      if (typeof resList !== 'undefined') { var i = resList.findIndex(function(x) { return x.id === up.row.id; }); if (i >= 0) resList[i] = up.row; else resList.push(up.row); }
+      if (typeof renderResources === 'function') renderResources(); showToast('Uploaded to Drive and listed' + (up.shared === 'anyone' ? ' (anyone with the link can view)' : up.shared === 'domain' ? ' (shared inside the domain only; check the file\'s sharing in Drive)' : ''), 'success');
+    } catch (e) { showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v189)' : ''), 'error'); }
+    if (st) st.textContent = ''; inp.value = '';
+  };
+  function place() { try { var view = document.getElementById('resourcesView'), list = document.getElementById('resList'); if (!view || !list) return; var old = document.getElementById('rqShared'); if (old) old.remove(); var after = view.querySelector('.rq-card'); if (after) after.insertAdjacentHTML('afterend', card()); else list.insertAdjacentHTML('beforebegin', card()); } catch (e) {} }
+  if (typeof renderResources === 'function') { var _rr = renderResources; renderResources = function() { _rr.apply(this, arguments); place(); }; }
+  if (typeof switchView === 'function') { var _sv = switchView; switchView = function(v) { var r = _sv.apply(this, arguments); if (v === 'resources') setTimeout(place, 0); return r; }; }
+  setTimeout(place, 800);
+  try { window.PP_SEARCH_EXTRA = window.PP_SEARCH_EXTRA || []; window.PP_SEARCH_EXTRA.push(function(add) { rows().forEach(function(r) { add({ g: 'Resources', kind: 'resource', title: r.title, crumb: 'Workspace · Resources · Shared with districts', open: function() { switchView('resources'); } }, [r.title, r.description, 'fee schedule', 'shared with districts', 'rental rates']); }); }); } catch (e) {}
+})();
+</script>
+<style>
+/* v222 (first built as v208, Nov 10): blog drafts in Content Studio */
+.bd-list{display:flex;flex-direction:column;gap:8px}.bd-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--card)}.bd-row:hover{border-color:var(--text3)}.bd-row .t{font-weight:800;font-size:14px;color:var(--text);cursor:pointer}.bd-row .t:hover{text-decoration:underline}.bd-row .s{font-size:12.5px;color:var(--text2);margin-top:2px}.bd-row .m{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:8px;font-size:11px;color:var(--text3)}.bd-row .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.bd-pill{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:999px;font-size:10.5px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;background:var(--bg2);color:var(--text2)}.bd-pill.draft{background:var(--bg2)}.bd-pill.reviewed{background:rgba(201,162,39,.16);color:var(--pp-gold-dk,#8a6d0b)}.bd-pill.published{background:rgba(22,163,74,.14);color:#15803d}
+.bd-chk{display:inline-flex;align-items:center;gap:5px;height:20px;padding:0 8px;border-radius:999px;font-size:10.5px;font-weight:700;background:var(--bg2);color:var(--text2)}.bd-chk::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--text3)}.bd-chk.ok{background:rgba(22,163,74,.14);color:#15803d}.bd-chk.ok::before{background:#16a34a}.bd-chk.warn{background:rgba(201,162,39,.16);color:var(--pp-gold-dk,#8a6d0b)}.bd-chk.warn::before{background:var(--pp-gold,#c9a227)}.bd-chk.bad{background:rgba(220,38,38,.12);color:#b91c1c}.bd-chk.bad::before{background:#dc2626}
+.bd-edit{display:grid;grid-template-columns:1fr 1fr;gap:14px}.bd-edit textarea{width:100%;min-height:420px;font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);resize:vertical}.bd-prev{border:1px solid var(--border);border-radius:8px;padding:14px 18px;background:var(--card);max-height:560px;overflow:auto;font-size:14px;line-height:1.6;color:var(--text)}.bd-prev h2{font-size:17px;margin:14px 0 6px}.bd-prev p{margin:0 0 10px}.bd-prev ul,.bd-prev ol{margin:0 0 10px 20px}.bd-prev li{margin:0 0 4px}.bd-prev a{color:var(--primary,#1d6fe0)}
+.bd-src{display:grid;grid-template-columns:1.2fr 90px 1.6fr 1.4fr 28px;gap:6px;align-items:center;margin-bottom:6px}.bd-src input{height:32px;padding:0 8px;border:1px solid var(--border);border-radius:6px;background:var(--card);color:var(--text);font:inherit;font-size:12.5px;min-width:0}.bd-src button{height:28px;width:28px;border:none;background:none;color:var(--text3);cursor:pointer;font-size:16px}.bd-srchead{display:grid;grid-template-columns:1.2fr 90px 1.6fr 1.4fr 28px;gap:6px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);margin:0 0 4px}
+.bd-res{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-top:10px}.bd-res .r{display:grid;grid-template-columns:18px 1fr auto;gap:10px;align-items:start;padding:9px 12px;border-top:1px solid var(--border);font-size:12.5px}.bd-res .r:first-child{border-top:none}.bd-res .dot{width:10px;height:10px;border-radius:50%;margin-top:4px;background:var(--text3)}.bd-res .dot.ok{background:#16a34a}.bd-res .dot.bad{background:#dc2626}.bd-res .dot.warn{background:var(--pp-gold,#c9a227)}.bd-res .u{color:var(--text3);font-size:11px;word-break:break-all}.bd-res .c{display:inline-flex;align-items:center;gap:4px;margin:4px 6px 0 0;padding:2px 7px;border-radius:5px;font-size:11px;background:var(--bg2)}.bd-res .c.ok{background:rgba(22,163,74,.12);color:#15803d}.bd-res .c.bad{background:rgba(220,38,38,.12);color:#b91c1c}.bd-res .c.na{color:var(--text3)}
+@media (max-width:900px){.bd-edit{grid-template-columns:1fr}.bd-src,.bd-srchead{grid-template-columns:1fr 1fr}.bd-srchead{display:none}.bd-row{grid-template-columns:1fr}.bd-row .acts{justify-content:flex-start}}
+</style>
+<script>
+// v222: blog drafts live in Content Studio. Ten seeded thought-leadership drafts (and any added here) with their sources,
+// editable in a modal with a live preview, copied out as Markdown, plain text or formatted HTML, and checked: every cited
+// page is fetched and the figures the article quotes are looked for on it, so nothing goes out unverified.
+(function() {
+  var bdData = null, bdLoading = false, bdDirty = {};
+  var PILL = { thought: 'Thought leadership', data: 'Data story', video: 'Video', testimonial: 'Testimonial', 'case': 'Case study', howto: 'Tip', culture: 'Team and culture' };
+  var STATUS = [['draft', 'Draft'], ['reviewed', 'Reviewed'], ['published', 'Published']];
+  function hint(e) { return e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v189)' : ''); }
+  async function bdLoad(force) {
+    if (bdLoading || (bdData && !force)) return; bdLoading = true;
+    try { var r = await ppApi('getBlogDrafts', {}, 90000); if (!r.success) throw new Error(r.error); bdData = r.rows || []; if (r.seeded) showToast(r.seeded + ' blog drafts added to the studio. Check their links and facts before publishing.', 'success'); }
+    catch (e) { bdData = { error: hint(e) }; }
+    bdLoading = false; if (typeof stRender === 'function') stRender();
+  }
+  window.bdReload = function() { bdData = null; bdLoad(true); };
+  function rows() { return Array.isArray(bdData) ? bdData : []; }
+  function byId(id) { return rows().find(function(x) { return x.id === id; }); }
+  function md(src) {
+    var e = function(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); };
+    var inl = function(s) { s = e(s); s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, function(m, t, u) { return '<a href="' + u + '" target="_blank" rel="noopener">' + t + '</a>'; }); s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>'); s = s.replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>'); return s; };
+    var out = [], lines = String(src || '').replace(/\r/g, '').split('\n'), para = [], list = null;
+    var flushP = function() { if (para.length) { out.push('<p>' + inl(para.join(' ')) + '</p>'); para = []; } }, flushL = function() { if (list) { out.push('<' + list.k + '>' + list.items.map(function(i) { return '<li>' + inl(i) + '</li>'; }).join('') + '</' + list.k + '>'); list = null; } };
+    lines.forEach(function(ln) {
+      var h = ln.match(/^(#{1,3})\s+(.*)$/), b = ln.match(/^\s*[-*]\s+(.*)$/), n = ln.match(/^\s*\d+[.)]\s+(.*)$/);
+      if (h) { flushP(); flushL(); out.push('<h' + (h[1].length + 1) + '>' + inl(h[2]) + '</h' + (h[1].length + 1) + '>'); }
+      else if (b || n) { flushP(); var k = b ? 'ul' : 'ol'; if (!list || list.k !== k) { flushL(); list = { k: k, items: [] }; } list.items.push((b || n)[1]); }
+      else if (!ln.trim()) { flushP(); flushL(); }
+      else para.push(ln.trim());
+    });
+    flushP(); flushL(); return out.join('\n');
+  }
+  function srcLine(s) { return (s.who || s.url) + (s.date ? ' (' + s.date + ')' : '') + (s.url ? ': ' + s.url : ''); }
+  function asMarkdown(d) { return '# ' + d.title + '\n\n' + (d.subtitle ? '*' + d.subtitle + '*\n\n' : '') + String(d.body || '').trim() + (d.sources && d.sources.length ? '\n\n**Sources**\n\n' + d.sources.map(function(s) { return '- ' + srcLine(s); }).join('\n') : '') + '\n'; }
+  function asText(d) { var t = asMarkdown(d); return t.replace(/^#+\s+/gm, '').replace(/\*\*([^*]+)\*\*/g, '$1').replace(/(^|[^*])\*([^*\n]+)\*/g, '$1$2').replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '$1 ($2)').replace(/^- /gm, '• '); }
+  function asHtml(d) { return '<h1>' + ppEsc(d.title) + '</h1>' + (d.subtitle ? '<p><em>' + ppEsc(d.subtitle) + '</em></p>' : '') + md(d.body) + (d.sources && d.sources.length ? '<h2>Sources</h2><ul>' + d.sources.map(function(s) { return '<li>' + ppEsc(s.who || s.url) + (s.date ? ' (' + ppEsc(s.date) + ')' : '') + (s.url ? ': <a href="' + ppEsc(s.url) + '">' + ppEsc(s.url) + '</a>' : '') + '</li>'; }).join('') + '</ul>' : ''); }
+  window.bdCopy = function(id, kind) {
+    var d = byId(id); if (!d) return;
+    if (kind === 'html') {
+      var html = asHtml(d), text = asText(d);
+      if (navigator.clipboard && window.ClipboardItem) { try { navigator.clipboard.write([new ClipboardItem({ 'text/html': new Blob([html], { type: 'text/html' }), 'text/plain': new Blob([text], { type: 'text/plain' }) })]).then(function() { showToast('Copied with formatting; paste into the CMS editor', 'success'); }).catch(function() { ppCopy(text, 'Copied as plain text (formatting not allowed here)'); }); return; } catch (e) {} }
+      ppCopy(text, 'Copied as plain text'); return;
+    }
+    ppCopy(kind === 'text' ? asText(d) : asMarkdown(d), kind === 'text' ? 'Copied as plain text' : 'Copied as Markdown');
+  };
+  function chk(d) {
+    var c = d.checkResult && d.checkResult.summary; if (!c) return '<span class="bd-chk">Not checked</span>';
+    var cls = (c.down > 0 || c.missing > 0) ? 'bad' : (c.blocked > 0 || c.unknown > 0 || c.skipped > 0) ? 'warn' : 'ok';
+    var parts = [c.live + '/' + c.pages + ' pages live']; if (c.claims) parts.push(c.found + '/' + c.claims + ' facts found'); if (c.blocked) parts.push(c.blocked + ' blocked the check'); if (c.skipped) parts.push(c.skipped + ' not checked yet');
+    return '<span class="bd-chk ' + cls + '" title="Checked ' + ppEsc(ppAgo(d.checkedAt)) + (d.checkedBy ? ' by ' + ppEsc(ppRepName(d.checkedBy) || d.checkedBy) : '') + '">' + parts.join(' · ') + '</span>';
+  }
+  function card() {
+    var list = rows().slice().sort(function(a, b) { return String(a.id).localeCompare(String(b.id)); });
+    var head = '<div class="st-head"><h3>Blog drafts<span class="n">' + list.length + '</span></h3><div class="sub">Thought-leadership articles written from the news Signals watches, with every source attached. Open one to edit it or copy it out; Check reads each cited page and confirms the figures the article quotes are really there.</div><div class="acts"><button class="text-action-btn" onclick="bdCheckAll(this)" title="Fetch every cited page for every draft and confirm the quoted figures">Check all</button><button class="pp-btn primary" onclick="bdNew()">+ New draft</button></div></div>';
+    var body;
+    if (bdData && bdData.error) body = '<div class="st-empty">' + ppEsc(bdData.error) + ' <button class="text-action-btn" onclick="bdReload()">Try again</button></div>';
+    else if (!bdData) body = ppLoader('Opening the drafts', { rows: 3 });
+    else if (!list.length) body = '<div class="st-empty">No drafts yet. Press + New draft, or <button class="text-action-btn" onclick="bdReload()">reload</button> to seed the ten from Nov 10.</div>';
+    else body = '<div class="bd-list">' + list.map(function(d) {
+      var st = STATUS.find(function(s) { return s[0] === d.status; }) || STATUS[0];
+      return '<div class="bd-row" data-id="' + ppEsc(d.id) + '"><div><div class="t" onclick="bdOpen(\'' + ppEsc(d.id) + '\')">' + ppEsc(d.title) + '</div>' + (d.subtitle ? '<div class="s">' + ppEsc(d.subtitle) + '</div>' : '') + '<div class="m"><span class="bd-pill ' + ppEsc(d.status || 'draft') + '">' + st[1] + '</span><span class="bd-pill">' + ppEsc(PILL[d.pillar] || d.pillar || 'Thought leadership') + '</span>' + chk(d) + '<span>' + (d.sources || []).length + ' source' + ((d.sources || []).length === 1 ? '' : 's') + '</span><span>' + Math.round(String(d.body || '').split(/\s+/).filter(Boolean).length / 10) * 10 + ' words</span>' + (d.updatedAt ? '<span>edited ' + ppEsc(ppAgo(d.updatedAt)) + '</span>' : '') + '</div></div><div class="acts"><button class="pp-btn" onclick="bdCheck(\'' + ppEsc(d.id) + '\',this)" title="Fetch every cited page and confirm the quoted figures">Check</button><button class="pp-btn" onclick="bdCopy(\'' + ppEsc(d.id) + '\',\'md\')" title="Copy the article as Markdown">Copy</button><button class="pp-btn primary" onclick="bdOpen(\'' + ppEsc(d.id) + '\')">Open</button></div></div>';
+    }).join('') + '</div>';
+    return '<div class="st-card" id="bdCard">' + head + '<div class="st-body">' + body + '</div></div>';
+  }
+  var _st = window.stRender;
+  window.stRender = function() {
+    if (typeof _st === 'function') _st.apply(this, arguments);
+    var host = document.getElementById('stHost'); if (!host) return;
+    var cards = host.querySelectorAll('.st-card'); if (!cards.length) return;
+    var old = document.getElementById('bdCard'); if (old) old.remove();
+    var el = document.createElement('div'); el.innerHTML = card(); var node = el.firstChild;
+    cards[0].insertAdjacentElement('afterend', node);
+    if (!bdData && !bdLoading) bdLoad(false);
+  };
+  window.bdNew = function() { bdOpen('', { id: '', title: '', subtitle: '', body: '', sources: [], pillar: 'thought', status: 'draft', publishedUrl: '', notes: '' }); };
+  function readForm() {
+    var g = function(id) { var x = document.getElementById(id); return x ? x.value : ''; };
+    var srcs = Array.from(document.querySelectorAll('#bdSources .bd-src')).map(function(r) { var q = function(c) { var x = r.querySelector('.' + c); return x ? x.value.trim() : ''; }; return { who: q('who'), date: q('date'), url: q('url'), claims: q('claims') }; }).filter(function(s) { return s.who || s.url; });
+    return { title: g('bdF_title').trim(), subtitle: g('bdF_sub').trim(), pillar: g('bdF_pillar'), status: g('bdF_status'), publishedUrl: g('bdF_url').trim(), notes: g('bdF_notes').trim(), body: g('bdF_body'), sources: srcs };
+  }
+  function srcRow(s) { s = s || {}; return '<div class="bd-src"><input class="who" placeholder="Who (outlet or board)" value="' + ppEsc(s.who || '') + '"><input class="date" placeholder="YYYY-MM-DD" value="' + ppEsc(s.date || '') + '"><input class="url" placeholder="https://" value="' + ppEsc(s.url || '') + '"><input class="claims" placeholder="Figures to confirm, separated by ;" value="' + ppEsc(Array.isArray(s.claims) ? s.claims.join('; ') : (s.claims || '')) + '"><button type="button" title="Remove" onclick="this.parentNode.remove()">&#x2715;</button></div>'; }
+  window.bdAddSource = function() { var h = document.getElementById('bdSources'); if (h) h.insertAdjacentHTML('beforeend', srcRow({})); };
+  function resultsHtml(d) {
+    var c = d.checkResult; if (!c || !c.results) return '<div class="st-empty" style="padding:10px 0 0">Not checked yet. Check links and facts fetches every cited page and every link in the article, and looks for each figure listed under Sources on its page.</div>';
+    var s = c.summary || {};
+    return '<div style="font-size:12.5px;color:var(--text2);margin-top:8px">Checked ' + ppEsc(ppAgo(c.checkedAt)) + (c.checkedBy ? ' by ' + ppEsc(ppRepName(c.checkedBy) || c.checkedBy) : '') + ': <b>' + s.live + ' of ' + s.pages + '</b> pages answered' + (s.blocked ? ', ' + s.blocked + ' blocked the check' : '') + (s.down ? ', <b style="color:#b91c1c">' + s.down + ' not reachable</b>' : '') + (s.claims ? '; <b>' + s.found + ' of ' + s.claims + '</b> quoted figures found on their pages' + (s.missing ? ', <b style="color:#b91c1c">' + s.missing + ' not found</b>' : '') + (s.unknown ? ', ' + s.unknown + ' could not be read' : '') : '') + '.</div>'
+      + '<div class="bd-res">' + c.results.map(function(r) { var cls = r.live ? ((r.claims || []).some(function(x) { return x.found === false; }) ? 'warn' : 'ok') : (r.code === 403 || r.code === 429 || !r.code) ? 'warn' : 'bad'; return '<div class="r"><div class="dot ' + cls + '"></div><div><div><b>' + ppEsc(r.who || r.title || r.url) + '</b>' + (r.title && r.who ? ' <span style="color:var(--text3)">' + ppEsc(r.title) + '</span>' : '') + (r.inBody && !r.cited ? ' <span class="bd-pill">link in the text</span>' : '') + '</div><div class="u"><a href="' + ppEsc(r.url) + '" target="_blank" rel="noopener">' + ppEsc(r.url) + '</a></div>' + (r.note ? '<div style="color:var(--text2);font-size:11.5px;margin-top:2px">' + ppEsc(r.note) + '</div>' : '') + (r.claims && r.claims.length ? '<div>' + r.claims.map(function(x) { return '<span class="c ' + (x.found === true ? 'ok' : x.found === false ? 'bad' : 'na') + '" title="' + (x.found === true ? 'Found on the page' : x.found === false ? 'Not found on the page: check the wording or the source' : 'Could not read the page') + '">' + (x.found === true ? '✓' : x.found === false ? '✗' : '?') + ' ' + ppEsc(x.text) + '</span>'; }).join('') + '</div>' : '') + '</div><div style="font-size:11px;color:var(--text3);white-space:nowrap">' + (r.code ? 'HTTP ' + r.code : '') + '</div></div>'; }).join('') + '</div>';
+  }
+  window.bdOpen = function(id, fresh) {
+    var d = fresh || byId(id); if (!d) return;
+    var opt = function(list, cur) { return list.map(function(x) { return '<option value="' + ppEsc(x[0]) + '"' + (x[0] === cur ? ' selected' : '') + '>' + ppEsc(x[1]) + '</option>'; }).join(''); };
+    ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + (d.id ? ppEsc(d.title) : 'New blog draft') + '</h2><div class="modal-subtitle">' + (d.id ? 'Edit, check, then copy it out. ' + (d.updatedAt ? 'Last edited ' + ppEsc(ppAgo(d.updatedAt)) + (d.updatedBy ? ' by ' + ppEsc(ppRepName(d.updatedBy) || d.updatedBy) : '') : '') : 'Markdown in the body: ## for a heading, **bold**, *italic*, [text](url) for a link, - for bullets.') + '</div></div>'
+      + '<div class="modal-body"><div class="detail-section" style="margin-top:16px"><div class="pp-form">'
+      + '<div class="full"><label>Title</label><input id="bdF_title" value="' + ppEsc(d.title) + '" autofocus></div>'
+      + '<div class="full"><label>Subtitle (the one-line hook under the title)</label><input id="bdF_sub" value="' + ppEsc(d.subtitle || '') + '"></div>'
+      + '<div><label>Pillar</label><select id="bdF_pillar">' + opt(Object.keys(PILL).map(function(k) { return [k, PILL[k]]; }), d.pillar || 'thought') + '</select></div>'
+      + '<div><label>Status</label><select id="bdF_status">' + opt(STATUS, d.status || 'draft') + '</select></div>'
+      + '<div class="full"><label>Published at (once it is live)</label><input id="bdF_url" placeholder="https://www.practiceplan.io/blog/..." value="' + ppEsc(d.publishedUrl || '') + '"></div>'
+      + '</div></div>'
+      + '<div class="detail-section"><h3 style="margin:0 0 8px">Article</h3><div class="bd-edit"><div><textarea id="bdF_body" oninput="bdPreview()">' + ppEsc(d.body || '') + '</textarea></div><div class="bd-prev" id="bdPrev">' + md(d.body || '') + '</div></div></div>'
+      + '<div class="detail-section"><h3 style="margin:0 0 4px">Sources</h3><div style="font-size:12px;color:var(--text2);margin-bottom:8px">One row per page the article leans on. Under Figures, list the numbers and phrases the article takes from that page, separated by semicolons; Check looks for each one on the page.</div><div class="bd-srchead"><span>Who</span><span>Date</span><span>Address</span><span>Figures to confirm</span><span></span></div><div id="bdSources">' + (d.sources || []).map(srcRow).join('') + '</div><button class="text-action-btn" onclick="bdAddSource()">+ Add a source</button></div>'
+      + '<div class="detail-section"><h3 style="margin:0 0 4px;display:flex;justify-content:space-between;align-items:center">Links and facts <button class="pp-btn" onclick="bdCheckModal(\'' + ppEsc(d.id) + '\',this)"' + (d.id ? '' : ' disabled title="Save the draft first"') + '>Check links and facts</button></h3><div id="bdResults">' + resultsHtml(d) + '</div></div>'
+      + '<div class="detail-section"><label style="font-size:12px;font-weight:700;color:var(--text2)">Notes (internal)</label><input id="bdF_notes" style="width:100%;margin-top:4px" value="' + ppEsc(d.notes || '') + '"></div>'
+      + '</div><div class="modal-footer" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between"><div style="display:flex;gap:8px;flex-wrap:wrap">' + (d.id ? '<button class="pp-btn" onclick="bdCopy(\'' + ppEsc(d.id) + '\',\'md\')">Copy as Markdown</button><button class="pp-btn" onclick="bdCopy(\'' + ppEsc(d.id) + '\',\'text\')">Copy as text</button><button class="pp-btn" onclick="bdCopy(\'' + ppEsc(d.id) + '\',\'html\')" title="Formatted, for pasting into a blog editor">Copy for the CMS</button>' : '') + '</div><div style="display:flex;gap:8px">' + (d.id ? '<button class="pp-btn" style="color:#b91c1c" onclick="bdDelete(\'' + ppEsc(d.id) + '\')">Delete</button>' : '') + '<button class="pp-btn primary" onclick="bdSave(\'' + ppEsc(d.id) + '\',this)">Save</button></div></div>');
+  };
+  window.bdPreview = function() { var ta = document.getElementById('bdF_body'), pv = document.getElementById('bdPrev'); if (ta && pv) pv.innerHTML = md(ta.value); };
+  window.bdSave = async function(id, btn) {
+    var f = readForm(); if (!f.title) { showToast('The draft needs a title', 'error'); return; }
+    if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+    try { var r = await ppApi('saveBlogDraft', { row: JSON.stringify(Object.assign({ id: id || '' }, f)) }, 90000); if (!r.success) throw new Error(r.error); var list = rows(), i = list.findIndex(function(x) { return x.id === r.row.id; }); if (i >= 0) list[i] = r.row; else list.push(r.row); showToast('Saved' + (id && r.row.checkedAt === '' && byId(r.row.id) && f.body ? '' : ''), 'success'); closeModal(); stRender(); }
+    catch (e) { showToast(hint(e), 'error'); if (btn) { btn.disabled = false; btn.textContent = 'Save'; } }
+  };
+  window.bdDelete = async function(id) { var d = byId(id); if (!d || !confirm('Delete "' + d.title + '"? This cannot be undone.')) return; try { var r = await ppApi('deleteBlogDraft', { id: id }, 60000); if (!r.success) throw new Error(r.error); bdData = rows().filter(function(x) { return x.id !== id; }); closeModal(); stRender(); showToast('Deleted', 'success'); } catch (e) { showToast(hint(e), 'error'); } };
+  async function runCheck(id) { var r = await ppApi('blogCheck', { id: id }, 300000); if (!r.success) throw new Error(r.error); var d = byId(id); if (d) { d.checkResult = r.check; d.checkedAt = r.check.checkedAt; d.checkedBy = r.check.checkedBy; } return r.check; }
+  function checkToast(c) { var s = c.summary || {}; var bad = (s.down || 0) + (s.missing || 0); showToast(s.live + ' of ' + s.pages + ' pages answered, ' + s.found + ' of ' + s.claims + ' figures found' + (bad ? '. Look at the ones marked red.' : s.blocked || s.unknown ? '. A few could not be read; open those by hand.' : '. All good.'), bad ? 'error' : (s.blocked || s.unknown) ? 'info' : 'success'); }
+  window.bdCheck = async function(id, btn) { var o = btn ? btn.textContent : ''; if (btn) { btn.disabled = true; btn.textContent = 'Checking...'; } try { var c = await runCheck(id); checkToast(c); stRender(); } catch (e) { showToast(hint(e), 'error'); if (btn) { btn.disabled = false; btn.textContent = o; } } };
+  window.bdCheckModal = async function(id, btn) {
+    // save first so the check reads what is on screen
+    var f = readForm(); if (!f.title) { showToast('The draft needs a title', 'error'); return; }
+    if (btn) { btn.disabled = true; btn.textContent = 'Saving and checking...'; }
+    try { var r = await ppApi('saveBlogDraft', { row: JSON.stringify(Object.assign({ id: id }, f)) }, 90000); if (!r.success) throw new Error(r.error); var list = rows(), i = list.findIndex(function(x) { return x.id === r.row.id; }); if (i >= 0) list[i] = r.row; else list.push(r.row); var c = await runCheck(id); var d = byId(id); var host = document.getElementById('bdResults'); if (host && d) host.innerHTML = resultsHtml(d); checkToast(c); stRender(); }
+    catch (e) { showToast(hint(e), 'error'); }
+    if (btn) { btn.disabled = false; btn.textContent = 'Check links and facts'; }
+  };
+  window.bdCheckAll = async function(btn) {
+    var list = rows(); if (!list.length) return; if (!confirm('Check every cited page for all ' + list.length + ' drafts? Each draft takes a few seconds.')) return;
+    var o = btn.innerHTML; btn.disabled = true; var n = 0, bad = 0;
+    for (var i = 0; i < list.length; i++) { btn.textContent = 'Checking ' + (i + 1) + ' of ' + list.length + '...'; try { var c = await runCheck(list[i].id); n++; if ((c.summary.down || 0) + (c.summary.missing || 0)) bad++; } catch (e) { showToast(list[i].title + ': ' + hint(e), 'error'); break; } stRender(); btn = document.querySelector('#bdCard .st-head .text-action-btn') || btn; btn.disabled = true; }
+    btn.disabled = false; btn.innerHTML = o; showToast(n + ' draft' + (n === 1 ? '' : 's') + ' checked' + (bad ? ', ' + bad + ' with something to look at (red)' : ', nothing to fix'), bad ? 'info' : 'success');
+  };
+})();
+</script>
 </body>
 </html>
