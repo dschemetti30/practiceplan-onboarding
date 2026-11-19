@@ -4722,7 +4722,7 @@
         var idx = credList.findIndex(function(x) { return x.id === rec.id; }); if (idx >= 0) credList[idx] = rec; else credList.push(rec);
         closeModal(); populateCredRepFilter(); renderCredentials(); showToast(id ? 'Credentials updated' : 'Client added', 'success');
         logActivityToServer(id ? 'updated credentials for' : 'added credentials for', org, rec.status, 'other');
-      } catch(e) { btn.disabled = false; btn.textContent = 'Save Changes'; showToast('Could not save: ' + e.message, 'error'); }
+      } catch(e) { btn.disabled = false; btn.textContent = id ? 'Save Changes' : 'Add Client'; showToast('Could not save: ' + e.message, 'error'); }
     }
     async function deleteCred(id) {
       var c = credList.find(function(x) { return x.id === id; }); if (!c) return;
@@ -10933,13 +10933,13 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v228 · Nov 19c';
+    var PP_BUILD = 'v229 · Nov 19d';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
         ppApi('ppPing', {}, 30000).then(function(r) { var v = Number(r && r.version) || 0; window._ppServerVersion = v; if (v && v < 120) { tag.classList.add('warn'); tag.textContent = PP_BUILD + ' · Extras v' + v + ' (needs v120)'; tag.title = 'The server is behind this page: install the current Extras.gs and deploy a new version.'; } else if (v) tag.textContent = PP_BUILD + ' · Extras v' + v; }).catch(function() {});
       }, 1500); };
-      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 193 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
+      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 194 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
     })();
     // =====================================================================
     // TEAM: titles and headshots, editable in Settings
@@ -16749,6 +16749,42 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
   function sync() { place(); if (!onClients()) return; renderDocsPanel(); loadSignedDocs(false); }
   if (typeof obSetMode === 'function') { var _mode = obSetMode; obSetMode = function() { var r = _mode.apply(this, arguments); try { sync(); } catch (e) {} return r; }; }
   place();
+})();
+</script>
+<script>
+// v229: a save could vanish from the screen even though it reached the sheet (Client Credentials: Irving ISD, Everman ISD).
+// The page refreshes every list in one background call (bootstrap) at startup and every 15 minutes, and that call can take
+// many seconds. A refresh that left before a save and came back after it replaced the list with the copy from before the
+// save, and stored that copy as the snapshot the next page load paints from. Two fixes, for every list, not only credentials:
+//   1. A background refresh that overlapped a save is thrown away and run again once the save is done.
+//   2. After a credentials save or delete the snapshot is rewritten from the list on screen, so a reload shows it at once.
+// Extras v194 closes the same gap on the server (its ten minute copy of the startup bundle).
+(function() {
+  if (typeof _ppApiNet !== 'function' || typeof ppBootstrapRefresh !== 'function') return;
+  var WRITE = /^(save|delete|patch|set|add|bulk|import|match|dismiss|restore|merge|update|remove|create|upsert|mark|approve|send|link|credit|rescan|apply|move|assign|archive|rename|reorder|toggle|upload)/i;
+  var seq = 0, open = 0, retry = null, tries = 0;
+  function count(pr) { seq++; open++; var done = function() { open--; seq++; }; try { pr.then(done, done); } catch (e) { open--; } return pr; }
+  function credSync() { try { if (typeof credList === 'undefined' || !credLoaded) return; if (typeof ppPrimed !== 'undefined') delete ppPrimed.getCredentialsList; ppSnap = ppSnap || { email: currentUser && currentUser.email }; ppSnap.bundle = ppSnap.bundle || {}; ppSnap.bundle.getCredentialsList = { success: true, rows: credList.slice() }; ppSnap.savedAt = Date.now(); if (typeof ppSnapSave === 'function') ppSnapSave(); } catch (e) {} }
+  function watch(name) {
+    var orig = window[name]; if (typeof orig !== 'function') return;
+    window[name] = function(action) {
+      var pr = orig.apply(this, arguments);
+      if (WRITE.test(String(action || ''))) { count(pr); if (/credential/i.test(action)) pr.then(function(r) { if (r && r.success) setTimeout(credSync, 250); }, function() {}); }
+      return pr;
+    };
+  }
+  watch('ppApi'); watch('ppApiPost');
+  var _net = _ppApiNet;
+  _ppApiNet = function(action) {
+    var pr = _net.apply(this, arguments); if (action !== 'bootstrap') return pr;
+    var at = seq;
+    return pr.then(function(r) {
+      if (seq === at && !open) { tries = 0; return r; }
+      // something was saved while this was on its way: its lists are from before the save. Drop it and ask again.
+      clearTimeout(retry); if (tries < 3) { tries++; retry = setTimeout(function() { try { ppBootstrapRefresh(); } catch (e) {} }, open ? 4000 : 1500); }
+      return { success: false, stale: true };
+    });
+  };
 })();
 </script>
 </body>
