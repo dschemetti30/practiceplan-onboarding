@@ -10933,13 +10933,13 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v231 · Nov 19f';
+    var PP_BUILD = 'v233 · Nov 19h';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
         ppApi('ppPing', {}, 30000).then(function(r) { var v = Number(r && r.version) || 0; window._ppServerVersion = v; if (v && v < 120) { tag.classList.add('warn'); tag.textContent = PP_BUILD + ' · Extras v' + v + ' (needs v120)'; tag.title = 'The server is behind this page: install the current Extras.gs and deploy a new version.'; } else if (v) tag.textContent = PP_BUILD + ' · Extras v' + v; }).catch(function() {});
       }, 1500); };
-      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 196 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
+      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 198 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
     })();
     // =====================================================================
     // TEAM: titles and headshots, editable in Settings
@@ -11719,7 +11719,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         more.onclick = function() { toggle(); }; tabs.appendChild(more);
         var bg = document.createElement('div'); bg.className = 'm-sheet-bg'; bg.onclick = function() { toggle(false); };
         sheet = document.createElement('div'); sheet.className = 'm-sheet'; fill();
-        var mo = new MutationObserver(function() { clearTimeout(mo._t); mo._t = setTimeout(function() { fill(); reflect(); }, 50); }); mo.observe(tabs, { childList: true });
+        var mo = new MutationObserver(function() { clearTimeout(mo._t); mo._t = setTimeout(function() { fill(); reflect(); }, 50); }); mo.observe(tabs, { childList: true });   // v233: this no longer runs in a loop; see the v233 block
         sheet.addEventListener('click', function(e) { var b = e.target.closest('button[data-view]'); if (!b) return; toggle(false); switchView(b.getAttribute('data-view')); });
         document.body.appendChild(bg); document.body.appendChild(sheet);
         window._ppMoreToggle = toggle;
@@ -14864,12 +14864,11 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
             if (!el.querySelector('.nv-chev')) { el.innerHTML = '<span class="nv-label">' + ppEsc(label) + '</span><span class="nv-n"></span><span class="nv-chev">' + CH + '</span>'; el.setAttribute('role', 'button'); el.onclick = function(ev) { ev.stopPropagation(); ppNavToggle(k); }; }
             body = document.createElement('div'); body.className = 'nv-body'; var inner = document.createElement('div'); inner.className = 'nv-in'; body.appendChild(inner); sec.appendChild(body); body = inner; return;
           }
-          if (el.classList.contains('view-tab') && body) body.appendChild(el);
+          if (el.classList.contains('view-tab') && !el.classList.contains('m-more') && body) body.appendChild(el);   // v233: not the phone More button (see the v233 block)
           else if (el.id === 'ppBuildTag' && sec) sec.appendChild(el);
         });
         tabs.querySelectorAll('.nav-sec').forEach(function(sc) { var n = sc.querySelectorAll('.view-tab:not(.soon)').length, badge = sc.querySelector('.nv-n'); if (badge) badge.textContent = n; var hasActive = !!sc.querySelector('.view-tab.active'); var g = sc.querySelector('.nav-group'); if (g) g.classList.toggle('has-active', hasActive); if (hasActive) sc.classList.remove('closed'); });
         var tag = document.getElementById('ppBuildTag'); if (tag) { var tsc = tag.closest('.nav-sec'); if (tsc && tsc.lastElementChild !== tag) tsc.appendChild(tag); }
-        if (!tabs.querySelector('.nv-tools')) { var tools = document.createElement('div'); tools.className = 'nv-tools'; tools.innerHTML = '<button onclick="ppNavAll(false)" title="Open every section">Expand all</button><button onclick="ppNavAll(true)" title="Fold every section but the current one">Collapse all</button>'; tabs.insertBefore(tools, tabs.firstChild); }
         if (typeof ppNavFit === 'function') setTimeout(ppNavFit, 40);
       };
       window.ppNavToggle = function(k) { var sc = document.querySelector('.nav-sec[data-key="' + k + '"]'); if (!sc) return; var closed = closedSet(); if (sc.classList.contains('closed')) { sc.classList.remove('closed'); delete closed[k]; } else { if (sc.querySelector('.view-tab.active')) { showToast('That section holds the page you are on', 'success'); return; } sc.classList.add('closed'); closed[k] = 1; } saveClosed(closed); if (typeof ppNavFit === 'function') setTimeout(ppNavFit, 340); };
@@ -14877,7 +14876,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       // keep the section of the current page open
       if (typeof switchView === 'function') { var _sv = switchView; switchView = function(view) { _sv.apply(this, arguments); try { var t = document.querySelector('.view-tab.active'), sc = t && t.closest('.nav-sec'); document.querySelectorAll('.nav-sec .nav-group.has-active').forEach(function(g) { g.classList.remove('has-active'); }); if (sc) { sc.classList.remove('closed'); var g = sc.querySelector('.nav-group'); if (g) g.classList.add('has-active'); } } catch (e) {} }; }
       // tabs that other blocks add straight into .view-tabs get swept into their section
-      function arm() { var tabs = document.querySelector('.view-tabs'); if (!tabs || tabs._nvArmed) return; tabs._nvArmed = true; try { new MutationObserver(function() { if (Array.prototype.some.call(tabs.children, function(c) { return c.classList && (c.classList.contains('view-tab') || (c.classList.contains('nav-group') && !c.closest('.nav-sec'))); })) ppNavSections(); }).observe(tabs, { childList: true }); } catch (e) {} }
+      function arm() { var tabs = document.querySelector('.view-tabs'); if (!tabs || tabs._nvArmed) return; tabs._nvArmed = true; try { new MutationObserver(function() { if (Array.prototype.some.call(tabs.children, function(c) { return c.classList && ((c.classList.contains('view-tab') && !c.classList.contains('m-more')) || (c.classList.contains('nav-group') && !c.closest('.nav-sec'))); })) ppNavSections(); }).observe(tabs, { childList: true }); } catch (e) {} }
       function go() { ppNavSections(); arm(); }
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
       if (typeof finishLoading === 'function') { var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(ppNavSections, 500); setTimeout(ppNavSections, 1800); }; }
@@ -16558,13 +16557,29 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
   .ps-foot .pp-btn{flex:0 0 auto}
   .ps-off{background:none;border:none;padding:0;font:600 12.5px inherit;font-family:inherit;color:var(--pp-red,#d93025);cursor:pointer}
   .ps-offq{font-size:12.5px;color:var(--text2)}
-  .ps-send{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:24px;align-items:start}
+  .ps-send{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:26px;align-items:start}
+  #modalContent:has(.ps-send){max-width:1120px}
+  .ps-tos{max-height:150px;overflow:auto;margin-bottom:16px}
+  .ps-mp{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#f5f7fa}
+  .ps-mph{background:#fff;border-bottom:1px solid #e2e8f0;padding:14px 16px 12px}
+  .ps-mps{font-size:15.5px;font-weight:700;color:#0f172a;line-height:1.3;margin-bottom:10px;overflow-wrap:anywhere}
+  .ps-mps.none{color:#94a3b8;font-weight:600}
+  .ps-mpf{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;align-items:center;font-size:12.5px;color:#0f172a;line-height:1.35}
+  .ps-mpa{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#0076bb,#00a84f);color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center}
+  .ps-mpf span.ad{color:#64748b;font-weight:400}
+  .ps-mpf small{display:block;color:#64748b;font-size:12px;overflow-wrap:anywhere}
+  .ps-mpb{max-height:540px;overflow:auto}
+  .ps-warn{margin-top:10px;padding:9px 12px;border-radius:10px;border:1px solid rgba(217,48,37,.35);background:rgba(217,48,37,.06);color:var(--pp-red,#d93025);font-size:12.5px;font-weight:600;line-height:1.4}
+  .ps-warn:empty{display:none}
+  .ps-plogo{display:flex;align-items:center;justify-content:space-between;padding:2px 2px 10px}
+  .ps-plogo img{height:20px;display:block}
+  .ps-plogo span{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
   .ps-from{padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:12.5px;line-height:1.45;margin-bottom:16px}
   .ps-from.bad{border-color:var(--pp-red,#d93025);background:rgba(217,48,37,.06)}
   .ps-to{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;padding:7px 0;border-top:1px solid var(--border);font-size:12.5px;line-height:1.4;cursor:pointer}
   .ps-to:first-of-type{border-top:0}
   .ps-to small{display:block;color:var(--text3);font-size:11.5px;overflow-wrap:anywhere}
-  .ps-send textarea{min-height:230px}
+  .ps-send textarea{min-height:250px}
   .pb-share{margin-left:8px;height:18px;padding:0 7px;border-radius:50px;border:1px solid var(--border);background:var(--card);font:600 10px/1 inherit;font-family:inherit;color:var(--text3);cursor:pointer;vertical-align:middle}
   .pb-share.on{border-color:var(--pp-green);color:var(--pp-green);background:rgba(0,168,79,.08)}
   @media(max-width:860px){.ps-grid,.ps-send{grid-template-columns:minmax(0,1fr)}.ps-col{max-height:none;overflow:visible}}
@@ -16576,6 +16591,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
 // v231: choices before publishing (go-live date, progress, next up, finished steps shown or folded, the rep and the
 // onboarding lead as contacts with phone numbers, which notes the district may read), a step that emails the link through
 // Close as the lead owner, the first-open notice (Today), and a chip on each Playbook note saying whether it is shared.
+// v232 (needs Extras v197): the email step shows the email as it will arrive, beside the boxes that edit it; the logo on the preview.
 (function() {
   var info = {}, pending = {}, timers = {}, ui = {};   // ui[email]: the unsaved choices while the dialog is open
   var IC = { link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>', eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>', sync: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/></svg>', mute: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H5.2L4 17.2z"/><path d="M9 9l6 4M15 9l-6 4"/></svg>', mail: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>' };
@@ -16620,7 +16636,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       var r = await ppApiPost('statusPublish', { orgEmail: email, snapshot: JSON.stringify(snap) }, 60000); if (!r.success) throw new Error(r.error);
       var was = info[email] || {}; info[email] = r.exists !== undefined ? r : Object.assign({}, was, { exists: true, url: r.url, views: r.views, updatedAt: r.updatedAt, createdAt: r.createdAt || was.createdAt, message: opts ? opts.message : was.message });
       info[email].sig = sig(email); button(email); return true;
-    } catch (e) { if (!silent) showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v196)' : ''), 'error'); return false; }
+    } catch (e) { if (!silent) showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v197)' : ''), 'error'); return false; }
   }
   function sig(email) { try { var s = snapshot(email); s.phases.forEach(function(ph) { ph.steps.forEach(function(x) { delete x.note; delete x.share; delete x.done; }); }); delete s.pct; delete s.nextStep; return JSON.stringify(s); } catch (e) { return ''; } }
   var day = function(iso) { var s = String(iso || '').slice(0, 10); if (!/^\d{4}-\d\d-\d\d$/.test(s)) return ''; return new Date(s + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
@@ -16630,7 +16646,8 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     var next = ''; if (cur) { var n = cur.steps.find(function(s) { return !s.done; }); if (n) next = n.task; }
     var ppl = people(email, snap).filter(function(p) { return p.k === 'rep' ? (o.rep || (p.both && o.lead)) : o.lead; }).map(function(p) { if (p.both && !(o.rep && o.lead)) p.role = o.rep ? 'Your account rep' : 'Onboarding lead'; return p; });
     var step = function(s) { return '<div class="ps-s' + (s.done ? ' d' : '') + '"><b>' + (s.done ? '&#10003;' : '') + '</b><div><span>' + ppEsc(s.task) + '</span>' + (s.owner === 'district' && !s.done ? '<span class="ps-tag">your side</span>' : '') + (s.note && st.shares[s.id] ? '<em>' + ppEsc(s.note) + '</em>' : '') + '</div></div>'; };
-    return '<div class="ps-pc"><div class="ps-pr"></div><div style="padding:12px"><div class="ps-pk">Onboarding status</div><div class="ps-pt">' + ppEsc(snap.organization) + '</div><div class="ps-pm">' + [snap.contact ? 'For ' + ppEsc(snap.contact) : '', o.goLive && snap.goLive ? 'Target go-live <b>' + ppEsc(day(snap.goLive) || snap.goLive) + '</b>' : ''].filter(Boolean).join(' &middot; ') + '</div>'
+    var lg = document.querySelector('.header-logo, .logo-svg'), logo = lg ? lg.getAttribute('src') : '';
+    return (logo ? '<div class="ps-plogo"><img src="' + logo + '" alt="PracticePlan"><span>Onboarding status</span></div>' : '') + '<div class="ps-pc"><div class="ps-pr"></div><div style="padding:12px"><div class="ps-pk">Onboarding status</div><div class="ps-pt">' + ppEsc(snap.organization) + '</div><div class="ps-pm">' + [snap.contact ? 'For ' + ppEsc(snap.contact) : '', o.goLive && snap.goLive ? 'Target go-live <b>' + ppEsc(day(snap.goLive) || snap.goLive) + '</b>' : ''].filter(Boolean).join(' &middot; ') + '</div>'
       + (st.message ? '<div class="ps-pmsg">' + ppEsc(st.message) + '</div>' : '')
       + (o.progress ? '<div class="ps-pm" style="display:flex;justify-content:space-between;margin-top:10px"><span>' + done + ' of ' + total + ' steps done' + (cur ? ' &middot; now in <b>' + ppEsc(cur.title) + '</b>' : total ? ' &middot; <b>onboarding complete</b>' : '') + '</span><b>' + pct + '%</b></div><div class="ps-bar"><i style="width:' + pct + '%"></i></div>' : '')
       + (o.next && next ? '<div class="ps-pm" style="margin-top:8px"><b>Next up:</b> ' + ppEsc(next) + '</div>' : '') + '</div></div>'
@@ -16668,29 +16685,49 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
   function editFoot(email, just) { var i = info[email] || {}, e = ppEsc(email); return (i.exists ? '<button class="ps-off" onclick="pbStatusOff(\'' + e + '\')">Turn the page off</button>' : '') + '<span class="sp"></span><button class="pp-btn" onclick="pbStatusClose(\'' + e + '\')">' + (just ? 'Done' : 'Cancel') + '</button><button class="pp-btn primary" onclick="pbStatusGo(\'' + e + '\',this)">' + (i.exists ? 'Save and copy the link' : 'Publish and copy the link') + '</button>'; }
   // ---- the email step
   function greet(c, st) { var names = c.contacts.filter(function(x) { return st.to[x.email]; }).map(function(x) { return String(x.name || '').split(' ')[0]; }).filter(Boolean); if (!names.length) return c.firstNameFallback || 'there'; return names.length === 1 ? names[0] : names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1]; }
+  // v232: the email step shows the email as it will arrive (our frame, the sender, who it goes to), redrawn as it is edited
+  function mailProblem(st) { var c = st.mail; if (!c) return ''; if (!c.mailbox) return ''; if (!String(st.subject || '').trim()) return 'Add a subject.'; if (!String(st.body || '').trim()) return 'The email is empty.'; if (String(st.body).indexOf(c.url) < 0) return 'The link is missing from the email. Put it back, or reset to the standard wording.'; if (/\{\{[a-z_]+\}\}/i.test(st.subject + st.body)) return 'There is an unfilled {{tag}} left in the email.'; return ''; }
+  function mailHtml(st) {
+    // the same steps the server takes with the wording (ppNudgeHtml_), inside the frame the server sent
+    var body = String(st.body || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" style="color:#0076bb">$1</a>').replace(/\n/g, '<br>');
+    var m = String(st.mail.frame || '').match(/<body[^>]*>([\s\S]*)<\/body>/i), inner = m && m[1].indexOf('PPSTATUSMAILBODY') >= 0 ? m[1] : '<div style="background:#ffffff;padding:24px 26px;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.55;color:#0f172a">PPSTATUSMAILBODY</div>';
+    return inner.split('PPSTATUSMAILBODY').join(body);
+  }
+  function mailTo(st) { var p = st.mail.contacts.filter(function(x) { return st.to[x.email]; }).map(function(x) { return x.name || x.email; }); return p.length ? 'to ' + p.join(', ') : 'nobody picked yet'; }
+  function mailCanSend(st) { var c = st.mail; return !!(c && c.mailbox && c.contacts.some(function(x) { return st.to[x.email]; }) && !mailProblem(st)); }
+  function mailPrev(email) {
+    var st = state(email), c = st.mail, ini = String(c.from.name || '').split(' ').map(function(x) { return x.charAt(0); }).join('').slice(0, 2).toUpperCase(), subj = String(st.subject || '').trim();
+    return '<div class="ps-mp"><div class="ps-mph"><div class="ps-mps' + (subj ? '' : ' none') + '" id="pbsPvSubj">' + (subj ? ppEsc(subj) : 'No subject') + '</div><div class="ps-mpf"><span class="ps-mpa">' + ppEsc(ini) + '</span><div><b>' + ppEsc(c.from.name) + '</b> <span class="ad">&lt;' + ppEsc(c.from.email) + '&gt;</span><small id="pbsPvTo">' + ppEsc(mailTo(st)) + '</small></div></div></div><div class="ps-mpb" id="pbsPvBody"></div></div><div class="ps-warn" id="pbsWarn">' + ppEsc(mailProblem(st)) + '</div>';
+  }
+  function mailHint(email) { var st = state(email); return 'Plain text. ' + (st.edited ? '<a onclick="pbsMailReset(\'' + ppEsc(email) + '\')" style="color:var(--pp-blue);cursor:pointer;font-weight:600">Reset to the standard wording</a>' : 'The greeting follows who you pick.'); }
   function mailBody(email) {
     var st = state(email), c = st.mail, e = ppEsc(email); if (!c) return '<div class="ps-hint" style="padding:30px 0;text-align:center">Getting the contacts from Close...</div>';
     var picked = c.contacts.filter(function(x) { return st.to[x.email]; }).length;
     return '<div class="ps-send"><div>'
       + '<span class="ps-h">From</span><div class="ps-from' + (c.mailbox ? '' : ' bad') + '"><b>' + ppEsc(c.from.name) + '</b><br>' + ppEsc(c.from.email) + '<br><span class="ps-hint">' + (c.mailbox ? 'Sent through Close from their own mailbox, as the lead owner. It is logged on the lead in Close.' : 'Close has no connected mailbox for this person, so the email cannot go. They connect it in Close under Settings, Email.') + '</span></div>'
-      + '<span class="ps-h">To <em>' + picked + ' picked</em></span>' + (c.contacts.length ? c.contacts.map(function(x) { return '<label class="ps-to"><input type="checkbox"' + (st.to[x.email] ? ' checked' : '') + ' onchange="pbsTo(\'' + e + '\',\'' + ppEsc(x.email) + '\',this)"><div><b>' + ppEsc(x.name || x.email) + '</b>' + (x.named ? ' <span class="ps-tag" style="margin-left:4px">named on the Playbook</span>' : '') + '<small>' + ppEsc([x.title, x.name ? x.email : ''].filter(Boolean).join(' · ')) + '</small></div></label>'; }).join('') : '<div class="ps-hint">This client has no contacts in Close and no one named on the Playbook.</div>')
-      + '</div><div><label class="ps-h" for="pbsSubj">Subject</label><input type="text" id="pbsSubj" value="' + ppEsc(st.subject) + '" oninput="pbsMailEdit(\'' + e + '\')" style="margin-bottom:12px"><label class="ps-h" for="pbsBody">Email <em>edit anything; the link has to stay in it</em></label><textarea id="pbsBody" oninput="pbsMailEdit(\'' + e + '\')">' + ppEsc(st.body) + '</textarea><div class="ps-hint" style="margin-top:6px">Plain text in our email frame, the same as reminders. ' + (st.edited ? '<a onclick="pbsMailReset(\'' + e + '\')" style="color:var(--pp-blue);cursor:pointer;font-weight:600">Reset to the standard wording</a>' : 'The greeting follows who you pick.') + '</div></div></div>';
+      + '<span class="ps-h">To <em>' + picked + ' picked</em></span><div class="ps-tos">' + (c.contacts.length ? c.contacts.map(function(x) { return '<label class="ps-to"><input type="checkbox"' + (st.to[x.email] ? ' checked' : '') + ' onchange="pbsTo(\'' + e + '\',\'' + ppEsc(x.email) + '\',this)"><div><b>' + ppEsc(x.name || x.email) + '</b>' + (x.named ? ' <span class="ps-tag" style="margin-left:4px">named on the Playbook</span>' : '') + '<small>' + ppEsc([x.title, x.name ? x.email : ''].filter(Boolean).join(' · ')) + '</small></div></label>'; }).join('') : '<div class="ps-hint">This client has no contacts in Close and no one named on the Playbook.</div>') + '</div>'
+      + '<label class="ps-h" for="pbsSubj">Subject</label><input type="text" id="pbsSubj" value="' + ppEsc(st.subject) + '" oninput="pbsMailEdit(\'' + e + '\')" style="margin-bottom:12px"><label class="ps-h" for="pbsBody">Email <em>edit anything; the link has to stay in it</em></label><textarea id="pbsBody" oninput="pbsMailEdit(\'' + e + '\')">' + ppEsc(st.body) + '</textarea><div class="ps-hint" id="pbsHint" style="margin-top:6px">' + mailHint(email) + '</div>'
+      + '</div><div><span class="ps-h">What they will receive <em>changes as you edit</em></span>' + mailPrev(email) + '</div></div>';
   }
-  function mailFoot(email) { var st = state(email), c = st.mail, e = ppEsc(email), n = c ? c.contacts.filter(function(x) { return st.to[x.email]; }).length : 0; return '<button class="pp-btn" onclick="pbStatusBack(\'' + e + '\')">Back</button><span class="sp"></span><button class="pp-btn primary" id="pbsSendBtn" onclick="pbStatusSend(\'' + e + '\',this)"' + (c && c.mailbox && n ? '' : ' disabled style="opacity:.5;cursor:not-allowed"') + '>' + (c ? 'Send as ' + ppEsc(String(c.from.name).split(' ')[0]) + (n ? ' to ' + n : '') : 'Send') + '</button>'; }
+  function mailFoot(email) { var st = state(email), c = st.mail, e = ppEsc(email), n = c ? c.contacts.filter(function(x) { return st.to[x.email]; }).length : 0; return '<button class="pp-btn" onclick="pbStatusBack(\'' + e + '\')">Back</button><span class="sp"></span><button class="pp-btn primary" id="pbsSendBtn" onclick="pbStatusSend(\'' + e + '\',this)"' + (mailCanSend(st) ? '' : ' disabled style="opacity:.5;cursor:not-allowed"') + '>' + (c ? 'Send as ' + ppEsc(String(c.from.name).split(' ')[0]) + (n ? ' to ' + n : '') : 'Send') + '</button>'; }
   window.pbsState = function(email) { return state(email); };
   window.pbsTo = function(email, who, el) { var st = state(email); st.to[who] = el.checked; if (!st.edited) st.body = st.mail.body.replace(/\{\{first_name\}\}/g, greet(st.mail, st)); dialog(email); };
-  window.pbsMailEdit = function(email) { var st = state(email), s = document.getElementById('pbsSubj'), b = document.getElementById('pbsBody'); if (s) st.subject = s.value; if (b) st.body = b.value; if (!st.edited) { st.edited = true; } };
+  window.pbsMailEdit = function(email) { var st = state(email), s = document.getElementById('pbsSubj'), b = document.getElementById('pbsBody'); if (s) st.subject = s.value; if (b) st.body = b.value; st.edited = true; pbsMailShow(email); };
+  // the preview, the warning and the Send button, without redrawing the boxes being typed in
+  window.pbsMailShow = function(email) { var st = state(email); if (!st.mail) return; var ps = document.getElementById('pbsPvSubj'), pb = document.getElementById('pbsPvBody'), pt = document.getElementById('pbsPvTo'), w = document.getElementById('pbsWarn'), h = document.getElementById('pbsHint'), btn = document.getElementById('pbsSendBtn'), subj = String(st.subject || '').trim();
+    if (ps) { ps.textContent = subj || 'No subject'; ps.classList.toggle('none', !subj); } if (pb) { var root = pb.shadowRoot || (pb.attachShadow ? pb.attachShadow({ mode: 'open' }) : pb); root.innerHTML = '<style>:host{display:block}a{pointer-events:none}</style>' + mailHtml(st); } if (pt) pt.textContent = mailTo(st); if (w) w.textContent = mailProblem(st); if (h) h.innerHTML = mailHint(email);
+    if (btn) { var ok = mailCanSend(st); btn.disabled = !ok; btn.style.opacity = ok ? '' : '.5'; btn.style.cursor = ok ? '' : 'not-allowed'; } };
   window.pbsMailReset = function(email) { var st = state(email); st.edited = false; st.subject = st.mail.subject; st.body = st.mail.body.replace(/\{\{first_name\}\}/g, greet(st.mail, st)); dialog(email); };
   window.pbStatusMail = async function(email) {
     var st = state(email); st.mode = 'mail'; dialog(email);
     if (st.mail) return;
     try { var r = await ppApi('statusCompose', { orgEmail: email }, 60000); if (!r.success) throw new Error(r.error); st.mail = r; st.to = {}; r.contacts.forEach(function(x) { st.to[x.email] = !!x.named; }); st.subject = r.subject; st.edited = false; st.body = r.body.replace(/\{\{first_name\}\}/g, greet(r, st)); }
-    catch (e) { st.mode = 'edit'; showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v196)' : ''), 'error'); }
+    catch (e) { st.mode = 'edit'; showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v197)' : ''), 'error'); }
     if (document.getElementById('pbsBox')) dialog(email);
   };
   window.pbStatusBack = function(email) { state(email).mode = 'edit'; dialog(email); };
   window.pbStatusSend = async function(email, btn) {
-    var st = state(email), c = st.mail, wasEdited = st.edited; window.pbsMailEdit(email); st.edited = wasEdited;
+    var st = state(email), c = st.mail, s0 = document.getElementById('pbsSubj'), b0 = document.getElementById('pbsBody'); if (s0) st.subject = s0.value; if (b0) st.body = b0.value; var bad = mailProblem(st); if (bad) { showToast(bad, 'error'); return; }
     var to = c.contacts.filter(function(x) { return st.to[x.email]; }).map(function(x) { return x.email; }); if (!to.length) { showToast('Pick at least one person', 'error'); return; }
     var o = btn.textContent; btn.disabled = true; btn.textContent = 'Sending...';
     try { var r = await ppApiPost('statusSend', { orgEmail: email, to: to.join(','), subject: st.subject, body: st.body }, 90000); if (!r.success) throw new Error(r.error); info[email].sent = (info[email].sent || []).concat([r.sent]); st.mode = 'edit'; st.mail = null; dialog(email, 'sent'); showToast('Sent to ' + to.join(', ') + ' as ' + r.from.name, 'success'); }
@@ -16703,6 +16740,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     var html = '<div class="modal-header"><button class="modal-close" onclick="pbStatusClose(\'' + ppEsc(email) + '\')">&#x2715;</button><h2>' + (mail ? 'Email the status page' : i.exists ? 'Status page' : 'Share a status page') + '</h2><div class="modal-subtitle">' + (mail ? 'To <b>' + ppEsc(snap.organization) + '</b>, through Close, as the lead owner. Nothing goes until you press Send.' : 'A read-only onboarding page for <b>' + ppEsc(snap.organization) + '</b>. They open it with a link, no login.') + '</div></div>'
       + '<div class="modal-body"><div class="ps" id="pbsBox">' + (mail ? mailBody(email) : editBody(email, just)) + '</div></div><div class="ps-foot" id="pbsFoot">' + (mail ? mailFoot(email) : editFoot(email, just)) + '</div>';
     ppOpenModal(html);
+    if (mail && st.mail) window.pbsMailShow(email);
     if (keep) { var c2 = document.querySelector('#pbsBox .ps-col'); if (c2) c2.scrollTop = keep; }
   }
   var opening = 0;
@@ -17031,6 +17069,149 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       clearTimeout(retry); if (tries < 3) { tries++; retry = setTimeout(function() { try { ppBootstrapRefresh(); } catch (e) {} }, open ? 4000 : 1500); }
       return { success: false, stale: true };
     });
+  };
+})();
+</script>
+<style>
+  /* v233: the sidebar logo at full width in every sidebar mode; no fade over the last items once the list is scrolled to its end */
+  body.pp-sidebar .pp-side .pp-side-logo,body.pp-sidebar .pp-side.compact .pp-side-logo,body.pp-sidebar .pp-side.tight .pp-side-logo{padding:4px 2px 10px;margin-bottom:8px}
+  body.pp-sidebar .pp-side .pp-side-logo img,body.pp-sidebar .pp-side.compact .pp-side-logo img,body.pp-sidebar .pp-side.tight .pp-side-logo img{display:block;width:100%;max-width:206px;height:auto;max-height:38px}
+  body.pp-sidebar .pp-side.scrolls.at-end .pp-side-nav{mask-image:none;-webkit-mask-image:none}
+  body.pp-sidebar .pp-side-nav{overscroll-behavior:contain}
+  .nv-tools{display:none !important}
+  /* v233: a clear sign that the page is working. The thin bar stays; a pill says what is happening; the thing that was pressed waits. */
+  #ppTopBar,#ppProgress{height:4px}
+  #ppWork{position:fixed;top:86px;left:50%;transform:translate(-50%,-140%);z-index:10000;display:flex;align-items:center;gap:10px;padding:9px 16px 9px 12px;border-radius:50px;background:#0f172a;color:#fff;font-size:13px;font-weight:600;letter-spacing:.01em;box-shadow:0 12px 34px rgba(15,23,42,.32),0 0 0 1px rgba(255,255,255,.06) inset;opacity:0;pointer-events:none;transition:transform .28s cubic-bezier(.2,.9,.3,1.2),opacity .2s ease;white-space:nowrap;max-width:calc(100vw - 32px)}
+  #ppWork.on{transform:translate(-50%,0);opacity:1}
+  body.pp-sidebar #ppWork{left:calc(50% + 118px)}
+  @media(max-width:900px){#ppWork,body.pp-sidebar #ppWork{left:50%;top:64px}}
+  #ppWork .wk-sp{width:16px;height:16px;border-radius:50%;border:2.5px solid rgba(255,255,255,.25);border-top-color:#fff;border-right-color:#5cc8ff;animation:ppSpin .7s linear infinite;flex:0 0 auto}
+  #ppWork .wk-ok{width:16px;height:16px;border-radius:50%;background:#00a84f;display:none;align-items:center;justify-content:center;flex:0 0 auto}
+  #ppWork .wk-ok svg{width:10px;height:10px;stroke:#fff;stroke-width:3.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  #ppWork.done .wk-sp{display:none}#ppWork.done .wk-ok{display:flex}
+  #ppWork small{font-size:12px;font-weight:500;color:rgba(255,255,255,.72);overflow:hidden;text-overflow:ellipsis}
+  #ppWork small:empty{display:none}
+  body.pp-working,body.pp-working button,body.pp-working a{cursor:progress}
+  [data-pp-held]{opacity:.55;cursor:progress !important;transition:opacity .15s ease}
+  [data-pp-held].pp-busy{opacity:1}
+  /* a follow-up row whose change is on its way to the server */
+  .f2-row.saving{opacity:.5;pointer-events:none;position:relative}
+  .f2-row.saving::after{content:"";position:absolute;right:18px;top:50%;width:16px;height:16px;margin-top:-8px;border-radius:50%;border:2.5px solid var(--border-2,#cbd5e1);border-top-color:var(--pp-blue);animation:ppSpin .7s linear infinite}
+  @media (prefers-reduced-motion: reduce){#ppWork{transition:opacity .2s ease}#ppWork .wk-sp{animation-duration:1.6s}}
+</style>
+<script>
+// v233, part 1: the sidebar.
+// Two pieces of sidebar code had been undoing each other since sections were added (page v187): the phone "More" button keeps
+// itself the last child of the tab list, and the section builder swept every loose tab, that button included, into the last
+// section. Each move woke the other, about twenty times a second, for as long as the page was open, and every pass re-measured the
+// sidebar (compact on, compact off). Scrolled to the bottom, that re-measuring is what shook. The builder and its watcher now leave
+// the More button alone (fixed where they are defined, further up); here: nothing fades the last items at the end of the list.
+(function() {
+  function end() { var side = document.getElementById('ppSide'), nav = side && side.querySelector('.pp-side-nav'); if (!nav) return; side.classList.toggle('at-end', nav.scrollTop + nav.clientHeight >= nav.scrollHeight - 6); }
+  function arm() { var nav = document.querySelector('#ppSide .pp-side-nav'); if (!nav || nav._endArmed) return; nav._endArmed = true; nav.addEventListener('scroll', end, { passive: true }); end(); }
+  if (typeof ppNavFit === 'function') { var _nf = ppNavFit; ppNavFit = function() { var out = _nf.apply(this, arguments); arm(); end(); return out; }; }
+  setTimeout(function() { arm(); document.querySelectorAll('.nv-tools').forEach(function(t) { t.remove(); }); }, 900);
+})();
+</script>
+<script>
+// v233, part 2: a clear sign that the page is working.
+// The thin bar at the top was easy to miss, so people pressed twice. Now: a pill at the top says Saving, Loading or Working once a
+// request a person started has run for a third of a second, says so if it is taking long, and turns into a tick when a save lands;
+// and the button that started it waits (dimmed, no second press) until its request is back.
+(function() {
+  if (typeof ppApi !== 'function') return;
+  var SAVE = /^(save|delete|patch|set|add|bulk|import|match|dismiss|restore|merge|update|remove|create|upsert|mark|approve|send|link|credit|rescan|apply|move|assign|archive|rename|reorder|toggle|upload|push|publish|log|fuAction|statusPublish|statusSend|askSend|rosterForce|pipelineMerge|pipelineImport|changesSend|changesSave|changesSchedule|changesCancel|changesSkip)/i;
+  var READ = /^(get|bootstrap|ppPing|search|list|load|read|fetch)|(Status|Info|Get|Preview|Compose|Board|Audit|Coverage|Inbox|Index|Data)$|^(attribution|repScorecards|clientHealth|leadPlanPreview|showVerify|siteSync)$/i;
+  var QUIET = /^(ppPing|bootstrap|signalSeen|getStartup|statusInfo|contactIndex|todayInbox|searchClose|searchCloseLive|leadPlanPreview)$/;
+  var touchAt = 0, pressed = null, pressedAt = 0, open = [], showT = null, slowT = null, hideT = null, el = null;
+  function pill() { if (!el) { el = document.createElement('div'); el.id = 'ppWork'; el.setAttribute('role', 'status'); el.setAttribute('aria-live', 'polite'); el.innerHTML = '<span class="wk-sp"></span><span class="wk-ok"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><b></b><small></small>'; document.body.appendChild(el); } return el; }
+  function label() { var k = open.some(function(o) { return o.kind === 'save'; }) ? 'Saving' : open.some(function(o) { return o.kind === 'work'; }) ? 'Working' : 'Loading'; return k; }
+  function show() { var p = pill(); clearTimeout(hideT); p.classList.remove('done'); p.querySelector('b').textContent = label(); p.querySelector('small').textContent = ''; p.classList.add('on'); document.body.classList.add('pp-working');
+    clearTimeout(slowT); slowT = setTimeout(function() { if (open.length && el) el.querySelector('small').textContent = 'Still going. Close CRM and the sheet can take a little while.'; }, 7000); }
+  function hide(doneMsg) { clearTimeout(showT); clearTimeout(slowT); showT = null; document.body.classList.remove('pp-working'); if (!el) return; if (doneMsg) { el.classList.add('done', 'on'); el.querySelector('b').textContent = doneMsg; el.querySelector('small').textContent = ''; clearTimeout(hideT); hideT = setTimeout(function() { el.classList.remove('on'); }, 1300); } else if (!el.classList.contains('done')) el.classList.remove('on'); }
+  function release(o) { if (o.held && o.held.removeAttribute) { o.held.removeAttribute('data-pp-held'); } clearTimeout(o.t); }
+  function settle(o, ok) {
+    var i = open.indexOf(o); if (i < 0) return; open.splice(i, 1); release(o);
+    if (ok && o.kind === 'save') o.saved = true;
+    if (open.length) { if (el && el.classList.contains('on') && !el.classList.contains('done')) el.querySelector('b').textContent = label(); return; }
+    var wasOn = el && el.classList.contains('on') && !el.classList.contains('done'); hide(wasOn && ok && o.kind === 'save' ? 'Saved' : '');
+  }
+  function track(action) {
+    var now = Date.now(), a = String(action || ''), kind = SAVE.test(a) ? 'save' : READ.test(a) ? 'load' : 'work';
+    if (QUIET.test(a)) return null;
+    if (kind === 'save' ? now - touchAt > 6000 : now - touchAt > 800) return null;   // nobody asked for this one: the thin bar is enough
+    var o = { kind: kind, action: a, held: null };
+    if (pressed && now - pressedAt < 400 && pressed.isConnected && !pressed.hasAttribute('data-pp-held')) { o.held = pressed; pressed.setAttribute('data-pp-held', '1'); pressed = null; }
+    o.t = setTimeout(function() { settle(o, false); }, 185000);
+    open.push(o); if (!showT && !(el && el.classList.contains('on') && !el.classList.contains('done'))) showT = setTimeout(function() { showT = null; if (open.length) show(); }, 330); else if (el && el.classList.contains('on')) el.querySelector('b').textContent = label();
+    return o;
+  }
+  function watch(name) {
+    var orig = window[name]; if (typeof orig !== 'function') return;
+    window[name] = function(action) {
+      var o = track(action), pr = orig.apply(this, arguments);
+      if (o) { try { pr.then(function(r) { settle(o, !(r && r.success === false)); }, function() { settle(o, false); }); } catch (e) { settle(o, false); } }
+      return pr;
+    };
+  }
+  watch('ppApi'); watch('ppApiPost');
+  document.addEventListener('pointerdown', function() { touchAt = Date.now(); }, true);
+  document.addEventListener('keydown', function(e) { if (e.key === 'Enter') touchAt = Date.now(); }, true);
+  document.addEventListener('change', function() { touchAt = Date.now(); }, true);
+  // a second press on something that is already waiting does nothing
+  document.addEventListener('click', function(e) {
+    var t = e.target && e.target.closest ? e.target.closest('[data-pp-held]') : null;
+    if (t) { e.preventDefault(); e.stopImmediatePropagation(); return; }
+    touchAt = Date.now();
+    var b = e.target && e.target.closest ? e.target.closest('button, [role="button"], a[onclick], .pp-chip[onclick]') : null;
+    if (!b || b.disabled || b.closest('.view-tabs, .nav-group, .modal-close, .m-sheet, .nv-tools') || b.classList.contains('modal-close')) { pressed = null; return; }
+    pressed = b; pressedAt = Date.now();
+  }, true);
+  // the older "Saved" flash at the bottom of the screen now speaks through the same pill, so there is one place to look
+  if (typeof ppSavedFlash === 'function') window.ppSavedFlash = function(msg) { pill(); if (open.some(function(o) { return o.kind === 'save'; })) return; hide(msg || 'Saved'); };
+  window.ppWorkState = function() { return { open: open.map(function(o) { return o.action; }), on: !!(el && el.classList.contains('on')), text: el ? el.textContent : '' }; };
+})();
+</script>
+<script>
+// v233, part 3 (needs Extras v198): Follow-up actions answer at once and stay answered.
+// Every action on a row (dismiss, hold, schedule and the rest) used to be followed by a rebuild of the whole queue AND a forced
+// rebuild of the Follow-up report, the two heaviest reads in the tool, one pair per press, side by side when several rows were
+// dismissed in a row; if either ran out of time the list was replaced by an error even though the dismissal itself had saved.
+// Now the server sends back the rows it changed and they are put into the list in place. The queue is only read again after the
+// actions that start sequences, one read at a time, and a read that fails leaves the list as it was.
+(function() {
+  if (typeof fqDo !== 'function' || typeof renderFollowUp !== 'function') return;
+  var busy = {}, reloading = false, again = false, RELOAD = { approve: 1, start: 1, requeue: 1, resume: 1, repsent: 1, push: 1, refresh: 1, islead: 1, setSequence: 1 };
+  function paint() { Object.keys(busy).forEach(function(id) { document.querySelectorAll('.f2-row[data-id]').forEach(function(r) { if (r.getAttribute('data-id') === id) r.classList.add('saving'); }); }); }
+  var _render = renderFollowUp; renderFollowUp = function() { var out = _render.apply(this, arguments); try { paint(); } catch (e) {} return out; };
+  function recount() { if (!fq || !fq.rows) return; var c = {}; fq.rows.forEach(function(r) { c[r.state] = (c[r.state] || 0) + 1; }); fq.counts = c; try { if (typeof ppSwr !== 'undefined') ppSwr.write('getFollowUpQueue', {}, fq); } catch (e) {} }
+  function reload() {
+    if (reloading) { again = true; return; } reloading = true; var prev = fq;
+    Promise.resolve().then(function() { return fqLoad(true, true); }).catch(function() {}).then(function() {
+      if (fq && fq.error && prev && !prev.error) { fq = prev; renderFollowUp(); showToast('Your change is saved. The list could not refresh just now; Refresh will bring it up to date.', 'success'); }
+      reloading = false; if (again) { again = false; reload(); }
+    });
+  }
+  window.fqDo = fqDo = async function(id, act, extra) {
+    if (busy[id]) { showToast('That one is still saving', 'success'); return; }
+    var snap = null, row = fq && fq.rows ? fq.rows.find(function(x) { return x.id === id; }) : null, pred = FQ_PREDICT[act];
+    busy[id] = 1;
+    if (row && pred) { snap = Object.assign({}, row); row.state = pred[0]; row.note = pred[1] + ' · saving'; if (act === 'resume' && fqStats && fqStats.leads && fqStats.leads[id]) { fqStats.leads[id].unanswered = false; fqStats.leads[id].replies = 0; } if (act === 'schedule' && extra && extra.date) row.date = extra.date; }
+    renderFollowUp();
+    try {
+      var r = await ppApi('fuAction', Object.assign({ id: id, act: act }, extra || {}), 170000); if (!r.success) throw new Error(r.error);
+      delete busy[id]; if (typeof ppSavedFlash === 'function') ppSavedFlash();
+      var got = Array.isArray(r.rows) ? r.rows : null;
+      if (got && fq && fq.rows) {
+        got.forEach(function(g) { var t = fq.rows.find(function(x) { return x.id === g.id; }); if (!t) return; if (g.notLead || (g.mergedInto && g.state === 'skipped')) { fq.rows = fq.rows.filter(function(x) { return x !== t; }); return; } ['state', 'note', 'date', 'next', 'updated', 'sender', 'sequenceId', 'stage', 'mergedInto'].forEach(function(k) { if (g[k] !== undefined) t[k] = g[k]; }); });
+        recount();
+      } else if (row && pred) row.note = pred[1];
+      renderFollowUp(); if (typeof fqBadge === 'function') { try { fqBadge(); } catch (e) {} }
+      if (!got || RELOAD[act]) reload();
+    } catch (e) {
+      delete busy[id]; if (snap && row) Object.assign(row, snap); renderFollowUp();
+      showToast(e.message + (/Timeout/.test(e.message) ? '. It may still have saved: press Refresh before trying again.' : ''), 'error');
+    }
   };
 })();
 </script>
