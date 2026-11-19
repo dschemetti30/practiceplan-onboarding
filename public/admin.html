@@ -6563,7 +6563,7 @@
     var docsError = '', docsLoadedAt = 0;
     async function loadSignedDocs(force) {
       if (docsLoaded && !force && Date.now() - docsLoadedAt < 10 * 60000) return;
-      for (var attempt = 0; attempt < 2; attempt++) { try { var r = await ppApi('getSignedDocs', {}, 60000); if (r.success) { signedDocs = r.rows || []; docsMeta = { folder: r.folder, lastScan: r.lastScan, triggerOn: r.triggerOn, dismissed: r.dismissed, stats: r.stats }; docsLoaded = true; docsLoadedAt = Date.now(); docsError = ''; try { if (typeof renderCloseAccounts === 'function' && document.getElementById('customersView') && document.getElementById('customersView').classList.contains('active')) renderCloseAccounts(); } catch(e) {} return; } docsError = r.error || 'Unknown error'; } catch(e) { docsError = e.message || 'Request failed'; } }
+      for (var attempt = 0; attempt < 2; attempt++) { try { var r = await ppApi('getSignedDocs', {}, 60000); if (r.success) { signedDocs = r.rows || []; docsMeta = { folder: r.folder, lastScan: r.lastScan, triggerOn: r.triggerOn, dismissed: r.dismissed, stats: r.stats, v: r.v }; docsLoaded = true; docsLoadedAt = Date.now(); docsError = ''; try { if (typeof renderCloseAccounts === 'function' && document.getElementById('customersView') && document.getElementById('customersView').classList.contains('active')) renderCloseAccounts(); } catch(e) {} return; } docsError = r.error || 'Unknown error'; } catch(e) { docsError = e.message || 'Request failed'; } }
     }
     function docsForKey(key, email, aliases) { var ks = [key, email].concat(String(aliases || '').split(',')).filter(Boolean); return signedDocs.filter(function(d) { return d.accountKey && ks.indexOf(d.accountKey) >= 0; }); }
     function docsAccountOptions() {
@@ -10933,13 +10933,13 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v226 · Nov 19a';
+    var PP_BUILD = 'v227 · Nov 19b';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
         ppApi('ppPing', {}, 30000).then(function(r) { var v = Number(r && r.version) || 0; window._ppServerVersion = v; if (v && v < 120) { tag.classList.add('warn'); tag.textContent = PP_BUILD + ' · Extras v' + v + ' (needs v120)'; tag.title = 'The server is behind this page: install the current Extras.gs and deploy a new version.'; } else if (v) tag.textContent = PP_BUILD + ' · Extras v' + v; }).catch(function() {});
       }, 1500); };
-      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 192 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
+      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 193 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
     })();
     // =====================================================================
     // TEAM: titles and headshots, editable in Settings
@@ -16361,47 +16361,59 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
 })();
 </script>
 <style>
-  /* v226: signed documents. One row per district, the three links in fixed columns so they line up down the list. */
+  /* v227: signed documents. One row per district as it is named in Drive, the three links in fixed columns. */
   #onboardingView > #docsPanel{margin-bottom:16px}
   .sd-card{margin-top:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:4px 16px 12px;box-shadow:var(--sh-xs);animation:ppViewIn .3s var(--ease) both}
   .sd-sec{padding-top:12px}
   .sd-h{display:flex;align-items:center;gap:8px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin:0 0 4px}
   .sd-h span{letter-spacing:0;color:var(--text2);background:var(--bg);border-radius:50px;padding:1px 8px}
   .sd-h.warn{color:var(--pp-gold-dk,#8a6d0b)}
+  .sd-h em{font-style:normal;text-transform:none;letter-spacing:0;font-weight:500;color:var(--text3)}
   /* both lists keep the same gutter, scrolling or not, so the link columns line up from one section to the next */
-  .sd-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(440px,100%),1fr));column-gap:32px;overflow-y:auto;scrollbar-gutter:stable;padding-right:8px}
+  .sd-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(440px,100%),1fr));column-gap:32px;overflow-y:auto;scrollbar-gutter:stable;padding-right:8px;align-items:start}
   .sd-list.cap{max-height:378px}
-  .sd-row{display:grid;grid-template-columns:minmax(0,1fr) 58px 112px 66px;gap:6px;align-items:center;min-height:36px;border-bottom:1px solid var(--border);font-size:12.5px}
-  .sd-name{display:flex;align-items:baseline;gap:5px;min-width:0;font-weight:600;color:var(--text)}
-  .sd-n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+  .sd-item{border-bottom:1px solid var(--border)}
+  .sd-row{display:grid;grid-template-columns:minmax(0,1fr) 58px 112px 66px;gap:6px;align-items:center;min-height:36px;font-size:12.5px}
+  .sd-name{display:flex;align-items:baseline;gap:5px;min-width:0;font-weight:600;color:var(--text);cursor:pointer;border-radius:6px}
+  .sd-name:hover .sd-n{text-decoration:underline;text-decoration-color:var(--border);text-underline-offset:3px}
+  .sd-n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:0 1 auto}
   .sd-st{flex-shrink:0;color:var(--text2)}
+  .sd-cl{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;font-size:11px;color:var(--text3)}
+  .sd-dot{flex-shrink:0;width:7px;height:7px;border-radius:50%;background:var(--pp-gold,#c9a227);align-self:center}
+  .sd-dot.quiet{background:var(--border)}
   .sd-pill{display:inline-flex;align-items:center;justify-content:center;gap:3px;height:22px;width:100%;box-sizing:border-box;font-size:10px;font-weight:700;border-radius:50px;text-decoration:none;white-space:nowrap;border:1px solid transparent}
   a.sd-pill.on{background:rgba(0,168,79,.12);color:var(--pp-green)}
   a.sd-pill.folder{background:rgba(201,162,39,.16);color:var(--pp-gold-dk,#8a6d0b)}
+  a.sd-pill.folder.thin{background:none;border:1px dashed var(--pp-gold,#c9a227)}
   a.sd-pill:hover{filter:brightness(.95)}
   .sd-pill.off{border:1px dashed var(--border);color:var(--text3);font-weight:600}
+  .sd-short{display:none}
+  .sd-edit{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:2px 0 10px;font-size:12px;color:var(--text2)}
   .sd-un{display:flex;align-items:center;gap:8px;min-height:44px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12.5px;flex-wrap:wrap}
-  .sd-un>div:first-child{flex:1;min-width:200px}
+  .sd-un>div:first-child{flex:1;min-width:220px}
   .sd-un b a{color:var(--text);text-decoration:none;overflow-wrap:anywhere}
   .sd-un b a:hover{text-decoration:underline}
-  .sd-un .styled-select select{height:30px;font-size:12px;max-width:230px}
+  .sd-un .styled-select select,.sd-edit .styled-select select{height:30px;font-size:12px;max-width:240px}
+  .sd-yes{height:30px;padding:0 12px;border-radius:8px;border:1px solid var(--pp-green);background:rgba(0,168,79,.1);color:var(--pp-green);font:inherit;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;max-width:320px;overflow:hidden;text-overflow:ellipsis}
+  .sd-yes:hover{background:rgba(0,168,79,.18)}
+  .sd-txt{background:none;border:none;padding:0;font:inherit;font-size:11.5px;font-weight:600;color:var(--pp-blue);cursor:pointer}
   .sd-foot{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
   .sd-more{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:8px;font-size:11.5px;color:var(--text3)}
   .sd-more a{color:var(--pp-blue);cursor:pointer;font-weight:600}
-  .sd-short{display:none}
-  @media(max-width:560px){.sd-row{grid-template-columns:minmax(0,1fr) 50px 46px 54px}.sd-long{display:none}.sd-short{display:inline}}
+  .sd-chg{font-size:12px;color:var(--text2);padding:5px 0;border-bottom:1px solid var(--border)}
+  @media(max-width:560px){.sd-row{grid-template-columns:minmax(0,1fr) 50px 46px 54px}.sd-long{display:none}.sd-short{display:inline}.sd-cl{display:none}}
 </style>
 <script>
-// v226 (first v225): Signed documents at the top of Clients (MOU and direct deposit per district). Needs Extras v192 for the
-// Dismissed list, Other files and the scan count; everything else works on v191.
-// v225: the panel was only ever drawn by switchView('submissions'). The Onboarding hub turns that into 'onboarding' before the
-// old code sees it, and ppRerender has no entry for 'onboarding', so the panel stayed an empty div. It now belongs to the hub:
-// it sits under the hub header on Board and Pipeline, is drawn every time Clients opens and every time the documents load,
-// always shows a line, and remembers whether it was left open (localStorage pp.docs.open).
-// v226: the panel is drawn here (the older renderDocsPanel further up is no longer called). One row per district with the
-// MOU, direct deposit and folder links in fixed columns; long names are shortened and cut with the state always showing;
-// two documents that share an account but not a name are two rows, never folded into one; the scan's set-aside files
-// (Other files, Dismissed) can be opened, typed, matched and restored.
+// v227 (first v225, v226): Signed documents at the top of Clients. Needs Extras v193.
+// v225: the panel was only ever drawn by switchView('submissions'), which the Onboarding hub renames to 'onboarding' before
+// the old code sees it, so the panel stayed an empty div. It belongs to the hub now: under the hub header on Board and
+// Pipeline, drawn every time Clients opens and every time the documents load, remembered open or closed (pp.docs.open).
+// v226: one row per district with the MOU, direct deposit and folder links in fixed columns; long names shortened and cut
+// with the state always showing; Other files and Dismissed can be opened.
+// v227: Drive first. A row is a district as it is named in the Drive folder (the server's groupKey), whether or not it is
+// linked to a client. The client link is shown on the row, asked for when the server would not link it by itself
+// ("Link to a client"), and can be changed by clicking the district's name. The older renderDocsPanel further up the
+// page is no longer called.
 (function() {
   if (typeof renderDocsPanel !== 'function' || typeof loadSignedDocs !== 'function') return;
   function onClients() { return typeof obMode === 'undefined' || obMode === 'submissions'; }
@@ -16414,7 +16426,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
   }
   var line = function(warn, text) { return '<div class="dh-bar" style="cursor:default"><span class="dh-dot' + (warn ? ' warn' : '') + '"></span><b>Signed documents:</b>&nbsp;' + text + '</div>'; };
   var norm = function(s) { return String(s || '').toLowerCase().replace(/\([^)]*\)/g, ' ').replace(/[^a-z0-9 ]+/g, ' ').replace(/\b(independent school district|isd|public schools|school district|schools|district|the)\b/g, ' ').replace(/\s+/g, ' ').trim(); };
-  var within = function(a, b) { var s = a.length <= b.length ? a : b, l = s === a ? b : a; return s.length > 0 && s.every(function(w) { return l.indexOf(w) >= 0; }); };
+  var stOf = function(s) { var m = String(s || '').match(/\(([A-Za-z]{2})\)\s*$/); return m ? m[1].toUpperCase() : ''; };
   // "Mabank Independent School District (TX)" -> name "Mabank ISD", state "TX". The state is its own piece so a cut-off name never loses it.
   function nameParts(org) {
     var m = String(org || '').match(/^(.*?)\s*\(([A-Za-z]{2})\)\s*$/), name = (m ? m[1] : String(org || '')).trim(), st = m ? m[2].toUpperCase() : '';
@@ -16423,57 +16435,73 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     if (name.length > 30) name = name.replace(/\bCounty\b/i, 'Co.');
     return { name: name, st: st, full: String(org || '') };
   }
-  function groupRows(matched) {
-    var groups = [];
-    matched.forEach(function(d) {
-      var n = norm(d.organization) || String(d.accountKey), w = n.split(' ');
-      // the same name is the same district; the same account under a longer or shorter spelling of the name is too
-      var g = groups.filter(function(x) { return x.n === n || (x.key === d.accountKey && within(x.w, w)); })[0];
-      if (!g) { g = { key: d.accountKey, org: d.organization, n: n, w: w, mou: null, deposit: null, folder: null }; groups.push(g); }
-      else { var has = /\([A-Za-z]{2}\)\s*$/.test(g.org), dHas = /\([A-Za-z]{2}\)\s*$/.test(d.organization || ''); if ((dHas && !has) || (dHas === has && String(d.organization || '').length && String(d.organization).length < String(g.org).length)) g.org = d.organization; }
-      if (d.kind === 'both' || d.isFolder === 'TRUE') g.folder = d; else if (d.kind === 'mou') g.mou = d; else if (d.kind === 'deposit') g.deposit = d;
+  var GL = [];   // the districts of the last draw, so buttons can point at one by its position
+  function groupRows(typed) {
+    var groups = [], byKey = {};
+    typed.forEach(function(d) {
+      var k = d.groupKey || (norm(d.organization || d.name) + '|' + stOf(d.organization)), g = byKey[k];
+      if (!g) { g = byKey[k] = { gk: k, org: d.organization || d.name, rows: [], mou: null, deposit: null, folder: null, keys: {}, accountName: '', suggestKey: '', suggestName: '' }; groups.push(g); }
+      g.rows.push(d);
+      if (d.kind === 'both' || d.isFolder === 'TRUE') { g.folder = d; g.org = d.organization || g.org; }   // the folder's own name is the district's name
+      else if (d.kind === 'mou') g.mou = d; else if (d.kind === 'deposit') g.deposit = d;
+      if (!g.folder && d.organization && (!stOf(g.org) && stOf(d.organization) || (stOf(g.org) === stOf(d.organization) && d.organization.length < g.org.length))) g.org = d.organization;
+      g.keys[d.accountKey || ''] = 1; if (d.accountKey) { g.accountKey = d.accountKey; g.accountName = d.accountName || g.accountName; }
+      if (d.suggestKey) { g.suggestKey = d.suggestKey; g.suggestName = d.suggestName || g.suggestName; }
     });
+    groups.forEach(function(g) { var ks = Object.keys(g.keys); g.mixed = ks.length > 1; g.linked = !!g.accountKey && !g.mixed; g.quiet = !g.accountKey && g.suggestKey === '-'; g.ask = !g.linked && !g.quiet; });
     return groups.sort(function(a, b) { return String(a.org).localeCompare(String(b.org), undefined, { sensitivity: 'base' }); });
   }
   function pill(g, kind) {
     var own = kind === 'mou' ? g.mou : g.deposit, d = own || g.folder, label = kind === 'mou' ? 'MOU' : 'Direct deposit';
     var text = kind === 'mou' ? 'MOU' : '<span class="sd-long">Direct deposit</span><span class="sd-short">DD</span>';
-    if (!d) return '<span class="sd-pill off" title="No ' + (kind === 'mou' ? 'signed MOU' : 'direct deposit form') + ' on file yet">' + text + '</span>';
+    if (!d) return '<span class="sd-pill off" title="No ' + (kind === 'mou' ? 'signed MOU' : 'direct deposit form') + ' in the Drive folder yet">' + text + '</span>';
     return '<a class="sd-pill on" href="' + ppEsc(d.url) + '" target="_blank" rel="noopener" title="' + ppEsc(own ? 'Open ' + d.name : label + ' counted from the district folder. Open the folder: ' + d.name) + '">&#10003; ' + text + '</a>';
   }
-  function row(g) {
-    var p = nameParts(g.org);
-    return '<div class="sd-row"><div class="sd-name" title="' + ppEsc(p.full) + '"><span class="sd-n">' + ppEsc(p.name) + '</span>' + (p.st ? '<span class="sd-st">(' + ppEsc(p.st) + ')</span>' : '') + '</div>' + pill(g, 'mou') + pill(g, 'deposit')
-      + (g.folder ? '<a class="sd-pill folder" href="' + ppEsc(g.folder.url) + '" target="_blank" rel="noopener" title="' + ppEsc('Open the folder: ' + g.folder.name) + '">Folder</a>' : '<span></span>') + '</div>';
+  function options(sel) { var o = ''; try { o = docsAccountOptions().slice().sort(function(a, b) { return String(a.org).localeCompare(String(b.org), undefined, { sensitivity: 'base' }); }).map(function(x) { return '<option value="' + ppEsc(x.key) + '"' + (sel && x.key === sel ? ' selected' : '') + '>' + ppEsc(x.org) + '</option>'; }).join(''); } catch (e) {} return o; }
+  function folderPill(g) {
+    if (!g.folder) return '<span></span>';
+    var n = g.folder.inside === '' || g.folder.inside === undefined ? -1 : Number(g.folder.inside), thin = n === 0 || n === 1;
+    return '<a class="sd-pill folder' + (thin ? ' thin' : '') + '" href="' + ppEsc(g.folder.url) + '" target="_blank" rel="noopener" title="' + ppEsc('Open the folder: ' + g.folder.name + (n >= 0 ? ' (' + n + ' file' + (n === 1 ? '' : 's') + ' inside)' : '') + (thin ? '. A complete district normally has two: the MOU and the direct deposit form.' : '')) + '">Folder' + (thin ? ' (' + n + ')' : '') + '</a>';
   }
-  function section(title, list, cap, empty, warn) { return '<div class="sd-sec"><div class="sd-h' + (warn ? ' warn' : '') + '">' + title + '<span>' + list.length + '</span></div>' + (list.length ? '<div class="sd-list' + (cap ? ' cap' : '') + '">' + list.map(row).join('') + '</div>' : '<div class="pp-up-empty">' + empty + '</div>') + '</div>'; }
-  function matchSelects(d, opts, needKind) {
-    return (needKind ? '<div class="styled-select"><select class="sd-kind" title="This file\'s name does not say what it is"><option value="">It is a...</option><option value="mou">MOU</option><option value="deposit">Direct deposit</option></select></div>' : '')
-      + '<div class="styled-select"><select onchange="sdMatch(\'' + ppEsc(d.fileId) + '\',this)"><option value="">Match to...</option>' + opts + '</select></div>';
+  function row(g) {
+    var p = nameParts(g.org), i = GL.indexOf(g), differs = g.linked && g.accountName && norm(g.accountName) !== norm(g.org);
+    var tip = p.full + (g.linked ? '. Client: ' + (g.accountName || 'linked') : g.quiet ? '. Marked as not a client' : '. Not linked to a client yet') + '. Click to change.';
+    var html = '<div class="sd-item"><div class="sd-row"><div class="sd-name" title="' + ppEsc(tip) + '" onclick="sdEdit(' + i + ')">' + (g.linked ? '' : '<span class="sd-dot' + (g.quiet ? ' quiet' : '') + '"></span>') + '<span class="sd-n">' + ppEsc(p.name) + '</span>' + (p.st ? '<span class="sd-st">(' + ppEsc(p.st) + ')</span>' : '') + (differs ? '<span class="sd-cl">' + ppEsc(g.accountName) + '</span>' : '') + '</div>' + pill(g, 'mou') + pill(g, 'deposit') + folderPill(g) + '</div>';
+    if (window._docsEdit === g.gk) html += '<div class="sd-edit"><span>' + (g.linked ? 'Client: <b>' + ppEsc(g.accountName || 'linked') + '</b>' : g.quiet ? 'Marked as not a client.' : 'Not linked to a client yet.') + '</span><div class="styled-select"><select onchange="if(this.value)sdLink(' + i + ',this.value,this)"><option value="">' + (g.linked ? 'Change client...' : 'Choose client...') + '</option>' + options('') + '</select></div>' + (g.quiet ? '' : '<button class="sd-txt" onclick="sdLink(' + i + ',\'-\',this)" title="Keep the documents here but stop asking for a client">Not a client</button>') + '<button class="sd-txt" onclick="sdDismiss(' + i + ',this)" title="A test or a duplicate: move this district\'s files to the Dismissed list">Dismiss</button></div>';
+    return html + '</div>';
+  }
+  function section(title, list, cap, empty) { return '<div class="sd-sec"><div class="sd-h">' + title + '<span>' + list.length + '</span></div>' + (list.length ? '<div class="sd-list' + (cap ? ' cap' : '') + '">' + list.map(row).join('') + '</div>' : '<div class="pp-up-empty">' + empty + '</div>') + '</div>'; }
+  function askRow(g) {
+    var p = nameParts(g.org), i = GL.indexOf(g), has = [g.folder ? 'folder' : '', g.mou ? 'MOU' : '', g.deposit ? 'direct deposit' : ''].filter(Boolean).join(', ');
+    return '<div class="sd-un"><div><b>' + ppEsc(p.name) + (p.st ? ' (' + ppEsc(p.st) + ')' : '') + '</b><div class="ca-sub">' + ppEsc(has) + ' in Drive &middot; ' + (g.mixed ? 'its files are linked to different clients' : 'no client has exactly this name') + '</div></div>'
+      + (g.suggestKey && g.suggestName ? '<button class="sd-yes" onclick="sdLink(' + i + ',\'' + ppEsc(g.suggestKey) + '\',this)" title="Link every file of this district to this client, now and in future">Yes, it is ' + ppEsc(g.suggestName) + '</button>' : '')
+      + '<div class="styled-select"><select onchange="if(this.value)sdLink(' + i + ',this.value,this)"><option value="">Choose client...</option>' + options('') + '</select></div>'
+      + '<button class="sd-txt" onclick="sdLink(' + i + ',\'-\',this)" title="Keep the documents here but stop asking for a client">Not a client</button></div>';
   }
   function draw() {
     var el = document.getElementById('docsPanel'); if (!el) return;
     if (!docsLoaded) { el.innerHTML = docsError ? line(true, 'could not load (' + ppEsc(docsError) + '). <a onclick="loadSignedDocs(true)" style="color:var(--pp-blue);cursor:pointer">Try again</a>') : line(false, 'loading'); return; }
     if (!docsMeta.folder) { el.innerHTML = line(false, 'no SignNow folder is being watched yet. <a onclick="switchView(\'resources\')" style="color:var(--pp-blue);cursor:pointer">Set it up under Resources.</a>'); return; }
-    var rows = signedDocs || [], matched = rows.filter(function(d) { return d.accountKey; }), unmatched = rows.filter(function(d) { return !d.accountKey && d.matchedBy !== 'ignored'; }), other = rows.filter(function(d) { return !d.accountKey && d.matchedBy === 'ignored'; }), dismissed = docsMeta.dismissed || [], st = docsMeta.stats || null;
-    var by = function(a, b) { return String(a.name).localeCompare(String(b.name), undefined, { sensitivity: 'base' }); }; unmatched.sort(by); other.sort(by); dismissed = dismissed.slice().sort(by);
-    var list = groupRows(matched), both = list.filter(function(a) { return a.folder || (a.mou && a.deposit); }), partial = list.filter(function(a) { return !a.folder && !(a.mou && a.deposit); });
-    var open = window._docsOpen === undefined ? unmatched.length > 0 : window._docsOpen, more = window._docsMore || '';
-    var bar = '<div class="dh-bar" onclick="window._docsOpen=!' + open + ';renderDocsPanel()"><span class="dh-dot' + (unmatched.length ? ' warn' : '') + '"></span><b>Signed documents:</b>&nbsp;' + both.length + ' district' + (both.length === 1 ? '' : 's') + ' complete, ' + partial.length + ' with one of two' + (unmatched.length ? ', <span style="color:var(--pp-gold-dk,#8a6d0b);font-weight:700">' + unmatched.length + ' file' + (unmatched.length === 1 ? '' : 's') + ' not matched</span>' : '') + (docsMeta.lastScan ? ' &middot; scanned ' + ppAgo(docsMeta.lastScan) : '') + '<span class="dh-caret">' + (open ? '&#x25B2;' : '&#x25BC;') + '</span></div>';
+    var rows = signedDocs || [], typed = rows.filter(function(d) { return d.matchedBy !== 'ignored' && (d.kind || d.isFolder === 'TRUE'); }), other = rows.filter(function(d) { return d.matchedBy === 'ignored' || (!d.kind && d.isFolder !== 'TRUE'); }), dismissed = docsMeta.dismissed || [], st = docsMeta.stats || null;
+    var by = function(a, b) { return String(a.name).localeCompare(String(b.name), undefined, { sensitivity: 'base' }); }; other.sort(by); dismissed = dismissed.slice().sort(by);
+    GL = groupRows(typed);
+    var both = GL.filter(function(a) { return a.folder || (a.mou && a.deposit); }), partial = GL.filter(function(a) { return !a.folder && !(a.mou && a.deposit); }), ask = GL.filter(function(a) { return a.ask; });
+    var open = window._docsOpen === undefined ? ask.length > 0 : window._docsOpen, more = window._docsMore || '', changed = (st && st.changed) || [], check = (st && st.check) || [];
+    var bar = '<div class="dh-bar" onclick="window._docsOpen=!' + open + ';renderDocsPanel()"><span class="dh-dot' + (ask.length ? ' warn' : '') + '"></span><b>Signed documents:</b>&nbsp;' + both.length + ' district' + (both.length === 1 ? '' : 's') + ' complete, ' + partial.length + ' with one of two' + (ask.length ? ', <span style="color:var(--pp-gold-dk,#8a6d0b);font-weight:700">' + ask.length + ' to link to a client</span>' : '') + (window._docsScanning ? ' &middot; reading the Drive folder...' : docsMeta.lastScan ? ' &middot; scanned ' + ppAgo(docsMeta.lastScan) : '') + '<span class="dh-caret">' + (open ? '&#x25B2;' : '&#x25BC;') + '</span></div>';
     if (!open) { el.innerHTML = bar; return; }
-    var opts = ''; try { opts = docsAccountOptions().slice().sort(function(a, b) { return String(a.org).localeCompare(String(b.org), undefined, { sensitivity: 'base' }); }).map(function(o) { return '<option value="' + ppEsc(o.key) + '">' + ppEsc(o.org) + '</option>'; }).join(''); } catch (e) {}
-    var sub = function(d) { return (d.isFolder === 'TRUE' ? 'folder (counts as both)' : d.kind === 'mou' ? 'MOU' : d.kind === 'deposit' ? 'direct deposit' : 'no MOU or direct deposit wording in the name') + (d.folderName ? ' &middot; in ' + ppEsc(d.folderName) : ''); };
-    var un = function(d, needKind, canDismiss) { return '<div class="sd-un"><div><b><a href="' + ppEsc(d.url) + '" target="_blank" rel="noopener">' + ppEsc(d.name) + '</a></b><div class="ca-sub">' + sub(d) + '</div></div>' + matchSelects(d, opts, needKind) + (canDismiss ? '<button class="pp-mini-btn" style="width:auto;padding:0 8px" title="Not a real document (a test, a duplicate). It moves to the Dismissed list, where it can be brought back." onclick="sdDismiss(\'' + ppEsc(d.fileId) + '\',this)">Dismiss</button>' : '') + '</div>'; };
     var html = '';
-    if (unmatched.length) html += '<div class="sd-sec"><div class="sd-h warn">Not matched<span>' + unmatched.length + '</span></div>' + unmatched.map(function(d) { return un(d, false, true); }).join('') + '</div>';
+    if (ask.length) html += '<div class="sd-sec"><div class="sd-h warn">Link to a client<span>' + ask.length + '</span><em>In Drive, but the tool will not guess whose it is. Say once and it is remembered.</em></div>' + ask.map(askRow).join('') + '</div>';
     html += section('One of two', partial, false, 'Nothing waiting on a second document.');
     html += section('Complete', both, true, 'None yet.');
-    if (more === 'other') html += '<div class="sd-sec"><div class="sd-h">Other files in the folder<span>' + other.length + '</span></div><div class="pp-toolbar-note" style="margin-bottom:4px">Read by the scan but left out because the name does not say MOU or direct deposit. If one is a signed document, say which and match it.</div>' + (other.length ? other.map(function(d) { return un(d, true, false); }).join('') : '<div class="pp-up-empty">None.</div>') + '</div>';
+    var kindSel = '<div class="styled-select"><select class="sd-kind" title="This file\'s name does not say what it is"><option value="">It is a...</option><option value="mou">MOU</option><option value="deposit">Direct deposit</option></select></div>';
+    if (more === 'other') html += '<div class="sd-sec"><div class="sd-h">Other files in the folder<span>' + other.length + '</span></div><div class="pp-toolbar-note" style="margin-bottom:4px">Read by the scan but left out because the name does not say MOU or direct deposit. If one is a signed document, say which and whose.</div>' + (other.length ? other.map(function(d) { return '<div class="sd-un"><div><b><a href="' + ppEsc(d.url) + '" target="_blank" rel="noopener">' + ppEsc(d.name) + '</a></b><div class="ca-sub">' + (d.folderName ? 'in ' + ppEsc(d.folderName) : 'at the top of the folder') + '</div></div>' + kindSel + '<div class="styled-select"><select onchange="sdMatch(\'' + ppEsc(d.fileId) + '\',this)"><option value="">Match to...</option>' + options('') + '</select></div></div>'; }).join('') : '<div class="pp-up-empty">None.</div>') + '</div>';
     if (more === 'dismissed') html += '<div class="sd-sec"><div class="sd-h">Dismissed<span>' + dismissed.length + '</span></div>' + (dismissed.length ? dismissed.map(function(d) { return '<div class="sd-un"><div><b><a href="' + ppEsc(d.url) + '" target="_blank" rel="noopener">' + ppEsc(d.name) + '</a></b><div class="ca-sub">' + (d.isFolder === 'TRUE' ? 'folder' : d.kind === 'mou' ? 'MOU' : d.kind === 'deposit' ? 'direct deposit' : 'file') + (d.folderName ? ' &middot; in ' + ppEsc(d.folderName) : '') + '</div></div><button class="pp-mini-btn" style="width:auto;padding:0 8px" onclick="sdRestore(\'' + ppEsc(d.fileId) + '\',this)">Restore</button></div>'; }).join('') : '<div class="pp-up-empty">Nothing has been dismissed.</div>') + '</div>';
+    if (more === 'changed') html += '<div class="sd-sec"><div class="sd-h">Changed on the last scan<span>' + (changed.length + check.length) + '</span></div>' + changed.map(function(c) { return '<div class="sd-chg"><b>' + ppEsc(c.doc) + '</b>: was linked to ' + ppEsc(c.from || 'a client') + (c.to ? ', now linked to <b>' + ppEsc(c.to) + '</b>.' : ', and that link did not meet the rules, so it was taken off. It is under Link to a client.') + '</div>'; }).join('') + check.map(function(c) { return '<div class="sd-chg"><b>Check ' + ppEsc(c.client) + '</b>: its checklist shows ' + (c.kind === 'mou' ? 'MOU Signed' : 'Direct Deposit Received') + ', but no file in Drive is linked to it now. The tool does not untick; a person decides.</div>'; }).join('') + '</div>';
     var tog = function(key, label, n) { return '<a onclick="window._docsMore=' + (more === key ? "''" : "'" + key + "'") + ';renderDocsPanel()">' + (more === key ? 'Hide ' : '') + label + ' (' + n + ')</a>'; };
-    var read = st && st.files !== undefined ? 'The last scan read ' + st.files + ' file' + (st.files === 1 ? '' : 's') + ' in ' + ((st.folders || 0) + 1) + ' folder' + (st.folders ? 's' : '') + (st.shortcuts ? ', following ' + st.shortcuts + ' shortcut' + (st.shortcuts === 1 ? '' : 's') : '') + '.' + (st.unreadable && st.unreadable.length ? ' <span style="color:var(--pp-gold-dk,#8a6d0b);font-weight:600">Could not open: ' + ppEsc(st.unreadable.join(', ')) + '.</span>' : '') : '';
-    html += '<div class="sd-foot"><button class="text-action-btn" onclick="scanSignedDocsNow(this)">Scan now</button><button class="text-action-btn" onclick="rescanSignedDocs(this)" title="Forget automatic matches and run the matcher again. Matches made by hand and dismissed files are kept.">Re-match everything</button><span class="pp-toolbar-note" style="align-self:center">Watching the SignNow folder' + (docsMeta.triggerOn ? ' every 30 minutes' : '') + '. <a onclick="switchView(\'resources\')" style="color:var(--pp-blue);cursor:pointer">Change folder</a></span></div>'
-      + '<div class="sd-more">' + (read ? '<span>' + read + '</span>' : '') + tog('other', 'Other files', other.length) + (docsMeta.dismissed ? tog('dismissed', 'Dismissed', dismissed.length) : '') + '</div>';
+    var folders = typed.filter(function(d) { return d.isFolder === 'TRUE'; }).length;
+    var read = st && st.files !== undefined ? 'The last scan read ' + st.files + ' file' + (st.files === 1 ? '' : 's') + ' and ' + (st.folders || 0) + ' folder' + (st.folders === 1 ? '' : 's') + ' in Drive' + (st.shortcuts ? ', following ' + st.shortcuts + ' shortcut' + (st.shortcuts === 1 ? '' : 's') : '') + '.' + (st.unreadable && st.unreadable.length ? ' <span style="color:var(--pp-gold-dk,#8a6d0b);font-weight:600">Could not open: ' + ppEsc(st.unreadable.join(', ')) + '.</span>' : '') : '';
+    html += '<div class="sd-foot"><button class="text-action-btn" onclick="sdScan(this)">Scan now</button><button class="text-action-btn" onclick="sdScan(this,true)" title="Rebuild every row from the Drive folder. Links you made or confirmed and dismissed files are kept.">Start over from Drive</button><span class="pp-toolbar-note" style="align-self:center">Watching the SignNow folder' + (docsMeta.triggerOn ? ' every 30 minutes' : '') + '. <a onclick="switchView(\'resources\')" style="color:var(--pp-blue);cursor:pointer">Change folder</a></span></div>'
+      + '<div class="sd-more">' + (read ? '<span>' + read + ' ' + GL.length + ' district' + (GL.length === 1 ? '' : 's') + ' here, ' + folders + ' from folders.</span>' : '') + (changed.length + check.length ? tog('changed', 'Changed on the last scan', changed.length + check.length) : '') + tog('other', 'Other files', other.length) + (docsMeta.dismissed ? tog('dismissed', 'Dismissed', dismissed.length) : '') + '</div>';
     el.innerHTML = bar + '<div class="sd-card">' + html + '</div>';
   }
   renderDocsPanel = function() {
@@ -16488,6 +16516,8 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
   loadSignedDocs = function(force) {
     if (inflight && !force) return inflight;
     var p = Promise.resolve(_load(force)).then(function(r) {
+      // rows written before Extras v193 carry no district group: have the server read the Drive folder once, by itself
+      try { if (docsLoaded && docsMeta.folder && Number(docsMeta.v) >= 193 && !window._docsAutoScan && (signedDocs || []).some(function(d) { return d.matchedBy !== 'ignored' && (d.kind || d.isFolder === 'TRUE') && !d.groupKey; })) { window._docsAutoScan = true; window._docsScanning = true; ppApi('scanSignedDocs', {}, 180000).then(function() {}, function() {}).then(function() { window._docsScanning = false; return loadSignedDocs(true); }); } } catch (e) {}
       // redraw with what came back, unless someone has a list open inside the panel
       var el = document.getElementById('docsPanel'), a = document.activeElement;
       if (!(el && a && a.tagName === 'SELECT' && !a.disabled && el.contains(a))) { try { renderDocsPanel(); } catch (e) {} }
@@ -16497,24 +16527,39 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     return p;
   };
   var after = function() { try { renderDocsPanel(); if (typeof renderTable === 'function') renderTable(); if (typeof updateStats === 'function') updateStats(); if (typeof renderCloseAccounts === 'function') renderCloseAccounts(); } catch (e) {} };
-  var needs = function(e) { return e.message + (/Unhandled|Unknown action/i.test(e.message) ? ' (needs Extras v192)' : ''); };
+  var needs = function(e) { return e.message + (/Unhandled|Unknown action/i.test(e.message) ? ' (needs Extras v193)' : ''); };
+  var reload = function() { return Promise.all([loadSignedDocs(true), (typeof loadChecklists === 'function' ? loadChecklists() : null)]).then(after); };
+  window.sdEdit = function(i) { var g = GL[i]; if (!g) return; window._docsEdit = (window._docsEdit === g.gk ? '' : g.gk); renderDocsPanel(); };
+  // link every file of a district to a client ('-' = not a client). The server remembers it by the district's name.
+  window.sdLink = async function(i, key, ctl) {
+    var g = GL[i]; if (!g || !key || !g.rows.length) return;
+    if (ctl) ctl.disabled = true;
+    try { var r = await ppApi('matchSignedDoc', { fileId: g.rows[0].fileId, accountKey: key }, 60000); if (!r.success) throw new Error(r.error || 'Could not link'); window._docsEdit = ''; await reload(); showToast(key === '-' ? 'Marked as not a client' : 'Linked to ' + ((r.row && r.row.accountName) || 'the client') + '. Remembered for this district.', 'success'); }
+    catch (e) { if (ctl) { ctl.disabled = false; if (ctl.tagName === 'SELECT') ctl.value = ''; } showToast(needs(e), 'error'); }
+  };
   window.sdMatch = async function(fileId, sel) {
     var key = sel.value; if (!key) return;
     var box = sel.closest('.sd-un'), ks = box && box.querySelector('.sd-kind'), kind = ks ? ks.value : '';
     if (ks && !kind) { showToast('Choose MOU or Direct deposit for this file first', 'error'); sel.value = ''; return; }
     sel.disabled = true; if (ks) ks.disabled = true;
-    try { var r = await ppApi('matchSignedDoc', { fileId: fileId, accountKey: key, kind: kind }, 60000); if (!r.success) throw new Error(r.error || 'Could not match'); await Promise.all([loadSignedDocs(true), (typeof loadChecklists === 'function' ? loadChecklists() : null)]); after(); showToast('Matched to ' + ((r.row && r.row.organization) || 'the account'), 'success'); }
+    try { var r = await ppApi('matchSignedDoc', { fileId: fileId, accountKey: key, kind: kind }, 60000); if (!r.success) throw new Error(r.error || 'Could not match'); await reload(); showToast('Matched to ' + ((r.row && (r.row.accountName || r.row.organization)) || 'the client'), 'success'); }
     catch (e) { sel.disabled = false; if (ks) ks.disabled = false; sel.value = ''; showToast(needs(e), 'error'); }
   };
-  window.sdDismiss = async function(fileId, btn) {
-    if (btn) btn.disabled = true;
-    try { var r = await ppApi('dismissSignedDoc', { fileId: fileId }); if (!r.success) throw new Error(r.error || 'Could not dismiss'); await loadSignedDocs(true); after(); showToast('Dismissed. It can be brought back from the Dismissed list.', 'success'); }
+  window.sdDismiss = async function(i, btn) {
+    var g = GL[i]; if (!g) return; if (btn) btn.disabled = true;
+    try { for (var k = 0; k < g.rows.length; k++) { var r = await ppApi('dismissSignedDoc', { fileId: g.rows[k].fileId }); if (!r.success) throw new Error(r.error || 'Could not dismiss'); } window._docsEdit = ''; await reload(); showToast('Dismissed. It can be brought back from the Dismissed list.', 'success'); }
     catch (e) { if (btn) btn.disabled = false; showToast(needs(e), 'error'); }
   };
   window.sdRestore = async function(fileId, btn) {
     if (btn) { btn.disabled = true; btn.textContent = 'Restoring...'; }
-    try { var r = await ppApi('restoreSignedDoc', { fileId: fileId }, 120000); if (!r.success) throw new Error(r.error || 'Could not restore'); await Promise.all([loadSignedDocs(true), (typeof loadChecklists === 'function' ? loadChecklists() : null)]); after(); showToast('Restored', 'success'); }
+    try { var r = await ppApi('restoreSignedDoc', { fileId: fileId }, 180000); if (!r.success) throw new Error(r.error || 'Could not restore'); await reload(); showToast('Restored', 'success'); }
     catch (e) { if (btn) { btn.disabled = false; btn.textContent = 'Restore'; } showToast(needs(e), 'error'); }
+  };
+  window.sdScan = async function(btn, startOver) {
+    var o = btn ? btn.innerHTML : ''; if (btn) { btn.disabled = true; btn.textContent = 'Reading Drive...'; }
+    try { var r = await ppApi(startOver ? 'rescanSignedDocs' : 'scanSignedDocs', {}, 180000); if (!r.success) throw new Error(r.error || 'Scan failed'); await reload(); var s = r.stats || {}; showToast('Read ' + (s.files || 0) + ' files and ' + (s.folders || 0) + ' folders' + ((s.changed || []).length ? '. ' + s.changed.length + ' link' + (s.changed.length === 1 ? '' : 's') + ' changed.' : '. Nothing changed.'), 'success'); }
+    catch (e) { showToast(needs(e), 'error'); }
+    if (btn && btn.isConnected) { btn.disabled = false; btn.innerHTML = o; }
   };
   function sync() { place(); if (!onClients()) return; renderDocsPanel(); loadSignedDocs(false); }
   if (typeof obSetMode === 'function') { var _mode = obSetMode; obSetMode = function() { var r = _mode.apply(this, arguments); try { sync(); } catch (e) {} return r; }; }
