@@ -10933,7 +10933,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v224 · Nov 18a';
+    var PP_BUILD = 'v225 · Nov 18b';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -15524,7 +15524,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       window.rvParsePaste = function(text) {
         var out = [], bad = [];
         String(text || '').split(/\r?\n/).forEach(function(line) {
-          var t = line.replace(/ /g, ' ').trim(); if (!t || /^(org|organization|client|name)\b/i.test(t) && /booking|revenue/i.test(t)) return;
+          var t = line.replace(/\u00a0/g, ' ').trim(); if (!t || /^(org|organization|client|name)\b/i.test(t) && /booking|revenue/i.test(t)) return;
           var parts = t.indexOf('\t') >= 0 ? t.split(/\t+/) : t.indexOf(',') >= 0 && !/\$[\d,]+,\d{3}/.test(t.replace(/"[^"]*"/g, '')) ? t.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/) : t.split(/\s{2,}|\s(?=[\d$])/);
           parts = parts.map(function(x) { return x.replace(/^"|"$/g, '').trim(); }).filter(Boolean);
           if (parts.length < 3) { // "Name 123 $4,567.00" with single spaces: peel the two numbers off the end
@@ -16358,6 +16358,53 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     card.innerHTML = '<h3>What changed this week</h3><div class="pp-toolbar-note">A plain-English read of the week for the team, built from the Activity log and the sheets. Nothing goes out until you send it here. Untick a section to leave it out; the preview updates.</div>' + body;
   }
   if (typeof renderSettings === 'function') { var _rs = renderSettings; renderSettings = function() { _rs.apply(this, arguments); try { var host = document.getElementById('settingsHost'); if (!host || !(typeof ppIsSuperAdmin === 'function' && ppIsSuperAdmin()) || document.getElementById('wcCard')) return; var c = document.createElement('div'); c.className = 'stat-card out-card wc-card'; c.id = 'wcCard'; host.insertAdjacentElement('afterbegin', c); draw(); if (!wc.data && !wc.busy) load(false); } catch (e) {} }; }
+})();
+</script>
+<style>
+  /* v225: the signed documents panel belongs to the Onboarding hub (Board and Pipeline), and its open lists stay a sensible height */
+  #onboardingView > #docsPanel{margin-bottom:16px}
+  #docsPanel .docs-col{max-height:340px;overflow:auto}
+</style>
+<script>
+// v225: Signed documents (MOU and direct deposit per client) back at the top of Clients. No server change.
+// The panel was only ever drawn by switchView('submissions'). The Onboarding hub turns that into 'onboarding' before the
+// old code sees it, and ppRerender has no entry for 'onboarding', so the panel stayed an empty div. It now belongs to the
+// hub: it sits under the hub header on Board and Pipeline, is drawn every time Clients opens and every time the documents
+// load, always shows a line (loading, could not load, no folder yet, or the counts), and remembers whether it was left
+// open (localStorage pp.docs.open).
+(function() {
+  if (typeof renderDocsPanel !== 'function' || typeof loadSignedDocs !== 'function') return;
+  function onClients() { return typeof obMode === 'undefined' || obMode === 'submissions'; }
+  function place() {
+    var el = document.getElementById('docsPanel'), hub = document.getElementById('onboardingView'), head = document.getElementById('obHubHead');
+    if (!el) { el = document.createElement('div'); el.id = 'docsPanel'; }
+    if (hub && head) { if (el.parentNode !== hub || el.previousElementSibling !== head) head.insertAdjacentElement('afterend', el); el.style.display = onClients() ? '' : 'none'; }
+    else if (!el.parentNode) { var b = document.getElementById('subBoard'); if (b && b.parentNode) b.parentNode.insertBefore(el, b); }
+    return el;
+  }
+  var line = function(warn, text) { return '<div class="dh-bar" style="cursor:default"><span class="dh-dot' + (warn ? ' warn' : '') + '"></span><b>Signed documents:</b>&nbsp;' + text + '</div>'; };
+  var _draw = renderDocsPanel;
+  renderDocsPanel = function() {
+    var el = place();
+    try { if (window._docsOpen === undefined) { var s = localStorage.getItem('pp.docs.open'); if (s === '1' || s === '0') window._docsOpen = (s === '1'); } else localStorage.setItem('pp.docs.open', window._docsOpen ? '1' : '0'); } catch (e) {}
+    try { _draw(); } catch (e) { el.innerHTML = line(true, 'could not be drawn (' + ppEsc(String(e && e.message || e)) + '). <a onclick="loadSignedDocs(true)" style="color:var(--pp-blue);cursor:pointer">Try again</a>'); }
+    if (!el.firstChild) el.innerHTML = line(false, 'loading');
+  };
+  var _load = loadSignedDocs, inflight = null;
+  loadSignedDocs = function(force) {
+    if (inflight && !force) return inflight;
+    var p = Promise.resolve(_load(force)).then(function(r) {
+      // redraw with what came back, unless someone has a "Match to..." list open inside the panel
+      var el = document.getElementById('docsPanel'), a = document.activeElement;
+      if (!(el && a && a.tagName === 'SELECT' && el.contains(a))) { try { renderDocsPanel(); } catch (e) {} }
+      return r;
+    });
+    inflight = p; var done = function() { if (inflight === p) inflight = null; }; p.then(done, done);
+    return p;
+  };
+  function sync() { place(); if (!onClients()) return; renderDocsPanel(); loadSignedDocs(false); }
+  if (typeof obSetMode === 'function') { var _mode = obSetMode; obSetMode = function() { var r = _mode.apply(this, arguments); try { sync(); } catch (e) {} return r; }; }
+  place();
 })();
 </script>
 </body>
