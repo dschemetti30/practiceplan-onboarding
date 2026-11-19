@@ -10933,13 +10933,13 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v229 · Nov 19d';
+    var PP_BUILD = 'v231 · Nov 19f';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
         ppApi('ppPing', {}, 30000).then(function(r) { var v = Number(r && r.version) || 0; window._ppServerVersion = v; if (v && v < 120) { tag.classList.add('warn'); tag.textContent = PP_BUILD + ' · Extras v' + v + ' (needs v120)'; tag.title = 'The server is behind this page: install the current Extras.gs and deploy a new version.'; } else if (v) tag.textContent = PP_BUILD + ' · Extras v' + v; }).catch(function() {});
       }, 1500); };
-      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 194 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
+      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 196 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
     })();
     // =====================================================================
     // TEAM: titles and headshots, editable in Settings
@@ -16310,13 +16310,13 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
 <script>
 // v223: Today on the dashboard, rep scorecards, and the "team update waiting" line. Needs Extras v190. (v228: Today is a strip plus its own page.)
 (function() {
-  var state = { who: 'me', data: null, loading: false, score: null, open: 8, err: '' }, KIND = { reply: ['Reply', 'followup'], held: ['Held', 'fix'], blocked: ['Blocked', 'followup'], review: ['Approve', 'followup'], awaiting: ['Write', 'followup'], untouched: ['Touch', 'leads'], unassigned: ['Assign', 'leads'], preshow: ['Set up', 'preevent'], outreach: ['Approve', 'availability'], checkin: ['Check in', 'health'], health: ['Look', 'health'], show: ['Fix', 'tradeshows'], decide: ['Decide', 'showpipeline'], rfp: ['Open', 'signals'] };
-  var IC = { reply: '&#8617;', held: '&#9203;', blocked: '&#9888;', review: '&#10003;', awaiting: '&#9998;', untouched: '&#9679;', unassigned: '?', preshow: '&#9993;', outreach: '&#9993;', checkin: '&#9742;', health: '&#8595;', show: '&#9873;', decide: '&#9881;', rfp: '&#9733;' };
+  var state = { who: 'me', data: null, loading: false, score: null, open: 8, err: '' }, KIND = { reply: ['Reply', 'followup'], held: ['Held', 'fix'], blocked: ['Blocked', 'followup'], review: ['Approve', 'followup'], awaiting: ['Write', 'followup'], untouched: ['Touch', 'leads'], unassigned: ['Assign', 'leads'], preshow: ['Set up', 'preevent'], outreach: ['Approve', 'availability'], checkin: ['Check in', 'health'], health: ['Look', 'health'], show: ['Fix', 'tradeshows'], decide: ['Decide', 'showpipeline'], rfp: ['Open', 'signals'], statusopen: ['Look', 'onboarding'] };
+  var IC = { reply: '&#8617;', held: '&#9203;', blocked: '&#9888;', review: '&#10003;', awaiting: '&#9998;', untouched: '&#9679;', unassigned: '?', preshow: '&#9993;', outreach: '&#9993;', checkin: '&#9742;', health: '&#8595;', show: '&#9873;', decide: '&#9881;', rfp: '&#9733;', statusopen: '&#128065;' };
   function me() { return String(currentUser && currentUser.email || '').toLowerCase(); }
   function isSuper() { return typeof ppIsSuperAdmin === 'function' && ppIsSuperAdmin(); }
   async function load(force) { if (state.loading) return; state.loading = true; try { var r = await ppApi('todayInbox', { rep: state.who === 'all' ? 'all' : me(), force: force ? '1' : '0' }, 120000); if (!r.success) throw new Error(r.error); state.data = r; state.err = ''; } catch (e) { state.err = e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v190)' : ''); state.errAt = Date.now(); } state.loading = false; draw(); }
   async function loadScore() { try { var r = await ppApi('repScorecards', { days: 30 }, 120000); if (r.success) { state.score = r; draw(); } } catch (e) {} }
-  window.tdAct = function(kind, id, url) { var k = KIND[kind] || ['Open', 'dashboard']; if (k[1] === 'fix') { switchView('leads'); setTimeout(function() { if (typeof lsFixOpen === 'function') lsFixOpen(null); }, 250); return; } if (kind === 'reply' && url) { window.open(url, '_blank', 'noopener'); } switchView(k[1]); if (kind === 'show' && typeof openTsModal === 'function') setTimeout(function() { openTsModal(id); }, 300); if (kind === 'preshow' && typeof psOpen === 'function') setTimeout(function() { psOpen(id); }, 300); if ((kind === 'untouched' || kind === 'unassigned') && typeof openLeadModal === 'function') setTimeout(function() { openLeadModal(id); }, 400); };
+  window.tdAct = function(kind, id, url) { var k = KIND[kind] || ['Open', 'dashboard']; if (kind === 'statusopen') { if (typeof openPlaybookFor === 'function') openPlaybookFor(id); else switchView('onboarding'); setTimeout(function() { if (typeof pbStatusShare === 'function') pbStatusShare(id); }, 500); return; } if (k[1] === 'fix') { switchView('leads'); setTimeout(function() { if (typeof lsFixOpen === 'function') lsFixOpen(null); }, 250); return; } if (kind === 'reply' && url) { window.open(url, '_blank', 'noopener'); } switchView(k[1]); if (kind === 'show' && typeof openTsModal === 'function') setTimeout(function() { openTsModal(id); }, 300); if (kind === 'preshow' && typeof psOpen === 'function') setTimeout(function() { psOpen(id); }, 300); if ((kind === 'untouched' || kind === 'unassigned') && typeof openLeadModal === 'function') setTimeout(function() { openLeadModal(id); }, 400); };
   window.tdWho = function(w) { state.who = w; state.data = null; draw(); load(false); };
   window.tdMore = function() { state.open += 10; draw(); };
   window.tdRefresh = function() { state.data = null; draw(); load(true); loadScore(); };
@@ -16325,7 +16325,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
   // how urgent, and the next thing up; the page is the whole list as a board: grouped by urgency, type or person, with a
   // type pill, the owner, how long it has waited and one action per row. Same data (todayInbox), no server change.
   var view = { group: 'urgency', kind: '', person: '', q: '', closed: {} };
-  var TYPE = { reply: ['Reply waiting', 'blue'], held: ['Held', 'gold'], blocked: ['Blocked', 'red'], review: ['Needs approval', 'green'], awaiting: ['First email', 'purple'], untouched: ['Untouched', 'slate'], unassigned: ['Unassigned', 'red'], preshow: ['Pre-show', 'teal'], outreach: ['District email', 'teal'], checkin: ['Check-in', 'purple'], health: ['Slipping', 'red'], show: ['Show to-do', 'gold'], decide: ['Decision', 'slate'], rfp: ['RFP', 'blue'] };
+  var TYPE = { reply: ['Reply waiting', 'blue'], held: ['Held', 'gold'], blocked: ['Blocked', 'red'], review: ['Needs approval', 'green'], awaiting: ['First email', 'purple'], untouched: ['Untouched', 'slate'], unassigned: ['Unassigned', 'red'], preshow: ['Pre-show', 'teal'], outreach: ['District email', 'teal'], checkin: ['Check-in', 'purple'], health: ['Slipping', 'red'], show: ['Show to-do', 'gold'], decide: ['Decision', 'slate'], rfp: ['RFP', 'blue'], statusopen: ['Status page opened', 'green'] };
   var URG = { 3: ['Now', 'red', 'overdue, or waiting too long'], 2: ['Soon', 'gold', 'due or waiting'], 1: ['When you can', 'blue', 'nothing is late yet'] };
   var BOLT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>';
   var CHEV = '<svg class="td-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
@@ -16483,27 +16483,274 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
   if (typeof renderTeam === 'function') { var _rt = renderTeam; renderTeam = function() { _rt.apply(this, arguments); try { var view = document.getElementById('teamView'); if (view && view.classList.contains('active')) { draw(); if (!sc.data && !sc.err) load(false); } } catch (e) {} }; }
 })();
 </script>
+<style>
+  /* v231: the status page dialog. Choices on the left, what the district will see on the right, then an email step. */
+  #modalContent:has(.ps){max-width:1000px}
+  .ps{padding:18px 24px 4px;display:flex;flex-direction:column;gap:14px}
+  .ps-live{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid rgba(0,168,79,.35);background:rgba(0,168,79,.07);border-radius:12px;font-size:12.5px;color:var(--text2)}
+  .ps-live.just{animation:psPop .5s var(--ease,ease)}
+  @keyframes psPop{0%{transform:scale(.985);box-shadow:0 0 0 0 rgba(0,168,79,.45)}100%{transform:none;box-shadow:0 0 0 10px rgba(0,168,79,0)}}
+  .ps-live>b{color:var(--pp-green);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  .ps-live>b i{width:8px;height:8px;border-radius:50%;background:var(--pp-green)}
+  .ps-link{flex:1;min-width:260px;display:flex;gap:6px}
+  .ps-link input{flex:1;min-width:0;height:32px;border:1px solid var(--border);border-radius:8px;padding:0 10px;font:12px/1 ui-monospace,Menlo,monospace;color:var(--text2);background:var(--card)}
+  .ps-mini{height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--border);background:var(--card);font:600 12px/1 inherit;font-family:inherit;color:var(--text);cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+  .ps-mini:hover{border-color:var(--pp-blue);color:var(--pp-blue)}
+  .ps-mini.go{background:var(--pp-blue);border-color:var(--pp-blue);color:#fff}
+  .ps-mini.go:hover{color:#fff;filter:brightness(1.06)}
+  .ps-sub{flex-basis:100%;font-size:11.5px;color:var(--text3)}
+  .ps-sub b{color:var(--text2);font-weight:600}
+  .ps-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
+  .ps-col{max-height:min(58vh,560px);overflow:auto;padding-right:6px}
+  .ps-h{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin:0 0 8px;display:block}
+  .ps-h em{font-style:normal;text-transform:none;letter-spacing:0;font-weight:500}
+  .ps-sec{margin-bottom:18px}
+  .ps-facts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+  .ps-facts li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;font-size:12.5px;line-height:1.45;color:var(--text2)}
+  .ps-facts li>span{width:26px;height:26px;border-radius:8px;background:rgba(0,118,187,.1);color:var(--pp-blue);display:flex;align-items:center;justify-content:center}
+  .ps-facts svg{width:14px;height:14px}
+  .ps-facts b{color:var(--text);font-weight:700}
+  .ps textarea,.ps input[type=text],.ps input[type=tel]{width:100%;box-sizing:border-box;font:inherit;font-size:13px;line-height:1.45;border:1px solid var(--border);border-radius:10px;padding:8px 11px;background:var(--card);color:var(--text)}
+  .ps textarea{min-height:66px;resize:vertical}
+  .ps textarea:focus,.ps input[type=text]:focus,.ps input[type=tel]:focus{outline:none;border-color:var(--pp-blue);box-shadow:0 0 0 3px rgba(0,118,187,.12)}
+  .ps-count{text-align:right;font-size:11px;color:var(--text3);margin-top:4px}
+  .ps-opts{display:flex;flex-wrap:wrap;gap:6px}
+  .ps-opt{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 11px;border-radius:50px;border:1px solid var(--border);background:var(--card);font:600 12px/1 inherit;font-family:inherit;color:var(--text3);cursor:pointer;transition:all .15s}
+  .ps-opt i{width:14px;height:14px;border-radius:4px;border:1.5px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:10px;color:#fff}
+  .ps-opt.on{border-color:rgba(0,118,187,.45);background:rgba(0,118,187,.07);color:var(--text)}
+  .ps-opt.on i{background:var(--pp-blue);border-color:var(--pp-blue)}
+  .ps-who{display:grid;grid-template-columns:auto minmax(0,1fr) 150px;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--border);font-size:12.5px}
+  .ps-who:first-of-type{border-top:0}
+  .ps-who small{display:block;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text3)}
+  .ps-who b{color:var(--text)}.ps-who span{color:var(--text3);overflow-wrap:anywhere}
+  .ps-who input[type=checkbox],.ps-note input[type=checkbox],.ps-to input[type=checkbox]{accent-color:var(--pp-blue);width:15px;height:15px}
+  .ps-note{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;padding:7px 0;border-top:1px solid var(--border);font-size:12.5px;line-height:1.4;cursor:pointer}
+  .ps-note:first-of-type{border-top:0}
+  .ps-note small{display:block;color:var(--text3);font-size:11.5px}
+  .ps-hint{font-size:11.5px;color:var(--text3);line-height:1.45}
+  .ps-prev{border:1px solid var(--border);border-radius:12px;background:var(--bg);padding:12px}
+  .ps-pc{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px}
+  .ps-pc:last-child{margin-bottom:0}
+  .ps-pr{height:4px;background:linear-gradient(90deg,var(--pp-blue),var(--pp-green))}
+  .ps-pk{font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--pp-blue)}
+  .ps-pt{font-size:16px;font-weight:800;color:var(--text);margin:2px 0 4px}
+  .ps-pm{font-size:12px;color:var(--text2);line-height:1.45}
+  .ps-pmsg{background:rgba(0,118,187,.07);border:1px solid rgba(0,118,187,.2);border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.45;margin-top:8px;color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere}
+  .ps-bar{height:7px;background:var(--border);border-radius:5px;overflow:hidden;margin-top:6px}
+  .ps-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pp-blue),var(--pp-green))}
+  .ps-ppl{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .ps-ppl div{padding:9px 12px;font-size:11.5px;line-height:1.5;color:var(--pp-blue);overflow-wrap:anywhere}
+  .ps-ppl small{display:block;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+  .ps-ppl b{display:block;color:var(--text);font-size:12.5px}
+  .ps-ph{padding:9px 12px;border-top:1px solid var(--border)}
+  .ps-ph:first-child{border-top:0}
+  .ps-ph h4{margin:0 0 4px;font-size:12.5px;color:var(--text)}
+  .ps-ph h4 small{color:var(--text3);font-weight:600;margin-left:6px;font-size:11px}
+  .ps-s{display:flex;gap:8px;padding:3px 0;font-size:12px;line-height:1.4;color:var(--text)}
+  .ps-s>b{flex:0 0 14px;height:14px;border-radius:50%;border:2px solid var(--border);font-size:9px;line-height:11px;text-align:center;color:#fff;margin-top:1px;box-sizing:border-box}
+  .ps-s.d>b{background:var(--pp-green);border-color:var(--pp-green)}
+  .ps-s.d span{color:var(--text3);text-decoration:line-through}
+  .ps-s em{display:block;font-style:normal;color:var(--text3);font-size:11px}
+  .ps-more{font-size:11px;color:var(--text3);padding:2px 0 0 22px}
+  .ps-tag{display:inline-block;font-size:9.5px;font-weight:700;border-radius:20px;padding:1px 7px;background:rgba(201,162,39,.18);color:var(--pp-gold-dk,#8a6d0b);margin-left:6px;vertical-align:middle;text-decoration:none}
+  .ps-foot{display:flex;gap:10px;align-items:center;padding:14px 24px 20px;flex-wrap:wrap}
+  .ps-foot .sp{flex:1}
+  .ps-foot .pp-btn{flex:0 0 auto}
+  .ps-off{background:none;border:none;padding:0;font:600 12.5px inherit;font-family:inherit;color:var(--pp-red,#d93025);cursor:pointer}
+  .ps-offq{font-size:12.5px;color:var(--text2)}
+  .ps-send{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:24px;align-items:start}
+  .ps-from{padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:12.5px;line-height:1.45;margin-bottom:16px}
+  .ps-from.bad{border-color:var(--pp-red,#d93025);background:rgba(217,48,37,.06)}
+  .ps-to{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;padding:7px 0;border-top:1px solid var(--border);font-size:12.5px;line-height:1.4;cursor:pointer}
+  .ps-to:first-of-type{border-top:0}
+  .ps-to small{display:block;color:var(--text3);font-size:11.5px;overflow-wrap:anywhere}
+  .ps-send textarea{min-height:230px}
+  .pb-share{margin-left:8px;height:18px;padding:0 7px;border-radius:50px;border:1px solid var(--border);background:var(--card);font:600 10px/1 inherit;font-family:inherit;color:var(--text3);cursor:pointer;vertical-align:middle}
+  .pb-share.on{border-color:var(--pp-green);color:var(--pp-green);background:rgba(0,168,79,.08)}
+  @media(max-width:860px){.ps-grid,.ps-send{grid-template-columns:minmax(0,1fr)}.ps-col{max-height:none;overflow:visible}}
+</style>
 <script>
-// v223: Share status link on the Playbook: the District view, published as a signed read-only page. Needs Extras v190.
+// v231 (first v223, v230): Share status link on the Playbook: the District view, published as a signed read-only page.
+// Needs Extras v196, and public/status.html on the site for the link to be on onboarding.practice-plan.com.
+// v230: the dialog rebuilt; steps published with their ids so the server reads ticks fresh; quiet republish on change.
+// v231: choices before publishing (go-live date, progress, next up, finished steps shown or folded, the rep and the
+// onboarding lead as contacts with phone numbers, which notes the district may read), a step that emails the link through
+// Close as the lead owner, the first-open notice (Today), and a chip on each Playbook note saying whether it is shared.
 (function() {
-  var info = {}, pending = {};
+  var info = {}, pending = {}, timers = {}, ui = {};   // ui[email]: the unsaved choices while the dialog is open
+  var IC = { link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>', eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>', sync: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/></svg>', mute: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v12H5.2L4 17.2z"/><path d="M9 9l6 4M15 9l-6 4"/></svg>', mail: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>' };
+  var yes = function(v) { return v === true || /^(true|yes|1)$/i.test(String(v || '')); };
+  var full = function(email) { if (!email) return ''; try { return (typeof hoFullName === 'function' && hoFullName(email)) || (typeof ppRepFull === 'function' && ppRepFull(email)) || (typeof ppRepName === 'function' ? ppRepName(email) : email); } catch (e) { return email; } };
+  var shown = function(s, cl) { return s.customer || (cl['pb_' + s.id + '_owner_field'] || s.owner) === 'district'; };
   function snapshot(email) {
     var d = allData.find(function(x) { return x.email === email; }); if (!d) return null;
-    var phases = PB_PHASES.map(function(ph) { var steps = pbSteps(email, ph).filter(function(s) { return s.customer || s.owner === 'district'; }).map(function(s) { var cl = getChecklist(email) || {}; return { task: s.task, done: pbDone(email, s.id), owner: s.owner, note: String(cl['pb_' + s.id + '_note'] || '').slice(0, 300) }; }); return { title: ph.title, steps: steps }; }).filter(function(ph) { return ph.steps.length; });
-    var cur = pbCurrentPhase(email), nextStep = ''; if (cur) { var s = pbSteps(email, cur).find(function(x) { return !pbDone(email, x.id) && (x.customer || x.owner === 'district'); }); if (s) nextStep = s.task; }
-    var prog = pbProgress(email), rep = d.accountRep || '';
-    return { organization: typeof ppClientName === 'function' ? ppClientName(d) : d.organization, contact: d.contact || '', rep: rep ? (typeof ppRepName === 'function' ? ppRepName(rep) : rep) : '', repEmail: /@/.test(rep) ? rep : '', goLive: d.goLiveDate || '', stage: d.pipelineStatus || '', pct: prog.pct, phases: phases, nextStep: nextStep };
+    var cl = getChecklist(email) || {};
+    var phases = PB_PHASES.map(function(ph) { var steps = pbSteps(email, ph).filter(function(s) { return shown(s, cl); }).map(function(s) { return { id: String(s.id), task: s.task, done: pbDone(email, s.id), owner: cl['pb_' + s.id + '_owner_field'] || s.owner, note: String(cl['pb_' + s.id + '_note_field'] || '').slice(0, 300), share: yes(cl['pb_' + s.id + '_note_share_field']) }; }); return { title: ph.title, steps: steps }; }).filter(function(ph) { return ph.steps.length; });
+    var cur = pbCurrentPhase(email), nextStep = ''; if (cur) { var s = pbSteps(email, cur).find(function(x) { return !pbDone(email, x.id) && shown(x, cl); }); if (s) nextStep = s.task; }
+    var prog = pbProgress(email), rep = String(d.accountRep || '').toLowerCase(), lead = '';
+    try { lead = String((typeof hoLeadFor === 'function' ? hoLeadFor(d) : (typeof hoLeadEmail === 'function' ? hoLeadEmail() : '')) || '').toLowerCase(); } catch (e) {}
+    // the name: ppClientName takes a name and a state, not the record (v223 passed the record, which published the title as "[object Object]")
+    try { if (typeof ppClientNormalize === 'function') ppClientNormalize(); } catch (e) {}
+    var org = String((d && d.organization) || ''); try { if (typeof ppClientName === 'function') org = String(ppClientName(org) || org); } catch (e) {}
+    return { organization: org, contact: String(d.contact || ''), rep: /@/.test(rep) ? full(rep) : '', repEmail: /@/.test(rep) ? rep : '', leadEmail: /@/.test(lead) ? lead : '', goLive: d.goLiveDate || '', stage: d.pipelineStatus || '', pct: prog.pct, phases: phases, nextStep: nextStep };
   }
-  async function publish(email, msg, silent) { var snap = snapshot(email); if (!snap) return; if (msg !== undefined) snap.message = msg; try { var r = await ppApiPost('statusPublish', { orgEmail: email, snapshot: JSON.stringify(snap) }, 60000); if (!r.success) throw new Error(r.error); info[email] = { exists: true, url: r.url, views: r.views, updatedAt: r.updatedAt }; if (!silent) { ppCopy(r.url, 'Status page link'); showToast('Status page is live and the link is copied. It updates itself as steps are ticked.', 'success'); } button(email); } catch (e) { if (!silent) showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v190)' : ''), 'error'); } }
-  window.pbStatusShare = async function(email) {
-    var i = info[email] || {}, html = '<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>Status page for the district</h2><div class="modal-subtitle">A read-only page with the District view: the steps the district sees, what is done, what is next, your name as their contact. Anyone with the link can open it; nothing else in the tool is reachable from it. It refreshes itself whenever someone opens this Playbook.</div></div><div class="modal-body"><div class="detail-section" style="margin-top:18px"><div class="pp-form"><div class="full"><label>A line for the district (optional, shown at the top)</label><textarea id="pbsMsg" rows="2" style="width:100%;font:inherit;border:1px solid var(--border);border-radius:8px;padding:8px" placeholder="We are on track for the go-live date. Two items on your side are left; see below.">' + ppEsc(i.message || '') + '</textarea></div></div>' + (i.exists ? '<div class="src-help" style="margin-top:10px">Live since ' + ppEsc(String(i.createdAt || i.updatedAt || '').slice(0, 10)) + (i.views ? ', opened ' + i.views + ' time' + (i.views === 1 ? '' : 's') : ', not opened yet') + '.<br><code style="word-break:break-all">' + ppEsc(i.url || '') + '</code></div>' : '') + '</div></div><div class="modal-footer">' + (i.exists ? '<button class="pp-btn" style="color:var(--pp-red)" onclick="pbStatusOff(\'' + ppEsc(email) + '\')">Turn the page off</button>' : '') + '<span style="flex:1"></span><button class="pp-btn" onclick="closeModal()">Cancel</button><button class="pp-btn primary" onclick="pbStatusGo(\'' + ppEsc(email) + '\',this)">' + (i.exists ? 'Update and copy the link' : 'Publish and copy the link') + '</button></div>';
-    ppOpenModal(html);
+  var defOpts = function(o) { o = o || {}; return { goLive: o.goLive !== false, progress: o.progress !== false, next: o.next !== false, rep: o.rep !== false, lead: o.lead !== false, done: o.done === 'fold' ? 'fold' : 'show' }; };
+  // the choices on screen: from what is saved, then whatever the person has changed since the dialog opened
+  function state(email) {
+    if (ui[email]) return ui[email];
+    var i = info[email] || {}, snap = snapshot(email) || { phases: [] }, team = i.team || {}, phones = {}, shares = {};
+    [team.rep, team.lead].forEach(function(p) { if (p && p.email) phones[p.email] = p.phone || ''; });
+    snap.phases.forEach(function(ph) { ph.steps.forEach(function(s) { if (s.note) shares[s.id] = !!s.share; }); });
+    return (ui[email] = { message: i.message || '', opts: defOpts(i.opts), phones: phones, shares: shares, mode: 'edit' });
+  }
+  function people(email, snap) {
+    var st = state(email), team = (info[email] || {}).team || {}, out = [];
+    var nm = function(email) { var t = [team.rep, team.lead].filter(function(x) { return x && x.email === email && x.name; })[0], f = full(email); return f && f !== email ? f : (t ? t.name : email); };
+    var rep = snap.repEmail ? { email: snap.repEmail, name: nm(snap.repEmail) } : (team.rep || null), lead = snap.leadEmail ? { email: snap.leadEmail, name: nm(snap.leadEmail) } : (team.lead || null);
+    if (rep) out.push({ k: 'rep', role: 'Your account rep', email: rep.email, name: rep.name, phone: st.phones[rep.email] || '' });
+    if (lead) { if (rep && lead.email === rep.email) { out[0].role = 'Your account rep and onboarding lead'; out[0].both = true; } else out.push({ k: 'lead', role: 'Onboarding lead', email: lead.email, name: lead.name, phone: st.phones[lead.email] || '' }); }
+    return out;
+  }
+  // opts: what a person chose in the dialog; nothing for the quiet refresh
+  async function publish(email, opts, silent) {
+    var snap = snapshot(email); if (!snap) return false;
+    snap.phases.forEach(function(ph) { ph.steps.forEach(function(s) { delete s.note; delete s.share; }); });   // notes are read from the checklist by the server, shared ones only
+    if (opts) { snap.message = opts.message; snap.opts = opts.opts; snap.phones = opts.phones; }
+    try {
+      var r = await ppApiPost('statusPublish', { orgEmail: email, snapshot: JSON.stringify(snap) }, 60000); if (!r.success) throw new Error(r.error);
+      var was = info[email] || {}; info[email] = r.exists !== undefined ? r : Object.assign({}, was, { exists: true, url: r.url, views: r.views, updatedAt: r.updatedAt, createdAt: r.createdAt || was.createdAt, message: opts ? opts.message : was.message });
+      info[email].sig = sig(email); button(email); return true;
+    } catch (e) { if (!silent) showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v196)' : ''), 'error'); return false; }
+  }
+  function sig(email) { try { var s = snapshot(email); s.phases.forEach(function(ph) { ph.steps.forEach(function(x) { delete x.note; delete x.share; delete x.done; }); }); delete s.pct; delete s.nextStep; return JSON.stringify(s); } catch (e) { return ''; } }
+  var day = function(iso) { var s = String(iso || '').slice(0, 10); if (!/^\d{4}-\d\d-\d\d$/.test(s)) return ''; return new Date(s + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
+  function preview(email) {
+    var snap = snapshot(email), st = state(email), o = st.opts, done = 0, total = 0; snap.phases.forEach(function(ph) { ph.steps.forEach(function(s) { total++; if (s.done) done++; }); });
+    var pct = total ? Math.round(done / total * 100) : 0, cur = snap.phases.find(function(ph) { return ph.steps.some(function(s) { return !s.done; }); });
+    var next = ''; if (cur) { var n = cur.steps.find(function(s) { return !s.done; }); if (n) next = n.task; }
+    var ppl = people(email, snap).filter(function(p) { return p.k === 'rep' ? (o.rep || (p.both && o.lead)) : o.lead; }).map(function(p) { if (p.both && !(o.rep && o.lead)) p.role = o.rep ? 'Your account rep' : 'Onboarding lead'; return p; });
+    var step = function(s) { return '<div class="ps-s' + (s.done ? ' d' : '') + '"><b>' + (s.done ? '&#10003;' : '') + '</b><div><span>' + ppEsc(s.task) + '</span>' + (s.owner === 'district' && !s.done ? '<span class="ps-tag">your side</span>' : '') + (s.note && st.shares[s.id] ? '<em>' + ppEsc(s.note) + '</em>' : '') + '</div></div>'; };
+    return '<div class="ps-pc"><div class="ps-pr"></div><div style="padding:12px"><div class="ps-pk">Onboarding status</div><div class="ps-pt">' + ppEsc(snap.organization) + '</div><div class="ps-pm">' + [snap.contact ? 'For ' + ppEsc(snap.contact) : '', o.goLive && snap.goLive ? 'Target go-live <b>' + ppEsc(day(snap.goLive) || snap.goLive) + '</b>' : ''].filter(Boolean).join(' &middot; ') + '</div>'
+      + (st.message ? '<div class="ps-pmsg">' + ppEsc(st.message) + '</div>' : '')
+      + (o.progress ? '<div class="ps-pm" style="display:flex;justify-content:space-between;margin-top:10px"><span>' + done + ' of ' + total + ' steps done' + (cur ? ' &middot; now in <b>' + ppEsc(cur.title) + '</b>' : total ? ' &middot; <b>onboarding complete</b>' : '') + '</span><b>' + pct + '%</b></div><div class="ps-bar"><i style="width:' + pct + '%"></i></div>' : '')
+      + (o.next && next ? '<div class="ps-pm" style="margin-top:8px"><b>Next up:</b> ' + ppEsc(next) + '</div>' : '') + '</div></div>'
+      + (ppl.length ? '<div class="ps-pc ps-ppl">' + ppl.map(function(p) { return '<div><small>' + p.role + '</small><b>' + ppEsc(p.name) + '</b>' + ppEsc(p.email) + (p.phone ? '<br>' + ppEsc(p.phone) : '') + '</div>'; }).join('') + '</div>' : '')
+      + '<div class="ps-pc">' + snap.phases.map(function(ph, i) { var d = ph.steps.filter(function(s) { return s.done; }), open = ph.steps.filter(function(s) { return !s.done; }); return '<div class="ps-ph"><h4>' + (i + 1) + '. ' + ppEsc(ph.title) + '<small>' + (open.length ? d.length + ' of ' + ph.steps.length : 'Done') + '</small></h4>' + (o.done === 'fold' ? open.map(step).join('') + (d.length ? '<div class="ps-more">+ ' + d.length + ' finished step' + (d.length === 1 ? '' : 's') + ', folded away</div>' : '') : ph.steps.map(step).join('')) + '</div>'; }).join('') + '</div>';
+  }
+  function redraw(email) { var host = document.getElementById('pbsPrev'); if (host) host.innerHTML = preview(email); }
+  window.pbsMsg = function(email, el) { var st0 = state(email); st0.dirty = true; st0.message = el.value; var n = document.getElementById('pbsCount'); if (n) n.textContent = el.value.length + ' / 600'; redraw(email); };
+  window.pbsOpt = function(email, k, el) { var st0 = state(email), o = st0.opts; st0.dirty = true; if (k === 'done') o.done = o.done === 'fold' ? 'show' : 'fold'; else o[k] = !o[k]; var on = k === 'done' ? o.done === 'fold' : o[k]; if (el.type !== 'checkbox') { el.classList.toggle('on', on); var i = el.querySelector('i'); if (i) i.innerHTML = on ? '&#10003;' : ''; } redraw(email); };
+  window.pbsWho = function(email, keys, el) { var st = state(email); st.dirty = true; String(keys).split(',').forEach(function(k) { st.opts[k] = !!el.checked; }); redraw(email); };
+  window.pbsPhone = function(email, who, el) { var st = state(email); st.dirty = true; st.phones[who] = el.value; redraw(email); };
+  window.pbsShare = function(email, id, el) { var st0 = state(email); st0.dirty = true; st0.shares[id] = el.checked; redraw(email); };
+  function editBody(email, just) {
+    var i = info[email] || {}, snap = snapshot(email), st = state(email), o = st.opts, e = ppEsc(email);
+    var steps = 0, notes = []; snap.phases.forEach(function(ph) { ph.steps.forEach(function(s) { steps++; if (s.note) notes.push(s); }); });
+    var sent = (i.sent || []).slice(-1)[0];
+    var live = i.exists ? '<div class="ps-live' + (just ? ' just' : '') + '"><b><i></i>' + (just === 'sent' ? 'Email sent.' : just ? 'Published. The link is copied.' : 'Live' + (day(i.createdAt) ? ' since ' + day(i.createdAt) : '')) + '</b><div class="ps-link"><input readonly value="' + ppEsc(i.url || '') + '" onclick="this.select()"><button class="ps-mini" onclick="ppCopy(\'' + ppEsc(i.url || '') + '\',\'Status page link\')">Copy</button><a class="ps-mini" href="' + ppEsc((i.url || '') + ((i.url || '').indexOf('?') >= 0 ? '&' : '?') + 'pv=1') + '" target="_blank" rel="noopener" title="Opens the page the way the district sees it. This does not count as the district opening it.">Open</a><button class="ps-mini go" onclick="pbStatusMail(\'' + e + '\')">' + IC.mail + 'Email it to the district</button></div>'
+      + '<div class="ps-sub">' + (i.views ? '<b>Opened ' + i.views + ' time' + (i.views === 1 ? '' : 's') + '</b>' + (day(i.firstViewedAt) ? ', first on ' + day(i.firstViewedAt) : '') + (day(i.lastViewedAt) && i.views > 1 ? ', last on ' + day(i.lastViewedAt) : '') : 'Not opened by the district yet') + '.' + (sent ? ' <b>Emailed</b> ' + day(sent.at) + ' to ' + ppEsc((sent.to || []).join(', ')) + '.' : ' Not emailed from here yet.') + (i.onSite === false ? ' The link is on script.google.com until status.html is on the site.' : '') + '</div></div>' : '';
+    var fact = function(icon, html) { return '<li><span>' + IC[icon] + '</span><div>' + html + '</div></li>'; };
+    var opt = function(k, label, on) { return '<button type="button" class="ps-opt' + (on ? ' on' : '') + '" onclick="pbsOpt(\'' + e + '\',\'' + k + '\',this)"><i>' + (on ? '&#10003;' : '') + '</i>' + label + '</button>'; };
+    var ppl = people(email, snap), who = ppl.map(function(p) { var keys = p.both ? ['rep', 'lead'] : [p.k], on = keys.some(function(k) { return o[k]; }); return '<div class="ps-who"><input type="checkbox"' + (on ? ' checked' : '') + ' onchange="pbsWho(\'' + e + '\',\'' + keys.join(',') + '\',this)" title="Show on the page"><div><small>' + (p.both ? 'Account rep and onboarding lead' : p.k === 'rep' ? 'Account rep' : 'Onboarding lead') + '</small><b>' + ppEsc(p.name) + '</b> <span>' + ppEsc(p.email) + '</span></div><input type="tel" placeholder="Phone, optional" value="' + ppEsc(p.phone) + '" oninput="pbsPhone(\'' + e + '\',\'' + ppEsc(p.email) + '\',this)" title="Kept for this person and used on every status page"></div>'; }).join('');
+    return live + '<div class="ps-grid"><div class="ps-col">'
+      + '<div class="ps-sec"><span class="ps-h">' + (i.exists ? 'How it works' : 'What publishing does') + '</span><ul class="ps-facts">'
+      + fact('link', '<b>Creates one private link for this district.</b> Anyone who has the link can open the page. Nothing else in Front Office can be reached from it.')
+      + fact('eye', '<b>Shows only the District view:</b> ' + steps + ' step' + (steps === 1 ? '' : 's') + ' in ' + snap.phases.length + ' phase' + (snap.phases.length === 1 ? '' : 's') + ', plus what you switch on below. Internal steps are never shown.')
+      + fact('sync', '<b>Stays current by itself.</b> Ticks, the go-live date and the contacts are read fresh each time the district opens the link.')
+      + fact('mute', '<b>Sends nothing by itself.</b> You copy the link, or email it from here as the lead owner once it is published.')
+      + '</ul></div>'
+      + '<div class="ps-sec"><label class="ps-h" for="pbsMsg">A line for the district <em>optional, shown at the top</em></label><textarea id="pbsMsg" maxlength="600" oninput="pbsMsg(\'' + e + '\',this)" placeholder="We are on track for the go-live date. Two items on your side are left; see below.">' + ppEsc(st.message) + '</textarea><div class="ps-count" id="pbsCount">' + st.message.length + ' / 600</div></div>'
+      + '<div class="ps-sec"><span class="ps-h">Show on the page</span><div class="ps-opts">' + opt('goLive', 'Go-live date', o.goLive) + opt('progress', 'Progress bar', o.progress) + opt('next', 'Next up', o.next) + opt('done', 'Fold finished steps away', o.done === 'fold') + '</div></div>'
+      + '<div class="ps-sec"><span class="ps-h">Their PracticePlan team <em>name, email and phone</em></span>' + (who || '<div class="ps-hint">No account rep is set on this record and no onboarding lead is set in Settings.</div>') + '</div>'
+      + '<div class="ps-sec"><span class="ps-h">Notes the district can read <em>internal unless ticked</em></span>' + (notes.length ? notes.map(function(s) { return '<label class="ps-note"><input type="checkbox"' + (st.shares[s.id] ? ' checked' : '') + ' onchange="pbsShare(\'' + e + '\',\'' + ppEsc(s.id) + '\',this)"><div>' + ppEsc(s.note) + '<small>on: ' + ppEsc(s.task) + '</small></div></label>'; }).join('') : '<div class="ps-hint">There are no notes on these steps. A note you add in the Playbook stays internal until you mark it shared, here or on the note itself.</div>') + '</div>'
+      + '</div><div class="ps-col"><span class="ps-h">What the district sees</span><div class="ps-prev" id="pbsPrev">' + preview(email) + '</div></div></div>';
+  }
+  function editFoot(email, just) { var i = info[email] || {}, e = ppEsc(email); return (i.exists ? '<button class="ps-off" onclick="pbStatusOff(\'' + e + '\')">Turn the page off</button>' : '') + '<span class="sp"></span><button class="pp-btn" onclick="pbStatusClose(\'' + e + '\')">' + (just ? 'Done' : 'Cancel') + '</button><button class="pp-btn primary" onclick="pbStatusGo(\'' + e + '\',this)">' + (i.exists ? 'Save and copy the link' : 'Publish and copy the link') + '</button>'; }
+  // ---- the email step
+  function greet(c, st) { var names = c.contacts.filter(function(x) { return st.to[x.email]; }).map(function(x) { return String(x.name || '').split(' ')[0]; }).filter(Boolean); if (!names.length) return c.firstNameFallback || 'there'; return names.length === 1 ? names[0] : names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1]; }
+  function mailBody(email) {
+    var st = state(email), c = st.mail, e = ppEsc(email); if (!c) return '<div class="ps-hint" style="padding:30px 0;text-align:center">Getting the contacts from Close...</div>';
+    var picked = c.contacts.filter(function(x) { return st.to[x.email]; }).length;
+    return '<div class="ps-send"><div>'
+      + '<span class="ps-h">From</span><div class="ps-from' + (c.mailbox ? '' : ' bad') + '"><b>' + ppEsc(c.from.name) + '</b><br>' + ppEsc(c.from.email) + '<br><span class="ps-hint">' + (c.mailbox ? 'Sent through Close from their own mailbox, as the lead owner. It is logged on the lead in Close.' : 'Close has no connected mailbox for this person, so the email cannot go. They connect it in Close under Settings, Email.') + '</span></div>'
+      + '<span class="ps-h">To <em>' + picked + ' picked</em></span>' + (c.contacts.length ? c.contacts.map(function(x) { return '<label class="ps-to"><input type="checkbox"' + (st.to[x.email] ? ' checked' : '') + ' onchange="pbsTo(\'' + e + '\',\'' + ppEsc(x.email) + '\',this)"><div><b>' + ppEsc(x.name || x.email) + '</b>' + (x.named ? ' <span class="ps-tag" style="margin-left:4px">named on the Playbook</span>' : '') + '<small>' + ppEsc([x.title, x.name ? x.email : ''].filter(Boolean).join(' · ')) + '</small></div></label>'; }).join('') : '<div class="ps-hint">This client has no contacts in Close and no one named on the Playbook.</div>')
+      + '</div><div><label class="ps-h" for="pbsSubj">Subject</label><input type="text" id="pbsSubj" value="' + ppEsc(st.subject) + '" oninput="pbsMailEdit(\'' + e + '\')" style="margin-bottom:12px"><label class="ps-h" for="pbsBody">Email <em>edit anything; the link has to stay in it</em></label><textarea id="pbsBody" oninput="pbsMailEdit(\'' + e + '\')">' + ppEsc(st.body) + '</textarea><div class="ps-hint" style="margin-top:6px">Plain text in our email frame, the same as reminders. ' + (st.edited ? '<a onclick="pbsMailReset(\'' + e + '\')" style="color:var(--pp-blue);cursor:pointer;font-weight:600">Reset to the standard wording</a>' : 'The greeting follows who you pick.') + '</div></div></div>';
+  }
+  function mailFoot(email) { var st = state(email), c = st.mail, e = ppEsc(email), n = c ? c.contacts.filter(function(x) { return st.to[x.email]; }).length : 0; return '<button class="pp-btn" onclick="pbStatusBack(\'' + e + '\')">Back</button><span class="sp"></span><button class="pp-btn primary" id="pbsSendBtn" onclick="pbStatusSend(\'' + e + '\',this)"' + (c && c.mailbox && n ? '' : ' disabled style="opacity:.5;cursor:not-allowed"') + '>' + (c ? 'Send as ' + ppEsc(String(c.from.name).split(' ')[0]) + (n ? ' to ' + n : '') : 'Send') + '</button>'; }
+  window.pbsState = function(email) { return state(email); };
+  window.pbsTo = function(email, who, el) { var st = state(email); st.to[who] = el.checked; if (!st.edited) st.body = st.mail.body.replace(/\{\{first_name\}\}/g, greet(st.mail, st)); dialog(email); };
+  window.pbsMailEdit = function(email) { var st = state(email), s = document.getElementById('pbsSubj'), b = document.getElementById('pbsBody'); if (s) st.subject = s.value; if (b) st.body = b.value; if (!st.edited) { st.edited = true; } };
+  window.pbsMailReset = function(email) { var st = state(email); st.edited = false; st.subject = st.mail.subject; st.body = st.mail.body.replace(/\{\{first_name\}\}/g, greet(st.mail, st)); dialog(email); };
+  window.pbStatusMail = async function(email) {
+    var st = state(email); st.mode = 'mail'; dialog(email);
+    if (st.mail) return;
+    try { var r = await ppApi('statusCompose', { orgEmail: email }, 60000); if (!r.success) throw new Error(r.error); st.mail = r; st.to = {}; r.contacts.forEach(function(x) { st.to[x.email] = !!x.named; }); st.subject = r.subject; st.edited = false; st.body = r.body.replace(/\{\{first_name\}\}/g, greet(r, st)); }
+    catch (e) { st.mode = 'edit'; showToast(e.message + (/Unhandled|Unknown/.test(e.message) ? ' (needs Extras v196)' : ''), 'error'); }
+    if (document.getElementById('pbsBox')) dialog(email);
   };
-  window.pbStatusGo = async function(email, btn) { btn.disabled = true; await publish(email, String((document.getElementById('pbsMsg') || {}).value || '').trim(), false); closeModal(); };
-  window.pbStatusOff = async function(email) { if (!confirm('Turn the status page off? The link stops working until you publish again.')) return; try { var r = await ppApiPost('statusPublish', { orgEmail: email, snapshot: '{}', off: '1' }, 60000); if (!r.success) throw new Error(r.error); info[email] = { exists: false }; closeModal(); showToast('Status page is off', 'success'); button(email); } catch (e) { showToast(e.message, 'error'); } };
-  function button(email) { var right = document.querySelector('#playbookView .pb-head-right') || document.querySelector('.pb-head-right'); if (!right) return; var old = right.querySelector('.pb-status-btn'); if (old) old.remove(); var i = info[email]; right.insertAdjacentHTML('afterbegin', '<button class="pb-status-btn' + (i && i.exists ? ' live' : '') + '" onclick="pbStatusShare(\'' + ppEsc(email) + '\')" title="' + (i && i.exists ? 'The district has a status page; click to copy the link or update the note' : 'Publish a read-only status page for the district') + '">&#128279; ' + (i && i.exists ? 'Status page live' : 'Share status link') + '</button>'); }
-  async function check(email) { if (info[email] || pending[email]) { button(email); if (info[email] && info[email].exists && !info[email].fresh) { info[email].fresh = true; publish(email, undefined, true); } return; } pending[email] = true; try { var r = await ppApi('statusInfo', { orgEmail: email }, 60000); if (r.success) { info[email] = r; if (r.exists) { info[email].fresh = true; publish(email, undefined, true); } } } catch (e) {} pending[email] = false; button(email); }
-  if (typeof renderPlaybook === 'function') { var _rp = renderPlaybook; renderPlaybook = function() { _rp.apply(this, arguments); try { if (typeof pbClient !== 'undefined' && pbClient && !pbDistrictView) check(pbClient); } catch (e) {} }; }
+  window.pbStatusBack = function(email) { state(email).mode = 'edit'; dialog(email); };
+  window.pbStatusSend = async function(email, btn) {
+    var st = state(email), c = st.mail, wasEdited = st.edited; window.pbsMailEdit(email); st.edited = wasEdited;
+    var to = c.contacts.filter(function(x) { return st.to[x.email]; }).map(function(x) { return x.email; }); if (!to.length) { showToast('Pick at least one person', 'error'); return; }
+    var o = btn.textContent; btn.disabled = true; btn.textContent = 'Sending...';
+    try { var r = await ppApiPost('statusSend', { orgEmail: email, to: to.join(','), subject: st.subject, body: st.body }, 90000); if (!r.success) throw new Error(r.error); info[email].sent = (info[email].sent || []).concat([r.sent]); st.mode = 'edit'; st.mail = null; dialog(email, 'sent'); showToast('Sent to ' + to.join(', ') + ' as ' + r.from.name, 'success'); }
+    catch (e) { btn.disabled = false; btn.textContent = o; showToast(e.message, 'error'); }
+  };
+  function dialog(email, just) {
+    var snap = snapshot(email); if (!snap) { showToast('Open this client\'s Playbook first', 'error'); return; }
+    var i = info[email] || {}, st = state(email), mail = st.mode === 'mail';
+    var keep = null, col = document.querySelector('#pbsBox .ps-col'); if (col && !just) keep = col.scrollTop;
+    var html = '<div class="modal-header"><button class="modal-close" onclick="pbStatusClose(\'' + ppEsc(email) + '\')">&#x2715;</button><h2>' + (mail ? 'Email the status page' : i.exists ? 'Status page' : 'Share a status page') + '</h2><div class="modal-subtitle">' + (mail ? 'To <b>' + ppEsc(snap.organization) + '</b>, through Close, as the lead owner. Nothing goes until you press Send.' : 'A read-only onboarding page for <b>' + ppEsc(snap.organization) + '</b>. They open it with a link, no login.') + '</div></div>'
+      + '<div class="modal-body"><div class="ps" id="pbsBox">' + (mail ? mailBody(email) : editBody(email, just)) + '</div></div><div class="ps-foot" id="pbsFoot">' + (mail ? mailFoot(email) : editFoot(email, just)) + '</div>';
+    ppOpenModal(html);
+    if (keep) { var c2 = document.querySelector('#pbsBox .ps-col'); if (c2) c2.scrollTop = keep; }
+  }
+  var opening = 0;
+  window.pbStatusClose = function(email) { opening++; delete ui[email]; closeModal(); };
+  window.pbStatusShare = async function(email) {
+    var call = ++opening; delete ui[email];
+    if (info[email]) dialog(email);          // at once, with what is already known
+    // then fresh from the server: the open count, who it was emailed to, the phone numbers on file. Looking also clears the first-open notice on Today.
+    try {
+      var d = allData.find(function(x) { return x.email === email; }) || {}, lead = ''; try { lead = typeof hoLeadFor === 'function' ? hoLeadFor(d) : ''; } catch (e) {}
+      var r = await ppApi('statusInfo', { orgEmail: email, seen: '1', lead: lead }, 60000);
+      if (r.success) { var s0 = (info[email] || {}).sig; info[email] = r; info[email].sig = s0; button(email); if (call === opening && !(ui[email] && ui[email].dirty)) { delete ui[email]; dialog(email); } }
+    } catch (e) {}
+    if (!info[email]) { info[email] = { exists: false }; if (call === opening) dialog(email); }
+  };
+  window.pbStatusGo = async function(email, btn) {
+    var st = state(email), o = btn.textContent; btn.disabled = true; btn.textContent = 'Publishing...';
+    // which notes the district may read lives on the checklist, beside the note itself
+    try { var snap = snapshot(email); snap.phases.forEach(function(ph) { ph.steps.forEach(function(s) { if (s.note && !!st.shares[s.id] !== !!s.share) setChecklist(email, 'pb_' + s.id + '_note_share_field', st.shares[s.id] ? 'yes' : ''); }); }); } catch (e) {}
+    var ok = await publish(email, { message: String(st.message || '').trim(), opts: st.opts, phones: st.phones }, false);
+    if (!ok) { btn.disabled = false; btn.textContent = o; return; }
+    try { ppCopy(info[email].url, 'Status page link'); } catch (e) {}
+    delete ui[email]; if (document.getElementById('pbsBox')) dialog(email, 'published'); try { renderPlaybook(); } catch (e) {}
+  };
+  var lastFoot = '';
+  window.pbStatusKeep = function() { var foot = document.getElementById('pbsFoot'); if (foot && lastFoot) foot.innerHTML = lastFoot; };
+  window.pbStatusOff = async function(email, sure) {
+    var foot = document.getElementById('pbsFoot'), e = ppEsc(email);
+    if (!sure) { if (foot) { lastFoot = foot.innerHTML; foot.innerHTML = '<span class="ps-offq"><b>Turn the page off?</b> The link stops working at once. Publishing again brings the same link back.</span><span class="sp"></span><button class="pp-btn" onclick="pbStatusKeep()">Keep it</button><button class="pp-btn" style="color:var(--pp-red,#d93025);border-color:var(--pp-red,#d93025)" onclick="pbStatusOff(\'' + e + '\',1)">Yes, turn it off</button>'; } return; }
+    try { var r = await ppApiPost('statusPublish', { orgEmail: email, snapshot: '{}', off: '1' }, 60000); if (!r.success) throw new Error(r.error); info[email] = { exists: false, team: (info[email] || {}).team }; delete ui[email]; closeModal(); showToast('Status page is off. The link no longer opens.', 'success'); button(email); } catch (er) { showToast(er.message, 'error'); }
+  };
+  function button(email) { var right = document.querySelector('#playbookView .pb-head-right') || document.querySelector('.pb-head-right'); if (!right) return; var old = right.querySelector('.pb-status-btn'); if (old) old.remove(); var i = info[email]; right.insertAdjacentHTML('afterbegin', '<button class="pb-status-btn' + (i && i.exists ? ' live' : '') + '" onclick="pbStatusShare(\'' + ppEsc(email) + '\')" title="' + (i && i.exists ? 'The district has a status page. Click for the link, what they see, and to email it.' : 'Publish a read-only status page for the district') + '">&#128279; ' + (i && i.exists ? 'Status page live' + (i.views ? ' · opened ' + i.views : '') : 'Share status link') + '</button>'); }
+  // each note on a step the district can see says whether it is shared, and one click changes it
+  window.pbNoteShare = function(email, id) { var cl = getChecklist(email) || {}, on = !yes(cl['pb_' + id + '_note_share_field']); setChecklist(email, 'pb_' + id + '_note_share_field', on ? 'yes' : ''); renderPlaybook(); showToast(on ? 'The district can read this note on their status page' : 'This note is internal again', 'success'); };
+  function chips(email) {
+    var cl = getChecklist(email) || {}, vis = {}; PB_PHASES.forEach(function(ph) { pbSteps(email, ph).forEach(function(s) { if (shown(s, cl)) vis[String(s.id)] = 1; }); });
+    document.querySelectorAll('#playbookView .pb-note:not(.empty), .pb-step .pb-note:not(.empty)').forEach(function(el) {
+      if (el.nextElementSibling && el.nextElementSibling.classList.contains('pb-share')) return;
+      var m = String(el.getAttribute('onclick') || '').match(/pbNote\('[^']*','([^']+)'/); if (!m || !vis[m[1]]) return;
+      var on = yes(cl['pb_' + m[1] + '_note_share_field']);
+      el.insertAdjacentHTML('afterend', '<button type="button" class="pb-share' + (on ? ' on' : '') + '" onclick="event.stopPropagation();pbNoteShare(\'' + ppEsc(email) + '\',\'' + ppEsc(m[1]) + '\')" title="' + (on ? 'The district can read this note on their status page. Click to make it internal.' : 'Only the team sees this note. Click to show it to the district on their status page.') + '">' + (on ? 'Shared with district' : 'Internal') + '</button>');
+    });
+  }
+  // the quiet refresh: when which steps exist, their wording, the dates or the people have changed since the last publish.
+  // Ticks, notes and contacts do not need it; the server reads those when the district opens the link.
+  function quiet(email) { var i = info[email]; if (!i || !i.exists) return; var s = sig(email); if (!s || i.sig === s) return; clearTimeout(timers[email]); timers[email] = setTimeout(function() { var j = info[email]; if (j && j.exists && !ui[email]) publish(email, undefined, true); }, 1500); }
+  async function check(email) { if (info[email]) { button(email); quiet(email); return; } if (pending[email]) { button(email); return; } pending[email] = true; try { var r = await ppApi('statusInfo', { orgEmail: email }, 60000); if (r.success) { info[email] = r; quiet(email); } } catch (e) {} pending[email] = false; button(email); }
+  if (typeof renderPlaybook === 'function') { var _rp = renderPlaybook; renderPlaybook = function() { _rp.apply(this, arguments); try { if (typeof pbClient !== 'undefined' && pbClient) { chips(pbClient); if (!pbDistrictView) check(pbClient); } } catch (e) {} }; }
 })();
 </script>
 <script>
