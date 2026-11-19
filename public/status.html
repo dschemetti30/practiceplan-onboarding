@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="pp-status-page" content="v1">
+<title>Onboarding status | PracticePlan</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!--
+  PracticePlan: the district's onboarding status page (public/status.html in the practiceplan-onboarding repo).
+  Read-only. It asks the Front Office server for one district's page with the signed key in the link (?k=...), and draws it.
+  Nothing here can reach anything else in Front Office. v1, Nov 19 2026, with Extras v196.
+-->
+<style>
+  :root{--blue:#0076bb;--green:#00a84f;--gold:#c9a227;--gold-dk:#8a6d0b;--ink:#0f172a;--ink2:#475569;--ink3:#94a3b8;--line:#e2e8f0;--bg:#f4f6f9;--card:#fff}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+  a{color:var(--blue)}
+  .top{height:4px;background:linear-gradient(90deg,var(--blue),var(--green))}
+  .wrap{max-width:760px;margin:0 auto;padding:22px 16px 40px}
+  .brand{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .brand b{display:flex;align-items:center;gap:9px;font-size:16px;font-weight:800;letter-spacing:-.01em}
+  .brand img{width:26px;height:26px}
+  .brand span{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 1px 2px rgba(15,23,42,.04);margin-bottom:14px;overflow:hidden;animation:in .35s ease both}
+  @keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .hero{padding:24px 24px 22px}
+  .k{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue)}
+  h1{margin:6px 0 6px;font-size:28px;line-height:1.15;font-weight:800;letter-spacing:-.02em}
+  .sub{font-size:14px;color:var(--ink2);line-height:1.5}
+  .sub b{color:var(--ink)}
+  .msg{margin-top:14px;background:#f0f7ff;border:1px solid #cfe3f5;border-radius:12px;padding:12px 14px;font-size:14.5px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+  .prog{margin-top:18px}
+  .prog .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:14px;color:var(--ink2);margin-bottom:8px}
+  .prog .row b{color:var(--ink)}
+  .prog .pct{font-size:20px;font-weight:800;color:var(--ink)}
+  .bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:6px;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+  .next{margin-top:14px;display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.45;color:var(--ink)}
+  .next span{flex-shrink:0;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--blue);border-radius:50px;padding:3px 9px;margin-top:1px}
+  .people{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0}
+  .person{display:flex;gap:12px;padding:16px 20px;border-left:1px solid var(--line)}
+  .person:first-child{border-left:0}
+  .av{flex-shrink:0;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--green));color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center}
+  .person small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+  .person b{display:block;font-size:15px;margin:1px 0 4px}
+  .person a{display:block;font-size:13.5px;text-decoration:none;line-height:1.55;overflow-wrap:anywhere}
+  .person a:hover{text-decoration:underline}
+  .h2{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin:22px 4px 10px}
+  .ph{padding:16px 20px}
+  .ph-h{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .ph-n{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--bg);color:var(--ink2);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .ph.done .ph-n{background:var(--green);color:#fff}
+  .ph.now .ph-n{background:var(--blue);color:#fff}
+  .ph-h h2{margin:0;font-size:16px;font-weight:700;flex:1;min-width:0}
+  .ph-c{font-size:12px;font-weight:600;color:var(--ink2);background:var(--bg);border-radius:50px;padding:2px 9px;white-space:nowrap}
+  .ph.now .ph-c{background:#e6f1f9;color:var(--blue)}
+  .s{display:flex;gap:11px;padding:7px 0 7px 34px;font-size:14.5px;line-height:1.45}
+  .s i{flex:0 0 18px;height:18px;margin-top:2px;border-radius:50%;border:2px solid #cbd5e1;font-style:normal;font-size:11px;line-height:14px;text-align:center;color:#fff}
+  .s.d i{background:var(--green);border-color:var(--green)}
+  .s.d span{color:var(--ink3);text-decoration:line-through}
+  .s em{display:block;font-style:normal;font-size:13px;color:var(--ink2);margin-top:2px}
+  .tag{display:inline-block;font-size:10.5px;font-weight:700;border-radius:50px;padding:2px 8px;background:#fdf6dc;color:var(--gold-dk);margin-left:7px;vertical-align:middle;white-space:nowrap}
+  details{margin-left:34px;font-size:13px;color:var(--ink2)}
+  details summary{cursor:pointer;padding:5px 0;font-weight:600;list-style:none}
+  details summary::-webkit-details-marker{display:none}
+  details summary::before{content:"+ ";color:var(--ink3)}
+  details[open] summary::before{content:"- "}
+  details .s{padding-left:0}
+  .foot{text-align:center;font-size:12.5px;color:var(--ink3);line-height:1.6;margin-top:20px}
+  .foot button{font:inherit;font-weight:600;color:var(--blue);background:none;border:none;cursor:pointer;padding:0}
+  .state{padding:40px 28px;text-align:center}
+  .state h1{font-size:22px}
+  .pv{background:#fdf6dc;border:1px solid #ecd98a;color:var(--gold-dk);border-radius:12px;padding:10px 14px;font-size:13px;margin-bottom:14px}
+  .sk{height:14px;border-radius:6px;background:linear-gradient(90deg,#e9eef4 25%,#f4f7fa 37%,#e9eef4 63%);background-size:400% 100%;animation:sk 1.3s ease infinite;margin:10px 0}
+  @keyframes sk{0%{background-position:100% 0}100%{background-position:0 0}}
+  @media(max-width:560px){h1{font-size:23px}.hero{padding:20px 18px}.person{border-left:0;border-top:1px solid var(--line)}.person:first-child{border-top:0}.s{padding-left:0}details{margin-left:0}}
+  @media print{body{background:#fff}.card{box-shadow:none;break-inside:avoid}.foot button,.pv{display:none}}
+</style>
+</head>
+<body>
+<div class="top"></div>
+<div class="wrap">
+  <div class="brand"><b><img src="/favicon.svg" alt="" onerror="this.style.display='none'">PracticePlan</b><span>Onboarding status</span></div>
+  <div id="app"><div class="card hero"><div class="sk" style="width:30%"></div><div class="sk" style="width:65%;height:26px"></div><div class="sk" style="width:80%"></div><div class="sk" style="width:100%;height:10px;margin-top:22px"></div></div></div>
+</div>
+<script>
+(function() {
+  var API = 'https://script.google.com/macros/s/AKfycbxY4cTJeIBwjbCV77vSDpn1OiP2mrs5h6phU4rJazR9rAYbrQLYJF37W8d7l_QndcMB/exec';
+  var q = new URLSearchParams(location.search), key = q.get('k') || '', preview = q.get('pv') === '1', app = document.getElementById('app'), loadedAt = 0, n = 0;
+  function esc(x) { return String(x === undefined || x === null ? '' : x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function ask(extra, done) {
+    var cb = 'ppst_' + Date.now() + '_' + (n++), s = document.createElement('script'), t = setTimeout(function() { finish(null); }, 45000);
+    function finish(r) { clearTimeout(t); try { delete window[cb]; } catch (e) { window[cb] = undefined; } if (s.parentNode) s.parentNode.removeChild(s); done(r); }
+    window[cb] = function(r) { finish(r); }; s.onerror = function() { finish(null); };
+    s.src = API + '?action=statusData&k=' + encodeURIComponent(key) + extra + '&callback=' + cb; document.body.appendChild(s);
+  }
+  function state(title, text, retry) { app.innerHTML = '<div class="card state"><div class="k">PracticePlan</div><h1>' + title + '</h1><div class="sub">' + text + '</div>' + (retry ? '<div class="foot"><button onclick="location.reload()">Try again</button></div>' : '') + '</div>'; }
+  function initials(name) { return String(name || '').split(/\s+/).filter(Boolean).slice(0, 2).map(function(w) { return w.charAt(0).toUpperCase(); }).join(''); }
+  function step(s) { return '<div class="s' + (s.done ? ' d' : '') + '"><i>' + (s.done ? '&#10003;' : '') + '</i><div><span>' + esc(s.task) + '</span>' + (s.yours && !s.done ? '<span class="tag">your side</span>' : '') + (s.note ? '<em>' + esc(s.note) + '</em>' : '') + '</div></div>'; }
+  function draw(m) {
+    document.title = m.organization + ': onboarding status | PracticePlan';
+    var h = preview ? '<div class="pv"><b>Preview.</b> This is what the district sees. Opening it from Front Office does not count as the district opening it.</div>' : '';
+    h += '<div class="card hero"><div class="k">Onboarding status</div><h1>' + esc(m.organization) + '</h1><div class="sub">' + [m.contact ? 'For ' + esc(m.contact) : '', m.goLive ? 'Target go-live <b>' + esc(m.goLive) + '</b>' : ''].filter(Boolean).join(' &middot; ') + '</div>'
+      + (m.message ? '<div class="msg">' + esc(m.message) + '</div>' : '')
+      + (m.showProgress ? '<div class="prog"><div class="row"><span><b>' + m.done + ' of ' + m.total + '</b> steps done' + (m.current ? ' &middot; now in <b>' + esc(m.current) + '</b>' : m.total ? ' &middot; <b>onboarding complete</b>' : '') + '</span><span class="pct">' + m.pct + '%</span></div><div class="bar"><i id="bar"></i></div></div>' : '')
+      + (m.showNext && m.next ? '<div class="next"><span>Next up</span><div>' + esc(m.next) + '</div></div>' : '') + '</div>';
+    if (m.contacts && m.contacts.length) h += '<div class="h2">Your PracticePlan team</div><div class="card people">' + m.contacts.map(function(c) { return '<div class="person"><div class="av">' + esc(initials(c.name)) + '</div><div><small>' + esc(c.role) + '</small><b>' + esc(c.name) + '</b><a href="mailto:' + esc(c.email) + '">' + esc(c.email) + '</a>' + (c.phone ? '<a href="tel:' + esc(String(c.phone).replace(/[^0-9+]/g, '')) + '">' + esc(c.phone) + '</a>' : '') + '</div></div>'; }).join('') + '</div>';
+    if (m.phases && m.phases.length) {
+      var seenNow = false;
+      h += '<div class="h2">The plan</div>' + m.phases.map(function(ph, i) {
+        var d = ph.steps.filter(function(s) { return s.done; }), open = ph.steps.filter(function(s) { return !s.done; }), complete = !open.length, now = !complete && !seenNow; if (now) seenNow = true;
+        var body = m.foldDone ? open.map(step).join('') + (d.length ? '<details><summary>' + d.length + ' finished step' + (d.length === 1 ? '' : 's') + '</summary>' + d.map(step).join('') + '</details>' : '') : ph.steps.map(step).join('');
+        return '<div class="card ph' + (complete ? ' done' : now ? ' now' : '') + '" style="animation-delay:' + (60 + i * 40) + 'ms"><div class="ph-h"><div class="ph-n">' + (complete ? '&#10003;' : (i + 1)) + '</div><h2>' + esc(ph.title) + '</h2><span class="ph-c">' + (complete ? 'Done' : d.length + ' of ' + ph.steps.length) + '</span></div>' + body + '</div>';
+      }).join('');
+    }
+    h += '<div class="foot">' + (m.asOf ? 'Status as of ' + esc(m.asOf) + '. ' : '') + 'This page always shows the latest. <button onclick="location.reload()">Reload</button><br>Private to this link &middot; PracticePlan</div>';
+    app.innerHTML = h;
+    var bar = document.getElementById('bar'); if (bar) setTimeout(function() { bar.style.width = m.pct + '%'; }, 80);
+  }
+  function load(quiet) {
+    if (!key) { state('This link is not complete', 'Ask your PracticePlan contact to send the link again.'); return; }
+    ask(preview || quiet ? '&pv=1' : '', function(r) {
+      if (r && r.success && r.page) { loadedAt = Date.now(); draw(r.page); return; }
+      if (quiet) return;
+      if (r && r.state === 'off') state('This page is no longer shared', 'Ask your PracticePlan contact if you need an update.');
+      else if (r && r.state === 'invalid') state('This link is not valid', 'Ask your PracticePlan contact for a fresh link.');
+      else state('The page did not load', 'Check your connection and try again.', true);
+    });
+  }
+  load(false);
+  // coming back to the tab after a while: read it again, quietly, without counting another open
+  document.addEventListener('visibilitychange', function() { if (document.visibilityState === 'visible' && loadedAt && Date.now() - loadedAt > 120000) load(true); });
+})();
+</script>
+</body>
+</html>
