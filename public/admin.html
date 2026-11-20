@@ -11020,13 +11020,13 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v238 · Nov 20e';
+    var PP_BUILD = 'v239 · Nov 20f';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
         ppApi('ppPing', {}, 30000).then(function(r) { var v = Number(r && r.version) || 0; window._ppServerVersion = v; if (v && v < 120) { tag.classList.add('warn'); tag.textContent = PP_BUILD + ' · Extras v' + v + ' (needs v120)'; tag.title = 'The server is behind this page: install the current Extras.gs and deploy a new version.'; } else if (v) tag.textContent = PP_BUILD + ' · Extras v' + v; }).catch(function() {});
       }, 1500); };
-      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 199 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
+      window.ppVersionCheck = function() { ppApi('ppPing', {}, 30000).then(function(r) { showToast('Page ' + PP_BUILD + ' · Extras v' + (r.version || '?') + (r.version < 200 ? ' (behind; install the current Extras.gs)' : ' (current)'), r.version < 106 ? 'error' : 'success'); }).catch(function(e) { showToast('Server unreachable: ' + e.message, 'error'); }); };
     })();
     // =====================================================================
     // TEAM: titles and headshots, editable in Settings
@@ -15308,7 +15308,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
         } catch (e) {}
       };
       // every write that touches a show row, then the caches; a delete is also remembered for a week so a stale copy of the list cannot show it
-      var WRITE = /^(saveTradeShow|patchTradeShow|deleteTradeShow|bulkSaveTradeShows|setShowAliases|pipelineMerge|pipelineNotDup|pipelineImport|pipelineDedupe|pipelinePastTidy|showFindDeadline|showVerifyApply|showFileUpload|showRollover|showSourcesPull|showMailScan)$/;
+      var WRITE = /^(saveShowRenewal|saveTradeShow|patchTradeShow|deleteTradeShow|bulkSaveTradeShows|setShowAliases|pipelineMerge|pipelineNotDup|pipelineImport|pipelineDedupe|pipelinePastTidy|showFindDeadline|showVerifyApply|showFileUpload|showRollover|showSourcesPull|showMailScan)$/;
       if (typeof ppApi === 'function') { var _api = ppApi; ppApi = function(action, params, timeoutMs) { var pr = _api.apply(this, arguments); if (WRITE.test(action)) { pr.then(function(r) { if (r && r.success) { if (action === 'deleteTradeShow' && params && params.id) markDeleted(params.id); setTimeout(tsSyncCaches, 500); } }).catch(function() {}); } return pr; }; }
       if (typeof ppApiPost === 'function') { var _post = ppApiPost; ppApiPost = function(action, params) { var pr = _post.apply(this, arguments); if (WRITE.test(action)) pr.then(function(r) { if (r && r.success) setTimeout(tsSyncCaches, 500); }).catch(function() {}); return pr; }; }
       // rows deleted here in the last week never come back from a cached list
@@ -17406,6 +17406,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     { a: 'Client success', q: 'How do I ask a district to open their next season?', view: 'availability', s: ['On Availability, start the ask from that client\'s row. The email opens with the season filled in.', 'Pick who gets it, adjust the wording if needed, and send. It goes through Close as the lead owner.', 'Nothing is sent to a district automatically unless an admin has switched that on.'], k: 'ask season open availability email' },
     { a: 'Client success', q: 'How do I add or find a client\'s login?', view: 'credentials', s: ['Open <b>Client Success, Client Credentials</b>. Search by district, or press <b>Add Client</b> to save a new login.', 'A new login shows in the list as soon as it is saved.'], k: 'login password credentials username' },
 
+    { a: 'Events', q: 'How do I renew a show for next year?', view: 'tradeshows', s: ['Open <b>Events, Trade Shows</b>. When shows from the past year are not on next year\'s list yet, a bar above the list says how many. Press <b>Renew for next year</b> to see them with last year\'s results and cost.', 'Press <b>Renew</b> on a show. Check the dates (they start as this year\'s, moved 52 weeks so the weekdays match), say whether we are registered or paid, fix the booth cost if it changed, and add it. Next year\'s show goes on the list with the same reps, audience, booth and follow-up.', 'Not going back? Press <b>Not this year</b> and it leaves the renewal list. It stays in Trade Shows.', 'You can also renew from a finished show\'s row, under its name, or from the bottom of any show\'s editor.', 'When the registration changes later, click the registration chip on the show\'s row: Register, To pay, Paid.'], k: 'renew rebook next year next season register registration paid conference again' },
     { a: 'Events', q: 'How do I add a trade show, and who gets its leads?', view: 'tradeshows', s: ['Open <b>Events, Trade Shows</b> and press <b>Add Show</b>. Fill in the dates and the reps working it.', 'Each show gets one code, like THSADA-TX-2026. Leads that come in from that show go to the reps on it and follow the show\'s sequence.'], k: 'conference show booth code reps' },
     { a: 'Events', q: 'Where do shows we are still deciding on live?', view: 'showpipeline', s: ['<b>Events, Trade Show Review</b>. Shows found in email or on the source lists, or added by hand, wait there with their dates and deadlines.', 'When the answer is yes, move it to Go and it becomes a show on Trade Shows.'], k: 'pipeline evaluate consider deadline' },
     { a: 'Events', q: 'How do I email attendees before a show?', view: 'preevent', s: ['Open <b>Events, Pre-event Outreach</b> and pick the show.', 'Check the two emails and when they go, then approve. Nothing sends until a campaign is approved.', 'They go out through Close as the rep on the show, and stop for anyone who replies.'], k: 'pre show attendees outreach campaign' },
@@ -17431,7 +17432,8 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     { a: 'Workspace', q: 'What is the weekly team update?', view: 'settings', role: 'super', s: ['<b>Settings, What changed this week</b> drafts an email each Monday about the week in the business: leads, shows and clients. It waits for you to read and send it.', 'It is not about changes to Front Office itself. Those are under <b>What\'s new</b> on this page.'], k: 'weekly update what changed email' }
   ];
   var NEWS = [
-    { id: '2026-11-20c', when: 'Nov 20, 2026 · second update', items: [
+    { id: '2026-11-20d', when: 'Nov 20, 2026 · second update', items: [
+      { t: 'Renew a show for next year', view: 'tradeshows', d: 'Trade Shows now tells you which of the past year\'s shows are not on next year\'s list yet. One step renews a show with the same reps, audience and booth, and you can mark it registered or paid as you add it.' },
       { t: 'Dark mode you can read', d: 'Selected filters, code chips, status tags and notices no longer turn white on white. Every colour in the tool now has a dark-mode version, and buttons use the deeper brand blue and green.' },
       { t: 'A plain navy menu', d: 'The field lines are off the sidebar in both modes. They stay on the sign-in screen and on district status pages.' },
       { t: 'No more "not available" right after signing in', d: 'Pages used to ask for their data before you had signed in, and a few kept the refusal on screen. Nothing is asked until you are in.' }
@@ -17674,6 +17676,188 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
   var iv = setInterval(function() { if (go()) clearInterval(iv); }, 400);
   // a failed read of the Follow-up queue is not kept: opening the page again asks again
   if (typeof fqLoad === 'function') { var _fl = fqLoad; fqLoad = function() { try { if (fq && fq.error) fq = null; } catch (e) {} return _fl.apply(this, arguments); }; }
+})();
+</script>
+<style>
+  /* v239: renew a show for next year. Theme variables only, so both modes are covered (see the v238 note). */
+  .ts-rn-bar{display:flex;align-items:center;gap:14px;margin:0 0 16px;padding:12px 16px;border:1px solid var(--border);border-radius:14px;background:var(--card);box-shadow:var(--sh-xs);position:relative;overflow:hidden}
+  .ts-rn-bar::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--pp-grad)}
+  .ts-rn-bar .ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--card-2);color:var(--pp-blue);flex:none}
+  .ts-rn-bar .ic svg{width:17px;height:17px}
+  .ts-rn-bar .tx{flex:1;min-width:0;font-size:13.5px;color:var(--text)}
+  .ts-rn-bar .tx small{display:block;font-size:12px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ts-rn-row{display:grid;grid-template-columns:minmax(0,1fr) 190px 84px auto;gap:14px;align-items:center;padding:12px 4px;border-bottom:1px solid var(--border)}
+  .ts-rn-row:last-child{border-bottom:none}
+  .ts-rn-row .who b{display:block;font-size:13.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ts-rn-row .who span,.ts-rn-row .res{font-size:12px;color:var(--text2)}
+  .ts-rn-row .res b{color:var(--text)}
+  .ts-rn-row .cost{font-size:13px;font-weight:700;color:var(--text);text-align:right}
+  .ts-rn-row .act{display:flex;gap:8px;align-items:center;justify-content:flex-end;min-width:214px}
+  .ts-rn-row.off .who b,.ts-rn-row.off .cost{color:var(--text3)}
+  .ts-rn-row .act .pp-btn{height:32px;white-space:nowrap}
+  .ts-rn-row .act .pp-btn svg{width:13px;height:13px;margin-right:6px;vertical-align:-2px}
+  .ts-rn-row .act .quiet{border-color:transparent;background:transparent;color:var(--text2)}
+  .ts-rn-row .act .quiet:hover{color:var(--text);background:var(--card-2)}
+  .ts-rn-row .act .ok{font-size:12.5px;font-weight:700;color:var(--pp-green);cursor:pointer;white-space:nowrap}
+  .ts-rn-row .act .no{font-size:12.5px;color:var(--text3);white-space:nowrap}
+  .ts-rn-h{font-family:var(--font-brand);font-size:12.5px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);margin:16px 4px 2px}
+  .ts-rn-empty{padding:26px 4px;font-size:13.5px;color:var(--text2);text-align:center}
+  .ts-rn-line{margin-top:5px}
+  .pp-mini-btn.ts-renew{width:auto;height:22px;padding:0 8px;gap:5px;margin:0;font:inherit;font-size:11px;font-weight:700;color:var(--pp-blue);white-space:nowrap}
+  .pp-mini-btn.ts-renew:hover{border-color:var(--pp-blue);background:var(--card-2)}
+  .pp-mini-btn.ts-renew svg{width:11px;height:11px;flex:none}
+  .pp-mini-btn.ts-renew.done{color:var(--pp-green);border-color:transparent;background:transparent;padding-left:0}
+  .pp-mini-btn.ts-renew.wait{opacity:.55;pointer-events:none}
+  .pp-btn.ts-renew-m svg{width:13px;height:13px;margin-right:6px;vertical-align:-2px}
+  tr.ts-rn-flash td{animation:tsRnFlash 2.8s ease}
+  @keyframes tsRnFlash{0%,45%{background:rgba(20,168,78,.16)}100%{background:transparent}}
+  @media(prefers-reduced-motion:reduce){tr.ts-rn-flash td{animation:none}}
+  @media(max-width:760px){.ts-rn-bar{flex-wrap:wrap}.ts-rn-row{grid-template-columns:1fr;gap:6px}.ts-rn-row .cost{text-align:left}.ts-rn-row .act{justify-content:flex-start;min-width:0}}
+</style>
+<script>
+// v239: renew a show for next year.
+// Three ways in, one step behind them:
+//   - a bar above the list when shows from the past 15 months are not on next year's list yet; it opens the renewal list
+//     (tsRenewList), one row per show with last year's results and cost, Renew, and Not this year;
+//   - Renew under the name of any finished or running show in the table (and a check mark with the year once it is done);
+//   - "Renew for <year>" at the foot of any show's editor (an organizer who rebooks you at the booth, an early-bird rate).
+// The step is one small form (dates, registration, booth cost). The server (action saveShowRenewal, Extras v200) puts next
+// year's edition on the Trade Shows list with the reps, audience, booth, partner and follow-up settings carried over, and
+// it alone decides whether next year's show already exists: one waiting in the Show Pipeline is moved onto the list, one
+// already on the list is opened, a second row is never made. nextOf() here only chooses what a button says.
+// "Not this year" writes renewal = 'no' on the show through patchTradeShow; the nightly roll-forward respects it too.
+(function() {
+  if (typeof tsRow !== 'function' || typeof ppFormPopover !== 'function' || typeof tsNormalize !== 'function') return;
+  var busy = {}, kept = {}, PIPE = { inbox: 1, evaluating: 1, pass: 1, revisit: 1, past: 1 };
+  var ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>';
+  function byId(id) { return tsList.find(function(x) { return x.id === id; }); }
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function addDays(iso, n) { var d = ppParseISO(iso); if (!d || isNaN(d)) return ''; d.setDate(d.getDate() + n); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function startOf(x) { return x._start || ppNormalizeDate(x.exhibitStart || x.eventDate || '') || ''; }
+  function endOf(x) { return x._end || ppNormalizeDate(x.exhibitEnd || '') || startOf(x); }
+  function key(name) { return String(name || '').toLowerCase().replace(/\b(19|20)\d\d\b/g, ' ').replace(/[^a-z0-9]+/g, ''); }
+  function fam(code) { var m = String(code || '').toUpperCase().match(/^([A-Z0-9]{2,14}-[A-Z]{2})-(19|20)\d\d$/); return m ? m[1] : ''; }
+  function plan(s) {
+    var start = s._start ? addDays(s._start, 364) : '', end = s._end ? addDays(s._end, 364) : start, year = start ? start.slice(0, 4) : String(Number((s._start || ppTodayISO()).slice(0, 4)) + 1), n = String(s.name || '');
+    return { start: start, end: end, year: year, name: /\b(19|20)\d\d\b/.test(n) ? n.replace(/\b(19|20)\d\d\b/, year) : n + ' ' + year };
+  }
+  // next year's edition, if the page already holds one: on the list, or waiting in the Show Pipeline
+  function nextOf(s) {
+    var pl = plan(s), pool = tsList.map(function(x) { return { row: x, where: PIPE[String(x.stage || '').toLowerCase()] ? 'pipeline' : 'list' }; }).concat((window.spList || []).map(function(x) { return { row: x, where: 'pipeline' }; }));
+    var hit = pool.find(function(a) { var x = a.row; return x.id !== s.id && ((s.rolledTo && x.id === s.rolledTo) || x.rolledFrom === s.id); });
+    if (!hit) hit = pool.find(function(a) {
+      var x = a.row; if (x.id === s.id) return false;
+      var same = (key(s.name).length >= 3 && key(x.name) === key(s.name)) || (fam(s.sourceKey) && fam(x.sourceKey) === fam(s.sourceKey)); if (!same) return false;
+      var xs = startOf(x); return xs ? xs.slice(0, 4) === pl.year : (a.where === 'pipeline' && /^(inbox|evaluating)$/.test(String(x.stage || '')));
+    });
+    return hit || null;
+  }
+  function onList(s) { var nx = nextOf(s); return nx && nx.where === 'list' ? nx.row : null; }
+  function canRenew(s) { return !!(s && s.id && !s.archived && s.registration !== 'skip'); }
+  function declined(s) { return String(s.renewal || '') === 'no'; }
+  // finished in the past 15 months, and next year is neither on the list nor passed on in the pipeline
+  function finished() { var cut = addDays(ppTodayISO(), -455); return tsList.filter(function(s) { return canRenew(s) && s._isPast && s._end >= cut; }).sort(function(a, b) { return a._end < b._end ? 1 : -1; }); }
+  function due() { return finished().filter(function(s) { if (declined(s)) return false; var nx = nextOf(s); return !(nx && (nx.where === 'list' || String(nx.row.stage || '') === 'pass')); }); }
+  function yearOn(row, pl) { return (startOf(row) || pl.year).slice(0, 4); }
+
+  // ---- the table: Renew under the show's name
+  function control(s) {
+    if (!canRenew(s) || !(s._isPast || s._isLive)) return '';
+    var nx = nextOf(s), pl = plan(s);
+    if (nx && nx.where === 'list') return '<button class="pp-mini-btn ts-renew done" title="' + ppEsc(nx.row.name) + ' is on the list. Open it." onclick="event.stopPropagation();openTsModal(\'' + ppEsc(nx.row.id) + '\')">' + ppEsc(yearOn(nx.row, pl)) + ' is on the list &#10003;</button>';
+    if (declined(s) || (nx && String(nx.row.stage || '') === 'pass')) return '';
+    return '<button class="pp-mini-btn ts-renew' + (busy[s.id] ? ' wait' : '') + '" title="' + (nx ? 'Next year\'s show is waiting in the Show Pipeline. Put it on the list.' : 'Add ' + ppEsc(pl.name) + ' to the list') + '" onclick="event.stopPropagation();tsRenew(\'' + ppEsc(s.id) + '\',this)">' + ICON + 'Renew for ' + ppEsc(pl.year) + '</button>';
+  }
+  var CELL_END = '</div></div></div></td>';
+  var _row = tsRow; tsRow = function(s) { var html = _row(s), c = ''; try { c = control(s); } catch (e) {} if (!c) return html; var at = html.indexOf(CELL_END); return at < 0 ? html : html.slice(0, at + 6) + '<div class="ts-rn-line">' + c + '</div>' + html.slice(at + 6); };
+
+  // ---- the bar above the list
+  function bar() {
+    var host = document.getElementById('tsListView'), groups = document.getElementById('tsGroups'); if (!host || !groups) return;
+    var el = document.getElementById('tsRenewBar'), list = []; try { list = (typeof tsLoaded === 'undefined' || tsLoaded) ? due() : []; } catch (e) {}
+    if (!list.length) { if (el) el.remove(); return; }
+    if (!el) { el = document.createElement('div'); el.id = 'tsRenewBar'; el.className = 'ts-rn-bar'; }
+    if (el.nextSibling !== groups || el.parentNode !== groups.parentNode) groups.parentNode.insertBefore(el, groups);
+    var years = {}; list.forEach(function(s) { years[plan(s).year] = 1; }); var yl = Object.keys(years).sort(), names = list.slice(0, 3).map(function(s) { return s.name; }).join(', ') + (list.length > 3 ? ' and ' + (list.length - 3) + ' more' : '');
+    el.innerHTML = '<span class="ic">' + ICON + '</span><div class="tx"><b>' + list.length + ' show' + (list.length === 1 ? '' : 's') + '</b> from the past year ' + (list.length === 1 ? 'is' : 'are') + ' not on the ' + ppEsc(yl.join(' or ')) + ' list yet<small>' + ppEsc(names) + '</small></div><button class="pp-btn primary" onclick="tsRenewList()">Renew for next year</button>';
+  }
+  var _rt = renderTradeShows; renderTradeShows = function() { var out = _rt.apply(this, arguments); try { bar(); } catch (e) {} return out; };
+
+  // ---- the renewal list
+  function results(s) { if (s.registration === 'missed') return 'Registered, did not attend'; var n = function(v) { return Number(v) || 0; }; return '<b>' + n(s.leads) + '</b> lead' + (n(s.leads) === 1 ? '' : 's') + ' &middot; <b>' + n(s.demos) + '</b> demo' + (n(s.demos) === 1 ? '' : 's') + ' &middot; <b>' + n(s.deals) + '</b> deal' + (n(s.deals) === 1 ? '' : 's'); }
+  function listRow(s) {
+    var nx = nextOf(s), pl = plan(s), id = ppEsc(s.id), done = nx && nx.where === 'list', off = !done && declined(s), act;
+    if (done) act = '<span class="ok" onclick="closeModal();openTsModal(\'' + ppEsc(nx.row.id) + '\')" title="Open ' + ppEsc(nx.row.name) + '">' + ppEsc(yearOn(nx.row, pl)) + ' is on the list &#10003;</span>';
+    else if (off) act = '<span class="no">Not this year</span><button class="pp-btn quiet" onclick="tsRenewNo(\'' + id + '\',false)">Undo</button>';
+    else act = '<button class="pp-btn quiet" onclick="tsRenewNo(\'' + id + '\',true)" title="Take it off this list. It stays in Trade Shows.">Not this year</button><button class="pp-btn primary' + (busy[s.id] ? ' pp-busy' : '') + '" onclick="tsRenew(\'' + id + '\',this)">' + ICON + 'Renew for ' + ppEsc(pl.year) + '</button>';
+    return '<div class="ts-rn-row' + (off ? ' off' : '') + '" data-id="' + id + '"><div class="who"><b title="' + ppEsc(s.name) + '">' + ppEsc(s.name) + '</b><span>' + ppFmtRange(s._start, s._end) + (s.location ? ' &middot; ' + ppEsc(String(s.location).replace(/, USA$/, '')) : '') + (nx && nx.where === 'pipeline' && !off ? ' &middot; next year is waiting in the Show Pipeline' : '') + '</span></div><div class="res">' + results(s) + '</div><div class="cost">' + (s.cost ? ppFmtMoney(s.cost) : '') + '</div><div class="act">' + act + '</div></div>';
+  }
+  function listHtml() {
+    var all = finished(), open = all.filter(function(s) { var nx = nextOf(s); if (declined(s) && !(nx && nx.where === 'list')) return false; if (nx && String(nx.row.stage || '') === 'pass') return false; return !(nx && nx.where === 'list') || kept[s.id]; }), off = all.filter(function(s) { return declined(s) && !onList(s); });
+    if (!open.length && !off.length) return '<div class="ts-rn-empty">Every show from the past year is on next year\'s list, or has been decided.</div>';
+    return (open.length ? open.map(listRow).join('') : '<div class="ts-rn-empty">Nothing left to renew.</div>') + (off.length ? '<div class="ts-rn-h">Not this year</div>' + off.map(listRow).join('') : '');
+  }
+  function listEl() { var el = document.getElementById('tsRenewList'); return el && el.offsetParent !== null ? el : null; }      // a closed modal keeps its markup, so being in the page is not being open
+  function refreshList() { var el = listEl(); if (el) el.innerHTML = listHtml(); }
+  window.tsRenewList = function() {
+    kept = {};
+    ppOpenModal('<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>Renew for next year</h2><div class="modal-subtitle">Shows from the past 15 months that are not on next year\'s list yet, newest first</div></div><div class="modal-body"><div id="tsRenewList">' + listHtml() + '</div></div><div class="pp-modal-actions"><span></span><div class="right"><button class="pp-btn" onclick="closeModal()">Done</button></div></div>');
+  };
+  window.tsRenewNo = async function(id, on) {
+    var s = byId(id); if (!s) return; var prev = s.renewal || ''; s.renewal = on ? 'no' : ''; refreshList(); try { renderTradeShows(); } catch (e) {}
+    try { var r = await ppApi('patchTradeShow', { row: { id: id, renewal: s.renewal } }, 60000); if (!r || !r.success) throw new Error((r && r.error) || 'no answer'); }
+    catch (e) { s.renewal = prev; refreshList(); try { renderTradeShows(); } catch (e2) {} showToast('Could not save: ' + ppEsc(e.message), 'error'); }
+  };
+
+  // ---- the step itself
+  function flash(id) { setTimeout(function() { var tr = document.querySelector('#tsGroups tr[data-id="' + id + '"]'); if (!tr || listEl()) return; tr.classList.add('ts-rn-flash'); try { tr.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {} setTimeout(function() { tr.classList.remove('ts-rn-flash'); }, 3000); }, 60); }
+  async function go(s, v, start0, end0, fromEditor) {
+    if (busy[s.id]) return; busy[s.id] = true; refreshList(); try { renderTradeShows(); } catch (e) {}
+    try {
+      if (v.start && s._start && v.start <= s._start) throw new Error('next year\'s dates have to come after this year\'s show');
+      var r = await ppApi('saveShowRenewal', { id: s.id, start: v.start, end: v.end || v.start, registration: v.registration, cost: v.cost, datesTouched: (v.start !== start0 || v.end !== end0) ? '1' : '' }, 120000);
+      if (!r || !r.success) throw new Error((r && r.error) || 'no answer');
+      var row = tsNormalize(r.row), i = tsList.findIndex(function(x) { return x.id === row.id; }); if (i >= 0) tsList[i] = row; else tsList.push(row);
+      var sp = window.spList || []; for (var k = sp.length - 1; k >= 0; k--) if (sp[k].id === row.id) sp.splice(k, 1);
+      s.rolledTo = row.id; s.renewal = ''; busy[s.id] = false; kept[s.id] = 1;
+      if (fromEditor && typeof closeModal === 'function') closeModal();
+      try { populateTsRepFilter(); } catch (e) {}
+      renderTradeShows(); refreshList(); try { var pv = document.getElementById('showpipelineView'); if (pv && pv.classList.contains('active') && typeof spRender === 'function') spRender(); } catch (e) {}
+      var reg = row.registration === 'paid' ? ', marked paid' : row.registration === 'need-to-pay' ? ', marked to pay' : '';
+      showToast(r.exists ? ppEsc(row.name) + ' was already on the list' : ppEsc(row.name) + ' is on the list' + reg, 'success');
+      try { if (!r.exists) logActivityToServer('renewed trade show', row.name, ppFmtRange(row._start, row._end), 'other'); } catch (e) {}
+      flash(row.id);
+    } catch (e) {
+      busy[s.id] = false; refreshList(); try { renderTradeShows(); } catch (e2) {}
+      showToast(/Unhandled|Unknown action/i.test(e.message) ? 'Renewing a show needs Extras v200. Install the current Extras file.' : 'Could not renew: ' + ppEsc(e.message), 'error');
+    }
+  }
+  window.tsRenew = function(id, anchor, fromEditor) {
+    var s = byId(id); if (!s || busy[id] || !canRenew(s)) return;
+    var nx = nextOf(s), pl = plan(s); if (nx && nx.where === 'list') { openTsModal(nx.row.id); return; }
+    var start = (nx && startOf(nx.row)) || pl.start, end = (nx && startOf(nx.row) && endOf(nx.row)) || pl.end, name = nx ? nx.row.name : pl.name, year = start ? start.slice(0, 4) : pl.year;
+    ppFormPopover(anchor || document.body, [
+      { key: 'start', label: 'First day', type: 'date', value: start },
+      { key: 'end', label: 'Last day', type: 'date', value: end },
+      { key: 'registration', label: 'Registration', type: 'select', value: '', options: [{ val: '', label: 'Not registered yet' }, { val: 'need-to-pay', label: 'Registered, need to pay' }, { val: 'paid', label: 'Registered and paid' }] },
+      { key: 'cost', label: 'Booth cost', value: s.cost || (nx && nx.row.cost) || '', placeholder: '$' }
+    ], function(v) { go(s, v, start, end, fromEditor); }, {
+      title: 'Renew for ' + ppEsc(year),
+      note: nx ? name + ' is waiting in the Show Pipeline. This puts it on the Trade Shows list.' : 'Adds ' + name + ' with the same reps, audience, booth and follow-up. ' + (start ? 'The dates are this year\'s moved 52 weeks. Change them here or later.' : 'Add the dates when you have them.'),
+      submitLabel: 'Add ' + year + ' show', confirmOnly: true });
+  };
+
+  // ---- the same step from the show's editor
+  function editorBtn(id) {
+    var s = id && byId(id); if (!canRenew(s)) return;
+    var all = document.querySelectorAll('.pp-modal-actions'), box = all.length ? all[all.length - 1].firstElementChild : null; if (!box || box.tagName !== 'DIV' || box.classList.contains('right') || box.querySelector('.ts-renew-m')) return;
+    var row = onList(s), pl = plan(s), b = document.createElement('button'); b.type = 'button'; b.className = 'pp-btn ts-renew-m';
+    if (row) { b.textContent = 'Open the ' + yearOn(row, pl) + ' show'; b.onclick = function() { openTsModal(row.id); }; }
+    else { b.innerHTML = ICON + 'Renew for ' + ppEsc(pl.year); b.onclick = function() { tsRenew(id, b, true); }; }
+    box.appendChild(b);
+  }
+  var _open = openTsModal; openTsModal = function(id) { var out = _open.apply(this, arguments); try { editorBtn(id); } catch (e) {} return out; };
+  window.tsRenewState = function() { return { due: due().map(function(s) { return s.id; }), finished: finished().map(function(s) { return s.id; }) }; };
 })();
 </script>
 </body>
