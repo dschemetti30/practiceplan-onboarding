@@ -2071,17 +2071,79 @@
 <body>
   <svg style="position:absolute;width:0;height:0"><defs><linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#0076bb"/><stop offset="100%" stop-color="#00a84f"/></linearGradient></defs></svg>
   
+  <style>
+    /* v234: one stage from sign-in to the app. The card never moves or resizes; only what is inside it changes; the stage lifts once. */
+    #loginScreen{position:fixed;inset:0;z-index:3000;display:flex;align-items:center;justify-content:center;min-height:0;padding:24px;overflow:hidden;animation:none;opacity:1;transition:opacity .5s cubic-bezier(.4,0,.2,1);
+      background:radial-gradient(1100px 760px at 12% 8%,rgba(0,168,79,.55),transparent 62%),radial-gradient(1000px 720px at 88% 92%,rgba(10,143,220,.65),transparent 60%),linear-gradient(135deg,#04324f,#0076bb 48%,#0a8f77)}
+    #loginScreen::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,rgba(255,255,255,.16),transparent 55%);pointer-events:none}
+    #loginScreen.hidden{display:none}
+    #loginScreen.is-out{opacity:0;pointer-events:none}
+    #enCard{position:relative;z-index:1;width:min(420px,100%);padding:40px 36px 28px;border-radius:24px;background:rgba(255,255,255,.97);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:0 40px 100px -30px rgba(2,24,43,.55),0 0 0 1px rgba(255,255,255,.4) inset;text-align:center;animation:enIn .5s cubic-bezier(.2,.8,.2,1) both;transition:transform .5s cubic-bezier(.4,0,.2,1),opacity .32s ease}
+    #loginScreen.is-out #enCard{transform:scale(1.035);opacity:0}
+    @keyframes enIn{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+    @keyframes enSpin{to{transform:rotate(360deg)}}
+    @keyframes enShim{to{background-position:-200% 0}}
+    #enCard .en-logo{height:40px;width:auto;max-width:100%;display:block;margin:0 auto 22px}
+    #enCard .en-title{font-family:Montserrat,Inter,system-ui,sans-serif;font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.15;margin:0 0 8px;background:linear-gradient(135deg,#0076bb,#00a84f);-webkit-background-clip:text;background-clip:text;color:transparent}
+    #enCard .en-sub{font-family:Inter,system-ui,sans-serif;font-size:13.5px;line-height:1.5;color:#475569;margin:0 auto 20px;max-width:300px;min-height:41px;display:flex;align-items:center;justify-content:center;transition:opacity .22s ease}
+    #enCard .en-slot{display:grid;min-height:124px;align-items:center}
+    #enCard .en-pane{grid-area:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .26s ease,transform .32s cubic-bezier(.2,.8,.2,1)}
+    #enCard .en-work{opacity:0;transform:translateY(6px);pointer-events:none}
+    #loginScreen.is-work .en-signin{opacity:0;transform:translateY(-6px);pointer-events:none}
+    #loginScreen.is-work .en-work{opacity:1;transform:none}
+    #enCard .en-ring{width:44px;height:44px;border-radius:50%;background:conic-gradient(from 0deg,rgba(0,118,187,0) 0deg,#0076bb 110deg,#00a84f 330deg,rgba(0,168,79,0) 360deg);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 4.5px),#000 calc(100% - 4px));mask:radial-gradient(farthest-side,transparent calc(100% - 4.5px),#000 calc(100% - 4px));animation:enSpin .95s linear infinite}
+    #enCard .en-status{font-family:Inter,system-ui,sans-serif;font-size:13.5px;font-weight:600;color:#334155;min-height:20px;transition:opacity .2s ease}
+    #enCard .en-note{font-family:Inter,system-ui,sans-serif;font-size:12px;line-height:1.5;color:#64748b}
+    #enCard .en-note b{color:#334155;font-weight:600}
+    #enCard #googleButtonContainer{display:flex;justify-content:center;align-items:center;min-height:44px;margin:0}
+    #enCard #googleButtonContainer:empty::before{content:"";width:280px;max-width:100%;height:40px;border-radius:6px;background:linear-gradient(90deg,#eef2f7 25%,#f8fafc 50%,#eef2f7 75%);background-size:200% 100%;animation:enShim 1.3s linear infinite}
+    #enCard #loginError{display:none;margin:0;padding:10px 14px;border-radius:12px;background:#fef2f2;color:#b42318;font-family:Inter,system-ui,sans-serif;font-size:12.5px;font-weight:500;line-height:1.45;max-width:320px}
+    #loginScreen .en-foot{position:absolute;left:0;right:0;bottom:22px;text-align:center;font-family:Inter,system-ui,sans-serif;font-size:11.5px;letter-spacing:.05em;color:rgba(255,255,255,.72);z-index:1}
+    [data-theme="dark"] #enCard{background:rgba(15,23,42,.94);box-shadow:0 40px 100px -30px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.08) inset}
+    [data-theme="dark"] #enCard .en-title{background:linear-gradient(135deg,#38bdf8,#4ade80);-webkit-background-clip:text;background-clip:text}
+    [data-theme="dark"] #enCard .en-sub{color:#cbd5e1}[data-theme="dark"] #enCard .en-status{color:#e2e8f0}[data-theme="dark"] #enCard .en-note{color:#94a3b8}[data-theme="dark"] #enCard .en-note b{color:#e2e8f0}
+    [data-theme="dark"] #enCard #googleButtonContainer:empty::before{background:linear-gradient(90deg,#1e293b 25%,#334155 50%,#1e293b 75%);background-size:200% 100%}
+    /* the older loading card is retired (kept in the page only because older code still names it), and the app no longer fades itself in under the stage */
+    .data-loading-overlay{display:none !important}
+    /* nothing else speaks while the stage is up: the top bar and the working pill wait until the app is showing */
+    html:has(#loginScreen:not(.hidden)) #ppTopBar,html:has(#loginScreen:not(.hidden)) #ppProgress,html:has(#loginScreen:not(.hidden)) #ppWork{opacity:0 !important}
+    .dashboard.active,.dashboard.active .main-content{animation:none !important}
+    @media(max-width:480px){#enCard{padding:32px 22px 24px;border-radius:20px}#enCard .en-title{font-size:23px}}
+    @media(prefers-reduced-motion:reduce){#loginScreen,#enCard,#enCard .en-pane{transition:none !important;animation:none !important}#enCard .en-ring{animation-duration:1.8s}}
+  </style>
   <div class="login-screen" id="loginScreen">
-    <div class="login-box">
-      <div class="logo-container"><img class="logo-svg" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMiIgZGF0YS1uYW1lPSJMYXllciAyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzOTYuMzcgNjYuNyI+CiAgPGRlZnM+CiAgICA8c3R5bGU+CiAgICAgIC5jbHMtMSwgLmNscy0yIHsKICAgICAgICBzdHJva2U6ICNmZmY7CiAgICAgICAgc3Ryb2tlLW1pdGVybGltaXQ6IDEwOwogICAgICAgIHN0cm9rZS13aWR0aDogMS40cHg7CiAgICAgIH0KCiAgICAgIC5jbHMtMSwgLmNscy0zIHsKICAgICAgICBmaWxsOiAjMDA3NmJiOwogICAgICB9CgogICAgICAuY2xzLTQgewogICAgICAgIGZpbGw6ICNmMTVhMjk7CiAgICAgIH0KCiAgICAgIC5jbHMtMiB7CiAgICAgICAgZmlsbDogIzAwYTg0ZjsKICAgICAgfQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPGcgaWQ9IkxheWVyXzEtMiIgZGF0YS1uYW1lPSJMYXllciAxIj4KICAgIDxnPgogICAgICA8cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik0uNzIsNDkuN2MtLjI0LS4wNC0uNDgtLjA5LS43Mi0uMTQuMjQuMDUuNDguMDkuNzIuMTRaIi8+CiAgICAgIDxnPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTM4LjUyLDMxLjk3bC0xOC43Mi03Ljg4Yy0xLjAzLS40My0xLjg2LTEuNjgtMS44Ni0yLjh2LTguNTNjMC0xLjExLjgzLTEuNjcsMS44Ni0xLjIzbDIwLjk1LDguODJjMy41LDEuNDcsNS4yNSwzLjQxLDUuMjUsNS4zNCwwLDEuOTMtMS43NSwzLjg3LTUuMjUsNS4zNGwtMi4yMy45NFoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0yOS43NCw0OC4yMnYxMS40M2MwLDEuMTEtLjgzLDIuMzctMS44NiwyLjhsLTguMDgsMy40Yy0xLjAzLjQzLTEuODYtLjEyLTEuODYtMS4yM3YtMjEuOTdjMC0xLjExLjgzLTIuMzcsMS44Ni0yLjhsMjAuOTUtOC44MmMzLjUtMS40Nyw1LjI1LTMuNDEsNS4yNS01LjM0djEwLjgxYzAsMy4wMy0xLjc1LDUuNjEtNS4yNSw3LjA5bC0xMS4wMSw0LjY0WiIvPgogICAgICA8L2c+CiAgICAgIDxnPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTI0LjQzLDIxLjI5TDUuNzEsMTMuNDFjLTEuMDMtLjQzLTEuODYtMS42OC0xLjg2LTIuOFYyLjA4YzAtMS4xMS44My0xLjY3LDEuODYtMS4yM2wyMC45NSw4LjgyYzMuNSwxLjQ3LDUuMjUsMy40MSw1LjI1LDUuMzQsMCwxLjkzLTEuNzUsMy44Ny01LjI1LDUuMzRsLTIuMjMuOTRaIi8+CiAgICAgICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMTUuNjUsMzcuNTR2MTEuNDNjMCwxLjExLS44MywyLjM3LTEuODYsMi44bC04LjA4LDMuNGMtMS4wMy40My0xLjg2LS4xMi0xLjg2LTEuMjN2LTIxLjk3YzAtMS4xMS44My0yLjM3LDEuODYtMi44bDIwLjk1LTguODJjMy41LTEuNDcsNS4yNS0zLjQxLDUuMjUtNS4zNHYxMC44MWMwLDMuMDMtMS43NSw1LjYxLTUuMjUsNy4wOWwtMTEuMDEsNC42NFoiLz4KICAgICAgPC9nPgogICAgICA8Zz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik04Ny44LDM4LjA4aC0xMS42NGwtMSw1LjY5aC02Ljg1bDItMTEuMzhoMTkuMTZjMi4zOSwwLDMuODYtMS4yMywzLjg2LTIuOTYsMC0xLjMtMS4wMy0yLjEzLTIuOTYtMi4xM2gtMTkuMTZsMS4zMi01Ljc5aDE4LjI0YzYuMTksMCw5LjU4LDIuODksOS41OCw3LjE1LDAsNS41Mi00LjgyLDkuNDEtMTIuNTQsOS40MVoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0xMzAuMjksNDMuNzdoLTkuMjFsLTMuOTItNS44OWgtMTAuNThsLTEuMDMsNS44OWgtNi44OGwyLTExLjM4aDE5LjM2YzIuMjksMCw0LjI5LTEuMSw0LjI5LTIuODksMC0xLjQ2LTEuMjYtMi4yLTMuMzktMi4yaC0xOS4zNmwxLjMzLTUuNzloMTguNWM0LjY2LDAsMTAuMTgsMS40MywxMC4xOCw2Ljc1LDAsNC4wMi0yLjg5LDcuNDItNy4xOCw4LjI1LjYzLjU3LDEuMzMsMS4zNiwyLjU2LDIuOTNsMy4zNiw0LjMyWiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTEzOCw0My43N2w1LjE5LTUuNzJoNS41NWMxLjM2LDAsMi44OSwwLDMuOTYuMDctLjQ3LS44LTEuMTYtMi4xNi0xLjctMy4yM2wtMi45Ni01Ljg5LTEzLjA0LDE0Ljc3aC04LjE1bDE3LjgzLTIwLjEyYzEuMTYtMS4zLDIuNzMtMi40OSw0Ljg5LTIuNDlzMy4yMywxLjEsMy45NiwyLjQ5bDEwLjM0LDIwLjEyaC0yNS44OFoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0xOTAuMTgsMzguMDVsLTUuNDIsNS43MmgtMTEuMThjLTYuOTUsMC0xMS41Ny00LjE5LTExLjU3LTkuODEsMC03LjMyLDYuOTgtMTIuNDQsMTUuNS0xMi40NGgxNS42bC01LjQ1LDUuNzloLTExLjE4Yy00LjA5LDAtNy41NSwyLjYzLTcuNTUsNi4xNSwwLDIuNzYsMi4yOSw0LjU5LDUuNjUsNC41OWgxNS42WiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTIxNi42NSwyMS41MmwtMS4wOCw1Ljc5aC04bC0yLjkzLDE2LjQ2aC02Ljg4bDIuODktMTYuNDZoLTEwLjQ0bDUuNTItNS43OWgyMC45M1oiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yMjEuMTgsNDMuNzdoLTYuODhsMy45Ni0yMi4yNWg2Ljg1bC0zLjkzLDIyLjI1WiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTI1MS40NywzOC4wNWwtMS42NCw1LjcyaC0xNC4wNWMtNi45NSwwLTExLjU3LTQuMTktMTEuNTctOS44MSwwLTcuMzIsNi45OC0xMi40NCwxNS41LTEyLjQ0aDE0LjkzbC0xLjgzLDUuNzloLTE0LjE0Yy00LjA5LDAtNy41NSwyLjYzLTcuNTUsNi4xNSwwLDIuNzYsMi4yOSw0LjU5LDUuNjUsNC41OWgxNC42OVoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yNzguMzUsMzguMDVsLTQuNTksNS43MmgtMjEuNDJsMy45Ni0yMi4yNWgyNC44OGwtNC42Miw1Ljc5aC0xNC40bC0uNDcsMi42NmgxNi43M2wtMy45Miw1LjA2aC0xMy43bC0uNTMsMy4wM2gxOC4wOVoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yOTguMDUsMzguMDhoLTExLjY0bC0xLDUuNjloLTYuODVsMi0xMS4zOGgxOS4xNmMyLjM5LDAsMy44Ni0xLjIzLDMuODYtMi45NiwwLTEuMy0xLjAzLTIuMTMtMi45Ni0yLjEzaC0xOS4xNmw0LjE0LTUuNzloMTUuNDJjNi4xOSwwLDkuNTgsMi44OSw5LjU4LDcuMTUsMCw1LjUyLTQuODIsOS40MS0xMi41NCw5LjQxWiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTMzNC42MSwzOC4wNWwtNS40OSw1LjcyaC0xOS42NmwzLjk2LTIyLjI1aDYuODVsLTIuOTMsMTYuNTNoMTcuMjZaIi8+CiAgICAgICAgPHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMzQyLjMsNDMuNzdsNS4xOS01LjcyaDUuNTVjMS4zNiwwLDIuODksMCwzLjk2LjA3LS40Ny0uOC0xLjE2LTIuMTYtMS43LTMuMjNsLTIuOTYtNS44OS0xMy4wNCwxNC43N2gtOC4xNWwxNy44My0yMC4xMmMxLjE2LTEuMywyLjczLTIuNDksNC44OS0yLjQ5czMuMjMsMS4xLDMuOTYsMi40OWwxMC4zNCwyMC4xMmgtMjUuODhaIi8+CiAgICAgICAgPHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMzg2LjAyLDQyLjk0bC0xMS40Ny0xMi4yNC0yLjMsMTMuMDdoLTYuMjVsMy4yMy0xOC40NmMuNS0yLjk2LDIuNDYtNC4xNiw0LjUyLTQuMTYuODMsMCwxLjY2LjIsMi41NiwxLjJsMTEuNDcsMTIuMjQsMi4zMy0xMy4wN2g2LjI1bC0zLjI5LDE4LjQzYy0uNTMsMi45Ni0yLjQ5LDQuMTktNC40OSw0LjE5LS45MywwLTEuNjMtLjItMi41Ni0xLjJaIi8+CiAgICAgIDwvZz4KICAgIDwvZz4KICA8L2c+Cjwvc3ZnPg==" alt="PracticePlan"></div>
-      <h1 class="fo-title">Front Office</h1>
-      <p class="subtitle fo-sub">Sales, marketing and customer success for PracticePlan, in one place.</p>
-      <div class="login-error" id="loginError"></div>
-      <div class="login-loading" id="loginLoading"><div class="spinner"></div><span style="color:#64748b">Verifying...</span></div>
-      <div id="googleButtonContainer" class="google-btn-container"></div>
-      <div class="auth-info"><strong>Authorized users only</strong><br>Sign in with your approved Google account</div>
+    <div id="enCard">
+      <img class="en-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMiIgZGF0YS1uYW1lPSJMYXllciAyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzOTYuMzcgNjYuNyI+CiAgPGRlZnM+CiAgICA8c3R5bGU+CiAgICAgIC5jbHMtMSwgLmNscy0yIHsKICAgICAgICBzdHJva2U6ICNmZmY7CiAgICAgICAgc3Ryb2tlLW1pdGVybGltaXQ6IDEwOwogICAgICAgIHN0cm9rZS13aWR0aDogMS40cHg7CiAgICAgIH0KCiAgICAgIC5jbHMtMSwgLmNscy0zIHsKICAgICAgICBmaWxsOiAjMDA3NmJiOwogICAgICB9CgogICAgICAuY2xzLTQgewogICAgICAgIGZpbGw6ICNmMTVhMjk7CiAgICAgIH0KCiAgICAgIC5jbHMtMiB7CiAgICAgICAgZmlsbDogIzAwYTg0ZjsKICAgICAgfQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPGcgaWQ9IkxheWVyXzEtMiIgZGF0YS1uYW1lPSJMYXllciAxIj4KICAgIDxnPgogICAgICA8cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik0uNzIsNDkuN2MtLjI0LS4wNC0uNDgtLjA5LS43Mi0uMTQuMjQuMDUuNDguMDkuNzIuMTRaIi8+CiAgICAgIDxnPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTM4LjUyLDMxLjk3bC0xOC43Mi03Ljg4Yy0xLjAzLS40My0xLjg2LTEuNjgtMS44Ni0yLjh2LTguNTNjMC0xLjExLjgzLTEuNjcsMS44Ni0xLjIzbDIwLjk1LDguODJjMy41LDEuNDcsNS4yNSwzLjQxLDUuMjUsNS4zNCwwLDEuOTMtMS43NSwzLjg3LTUuMjUsNS4zNGwtMi4yMy45NFoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0yOS43NCw0OC4yMnYxMS40M2MwLDEuMTEtLjgzLDIuMzctMS44NiwyLjhsLTguMDgsMy40Yy0xLjAzLjQzLTEuODYtLjEyLTEuODYtMS4yM3YtMjEuOTdjMC0xLjExLjgzLTIuMzcsMS44Ni0yLjhsMjAuOTUtOC44MmMzLjUtMS40Nyw1LjI1LTMuNDEsNS4yNS01LjM0djEwLjgxYzAsMy4wMy0xLjc1LDUuNjEtNS4yNSw3LjA5bC0xMS4wMSw0LjY0WiIvPgogICAgICA8L2c+CiAgICAgIDxnPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTI0LjQzLDIxLjI5TDUuNzEsMTMuNDFjLTEuMDMtLjQzLTEuODYtMS42OC0xLjg2LTIuOFYyLjA4YzAtMS4xMS44My0xLjY3LDEuODYtMS4yM2wyMC45NSw4LjgyYzMuNSwxLjQ3LDUuMjUsMy40MSw1LjI1LDUuMzQsMCwxLjkzLTEuNzUsMy44Ny01LjI1LDUuMzRsLTIuMjMuOTRaIi8+CiAgICAgICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMTUuNjUsMzcuNTR2MTEuNDNjMCwxLjExLS44MywyLjM3LTEuODYsMi44bC04LjA4LDMuNGMtMS4wMy40My0xLjg2LS4xMi0xLjg2LTEuMjN2LTIxLjk3YzAtMS4xMS44My0yLjM3LDEuODYtMi44bDIwLjk1LTguODJjMy41LTEuNDcsNS4yNS0zLjQxLDUuMjUtNS4zNHYxMC44MWMwLDMuMDMtMS43NSw1LjYxLTUuMjUsNy4wOWwtMTEuMDEsNC42NFoiLz4KICAgICAgPC9nPgogICAgICA8Zz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik04Ny44LDM4LjA4aC0xMS42NGwtMSw1LjY5aC02Ljg1bDItMTEuMzhoMTkuMTZjMi4zOSwwLDMuODYtMS4yMywzLjg2LTIuOTYsMC0xLjMtMS4wMy0yLjEzLTIuOTYtMi4xM2gtMTkuMTZsMS4zMi01Ljc5aDE4LjI0YzYuMTksMCw5LjU4LDIuODksOS41OCw3LjE1LDAsNS41Mi00LjgyLDkuNDEtMTIuNTQsOS40MVoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0xMzAuMjksNDMuNzdoLTkuMjFsLTMuOTItNS44OWgtMTAuNThsLTEuMDMsNS44OWgtNi44OGwyLTExLjM4aDE5LjM2YzIuMjksMCw0LjI5LTEuMSw0LjI5LTIuODksMC0xLjQ2LTEuMjYtMi4yLTMuMzktMi4yaC0xOS4zNmwxLjMzLTUuNzloMTguNWM0LjY2LDAsMTAuMTgsMS40MywxMC4xOCw2Ljc1LDAsNC4wMi0yLjg5LDcuNDItNy4xOCw4LjI1LjYzLjU3LDEuMzMsMS4zNiwyLjU2LDIuOTNsMy4zNiw0LjMyWiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTEzOCw0My43N2w1LjE5LTUuNzJoNS41NWMxLjM2LDAsMi44OSwwLDMuOTYuMDctLjQ3LS44LTEuMTYtMi4xNi0xLjctMy4yM2wtMi45Ni01Ljg5LTEzLjA0LDE0Ljc3aC04LjE1bDE3LjgzLTIwLjEyYzEuMTYtMS4zLDIuNzMtMi40OSw0Ljg5LTIuNDlzMy4yMywxLjEsMy45NiwyLjQ5bDEwLjM0LDIwLjEyaC0yNS44OFoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0xOTAuMTgsMzguMDVsLTUuNDIsNS43MmgtMTEuMThjLTYuOTUsMC0xMS41Ny00LjE5LTExLjU3LTkuODEsMC03LjMyLDYuOTgtMTIuNDQsMTUuNS0xMi40NGgxNS42bC01LjQ1LDUuNzloLTExLjE4Yy00LjA5LDAtNy41NSwyLjYzLTcuNTUsNi4xNSwwLDIuNzYsMi4yOSw0LjU5LDUuNjUsNC41OWgxNS42WiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTIxNi42NSwyMS41MmwtMS4wOCw1Ljc5aC04bC0yLjkzLDE2LjQ2aC02Ljg4bDIuODktMTYuNDZoLTEwLjQ0bDUuNTItNS43OWgyMC45M1oiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yMjEuMTgsNDMuNzdoLTYuODhsMy45Ni0yMi4yNWg2Ljg1bC0zLjkzLDIyLjI1WiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTI1MS40NywzOC4wNWwtMS42NCw1LjcyaC0xNC4wNWMtNi45NSwwLTExLjU3LTQuMTktMTEuNTctOS44MSwwLTcuMzIsNi45OC0xMi40NCwxNS41LTEyLjQ0aDE0LjkzbC0xLjgzLDUuNzloLTE0LjE0Yy00LjA5LDAtNy41NSwyLjYzLTcuNTUsNi4xNSwwLDIuNzYsMi4yOSw0LjU5LDUuNjUsNC41OWgxNC42OVoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yNzguMzUsMzguMDVsLTQuNTksNS43MmgtMjEuNDJsMy45Ni0yMi4yNWgyNC44OGwtNC42Miw1Ljc5aC0xNC40bC0uNDcsMi42NmgxNi43M2wtMy45Miw1LjA2aC0xMy43bC0uNTMsMy4wM2gxOC4wOVoiLz4KICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik0yOTguMDUsMzguMDhoLTExLjY0bC0xLDUuNjloLTYuODVsMi0xMS4zOGgxOS4xNmMyLjM5LDAsMy44Ni0xLjIzLDMuODYtMi45NiwwLTEuMy0xLjAzLTIuMTMtMi45Ni0yLjEzaC0xOS4xNmw0LjE0LTUuNzloMTUuNDJjNi4xOSwwLDkuNTgsMi44OSw5LjU4LDcuMTUsMCw1LjUyLTQuODIsOS40MS0xMi41NCw5LjQxWiIvPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTMzNC42MSwzOC4wNWwtNS40OSw1LjcyaC0xOS42NmwzLjk2LTIyLjI1aDYuODVsLTIuOTMsMTYuNTNoMTcuMjZaIi8+CiAgICAgICAgPHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMzQyLjMsNDMuNzdsNS4xOS01LjcyaDUuNTVjMS4zNiwwLDIuODksMCwzLjk2LjA3LS40Ny0uOC0xLjE2LTIuMTYtMS43LTMuMjNsLTIuOTYtNS44OS0xMy4wNCwxNC43N2gtOC4xNWwxNy44My0yMC4xMmMxLjE2LTEuMywyLjczLTIuNDksNC44OS0yLjQ5czMuMjMsMS4xLDMuOTYsMi40OWwxMC4zNCwyMC4xMmgtMjUuODhaIi8+CiAgICAgICAgPHBhdGggY2xhc3M9ImNscy0zIiBkPSJNMzg2LjAyLDQyLjk0bC0xMS40Ny0xMi4yNC0yLjMsMTMuMDdoLTYuMjVsMy4yMy0xOC40NmMuNS0yLjk2LDIuNDYtNC4xNiw0LjUyLTQuMTYuODMsMCwxLjY2LjIsMi41NiwxLjJsMTEuNDcsMTIuMjQsMi4zMy0xMy4wN2g2LjI1bC0zLjI5LDE4LjQzYy0uNTMsMi45Ni0yLjQ5LDQuMTktNC40OSw0LjE5LS45MywwLTEuNjMtLjItMi41Ni0xLjJaIi8+CiAgICAgIDwvZz4KICAgIDwvZz4KICA8L2c+Cjwvc3ZnPg==" alt="PracticePlan">
+      <h1 class="en-title">Front Office</h1>
+      <p class="en-sub" id="enSub">Sales, marketing and customer success for PracticePlan, in one place.</p>
+      <div class="en-slot">
+        <div class="en-pane en-signin">
+          <div class="login-error" id="loginError" role="alert"></div>
+          <div id="googleButtonContainer" class="google-btn-container"></div>
+          <div class="en-note"><b>Authorized users only.</b> Sign in with your approved Google account.</div>
+        </div>
+        <div class="en-pane en-work" aria-live="polite">
+          <span class="en-ring" aria-hidden="true"></span>
+          <div class="en-status" id="enStatus">Signing you in</div>
+        </div>
+      </div>
+      <div class="login-loading" id="loginLoading" style="display:none !important"></div>
     </div>
+    <div class="en-foot">PracticePlan Front Office</div>
   </div>
+  <script>
+    // v234: before the first frame is drawn. Someone already signed in never sees the sign-in state, and a dark-mode user never sees a light flash.
+    (function() {
+      try { if (localStorage.getItem('darkMode') === 'true') document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}
+      try {
+        var u = JSON.parse(sessionStorage.getItem('pp_admin_user') || 'null'); if (!u || !u.email) return;
+        var first = String(u.name || '').trim().split(/\s+/)[0] || '';
+        document.getElementById('loginScreen').classList.add('is-work');
+        if (first) document.getElementById('enSub').textContent = 'Welcome back, ' + first.charAt(0).toUpperCase() + first.slice(1).toLowerCase() + '.';
+        document.getElementById('enStatus').textContent = 'Opening your workspace';
+      } catch (e) {}
+    })();
+  </script>
 
   <svg style="position:absolute;width:0;height:0">
     <defs>
@@ -2668,19 +2730,38 @@
 
     function toggleDarkMode() { darkMode = !darkMode; localStorage.setItem('darkMode', darkMode); document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : ''); updateDarkModeIcon(); }
     function updateDarkModeIcon() { document.getElementById('darkModeBtn').innerHTML = darkMode ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'; }
-    function handleCredentialResponse(r) { document.getElementById('loginLoading').classList.add('active'); document.getElementById('googleButtonContainer').style.display = 'none'; verifyAccess(JSON.parse(atob(r.credential.split('.')[1]))); }
+    // v234: the sign-in card turns to its working state in place; an error turns it back with a plain sentence
+    function ppEntryWork(text, who) {
+      var st = document.getElementById('loginScreen'), sub = document.getElementById('enSub'), es = document.getElementById('enStatus'), err = document.getElementById('loginError');
+      if (err) { err.style.display = 'none'; err.textContent = ''; } if (!st) return;
+      var first = who && who.name ? String(who.name).trim().split(/\s+/)[0] : '';
+      if (first && sub && !st.classList.contains('is-work')) { sub.style.opacity = '0'; setTimeout(function() { sub.textContent = 'Welcome, ' + first.charAt(0).toUpperCase() + first.slice(1).toLowerCase() + '.'; sub.style.opacity = '1'; }, 200); }
+      if (es && text) es.textContent = text;
+      st.classList.add('is-work');
+    }
+    function ppEntryError(msg) {
+      var st = document.getElementById('loginScreen'), sub = document.getElementById('enSub'), err = document.getElementById('loginError');
+      if (st) st.classList.remove('is-work'); if (sub) sub.textContent = 'Sales, marketing and customer success for PracticePlan, in one place.';
+      if (err) { err.textContent = msg; err.style.display = 'block'; }
+    }
+    // a Google sign-in token is base64url and UTF-8; read it as such (a plain atob trips on some tokens and on accented names)
+    function ppJwtPayload(token) {
+      var b = String(token || '').split('.')[1].replace(/-/g, '+').replace(/_/g, '/'); while (b.length % 4) b += '=';
+      var bin = atob(b); try { return JSON.parse(decodeURIComponent(Array.prototype.map.call(bin, function(ch) { return '%' + ('00' + ch.charCodeAt(0).toString(16)).slice(-2); }).join(''))); } catch (e) { return JSON.parse(bin); }
+    }
+    function handleCredentialResponse(r) { var p; try { p = ppJwtPayload(r.credential); } catch (e) { ppEntryError('That sign-in did not come through. Please try again.'); return; } ppEntryWork('Checking your access', p); verifyAccess(p); }
     async function verifyAccess(payload) {
       try {
         const result = await jsonpRequest(API_URL + '?action=verifyAdmin&email=' + encodeURIComponent(payload.email));
-        if (result.authorized) { currentUser = { email: payload.email, name: payload.name || payload.email.split('@')[0] }; sessionStorage.setItem('pp_admin_user', JSON.stringify(currentUser)); showDashboard(); }
-        else { document.getElementById('loginLoading').classList.remove('active'); document.getElementById('googleButtonContainer').style.display = 'flex'; document.getElementById('loginError').textContent = 'Access denied'; document.getElementById('loginError').style.display = 'block'; }
-      } catch(e) { document.getElementById('loginLoading').classList.remove('active'); document.getElementById('googleButtonContainer').style.display = 'flex'; document.getElementById('loginError').textContent = 'Connection error'; document.getElementById('loginError').style.display = 'block'; }
+        if (result.authorized) { currentUser = { email: payload.email, name: payload.name || payload.email.split('@')[0] }; sessionStorage.setItem('pp_admin_user', JSON.stringify(currentUser)); ppEntryWork('Opening your workspace'); showDashboard(); }
+        else ppEntryError('This Google account is not on the Front Office list. Try a different account, or ask an admin to add you.');
+      } catch(e) { ppEntryError('Front Office could not be reached just now. Check your connection and try again.'); }
     }
     function showDashboard() {
       var ls = document.getElementById('loginScreen'), ov0 = document.getElementById('dataLoadingOverlay');
-      // the sign-in card fades while the loading card fades in on the same gradient: one scene, no jump
-      ls.classList.add('fading'); ov0.classList.remove('hidden', 'settled'); ov0.classList.add('entering'); requestAnimationFrame(function() { requestAnimationFrame(function() { ov0.classList.remove('entering'); }); }); setTimeout(function() { ov0.classList.add('settled'); }, 600); setTimeout(function() { ls.classList.add('hidden'); ls.classList.remove('fading'); ls.style.display = ''; }, 1200);
-      window._ppSplashShownAt = Date.now(); ppSplashTween(8);
+      // v234: one stage. The card stays where it is in its working state, the app is drawn underneath, and the stage lifts once (finishLoading).
+      if (ov0) ov0.classList.add('hidden'); if (ls) { ls.classList.remove('hidden', 'is-out'); ppEntryWork(''); }
+      if (!window._ppSplashShownAt) window._ppSplashShownAt = Date.now(); ppSplashTween(8);
       if (currentUser) { const name = currentUser.name.split(' ').map(n => n.charAt(0).toUpperCase() + n.slice(1).toLowerCase()).join(' '); document.getElementById('userName').textContent = name; var member = TEAM_MEMBERS.find(function(m) { return m.email === currentUser.email; }); if (member && member.photo) { document.getElementById('userAvatar').innerHTML = '<img src="' + member.photo + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">'; } else { document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase(); } }
       // Start animated loading sequence
       window._ppLoadStart = Date.now(); window._ppLoadFinished = false; window._ppCachedRender = false;
@@ -2695,37 +2776,27 @@
     }
     function startLoadingSequence() {
       var steps = [
-        { pct: 12, text: 'Signed in. Fetching submissions...', delay: 250 },
-        { pct: 28, text: 'Loading organizations...', delay: 1400 },
-        { pct: 46, text: 'Reading your pipeline', delay: 3200 },
-        { pct: 62, text: 'Building your views', delay: 6000 },
+        { pct: 12, text: 'Opening your workspace', delay: 250 },
+        { pct: 28, text: 'Loading your clients', delay: 1600 },
+        { pct: 46, text: 'Reading your pipeline', delay: 3600 },
+        { pct: 62, text: 'Building your views', delay: 6500 },
         { pct: 74, text: 'Almost there', delay: 10000 },
-        { pct: 84, text: 'Google Sheets is taking a moment', delay: 18000 },
-        { pct: 90, text: 'Still working', delay: 30000 }
+        { pct: 84, text: 'Still going. Almost done.', delay: 18000 }
       ];
-      steps.forEach(function(step) {
-        setTimeout(function() {
-          var ov = document.getElementById('dataLoadingOverlay');
-          if (ov && !ov.classList.contains('hidden') && !window._ppLoadFinished) ppSplashProgress(step.pct, step.text);
-        }, step.delay);
-      });
+      steps.forEach(function(step) { setTimeout(function() { if (!window._ppLoadFinished) ppSplashProgress(step.pct, step.text); }, step.delay); });
     }
     function finishLoading(data, fromCache) {
       if (window._ppLoadFinished) return;
       window._ppLoadFinished = true;
-      ppSplashProgress(100, fromCache ? 'Ready' : 'Ready');
-      var metrics = document.getElementById('loadingMetrics');
-      var totalOrgs = data.length, totalSpaces = data.reduce(function(s, d) { return s + (d.spaces || 0); }, 0);
-      var totalComplete = data.filter(function(d) { return ['complete', 'onboarding', 'published', 'launched'].indexOf(d.pipelineStatus) >= 0; }).length;
-      // one scene only: the mark and the progress ring, then straight into the tool
-      // Hold the finished state just long enough to read it (max ~0.9s), never longer than the data took
-      // the splash stays on screen at least 2.2s from the moment it appeared, and 500ms after the ring completes, so it reads as one deliberate motion
-      var shown = window._ppSplashShownAt || Date.now(), hold = Math.max(500, 2200 - (Date.now() - shown));
+      try { ppSplashProgress(100, ''); } catch (e) {}
+      // v234: no held splash and no second fade. The stage is on screen for at least half a second so it never flickers; then the app is
+      // switched on underneath it, given a moment to finish drawing (its own first-paint motion and the late sidebar tabs), and the stage lifts once.
+      var shown = window._ppSplashShownAt || Date.now(), hold = Math.max(0, 500 - (Date.now() - shown));
       setTimeout(function() {
-        var ov = document.getElementById('dataLoadingOverlay');
-        document.getElementById('dashboard').classList.add('active');
-        requestAnimationFrame(function() { ppLayoutInit(); if (typeof ppApplyMarketingGate === 'function') ppApplyMarketingGate(); ppTabInk(); if (ov) ov.classList.add('leaving'); });
-        setTimeout(function() { if (ov) { ov.classList.add('hidden'); ov.classList.remove('leaving'); } }, 1250);
+        var st = document.getElementById('loginScreen'), ov = document.getElementById('dataLoadingOverlay');
+        document.getElementById('dashboard').classList.add('active'); if (ov) ov.classList.add('hidden');
+        requestAnimationFrame(function() { ppLayoutInit(); if (typeof ppApplyMarketingGate === 'function') ppApplyMarketingGate(); ppTabInk(); });
+        setTimeout(function() { if (!st) return; st.classList.add('is-out'); setTimeout(function() { st.classList.add('hidden'); st.classList.remove('is-out'); }, 560); }, 640);
       }, hold);
     }
     function animateCount(elId, target, duration) {
@@ -5163,6 +5234,7 @@
       ppSplashTween(pct);
       var status = document.getElementById('loadingStatus');
       if (status && text && status.textContent !== text) { status.style.opacity = '0'; setTimeout(function() { status.textContent = text; status.style.opacity = '1'; }, 180); }
+      var es = document.getElementById('enStatus'); if (es && text && es.textContent !== text) { es.style.opacity = '0'; setTimeout(function() { es.textContent = text; es.style.opacity = '1'; }, 200); }   // v234: the sign-in stage's status line
     }
     function ppSyncPill(on, text) {
       var el = document.getElementById('ppSyncPill'); if (!el) return;
@@ -10933,7 +11005,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v233 · Nov 19h';
+    var PP_BUILD = 'v234 · Nov 20a';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -16420,6 +16492,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
   function ensure() { if (!state.data && !state.loading && (!state.err || Date.now() - (state.errAt || 0) > 30000)) { state.err = ''; load(false); loadScore(); } }
   function place() { var hq = document.getElementById('hq2'); if (!hq) return; if (!document.getElementById('tdCard')) { var c = document.createElement('div'); c.className = 'td-bar'; c.id = 'tdCard'; hq.insertAdjacentElement('afterbegin', c); } draw(); ensure(); if (window._wcStatus && window._wcStatus.waiting && !document.getElementById('wcNote')) wcNoteDraw(window._wcStatus); }
   if (typeof renderDashboard2 === 'function') { var _rd = renderDashboard2; window.renderDashboard2 = function() { _rd.apply(this, arguments); try { place(); } catch (e) {} }; }
+  window.tdPlace = place;   // v234: so the strip can be put back the moment the dashboard redraws (see the v234 block)
   // the page: HQ > Today, right under Dashboard
   (function() {
     var anchor = document.getElementById('dashboardView'); if (!anchor || document.getElementById('todayView')) return;
@@ -17127,7 +17200,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
   function pill() { if (!el) { el = document.createElement('div'); el.id = 'ppWork'; el.setAttribute('role', 'status'); el.setAttribute('aria-live', 'polite'); el.innerHTML = '<span class="wk-sp"></span><span class="wk-ok"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><b></b><small></small>'; document.body.appendChild(el); } return el; }
   function label() { var k = open.some(function(o) { return o.kind === 'save'; }) ? 'Saving' : open.some(function(o) { return o.kind === 'work'; }) ? 'Working' : 'Loading'; return k; }
   function show() { var p = pill(); clearTimeout(hideT); p.classList.remove('done'); p.querySelector('b').textContent = label(); p.querySelector('small').textContent = ''; p.classList.add('on'); document.body.classList.add('pp-working');
-    clearTimeout(slowT); slowT = setTimeout(function() { if (open.length && el) el.querySelector('small').textContent = 'Still going. Close CRM and the sheet can take a little while.'; }, 7000); }
+    clearTimeout(slowT); slowT = setTimeout(function() { if (open.length && el) el.querySelector('small').textContent = 'Still going. Almost done.'; }, 7000); }
   function hide(doneMsg) { clearTimeout(showT); clearTimeout(slowT); showT = null; document.body.classList.remove('pp-working'); if (!el) return; if (doneMsg) { el.classList.add('done', 'on'); el.querySelector('b').textContent = doneMsg; el.querySelector('small').textContent = ''; clearTimeout(hideT); hideT = setTimeout(function() { el.classList.remove('on'); }, 1300); } else if (!el.classList.contains('done')) el.classList.remove('on'); }
   function release(o) { if (o.held && o.held.removeAttribute) { o.held.removeAttribute('data-pp-held'); } clearTimeout(o.t); }
   function settle(o, ok) {
@@ -17213,6 +17286,230 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       showToast(e.message + (/Timeout/.test(e.message) ? '. It may still have saved: press Refresh before trying again.' : ''), 'error');
     }
   };
+})();
+</script>
+<style>
+  /* v234: one ring for everything that waits. Hollow, blue running into green, the same on the sign-in card, the working pill,
+     a saving row and the page loaders. */
+  .pp-ring,#ppWork .wk-sp,.f2-row.saving::after,.spinner{border:0 !important;border-radius:50%;background:conic-gradient(from 0deg,rgba(0,118,187,0) 0deg,#0076bb 110deg,#00a84f 330deg,rgba(0,168,79,0) 360deg);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - var(--rw,3px) - .5px),#000 calc(100% - var(--rw,3px)));mask:radial-gradient(farthest-side,transparent calc(100% - var(--rw,3px) - .5px),#000 calc(100% - var(--rw,3px)));animation:ppSpin .95s linear infinite}
+  .pp-ring{display:inline-block;width:18px;height:18px;flex:0 0 auto}
+  .spinner{--rw:4px}
+  .pp-btn:not(.primary).pp-busy::after,.pp-mini-btn.pp-busy::after{border:0;border-radius:50%;background:conic-gradient(from 0deg,rgba(0,118,187,0) 0deg,#0076bb 110deg,#00a84f 330deg,rgba(0,168,79,0) 360deg);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2.5px),#000 calc(100% - 2px));mask:radial-gradient(farthest-side,transparent calc(100% - 2.5px),#000 calc(100% - 2px))}
+  /* the working pill, in the tool's own dress: a white pill like the header's, a hairline in the brand gradient, the ring, plain navy text */
+  #ppWork{top:84px;gap:10px;padding:8px 16px 8px 10px;border-radius:999px;border:1.5px solid transparent;background:linear-gradient(var(--card),var(--card)) padding-box,linear-gradient(120deg,#0076bb,#00a84f) border-box;color:var(--text);font-family:inherit;font-size:13px;font-weight:600;letter-spacing:0;box-shadow:0 10px 30px -10px rgba(15,23,42,.28),0 2px 6px rgba(15,23,42,.06)}
+  #ppWork .wk-sp{width:18px;height:18px;--rw:3px}
+  #ppWork .wk-ok{width:18px;height:18px;background:linear-gradient(135deg,#0a9d6a,#00a84f)}
+  #ppWork b{font-weight:600}
+  #ppWork small{color:var(--text3,#64748b);font-weight:500}
+  #ppWork small:not(:empty){padding-left:10px;margin-left:2px;border-left:1px solid var(--border)}
+  .f2-row.saving::after{border:0;width:18px;height:18px;margin-top:-9px}
+
+  /* v234: Help. How to and What's new, for the pages this person can open. */
+  .hp{max-width:1080px}
+  .hp-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+  .hp-seg{display:inline-flex;padding:4px;border-radius:12px;background:var(--bg2,rgba(100,116,139,.1));gap:2px}
+  .hp-seg button{border:0;background:transparent;font:600 13px inherit;font-family:inherit;color:var(--text2);padding:8px 16px;border-radius:9px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .15s ease,color .15s ease}
+  .hp-seg button.on{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(15,23,42,.12)}
+  .hp-seg .n{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:linear-gradient(135deg,#0076bb,#00a84f);color:#fff;font-size:10.5px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+  .hp-search{flex:1 1 260px;max-width:420px;position:relative}
+  .hp-search input{width:100%;height:40px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text);font:500 13.5px inherit;font-family:inherit;padding:0 14px 0 38px;outline:none;transition:border-color .15s ease,box-shadow .15s ease}
+  .hp-search input:focus{border-color:var(--pp-blue);box-shadow:0 0 0 3px rgba(0,118,187,.14)}
+  .hp-search svg{position:absolute;left:12px;top:11px;width:18px;height:18px;stroke:var(--text3,#94a3b8);fill:none;stroke-width:2;stroke-linecap:round}
+  .hp-for{font-size:12px;color:var(--text3,#64748b);margin-left:auto}
+  .hp-grid{display:grid;grid-template-columns:210px minmax(0,1fr);gap:22px;align-items:start}
+  .hp-areas{position:sticky;top:86px;display:flex;flex-direction:column;gap:2px}
+  .hp-areas button{display:flex;align-items:center;justify-content:space-between;gap:8px;border:0;background:transparent;text-align:left;font:600 13px inherit;font-family:inherit;color:var(--text2);padding:9px 12px;border-radius:10px;cursor:pointer}
+  .hp-areas button:hover{background:rgba(100,116,139,.08)}
+  .hp-areas button.on{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(15,23,42,.1),inset 3px 0 0 var(--pp-blue)}
+  .hp-areas button span{font-size:11px;font-weight:600;color:var(--text3,#94a3b8)}
+  .hp-h{font:700 11px inherit;font-family:inherit;letter-spacing:.09em;text-transform:uppercase;color:var(--text3,#64748b);margin:18px 2px 8px}
+  .hp-h:first-child{margin-top:0}
+  .hp-q{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:8px;overflow:hidden;transition:box-shadow .18s ease,border-color .18s ease}
+  .hp-q[open]{box-shadow:0 8px 26px -14px rgba(15,23,42,.22);border-color:rgba(0,118,187,.35)}
+  .hp-q summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px 16px;font-size:14px;font-weight:600;color:var(--text);line-height:1.35}
+  .hp-q summary::-webkit-details-marker{display:none}
+  .hp-q summary::after{content:"";margin-left:auto;flex:0 0 auto;width:8px;height:8px;border-right:2px solid var(--text3,#94a3b8);border-bottom:2px solid var(--text3,#94a3b8);transform:rotate(45deg);transition:transform .18s ease;margin-right:4px}
+  .hp-q[open] summary::after{transform:rotate(-135deg)}
+  .hp-a{padding:0 16px 16px;font-size:13.5px;line-height:1.6;color:var(--text2)}
+  .hp-a ol{margin:0;padding-left:20px}.hp-a li{margin:0 0 6px;padding-left:2px}.hp-a li::marker{color:var(--pp-blue);font-weight:700}
+  .hp-a p{margin:0 0 8px}
+  .hp-a b{color:var(--text);font-weight:600}
+  .hp-foot{display:flex;align-items:center;gap:10px;margin-top:12px}
+  .hp-go{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--pp-blue);font:600 12.5px inherit;font-family:inherit;cursor:pointer}
+  .hp-go:hover{border-color:var(--pp-blue)}
+  .hp-tag{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:10px;background:rgba(100,116,139,.12);color:var(--text2);font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+  .hp-tag.adm{background:rgba(201,162,39,.16);color:var(--pp-gold-dk,#8a6d0b)}
+  .hp-none{padding:36px 20px;text-align:center;color:var(--text3,#64748b);font-size:13.5px;background:var(--card);border:1px dashed var(--border);border-radius:14px}
+  .hp-rel{display:grid;grid-template-columns:118px minmax(0,1fr);gap:18px;margin-bottom:22px}
+  .hp-when{font:700 12.5px inherit;font-family:inherit;color:var(--text);padding-top:14px;position:relative}
+  .hp-when small{display:block;font-weight:500;font-size:11.5px;color:var(--text3,#64748b);margin-top:2px}
+  .hp-when .new{display:inline-flex;margin-top:6px;height:18px;padding:0 7px;border-radius:9px;background:linear-gradient(135deg,#0076bb,#00a84f);color:#fff;font-size:10px;font-weight:700;letter-spacing:.05em;align-items:center}
+  .hp-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+  .hp-it{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;padding:14px 16px;border-top:1px solid var(--border);align-items:start}
+  .hp-it:first-child{border-top:0}
+  .hp-it h4{margin:0;font-size:14px;font-weight:600;color:var(--text);line-height:1.35}
+  .hp-it p{margin:3px 0 0;font-size:13px;line-height:1.55;color:var(--text2);grid-column:1}
+  .hp-it .side{grid-column:2;grid-row:1 / span 2;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+  .view-tab .hp-dot{margin-left:auto;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:linear-gradient(135deg,#0076bb,#00a84f);color:#fff;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+  #ppBuildTag{cursor:pointer}
+  #ppBuildTag:hover{color:var(--pp-blue)}
+  @media(max-width:860px){.hp-grid{grid-template-columns:1fr}.hp-areas{position:static;flex-direction:row;flex-wrap:wrap}.hp-rel{grid-template-columns:1fr;gap:6px}.hp-when{padding-top:0}.hp-it{grid-template-columns:1fr}.hp-it .side{grid-column:1;grid-row:auto;flex-direction:row;align-items:center}}
+</style>
+<script>
+// v234, part 1: wording, and the Today strip keeps its place.
+(function() {
+  // the Today strip used to drop out for a moment whenever the dashboard redrew itself; it is put straight back before the screen is painted
+  try { var dv = document.getElementById('dashboardView'); if (dv && typeof MutationObserver === 'function') new MutationObserver(function() { var hq = document.getElementById('hq2'); if (hq && !document.getElementById('tdCard') && typeof window.tdPlace === 'function') { try { window.tdPlace(); } catch (e) {} } }).observe(dv, { childList: true, subtree: true }); } catch (e) {}
+})();
+</script>
+<script>
+// v234, part 2: Help. How to do things and what is new in Front Office, shown only for the pages this person can open.
+// To maintain: every build that changes what a person sees adds an item at the top of NEWS (newest release first) and, when the steps
+// for something change, edits its entry in HOW. `view` is the page's switchView key: an entry shows only when that page's sidebar
+// tab is there and not hidden for this person. `role: 'super'` is for admin-only things. No `view` means everyone.
+(function() {
+  if (typeof switchView !== 'function' || document.getElementById('helpView')) return;
+  var HOW = [
+    { a: 'Getting around', q: 'How do I find a client, a person, a lead or a show?', s: ['Use the search box at the top of any page. It looks through clients, people, prospects, leads, shows and signals, and through this help.', 'Pick a result to go straight to it.'], k: 'search find look up' },
+    { a: 'Getting around', q: 'How do I know my change saved?', s: ['A pill under the header says <b>Saving</b> while a change is on its way, and shows a green tick and <b>Saved</b> when it lands.', 'The button you pressed dims until its answer is back, so there is no need to press twice.', 'If something fails, a red message says what happened.'], k: 'saving loading working spinner did it save twice' },
+    { a: 'Getting around', q: 'What is Today?', view: 'today', s: ['Today lists what is waiting on you: replies to answer, sequences to approve, held leads, show to-dos and client check-ins, most urgent first.', 'The strip at the top of the Dashboard shows the count and the next item. Press it to open the full list.', 'Each row has a button that takes you to the place to deal with it.'], k: 'inbox to do needs me waiting' },
+    { a: 'Getting around', q: 'How do I see what is waiting on the whole team?', view: 'today', role: 'super', s: ['On Today, switch from <b>Me</b> to <b>Everyone</b>.', 'Only admins have this switch.'], k: 'everyone team all' },
+    { a: 'Getting around', q: 'Can I fold the sections in the sidebar?', s: ['Press a section heading in the sidebar (HQ, Sales, Marketing and so on) to fold or open it.', 'Front Office remembers how you left it.'], k: 'menu nav collapse expand' },
+    { a: 'Getting around', q: 'Is there a dark mode?', s: ['Press the moon at the top right. Press it again to go back.'], k: 'dark light theme' },
+
+    { a: 'Onboarding', q: 'Where do I see who has signed the MOU and the direct deposit form?', view: 'submissions', s: ['Open <b>Onboarding, Clients</b>. The <b>Signed documents</b> bar at the top shows how many districts are complete. Press it to open the list.', '<b>Complete</b> means both documents are in the district\'s folder. <b>One of two</b> shows which one is missing.', 'The list is read from the SignNow folder in Google Drive every 30 minutes.'], k: 'mou direct deposit signnow signed paperwork' },
+    { a: 'Onboarding', q: 'A signed document is under "Link to a client". What do I do?', view: 'submissions', s: ['It means Front Office could not tell for certain which client the document belongs to. It never guesses.', 'Pick the client from the list on that row. The choice is remembered for that district from then on.'], k: 'wrong client unmatched link' },
+    { a: 'Onboarding', q: 'How do I work through a new district\'s onboarding?', view: 'playbook', s: ['Open <b>Onboarding, Playbook</b> and pick the client.', 'Tick each step as it is done and add a note where it helps. Ticks and notes save as you go.', '<b>District view</b> shows only the steps the district sees.'], k: 'checklist steps phases' },
+    { a: 'Onboarding', q: 'How do I show a district where their onboarding stands?', view: 'playbook', s: ['On the client\'s Playbook, press <b>Status page link</b>.', 'Choose what the page shows (go-live date, progress, next step, your team\'s contact cards), check the preview on the right, and publish.', 'The district gets one link that always shows the latest. There is nothing for them to log in to.'], k: 'status page share progress link publish' },
+    { a: 'Onboarding', q: 'Can the district see my notes on their status page?', view: 'playbook', s: ['Not unless you share them. Every note is <b>Internal</b> to begin with.', 'Press the chip next to a note to switch it to <b>Shared with district</b>.'], k: 'notes internal shared private' },
+    { a: 'Onboarding', q: 'How do I email the status page to the district?', view: 'playbook', s: ['After publishing, press <b>Email it to the district</b>.', 'Pick who gets it and adjust the subject or wording if you like. The preview on the right is the email exactly as they will receive it.', 'It is sent through Close as the lead owner and logged on the lead. Nothing goes until you press Send.'], k: 'email send status preview' },
+    { a: 'Onboarding', q: 'How will I know the district looked at their status page?', view: 'playbook', s: ['The first time they open it, a row appears on Today for the account rep and the onboarding lead.', 'The Playbook also shows how many times it has been opened.'], k: 'opened viewed status' },
+
+    { a: 'Client success', q: 'What does a client\'s health score mean?', view: 'health', s: ['Each client gets one score from how much they use PracticePlan and how the relationship is going: contact, meetings, availability, setup, paperwork, check-ins and NPS.', 'Open a client\'s row to see each part as a bar, so you can see what is pulling the score down.', 'Gold means watch. Red means at risk.'], k: 'score risk watch healthy' },
+    { a: 'Client success', q: 'A client on Health says "not linked". How do I fix it?', view: 'health', s: ['It means Front Office does not know which Close lead is this client, so it cannot read their emails and meetings.', 'Open the row and paste the client\'s Close lead link into the box. It only has to be done once.'], k: 'not linked close lead' },
+    { a: 'Client success', q: 'How do I record how far out a client\'s calendar is open?', view: 'availability', s: ['Open <b>Client Success, Availability</b> and press the client.', 'Set the date their calendar is open through. A season that differs can be set on its own.'], k: 'open through season calendar' },
+    { a: 'Client success', q: 'How do I ask a district to open their next season?', view: 'availability', s: ['On Availability, start the ask from that client\'s row. The email opens with the season filled in.', 'Pick who gets it, adjust the wording if needed, and send. It goes through Close as the lead owner.', 'Nothing is sent to a district automatically unless an admin has switched that on.'], k: 'ask season open availability email' },
+    { a: 'Client success', q: 'How do I add or find a client\'s login?', view: 'credentials', s: ['Open <b>Client Success, Client Credentials</b>. Search by district, or press <b>Add Client</b> to save a new login.', 'A new login shows in the list as soon as it is saved.'], k: 'login password credentials username' },
+
+    { a: 'Events', q: 'How do I add a trade show, and who gets its leads?', view: 'tradeshows', s: ['Open <b>Events, Trade Shows</b> and press <b>Add Show</b>. Fill in the dates and the reps working it.', 'Each show gets one code, like THSADA-TX-2026. Leads that come in from that show go to the reps on it and follow the show\'s sequence.'], k: 'conference show booth code reps' },
+    { a: 'Events', q: 'Where do shows we are still deciding on live?', view: 'showpipeline', s: ['<b>Events, Trade Show Review</b>. Shows found in email or on the source lists, or added by hand, wait there with their dates and deadlines.', 'When the answer is yes, move it to Go and it becomes a show on Trade Shows.'], k: 'pipeline evaluate consider deadline' },
+    { a: 'Events', q: 'How do I email attendees before a show?', view: 'preevent', s: ['Open <b>Events, Pre-event Outreach</b> and pick the show.', 'Check the two emails and when they go, then approve. Nothing sends until a campaign is approved.', 'They go out through Close as the rep on the show, and stop for anyone who replies.'], k: 'pre show attendees outreach campaign' },
+    { a: 'Events', q: 'Where are the landing pages for our shows?', view: 'landing', s: ['<b>Events, Landing Pages</b> lists the page for each show with its link.', 'A lead that comes in through a page carries that show as its source.'], k: 'landing page link qr' },
+
+    { a: 'Sales', q: 'A new lead came in. What happens to it?', view: 'leads', s: ['Its source decides three things: which rep gets it, what follow-up it gets, and what Close records as the lead source.', 'It is pushed to Close and lands in Follow-up with a start date.', 'If the source is wrong, use <b>Fix sources</b> on Inbound Leads to credit it to the right show or source.'], k: 'inbound lead source rep assigned' },
+    { a: 'Sales', q: 'What do the tabs on Follow-up mean?', view: 'followup', s: ['<b>Needs you</b>: waiting for your approval or a decision. <b>Up next</b>: scheduled to start. <b>Running</b>: in a sequence now. <b>Done</b>: finished, replied or met. <b>Everything</b> shows all of them.'], k: 'queue tabs needs you running' },
+    { a: 'Sales', q: 'How do I approve, hold or change a lead\'s follow-up?', view: 'followup', s: ['Press <b>Approve</b> on the row to start it.', 'The three-dot menu has the rest: Preview the emails, Work this one by hand, Hold, Pick a start date, Change the sequence, and Dismiss.'], k: 'approve hold sequence start date dismiss' },
+    { a: 'Sales', q: 'The same person is in Follow-up more than once. What do I do?', view: 'followup', s: ['Usually nothing. Front Office folds copies with the same email into one row, so one person gets one sequence.', 'If a copy is still there, open its three-dot menu and choose <b>Dismiss as a duplicate</b>.'], k: 'duplicate twice same person copies' },
+    { a: 'Sales', q: 'Who do the follow-up emails come from, and what do they say?', view: 'followup', s: ['Sequences run in Close, from the sender set for that show or source.', '<b>Preview the emails</b> in the row\'s three-dot menu shows what will go and from whom.'], k: 'sender from sequence preview' },
+
+    { a: 'Prospecting', q: 'What is Signals for?', view: 'signals', s: ['Signals gathers news about districts and schools, such as bonds, new facilities and leadership changes. It is a list of reasons to reach out.', 'Star what matters, add a note, or dismiss what does not. What teammates did with an article shows on it.'], k: 'news signals bond' },
+    { a: 'Prospecting', q: 'What does Close CRM Insights show?', view: 'intel', s: ['Leads and opportunities from Close in one place, so you can see where your time is best spent.'], k: 'close crm insights opportunities' },
+
+    { a: 'Marketing', q: 'How do I ask marketing for something?', view: 'requests', s: ['Open <b>Marketing, Marketing Requests</b> and add what you need and when you need it.', 'Requests for an upcoming show are created for you ahead of the show.'], k: 'request creative design' },
+    { a: 'Marketing', q: 'How do I track leads that do not come from a show?', view: 'sources', s: ['Every other way a lead reaches us (a flyer, a referral, a webinar, an audience page) is a row on <b>Marketing, Sources</b>.', 'Each source has a code, the reps who get its leads, and the follow-up those leads receive.', 'Use the tagged link on a source when you share a page, so its leads are credited to it.'], k: 'source flyer referral webinar tagged link' },
+    { a: 'Marketing', q: 'Where can I see which shows and sources pay off?', view: 'attribution', s: ['<b>Marketing, Attribution</b> shows leads, meetings and customers by where they came from for the year, next to what was spent.'], k: 'attribution roi cost per lead' },
+    { a: 'Marketing', q: 'What is in Content Studio?', view: 'studio', s: ['Starters drawn from real client results, the testimonial pipeline, the idea board and blog drafts.'], k: 'content testimonial blog ideas' },
+    { a: 'Marketing', q: 'Where do sponsorships and marketing spend go?', view: 'partners', s: ['<b>Marketing, Partners &amp; Spend</b>: each partner with its renewals and deliverables, and a ledger of spend so cost per lead is complete.'], k: 'sponsor partner spend budget' },
+
+    { a: 'Workspace', q: 'Where are the MOU and direct deposit links, and the files we share with districts?', view: 'resources', s: ['<b>Workspace, Resources</b>. <b>Client agreements</b> has the signing links.', '<b>Shared with districts</b> holds files such as the fee schedule. Press <b>Upload a file</b> to add one, then copy its link.'], k: 'mou link fee schedule files documents' },
+    { a: 'Workspace', q: 'Where do I change sequences, reminders and background jobs?', view: 'settings', role: 'super', s: ['<b>Workspace, Settings</b>. Sequences sets what each show or source sends and who sends it.', 'Reminders to districts holds the templates and the switch for automatic sending.', 'Background jobs shows what runs on a schedule, and what people waited on.'], k: 'settings admin sequences reminders jobs' },
+    { a: 'Workspace', q: 'What is the weekly team update?', view: 'settings', role: 'super', s: ['<b>Settings, What changed this week</b> drafts an email each Monday about the week in the business: leads, shows and clients. It waits for you to read and send it.', 'It is not about changes to Front Office itself. Those are under <b>What\'s new</b> on this page.'], k: 'weekly update what changed email' }
+  ];
+  var NEWS = [
+    { id: '2026-11-20', when: 'Nov 20, 2026', items: [
+      { t: 'A calmer way in', d: 'Signing in is one card from start to dashboard, with no screens fading over each other. If you are already signed in, you go straight through.' },
+      { t: 'Help lives here now', d: 'This page: how to do things and what is new, only for the pages you can open. The search box at the top finds it too.', open: 'help' },
+      { t: 'A working sign that looks like Front Office', d: 'The pill that says Saving or Loading matches the rest of the tool, with one blue-to-green ring wherever something is waiting.' } ] },
+    { id: '2026-11-19', when: 'Nov 19, 2026', items: [
+      { t: 'A status page you can send a district', view: 'playbook', d: 'One link on our own address that shows a district where onboarding stands, with our logo and your name, email and phone. You choose what it shows, and it always reads the latest.' },
+      { t: 'Email the status page from here', view: 'playbook', d: 'Send the link through Close as the lead owner, see the email exactly as it will arrive before it goes, and get a row on Today the first time the district opens it.' },
+      { t: 'Notes stay internal unless you share them', view: 'playbook', d: 'Each Playbook note has a chip: Internal, or Shared with district. Only shared notes reach the status page.' },
+      { t: 'Dismissing a lead answers at once', view: 'followup', d: 'Dismiss, hold and the other row actions take effect right away, several in a row if you like.' },
+      { t: 'One person, one row in Follow-up', view: 'followup', d: 'Someone who came in more than once is folded into a single row, with the rep who had them first.' },
+      { t: 'Today on one line', view: 'today', d: 'The Dashboard shows a one-line strip with what is waiting on you. The full list has its own page, grouped and searchable.' },
+      { t: 'Signed documents you can rely on', view: 'submissions', d: 'The MOU and direct deposit list is read straight from the SignNow folder. A document is never filed on a client by guesswork: if it is not certain, it asks you once.' },
+      { t: 'Client logins show as soon as they are saved', view: 'credentials', d: 'A login added on Client Credentials no longer disappears for a few minutes after saving.' },
+      { t: 'Easier to see when something is saving', d: 'A pill under the header says Saving or Loading, and the button you pressed waits for its answer. The sidebar is steadier, and the logo is larger.' } ] },
+    { id: '2026-11-18', when: 'Nov 18, 2026', items: [
+      { t: 'Sources', view: 'sources', d: 'Every lead source that is not a show (flyers, referrals, webinars, audience pages) has a home, with who gets its leads and what follow-up they receive.' },
+      { t: 'Attribution', view: 'attribution', d: 'Leads, meetings and customers by where they came from, next to what was spent.' },
+      { t: 'Rep scorecards', view: 'team', d: 'On Team: how fast leads are first contacted, replies, and meetings held, per rep.' },
+      { t: 'Files to share with districts', view: 'resources', d: 'Upload a file such as the fee schedule on Resources and copy a link to send.' },
+      { t: 'Blog drafts in Content Studio', view: 'studio', d: 'Drafts with their sources checked against the pages they cite.' },
+      { t: 'Weekly team update', view: 'settings', role: 'super', d: 'A draft each Monday of the week in the business, waiting for you to read and send.' } ] },
+    { id: '2026-11-01', when: 'Earlier this fall', items: [
+      { t: 'Search everything from the top bar', d: 'Clients, people, prospects, leads, shows and signals from one box.' },
+      { t: 'Emails to attendees before a show', view: 'preevent', d: 'Two scheduled emails per show, approved by you, sent through Close as the rep.' },
+      { t: 'One code per show', view: 'tradeshows', d: 'Each show carries a single code so Close and Front Office always agree on where a lead came from.' },
+      { t: 'See what teammates did with a signal', view: 'signals', d: 'Stars, notes and who took it show on each article.' } ] }
+  ];
+  var QI = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.2 9.3a2.9 2.9 0 0 1 5.6 1c0 1.9-2.8 2.4-2.8 4.2"/><path d="M12 17.6h.01"/></svg>';
+  var st = { tab: '', area: '', q: '', openQ: -1 };
+  var esc = function(x) { return typeof ppEsc === 'function' ? ppEsc(x) : String(x == null ? '' : x).replace(/[&<>"]/g, function(c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  function isSuper() { try { return typeof ppIsSuperAdmin === 'function' && ppIsSuperAdmin(); } catch (e) { return false; } }
+  // a page is this person's if its sidebar tab is there and not hidden
+  function tabOf(view) { return document.querySelector('.view-tab[onclick="switchView(\'' + view + '\')"]'); }
+  function canView(view) { if (!view) return true; var t = tabOf(view); return !!t && t.style.display !== 'none' && !t.classList.contains('soon'); }
+  function can(e) { return canView(e.view) && (!e.role || (e.role === 'super' && isSuper())); }
+  // a page is called what its sidebar tab calls it
+  function label(view) { try { var t = tabOf(view), txt = ''; if (t) Array.prototype.forEach.call(t.childNodes, function(n) { if (n.nodeType === 3 && n.textContent.trim()) txt = txt || n.textContent.trim(); }); if (txt) return txt; var m = (typeof PP_PAGE_META !== 'undefined' && PP_PAGE_META[view]) || (typeof PP_VIEW_TITLES !== 'undefined' && PP_VIEW_TITLES[view]); return m ? m[1] : view; } catch (e) { return view; } }
+  function seen() { try { return localStorage.getItem('pp.news.seen') || ''; } catch (e) { return ''; } }
+  function news() { return NEWS.map(function(r) { return { id: r.id, when: r.when, items: r.items.filter(can) }; }).filter(function(r) { return r.items.length; }); }
+  function unseen() { var s = seen(), n = 0; news().forEach(function(r) { if (r.id > s) n += r.items.length; }); return s ? n : 0; }
+  function markSeen() { try { localStorage.setItem('pp.news.seen', NEWS[0].id); } catch (e) {} dot(); }
+  function dot() { var t = tabOf('help'); if (!t) return; var d = t.querySelector('.hp-dot'), n = unseen(); if (!n) { if (d) d.remove(); return; } if (!d) { d = document.createElement('span'); d.className = 'hp-dot'; t.appendChild(d); } d.textContent = n; d.title = n + ' new in Front Office'; }
+  function match(e, q) { if (!q) return true; var hay = (e.q + ' ' + (e.s || []).join(' ') + ' ' + (e.k || '') + ' ' + e.a + ' ' + (e.view ? label(e.view) : '')).toLowerCase().replace(/<[^>]+>/g, ' '); return q.toLowerCase().split(/\s+/).filter(Boolean).every(function(w) { return hay.indexOf(w) >= 0; }); }
+  function howHtml() {
+    var all = HOW.map(function(e, i) { return { e: e, i: i }; }).filter(function(x) { return can(x.e); }), q = st.q.trim();
+    var areas = []; all.forEach(function(x) { if (areas.indexOf(x.e.a) < 0) areas.push(x.e.a); });
+    var shown = all.filter(function(x) { return match(x.e, q) && (q || !st.area || x.e.a === st.area); });
+    var side = '<nav class="hp-areas"><button class="' + (!st.area || q ? 'on' : '') + '" onclick="hpArea(\'\')">Everything<span>' + all.length + '</span></button>' + areas.map(function(a) { return '<button class="' + (st.area === a && !q ? 'on' : '') + '" onclick="hpArea(\'' + esc(a) + '\')">' + esc(a) + '<span>' + all.filter(function(x) { return x.e.a === a; }).length + '</span></button>'; }).join('') + '</nav>';
+    var list = '', last = '';
+    shown.forEach(function(x) { var e = x.e; if (e.a !== last) { list += '<div class="hp-h">' + esc(e.a) + '</div>'; last = e.a; }
+      list += '<details class="hp-q" data-i="' + x.i + '"' + (st.openQ === x.i || (q && shown.length <= 3) ? ' open' : '') + '><summary>' + esc(e.q) + (e.role ? ' <span class="hp-tag adm">Admins</span>' : '') + '</summary><div class="hp-a">' + (e.s.length > 1 ? '<ol>' + e.s.map(function(t) { return '<li>' + t + '</li>'; }).join('') + '</ol>' : '<p>' + e.s[0] + '</p>') + (e.view ? '<div class="hp-foot"><button class="hp-go" onclick="hpGo(\'' + e.view + '\')">Open ' + esc(label(e.view)) + ' &rarr;</button></div>' : '') + '</div></details>'; });
+    if (!shown.length) list = '<div class="hp-none">Nothing matches "' + esc(q) + '". Try a different word, or the name of the page.</div>';
+    return '<div class="hp-grid">' + side + '<div class="hp-list">' + list + '</div></div>';
+  }
+  function newsHtml() {
+    var s = seen(), q = st.q.trim().toLowerCase(), out = '';
+    news().forEach(function(r) { var items = r.items.filter(function(it) { return !q || (it.t + ' ' + it.d + ' ' + (it.view ? label(it.view) : '')).toLowerCase().indexOf(q) >= 0; }); if (!items.length) return;
+      out += '<div class="hp-rel"><div class="hp-when">' + esc(r.when) + (s && r.id > s ? '<br><span class="new">NEW</span>' : '') + '</div><div class="hp-card">' + items.map(function(it) { var go = it.open || it.view; return '<div class="hp-it"><h4>' + esc(it.t) + '</h4><p>' + esc(it.d) + '</p><div class="side">' + (it.view ? '<span class="hp-tag">' + esc(label(it.view)) + '</span>' : '<span class="hp-tag">Everywhere</span>') + (it.role ? '<span class="hp-tag adm">Admins</span>' : '') + (go && go !== 'help' ? '<button class="hp-go" onclick="hpGo(\'' + go + '\')">Open &rarr;</button>' : '') + '</div></div>'; }).join('') + '</div></div>'; });
+    return out || '<div class="hp-none">Nothing matches "' + esc(st.q) + '".</div>';
+  }
+  function draw(keepFocus) {
+    var host = document.getElementById('hpHost'); if (!host) return; if (!st.tab) st.tab = unseen() ? 'new' : 'how';
+    var n = unseen(), body = st.tab === 'new' ? newsHtml() : howHtml();
+    if (keepFocus && document.getElementById('hpBody')) { document.getElementById('hpBody').innerHTML = body; return; }
+    host.innerHTML = '<div class="hp"><div class="hp-top"><div class="hp-seg"><button class="' + (st.tab === 'how' ? 'on' : '') + '" onclick="hpTab(\'how\')">How to</button><button class="' + (st.tab === 'new' ? 'on' : '') + '" onclick="hpTab(\'new\')">What\'s new' + (n ? '<span class="n">' + n + '</span>' : '') + '</button></div>'
+      + '<div class="hp-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="hpQ" placeholder="' + (st.tab === 'new' ? 'Search what is new' : 'Search how to') + '" value="' + esc(st.q) + '" oninput="hpSearch(this.value)" autocomplete="off"></div>'
+      + '<span class="hp-for">Shown for the pages you can open</span></div><div id="hpBody">' + body + '</div></div>';
+    if (st.openQ >= 0) { var el = host.querySelector('.hp-q[data-i="' + st.openQ + '"]'); if (el) setTimeout(function() { try { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {} }, 60); }
+    if (st.tab === 'new' && n) setTimeout(function() { if (st.tab === 'new' && document.getElementById('helpView') && document.getElementById('helpView').classList.contains('active')) { markSeen(); } }, 1500);
+  }
+  window.hpTab = function(t) { st.tab = t; st.q = ''; st.openQ = -1; draw(); };
+  window.hpArea = function(a) { st.area = a; st.q = ''; st.openQ = -1; draw(); };
+  window.hpSearch = function(v) { st.q = v; st.openQ = -1; draw(true); };
+  window.hpGo = function(view) { switchView(view); };
+  window.hpOpen = function(tab, i) { st.tab = tab || ''; st.q = ''; st.area = ''; st.openQ = typeof i === 'number' ? i : -1; switchView('help'); };
+  window.hpState = function() { return { unseen: unseen(), how: HOW.filter(can).length, news: news().reduce(function(n, r) { return n + r.items.length; }, 0), total: HOW.length }; };
+
+  // the page, its place in the sidebar (Workspace, after Resources), and the search box
+  var anchor = document.getElementById('resourcesView') || document.getElementById('dashboardView'); if (!anchor) return;
+  var v = document.createElement('div'); v.className = 'view-content'; v.id = 'helpView'; v.innerHTML = '<div id="hpHost"></div>'; anchor.insertAdjacentElement('afterend', v);
+  try { PP_VIEW_TITLES.help = ['Workspace', 'Help']; PP_PAGE_META.help = ['Workspace', 'Help', 'How to do things in Front Office, and what is new. You only see the pages you can open.']; } catch (e) {}
+  function addTab() { if (tabOf('help')) { dot(); return; } var after = tabOf('resources'); if (!after) return; var b = document.createElement('button'); b.className = 'view-tab'; b.setAttribute('onclick', "switchView('help')"); b.setAttribute('data-short', 'Help'); b.innerHTML = QI + ' Help'; after.insertAdjacentElement('afterend', b); dot(); if (typeof ppNavFit === 'function') setTimeout(ppNavFit, 50); if (typeof navApply === 'function') setTimeout(navApply, 60); }
+  var _sv = switchView; switchView = function(view) { var r = _sv.apply(this, arguments); if (view === 'help') { try { draw(); } catch (e) {} } return r; };
+  if (typeof finishLoading === 'function') { var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(addTab, 300); setTimeout(dot, 2500); }; }
+  addTab();
+  try { if (!seen()) localStorage.setItem('pp.news.seen', NEWS[1].id); } catch (e) {}   // the first time, only the newest release counts as new
+  try { window.PP_SEARCH_EXTRA = window.PP_SEARCH_EXTRA || []; window.PP_SEARCH_EXTRA.push(function(add) {
+    add({ g: 'Pages', kind: 'page', title: 'Help', crumb: 'Workspace · Help', open: function() { hpOpen('how'); } }, ['help', 'how to', 'how do i', 'faq', 'guide', 'instructions']);
+    add({ g: 'Pages', kind: 'page', title: 'What\'s new in Front Office', crumb: 'Workspace · Help', open: function() { hpOpen('new'); } }, ['whats new', 'what is new', 'release notes', 'updates', 'changes', 'new features']);
+    HOW.forEach(function(e, i) { if (!can(e)) return; add({ g: 'Pages', kind: 'page', title: e.q, crumb: 'Help · ' + e.a, open: function() { hpOpen('how', i); } }, [e.q], [e.k || '', e.s.join(' ').replace(/<[^>]+>/g, ' ')]); });
+  }); } catch (e) {}
+  // the build number at the foot of the sidebar opens What's new
+  document.addEventListener('click', function(e) { var t = e.target && e.target.closest ? e.target.closest('#ppBuildTag') : null; if (t) { e.preventDefault(); hpOpen('new'); } });
+  setTimeout(function() { var t = document.getElementById('ppBuildTag'); if (t) t.title = 'What\'s new in Front Office'; }, 3000);
 })();
 </script>
 </body>
