@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="pp-build" content="v240 · Nov 20g">
+  <meta name="pp-build" content="v241 · Nov 21a">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Front Office · PracticePlan</title>
   <link rel="icon" type="image/svg+xml" href="https://practiceplan-onboarding.vercel.app/favicon.svg">
@@ -11021,7 +11021,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v240 · Nov 20g';
+    var PP_BUILD = 'v241 · Nov 21a';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -17388,6 +17388,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
   var HOW = [
     { a: 'Getting around', q: 'How do I find a client, a person, a lead or a show?', s: ['Use the search box at the top of any page. It looks through clients, people, prospects, leads, shows and signals, and through this help.', 'Pick a result to go straight to it.'], k: 'search find look up' },
     { a: 'Getting around', q: 'How do I know I am on the latest version?', s: ['You do not have to do anything. Front Office checks every few minutes whether a newer version is live.', 'If one is, a pill at the bottom says <b>A newer Front Office is ready</b>. Press <b>Refresh</b>, or leave it: the page refreshes by itself once the tab has been in the background for a minute, or untouched for ten, and comes back on the page you were on.', 'It never refreshes while a window or form is open, while something is saving, or right after you have been typing.', 'The version you are on is at the bottom of the menu.'], k: 'version update refresh reload old stale latest build cache' },
+    { a: 'Getting around', q: 'A column I used is not on the table. How do I get it back?', s: ['Trade Shows, Landing Pages, Close CRM Insights and the Content Calendar list show a shorter set of columns so they fit the page.', 'Press the small grid button at the top right of the table and tick the column you want. Your choice is kept on this browser, for you only.', 'The fields themselves are unchanged. They are also in the row\'s own window: press the open button at the end of the row.'], k: 'columns hide show missing column pre-show short name source key notes next play nearest status owner campaign links table too wide' },
     { a: 'Getting around', q: 'How do I know my change saved?', s: ['A pill under the header says <b>Saving</b> while a change is on its way, and shows a green tick and <b>Saved</b> when it lands.', 'The button you pressed dims until its answer is back, so there is no need to press twice.', 'If something fails, a red message says what happened.'], k: 'saving loading working spinner did it save twice' },
     { a: 'Getting around', q: 'What is Today?', view: 'today', s: ['Today lists what is waiting on you: replies to answer, sequences to approve, held leads, show to-dos and client check-ins, most urgent first.', 'The strip at the top of the Dashboard shows the count and the next item. Press it to open the full list.', 'Each row has a button that takes you to the place to deal with it.'], k: 'inbox to do needs me waiting' },
     { a: 'Getting around', q: 'How do I see what is waiting on the whole team?', view: 'today', role: 'super', s: ['On Today, switch from <b>Me</b> to <b>Everyone</b>.', 'Only admins have this switch.'], k: 'everyone team all' },
@@ -17434,6 +17435,11 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     { a: 'Workspace', q: 'What is the weekly team update?', view: 'settings', role: 'super', s: ['<b>Settings, What changed this week</b> drafts an email each Monday about the week in the business: leads, shows and clients. It waits for you to read and send it.', 'It is not about changes to Front Office itself. Those are under <b>What\'s new</b> on this page.'], k: 'weekly update what changed email' }
   ];
   var NEWS = [
+    { id: '2026-11-21a', when: 'Nov 21, 2026', items: [
+      { t: 'Tables that fit the page', d: 'Trade Shows, Landing Pages, Close CRM Insights and the Content Calendar list no longer run off the right edge. Each shows the columns used day to day, at widths that fit a laptop screen.' },
+      { t: 'Leads at the right of every show', view: 'tradeshows', d: 'The last column on Trade Shows is now Leads: the leads recorded for the show or the ones that came in through Inbound Leads, whichever is higher, with demos and deals under it. Hotel and flight share one Travel column.' },
+      { t: 'Choose your columns', d: 'The small grid button at the top right of these tables brings back a column that is off: Pre-show email and Short name on shows, Source key and Notes on landing pages, Next play and Nearest customer on Insights, Status, Owner, Campaign and Links on content. Nothing was removed from the records.' }
+    ] },
     { id: '2026-11-20e', when: 'Nov 20, 2026 · second update', items: [
       { t: 'Front Office keeps itself current', d: 'A tab left open used to stay on whatever version it opened with. Now it notices when a newer one is live, shows a Refresh pill, and refreshes by itself while you are away from it.' },
       { t: 'Renew a show for next year', view: 'tradeshows', d: 'Trade Shows now tells you which of the past year\'s shows are not on next year\'s list yet. One step renews a show with the same reps, audience and booth, and you can mark it registered or paid as you add it.' },
@@ -17971,6 +17977,219 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
   setInterval(function() { if (!st.newer && Date.now() - st.lastCheck >= EVERY) check(); tick(); }, 30000);
   window.ppFreshState = function() { return Object.assign({}, st, { bar: !!document.querySelector('#ppFresh.on'), busy: busy(), view: viewNow() }); };
   window.ppFreshCheck = check; window.ppFreshTick = tick; window._ppFresh = st;
+})();
+</script>
+<style>
+  /* v241: tables that fit.
+     One treatment for a list table (class pp-fit, put on by the script below): fixed layout, widths from a colgroup, the first column
+     takes what is left, nothing wider than its card at 1280 and up. Older rules size these tables by column position
+     (th:nth-child(n){width}); pp-fit switches those off, because the columns are no longer in those positions.
+     Theme variables only, so both modes are covered (see the v238 note). */
+  table.pp-fit{table-layout:fixed !important;width:100% !important}
+  table.pp-fit th{width:auto !important}
+  table.pp-fit th,table.pp-fit td{padding:11px 10px;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
+  table.pp-fit th:first-child,table.pp-fit td:first-child{padding-left:14px}
+  table.pp-fit th{letter-spacing:.04em}
+  #tsGroups table.pp-fit td,#tsGroups table.pp-fit th{overflow:hidden;white-space:nowrap}
+  #tsGroups table.pp-fit td .pp-chip{letter-spacing:.02em}
+  table.pp-fit .pp-org-name{max-width:100%;font-size:13px}
+  table.pp-fit .pp-org-sub{max-width:100%;font-size:11px}
+  table.pp-fit th.num,table.pp-fit td.num{text-align:right}
+  table.pp-fit td.tf-act,table.pp-fit th.tf-act{text-align:right;padding-left:4px;padding-right:10px;white-space:nowrap}
+  table.pp-fit td.tf-act .pp-mini-btn + .pp-mini-btn{margin-left:4px}
+  /* the columns button, in the last header cell of every such table */
+  .tf-colbtn{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;padding:0;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--text3);cursor:pointer;vertical-align:middle}
+  .tf-colbtn:hover,.tf-colbtn.on{color:var(--pp-blue);border-color:var(--border);background:var(--card)}
+  .tf-colbtn svg{width:15px;height:15px}
+  .tf-colmenu{min-width:232px;padding:12px 14px}
+  .tf-colmenu h4{margin:0 0 2px;font-size:13px;font-weight:700;color:var(--text)}
+  .tf-colmenu p{margin:0 0 10px;font-size:11.5px;color:var(--text3);line-height:1.4}
+  .tf-colmenu label{display:flex;align-items:center;gap:9px;padding:6px 0;font-size:13px;color:var(--text);cursor:pointer}
+  .tf-colmenu label small{margin-left:auto;font-size:11px;color:var(--text3)}
+  .tf-colmenu input{width:15px;height:15px;accent-color:var(--pp-blue)}
+  /* Trade Shows: hotel and flight in one cell, leads at the right */
+  .tf-travel{display:flex;gap:4px;align-items:center}
+  .tf-travel .pp-chip{padding-left:7px;padding-right:7px;letter-spacing:.02em}
+  .tf-travel .pp-chip{display:inline-flex;align-items:center;gap:4px;cursor:pointer;flex:0 1 auto;min-width:0}
+  .tf-travel .pp-chip svg{width:11px;height:11px;flex:none}
+  .tf-leads{display:flex;align-items:baseline;justify-content:flex-end;gap:5px;font-size:11px;color:var(--text3)}
+  .tf-leads b{font-family:var(--font-display,inherit);font-size:17px;font-weight:700;color:var(--text);line-height:1}
+  .tf-leads.none b{color:var(--text3);font-weight:600}
+  .tf-na{font-size:11px;color:var(--text3)}
+  .tf-res-sub{margin-top:3px;font-size:11px;color:var(--text3);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* Close CRM Insights: the next play is a line under the district, not a column */
+  .tp-table.tp-fit td:nth-child(1){min-width:0}
+  .tp-table.tp-fit th:nth-child(n),.tp-table.tp-fit td:nth-child(n){display:table-cell}
+  .tp-table.tp-fit td{white-space:nowrap}
+  .tp-table.tp-fit .tp-play{max-width:100%;min-width:0;margin-top:5px;font-size:11.5px;font-weight:500;line-height:1.5;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tp-table.tp-fit .tp-play > div:first-child:not(.ca-sub):not(.tp-why){display:inline;margin-right:6px}
+  .tp-table.tp-fit .tp-play .tp-flag{vertical-align:1px}
+  .tp-table.tp-fit .tp-play .ca-sub{display:inline;margin:0 0 0 8px;color:var(--text3);font-weight:400}
+  .tp-table.tp-fit .tp-play .ca-sub::before{content:"\00B7";margin-right:8px}
+  .tp-table.tp-fit .tp-play .tp-why,.tp-table.tp-fit .tp-play .tp-why-line{display:none}
+  .tp-table.tp-fit .tp-play:empty{display:none}
+  .tp-table.tp-fit .tp-play > .ca-sub:first-child{margin-left:0}
+  .tp-table.tp-fit .tp-play > .ca-sub:first-child::before{content:none}
+  .tp-table.tp-fit .tp-near{white-space:normal}
+  /* Content Calendar: a post that is not out yet says so beside its title */
+  .tf-st{margin-left:8px;vertical-align:1px;font-size:9px !important;padding:2px 7px !important}
+  #cpTable.pp-fit .cp-post-cell{min-width:0}
+  #cpTable.pp-fit .pp-org-name{display:block}
+  @media(max-width:760px){table.pp-fit{min-width:720px !important}}
+</style>
+<script>
+// v241: tables that fit, and one way of choosing columns.
+// Four list tables had grown wider than their cards (Trade Shows, Landing Pages, Close CRM Insights, Content Calendar). Each is now
+// rebuilt after its own render: columns Donnie does not use day to day are off by default, related ones are merged, widths come from a
+// colgroup, and the table carries class pp-fit. Nothing is deleted from the data. A column that is off can be switched on from the
+// button in the table's last header cell (saved per browser in localStorage pp.cols); the fields stay in each row's editor as before.
+//   Trade Shows   off: Pre-show email, Short name. Hotel and Flight share one Travel cell (each chip still opens its own picker).
+//                 Outcomes becomes Leads at the right: the larger of the leads recorded on the show and the inbound leads matched to
+//                 it, with demos and deals under it.
+//   Landing Pages off: Source key, Notes.
+//   Insights      off: Next play, Nearest customer. The need flags (and how long ago they wrote) sit under the district; with Next play
+//                 on, the suggested step joins them on that line. It is never a column again.
+//   Content       off: Status, Owner, Campaign, Links. A post that is not published shows its status beside the title.
+// It works on the finished DOM, in the outermost wrap of each renderer, because earlier wraps fill cells by column position
+// (the short-name button, the short-link pill); they have all run by then.
+(function() {
+  var KEY = 'pp.cols';
+  var DEF = {
+    ts: [['short', 'Short name', 'used in emails'], ['preshow', 'Pre-show email', 'also on Pre-event Outreach']],
+    lp: [['source', 'Source key'], ['notes', 'Notes']],
+    intel: [['play', 'Next play', 'the suggested step'], ['nearest', 'Nearest customer']],
+    content: [['status', 'Status'], ['owner', 'Owner'], ['campaign', 'Campaign'], ['links', 'Links']]
+  };
+  var RENDER = { ts: function() { renderTradeShows(); }, lp: function() { renderLandingPages(); }, intel: function() { renderIntel(); }, content: function() { renderContent(); } };
+  function store() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
+  function on(table, col) { var s = store(); return !!(s[table] && s[table][col]); }
+  function set(table, col, v) { var s = store(); s[table] = s[table] || {}; if (v) s[table][col] = 1; else delete s[table][col]; try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
+  var ICO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M9 4v16M15 4v16"/></svg>';
+  var BED = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7M3 14h18M3 18v2M21 18v2M7 9V6h10v3"/></svg>';
+  var PLANE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L3 10.5l7 2.5 2.5 7z"/><path d="M21 3L10 13"/></svg>';
+  function btn(table) { return '<button type="button" class="tf-colbtn" title="Choose columns" onclick="event.stopPropagation();ppColsMenu(\'' + table + '\',this)">' + ICO + '</button>'; }
+  window.ppColsMenu = function(table, anchor) {
+    var html = '<div class="tf-colmenu"><h4>Columns</h4><p>Extra columns for this table. Your choice is kept on this browser.</p>' + DEF[table].map(function(c) { return '<label><input type="checkbox" data-col="' + c[0] + '"' + (on(table, c[0]) ? ' checked' : '') + '>' + c[1] + (c[2] ? '<small>' + c[2] + '</small>' : '') + '</label>'; }).join('') + '</div>';
+    var p = ppPopoverOpen(anchor, html, { focus: false }), r = anchor.getBoundingClientRect(); p.style.left = Math.max(8, Math.min(r.right - p.offsetWidth, window.innerWidth - p.offsetWidth - 8)) + 'px';
+    p.querySelectorAll('input').forEach(function(i) { i.addEventListener('change', function() { set(table, i.getAttribute('data-col'), i.checked); try { RENDER[table](); } catch (e) {} }); });
+  };
+  window.ppColsState = function() { return store(); };
+  function colgroup(t, widths, minFirst) {
+    var old = t.querySelector('colgroup'); if (old) old.remove();
+    var cg = document.createElement('colgroup'), sum = 0; widths.forEach(function(w) { var c = document.createElement('col'); if (w) { c.style.width = w + 'px'; sum += w; } cg.appendChild(c); });
+    t.insertBefore(cg, t.firstChild); t.style.setProperty('min-width', (sum + minFirst) + 'px', 'important'); t.classList.add('pp-fit');      // an older rule pins the show table at 1260px with !important
+  }
+  function spans(t, n) { t.querySelectorAll('td[colspan]').forEach(function(td) { td.setAttribute('colspan', n); }); }
+  function esc(s) { return typeof ppEsc === 'function' ? ppEsc(s) : String(s); }
+
+  // ---------- Trade Shows ----------
+  var leadMemo = { key: '', map: {} };
+  function showLeadCounts() {
+    try {
+      if (typeof leadList === 'undefined' || !leadList || !leadList.length || typeof leadShowFor !== 'function') return {};
+      var key = leadList.length + ':' + tsList.length + ':' + (typeof lpList !== 'undefined' && lpList ? lpList.length : 0); if (leadMemo.key === key) return leadMemo.map;
+      var m = {}; leadList.forEach(function(l) { if (!l || l.origin === 'history' || l.mergedInto || !l.source) return; var sh = leadShowFor(l), name = sh ? (sh.name || sh) : ''; if (name) m[name] = (m[name] || 0) + 1; });
+      leadMemo = { key: key, map: m }; return m;
+    } catch (e) { return {}; }
+  }
+  function travelChip(s, field, icon, word) {
+    var list = typeof TS_TRAVEL !== 'undefined' ? TS_TRAVEL : [], val = s[field] || '', item = list.find(function(x) { return x.val === val; }) || { label: 'Not set' };
+    return '<span class="pp-chip pick ' + (val || 'unset') + '" title="' + word + ': ' + esc(item.label) + '. Click to change." onclick="event.stopPropagation();tsCellEdit(\'' + esc(s.id) + '\',\'' + field + '\',this)">' + icon + esc(val ? (item.short || item.label) : word) + '</span>';
+  }
+  function fitShows() {
+    var counts = showLeadCounts(), wantShort = on('ts', 'short'), wantPre = on('ts', 'preshow');
+    document.querySelectorAll('#tsGroups table').forEach(function(t) {
+      if (t.classList.contains('pp-fit')) return;
+      var ths = [].slice.call(t.querySelectorAll('thead th')); if (ths.length < 8) return;
+      var at = function(re) { for (var i = 0; i < ths.length; i++) if (re.test(ths[i].textContent.trim())) return i; return -1; };
+      var iHotel = at(/^hotel$/i), iFlight = at(/^flight$/i), iOut = at(/^outcomes$/i), iPre = at(/^pre-show/i), iShort = at(/^(short name|booth)$/i), iCost = at(/^cost$/i), iReps = at(/^reps$/i), n = ths.length;
+      if (iHotel < 0 || iFlight < 0 || iOut < 0) return;                                  // not the table this was written for: leave it alone
+      var drop = {}; drop[iFlight] = 1; if (iPre >= 0 && !wantPre) drop[iPre] = 1; if (iShort >= 0 && !wantShort) drop[iShort] = 1;
+      t.querySelectorAll('tbody tr').forEach(function(tr) {
+        var cells = [].slice.call(tr.children); if (cells.length !== n) return;
+        var s = tsList.find(function(x) { return x.id === tr.getAttribute('data-id'); }); if (!s) return;
+        var nm = cells[0].querySelector('.pp-org-name'); if (nm && !nm.title) nm.title = s.name || '';
+        var tv = cells[iHotel]; tv.className = ''; tv.removeAttribute('data-edit'); tv.removeAttribute('title'); tv.innerHTML = '<div class="tf-travel">' + travelChip(s, 'hotel', BED, 'Hotel') + travelChip(s, 'flight', PLANE, 'Flight') + '</div>';
+        var out = cells[iOut]; out.classList.add('num');
+        if (s.registration === 'missed') { out.innerHTML = '<span class="tf-na">Not attended</span>'; }
+        else {
+          var rec = Number(s.leads) || 0, live = counts[s.name] || 0, lead = Math.max(rec, live), demos = Number(s.demos) || 0, deals = Number(s.deals) || 0;
+          out.title = (live ? live + ' in Inbound Leads' : 'None in Inbound Leads yet') + (rec ? ', ' + rec + ' recorded on the show' : '') + '. Click to record leads, demos and deals.';
+          out.innerHTML = '<div class="tf-leads' + (lead ? '' : ' none') + '"><b>' + (lead || '-') + '</b>' + (lead ? '<span>lead' + (lead === 1 ? '' : 's') + '</span>' : '') + '</div>' + (demos || deals ? '<div class="tf-res-sub">' + demos + ' demo' + (demos === 1 ? '' : 's') + ' &middot; ' + deals + ' deal' + (deals === 1 ? '' : 's') + '</div>' : '');
+        }
+        if (iCost >= 0) cells[iCost].classList.add('num');
+        if (iReps >= 0 && !String(s.reps || '').trim()) { cells[iReps].innerHTML = '<span class="tf-na">None</span>'; cells[iReps].title = 'No rep on this show yet. Click to add one.'; }
+        cells[n - 1].className = 'tf-act'; cells[n - 1].removeAttribute('style');
+        Object.keys(drop).forEach(function(i) { cells[i].remove(); });
+      });
+      ths[iHotel].textContent = 'Travel'; ths[iOut].textContent = 'Leads'; ths[iOut].className = 'num'; if (iCost >= 0) ths[iCost].className = 'num';
+      ths[n - 1].className = 'tf-act'; ths[n - 1].innerHTML = btn('ts');
+      Object.keys(drop).forEach(function(i) { ths[i].remove(); });
+      // widths in the order the columns now stand
+      var W = { dates: 116, audience: 88, reps: 64, registration: 132, cost: 70, short: 104, preshow: 130, travel: 166, leads: 106, act: 42 }, widths = [0];
+      [].slice.call(t.querySelectorAll('thead th')).slice(1).forEach(function(th) { var x = th.textContent.trim().toLowerCase(); widths.push(th.classList.contains('tf-act') ? W.act : /^dates/.test(x) ? W.dates : /^audience/.test(x) ? W.audience : /^reps/.test(x) ? W.reps : /^registration/.test(x) ? W.registration : /^cost/.test(x) ? W.cost : /^(short name|booth)/.test(x) ? W.short : /^pre-show/.test(x) ? W.preshow : /^travel/.test(x) ? W.travel : /^leads/.test(x) ? W.leads : 100); });
+      colgroup(t, widths, 200); spans(t, widths.length);
+    });
+  }
+  if (typeof renderTradeShows === 'function') { var _rts = renderTradeShows; renderTradeShows = function() { var out = _rts.apply(this, arguments); try { fitShows(); } catch (e) { console.warn('fitShows', e); } return out; }; }
+
+  // ---------- Landing Pages ----------
+  function fitPages() {
+    var head = document.getElementById('lpTableHead'), body = document.getElementById('lpTableBody'), t = head && head.closest('table'); if (!t || !body) return;
+    var wantSrc = on('lp', 'source'), wantNotes = on('lp', 'notes');
+    head.querySelectorAll('th').forEach(function(th) { var oc = th.getAttribute('onclick') || ''; if ((/lpSortBy\('source'\)/.test(oc) && !wantSrc) || (/lpSortBy\('notes'\)/.test(oc) && !wantNotes)) th.remove(); });
+    body.querySelectorAll('tr[data-id]').forEach(function(tr) { if (!wantSrc) { var a = tr.querySelector('td[data-edit="sourceKey"]'); if (a) a.remove(); } if (!wantNotes) { var b = tr.querySelector('td[data-edit="notes"]'); if (b) b.remove(); } var last = tr.lastElementChild; if (last) { last.className = 'tf-act'; last.removeAttribute('style'); } });
+    var ths = [].slice.call(head.querySelectorAll('th')); if (!ths.length) return;
+    var last = ths[ths.length - 1]; last.className = 'tf-act'; var reset = last.querySelector('a'); if (reset) { reset.textContent = 'Reset'; reset.title = 'Back to the default order'; reset.style.marginRight = '6px'; }
+    if (!last.querySelector('.tf-colbtn')) last.insertAdjacentHTML('beforeend', btn('lp'));
+    var widths = ths.map(function(th, i) { var oc = th.getAttribute('onclick') || ''; return i === 0 ? 0 : /'url'/.test(oc) ? 244 : /'show'/.test(oc) ? 200 : /'reps'/.test(oc) ? 126 : /'source'/.test(oc) ? 150 : /'leads'/.test(oc) ? 86 : /'notes'/.test(oc) ? 180 : (th.textContent.trim() ? 88 : 48); });
+    colgroup(t, widths, 232); spans(t, widths.length);
+  }
+  if (typeof renderLandingPages === 'function') { var _rlp = renderLandingPages; renderLandingPages = function() { var out = _rlp.apply(this, arguments); try { fitPages(); } catch (e) { console.warn('fitPages', e); } return out; }; }
+
+  // ---------- Close CRM Insights ----------
+  function fitIntel(html) {
+    var tpl = document.createElement('template'); tpl.innerHTML = html; var t = tpl.content.querySelector('table'); if (!t) return html;
+    var ths = [].slice.call(t.querySelectorAll('thead th')), at = function(re) { for (var i = 0; i < ths.length; i++) if (re.test(ths[i].textContent.trim())) return i; return -1; };
+    var iPlay = at(/^next play$/i), iNear = at(/^nearest/i), n = ths.length, wantNear = on('intel', 'nearest'), wantPlay = on('intel', 'play'); if (iPlay < 0 || iNear < 0) return html;
+    t.querySelectorAll('tbody tr').forEach(function(tr) {
+      var cells = [].slice.call(tr.children); if (cells.length !== n) return;
+      var play = cells[iPlay].querySelector('.tp-play');
+      if (play) {
+        play.title = 'Next play: ' + play.textContent.replace(/\s+/g, ' ').trim();
+        var first = play.firstChild, txt = null; if (first && (first.nodeType === 3 || (first.classList && first.classList.contains('tp-empty')))) { txt = document.createElement('span'); txt.className = 'tf-playtext'; play.insertBefore(txt, first); txt.appendChild(first); }
+        if (txt && !wantPlay) txt.remove();
+        cells[0].appendChild(play);
+      }
+      var last = cells[n - 1]; last.className = 'tf-act'; var a = last.querySelector('a[href]'); if (a) { a.className = 'pp-mini-btn'; a.title = 'Open in Close CRM'; a.innerHTML = typeof ppSvg === 'function' ? ppSvg('expand') : '&#8599;'; }
+      cells[iPlay].remove(); if (!wantNear) cells[iNear].remove();
+    });
+    ths[n - 1].className = 'tf-act'; ths[n - 1].innerHTML = btn('intel'); if (wantNear) ths[iNear].textContent = 'Nearest customer';
+    ths[iPlay].remove(); if (!wantNear) ths[iNear].remove();
+    var widths = [].slice.call(t.querySelectorAll('thead th')).map(function(th, i) { var x = th.textContent.trim().toLowerCase(); return i === 0 ? 0 : /^score/.test(x) ? 148 : /^nearest/.test(x) ? 210 : /^opportunity/.test(x) ? 190 : /^rep/.test(x) ? 62 : 52; });
+    t.removeAttribute('style'); colgroup(t, widths, 300); t.classList.add('tp-fit'); spans(t, widths.length);
+    return tpl.innerHTML;
+  }
+  if (typeof window.intelTableHtml === 'function') { var _ith = window.intelTableHtml; window.intelTableHtml = function(rows) { var html = _ith.apply(this, arguments); try { return fitIntel(html); } catch (e) { console.warn('fitIntel', e); return html; } }; }
+
+  // ---------- Content Calendar ----------
+  function fitContent() {
+    var t = document.getElementById('cpTable'), body = document.getElementById('cpTableBody'); if (!t || !body) return;
+    var want = { status: on('content', 'status'), owner: on('content', 'owner'), campaign: on('content', 'campaign'), links: on('content', 'links') };
+    var heads = [['when', 'When', 118], ['post', 'Post', 0], ['channel', 'Channel', 128]].concat(want.status ? [['status', 'Status', 116]] : [], want.owner ? [['owner', 'Owner', 140]] : [], want.campaign ? [['campaign', 'Campaign', 150]] : [], want.links ? [['links', 'Links', 84]] : [], [['results', 'Results', 176], ['act', '', 52]]);
+    var thead = t.querySelector('thead'); if (thead) thead.innerHTML = '<tr>' + heads.map(function(h) { return h[0] === 'act' ? '<th class="tf-act">' + btn('content') + '</th>' : '<th>' + h[1] + '</th>'; }).join('') + '</tr>';
+    body.querySelectorAll('tr[data-id]').forEach(function(tr) {
+      if (tr.getAttribute('data-fit')) return; tr.setAttribute('data-fit', '1');
+      var st = tr.querySelector('td[data-edit="status"]'), ow = tr.querySelector('td[data-edit="owner"]'), ca = tr.querySelector('td[data-edit="campaign"]'), me = tr.querySelector('td[data-edit="metrics"]'), ti = tr.querySelector('td[data-edit="title"]');
+      var li = me && me.previousElementSibling && !me.previousElementSibling.hasAttribute('data-edit') ? me.previousElementSibling : null;
+      var p = (typeof cpList !== 'undefined' && cpList ? cpList : []).find(function(x) { return x.id === tr.getAttribute('data-id'); });
+      if (!want.status && st && ti && p && p.status !== 'published') { var chip = st.querySelector('.pp-chip'), nm = ti.querySelector('.pp-org-name'); if (chip && nm && !nm.querySelector('.tf-st')) { var c = chip.cloneNode(true); c.classList.remove('pick'); c.classList.add('tf-st'); var caret = c.querySelector('.caret'); if (caret) caret.remove(); nm.appendChild(c); } }
+      if (!want.status && st) st.remove(); if (!want.owner && ow) ow.remove(); if (!want.campaign && ca) ca.remove(); if (!want.links && li) li.remove();
+      var last = tr.lastElementChild; if (last) { last.className = 'tf-act'; last.removeAttribute('style'); }
+    });
+    colgroup(t, heads.map(function(h) { return h[2]; }), 300); spans(t, heads.length);
+  }
+  if (typeof renderContent === 'function') { var _rc = renderContent; renderContent = function() { var out = _rc.apply(this, arguments); try { fitContent(); } catch (e) { console.warn('fitContent', e); } return out; }; }
 })();
 </script>
 </body>
