@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="pp-build" content="v243 · Nov 23b">
+  <meta name="pp-build" content="v244 · Nov 23c">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Front Office · PracticePlan</title>
   <link rel="icon" type="image/svg+xml" href="https://practiceplan-onboarding.vercel.app/favicon.svg">
@@ -11021,7 +11021,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v243 · Nov 23b';
+    var PP_BUILD = 'v244 · Nov 23c';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -14534,6 +14534,8 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       try { if (typeof ppIsSuperAdmin === 'function' && ppIsSuperAdmin() && !localStorage.getItem('pp.pipepast.v162')) { setTimeout(function() { ppApi('ppPing', {}, 30000).then(function(r) { if (!r || !(r.version >= 162)) return; localStorage.setItem('pp.pipepast.v162', '1'); return ppApi('pipelinePastTidy', {}, 120000).then(function(t2) { if (t2 && t2.success && t2.moved) { showToast(t2.moved + ' past show' + (t2.moved === 1 ? '' : 's') + ' moved out of the pipeline lists (see the Past filter)', 'success'); loadTradeShows(true).then(function() { if (typeof spRender === 'function') spRender(); }); } }); }).catch(function() {}); }, 8000); } } catch (e) {}
       // ---- one-time (v194): the shared calendar loses every show still in the pipeline and every stale event
       try { if (typeof ppIsSuperAdmin === 'function' && ppIsSuperAdmin() && !localStorage.getItem('pp.calclean.v165')) { setTimeout(function() { ppApi('ppPing', {}, 30000).then(function(r) { if (!r || !(r.version >= 165)) return; localStorage.setItem('pp.calclean.v165', '1'); return ppApi('calendarSync', {}, 170000).then(function(t2) { if (t2 && t2.success) showToast('Calendar cleaned: ' + t2.removed + ' event' + (t2.removed === 1 ? '' : 's') + ' removed' + (t2.gone && t2.gone.length ? ' (' + t2.gone.slice(0, 5).join('; ') + (t2.gone.length > 5 ? '; ...' : '') + ')' : '') + '. Only shows we are going to stay on it.', 'success', 9000); }); }).catch(function() {}); }, 9000); } } catch (e) {}
+      // ---- one-time (v244): the twelve conferences on APPA's events calendar go to the pipeline inbox for review (needs Extras v204)
+      try { if (typeof ppIsSuperAdmin === 'function' && ppIsSuperAdmin() && !localStorage.getItem('pp.pipeseed.appa2027')) { setTimeout(function() { ppApi('ppPing', {}, 30000).then(function(r) { if (!r || !(r.version >= 204)) return; localStorage.setItem('pp.pipeseed.appa2027', '1'); return ppApi('pipelineImport', { seed: 'appa-2027' }, 120000).then(function(t3) { if (t3 && t3.success) { showToast('APPA conferences: ' + t3.added + ' added to the pipeline inbox' + (t3.skipped ? ', ' + t3.skipped + ' already listed' : ''), 'success'); if (t3.added) loadTradeShows(true).then(function() { if (typeof spRender === 'function') spRender(); }); } else { localStorage.removeItem('pp.pipeseed.appa2027'); } }); }).catch(function() { try { localStorage.removeItem('pp.pipeseed.appa2027'); } catch (e) {} }); }, 12000); } } catch (e) {}
       // ---- one-time (v191): Kevin's Trade_Shows_to_Attend.xlsx into the pipeline inbox, skipping shows already listed
       try { if (typeof ppIsSuperAdmin === 'function' && ppIsSuperAdmin() && !localStorage.getItem('pp.pipeseed.v157')) { setTimeout(function() { ppApi('ppPing', {}, 30000).then(function(r) { if (!r || !(r.version >= 157)) return; localStorage.setItem('pp.pipeseed.v157', '1'); return ppApi('pipelineImport', { seed: 'v157' }, 120000).then(function(t2) { if (t2 && t2.success) { showToast('Team show list: ' + t2.added + ' show' + (t2.added === 1 ? '' : 's') + ' added to the pipeline inbox' + (t2.skipped ? ', ' + t2.skipped + ' already listed' : ''), 'success'); if (t2.added) loadTradeShows(true).then(function() { if (typeof spRender === 'function') spRender(); }); } }); }).catch(function() {}); }, 6000); } } catch (e) {}
       // ---- one-time (v210): the conferences on FMX's November 2026 exhibitor calendar go to the pipeline for review (over already: Revisit, with next year in mind)
@@ -17437,6 +17439,9 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     { a: 'Workspace', q: 'What is the weekly team update?', view: 'settings', role: 'super', s: ['<b>Settings, What changed this week</b> drafts an email each Monday about the week in the business: leads, shows and clients. It waits for you to read and send it.', 'It is not about changes to Front Office itself. Those are under <b>What\'s new</b> on this page.'], k: 'weekly update what changed email' }
   ];
   var NEWS = [
+    { id: '2026-11-23c', when: 'Nov 23, 2026 · third update', items: [
+      { t: 'APPA conferences are in the Show Pipeline', view: 'showpipeline', d: 'Twelve conferences from APPA, the facilities association for colleges and universities, are in the pipeline inbox to review: the 2027 national conference in Salt Lake City, the six regional conferences and four chapter conferences. Most have no city yet because APPA has not posted one.' }
+    ] },
     { id: '2026-11-23b', when: 'Nov 23, 2026 · second update', items: [
       { t: 'Conference History', view: 'confhistory', d: 'A new page under Events. Year over year puts every conference on one row with a column per year: whether we went, what it cost, and the leads, demos and deals. Coverage shows every state against the kinds of association (athletic directors, school business, superintendents, school boards, facilities, technology) so the gaps are easy to see.' },
       { t: 'The association list is a starting point', view: 'confhistory', d: 'About 90 associations are filled in to begin with and none has been checked yet: a ? after a name means not checked. Click any cell on Coverage to correct it, add a missing one, or mark that a state has none.' }
