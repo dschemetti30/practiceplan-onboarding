@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="pp-build" content="v241 · Nov 21a">
+  <meta name="pp-build" content="v242 · Nov 23a">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Front Office · PracticePlan</title>
   <link rel="icon" type="image/svg+xml" href="https://practiceplan-onboarding.vercel.app/favicon.svg">
@@ -5758,7 +5758,7 @@
     // INBOUND LEADS + ROUND ROBIN  (Sept 2026)
     // =====================================================================
     var LEAD_STATUSES = [{ val: 'new', label: 'New', cls: 'lead-new' }, { val: 'contacted', label: 'Contacted', cls: 'need-to-book' }, { val: 'replied', label: 'Replied', cls: 'aud-k12' }, { val: 'meeting', label: 'Meeting', cls: 'aud-supers' }, { val: 'qualified', label: 'Qualified', cls: 'booked' }, { val: 'won', label: 'Won', cls: 'active' }, { val: 'lost', label: 'Lost', cls: 'inactive' }];
-    var LEAD_COLS = ['id', 'receivedAt', 'name', 'org', 'email', 'phone', 'source', 'notes', 'status', 'assignedTo', 'assignedAt', 'assignedBy', 'firstTouchAt', 'internalNotes', 'origin', 'sourceKey', 'closeLeadId', 'closeUrl', 'closeStatus', 'closeLastTouch', 'closeLastTouchType', 'closeCheckedAt', 'updatedAt', 'updatedBy'];
+    var LEAD_COLS = ['id', 'receivedAt', 'name', 'org', 'email', 'phone', 'title', 'source', 'notes', 'status', 'assignedTo', 'assignedAt', 'assignedBy', 'firstTouchAt', 'internalNotes', 'origin', 'sourceKey', 'closeLeadId', 'closeUrl', 'closeStatus', 'closeLastTouch', 'closeLastTouchType', 'closeCheckedAt', 'updatedAt', 'updatedBy'];
     var leadList = [], leadsLoaded = false, leadsError = '', leadRotation = { order: [], next: '', paused: [] }, leadNotify = true, leadSearch = '', leadStatusFilter = 'open', leadRepFilter = 'all', leadSourceFilter = 'all';
     function leadNormalize(r) { var o = {}; Object.keys(r || {}).forEach(function(c) { if (LEAD_COLS.indexOf(c) < 0 && c.charAt(0) !== '_') o[c] = (r[c] === undefined || r[c] === null) ? '' : String(r[c]); }); LEAD_COLS.forEach(function(c) { o[c] = (r[c] === undefined || r[c] === null) ? '' : String(r[c]); }); if (LEAD_STATUSES.every(function(s) { return s.val !== o.status; })) o.status = 'new'; o.assignedTo = o.assignedTo.toLowerCase(); return o; }
     async function loadLeads(force) {
@@ -5878,7 +5878,7 @@
       l = l || { id: '', name: '', org: '', email: '', phone: '', source: '', notes: '', status: 'new', assignedTo: '', internalNotes: '' };
       var html = '<div class="modal-header"><button class="modal-close" onclick="closeModal()">&#x2715;</button><h2>' + (isNew ? 'Add Lead' : ppEsc(l.name || l.org || 'Lead')) + '</h2><div class="modal-subtitle">' + (isNew ? 'Goes to the next rep in the rotation unless you pick someone' : (l.org ? ppEsc(l.org) + ' &middot; ' : '') + 'received ' + leadAge(l) + (l.origin === 'form' ? ' from a landing page' : '')) + '</div></div>'
         + '<div class="modal-body"><div class="detail-section" style="margin-top:20px"><div class="pp-form">'
-        + '<div><label>Name</label><input id="lf_name" value="' + ppEsc(l.name) + '" autofocus></div><div><label>Organization</label><input id="lf_org" value="' + ppEsc(l.org) + '" placeholder="District or school"></div>'
+        + '<div><label>Name</label><input id="lf_name" value="' + ppEsc(l.name) + '" autofocus></div><div><label>Job title</label><input id="lf_title" value="' + ppEsc(l.title || '') + '" placeholder="Athletic Director"></div><div class="full"><label>Organization</label><input id="lf_org" value="' + ppEsc(l.org) + '" placeholder="District or school"></div>'
         + '<div><label>Email</label><input id="lf_email" type="email" value="' + ppEsc(l.email) + '"></div><div><label>Phone</label><input id="lf_phone" value="' + ppEsc(l.phone) + '"></div>'
         + '<div><label>Source</label><input type="hidden" id="lf_source" value="' + ppEsc(l.source) + '"><select id="lf_source_sel" onchange="lfSrcPick(' + (isNew ? 'true' : 'false') + ')"><option value="' + ppEsc(l.source) + '">' + (l.source ? ppEsc(l.source) : 'Loading the verified sources...') + '</option></select><input id="lf_source_other" style="display:none;margin-top:6px" placeholder="Describe the source (no emails go out until it is verified)" oninput="document.getElementById(\'lf_source\').value=this.value.trim();lfPlanSoon(' + (isNew ? 'true' : 'false') + ')"></div>'
         + '<div><label>Status</label><select id="lf_status">' + LEAD_STATUSES.map(function(s) { return '<option value="' + s.val + '"' + (l.status === s.val ? ' selected' : '') + '>' + s.label + '</option>'; }).join('') + '</select></div>'
@@ -5943,7 +5943,7 @@
       ppApi('leadPlanPreview', { source: el.value.trim(), rep: rep === 'next' ? '' : rep }, 30000).then(function(r) { if (seq !== lfPlanSeq || !r || !r.success || !document.getElementById('lf_plan')) return; lfPlanLast = r; lfSrcFill(r, isNew);
         box.style.display = ''; box.className = 'full lf-plan ' + r.level; box.innerHTML = '<b>' + (r.level === 'stop' ? (el.value.trim() ? 'Heads up: this source is not verified' : 'Pick a source') : r.level === 'warn' ? 'Check the source' : 'What happens when you save') + '</b><span>' + ppEsc(r.text) + (isNew ? '' : ' Changing the source on a lead that already exists does not restart or recall emails already sent; use Re-queue on Follow-up for one that has not started.') + '</span>'; }).catch(function() { var sel = document.getElementById('lf_source_sel'); if (sel && !sel.dataset.filled) { sel.dataset.filled = '1'; var cur = document.getElementById('lf_source').value; sel.innerHTML = '<option value="' + ppEsc(cur) + '">' + ppEsc(cur || 'Pick a source') + '</option><option value="Website">Website</option><option value="__other">Other (saved, but no emails go out)</option>'; } }); }, now ? 0 : 450); }
     async function saveLeadModal(id) {
-      var v = { name: document.getElementById('lf_name').value.trim(), org: document.getElementById('lf_org').value.trim(), email: document.getElementById('lf_email').value.trim(), phone: document.getElementById('lf_phone').value.trim(), source: document.getElementById('lf_source').value.trim(), status: document.getElementById('lf_status').value, internalNotes: document.getElementById('lf_notes').value.trim() };
+      var v = { name: document.getElementById('lf_name').value.trim(), org: document.getElementById('lf_org').value.trim(), title: ((document.getElementById('lf_title') || {}).value || '').trim(), email: document.getElementById('lf_email').value.trim(), phone: document.getElementById('lf_phone').value.trim(), source: document.getElementById('lf_source').value.trim(), status: document.getElementById('lf_status').value, internalNotes: document.getElementById('lf_notes').value.trim() };
       var rep = document.getElementById('lf_rep').value;
       if (!v.name && !v.org && !v.email) { showToast('Give the lead at least a name, organization, or email', 'error'); return; }
       var btn = document.getElementById('leadSaveBtn'); btn.disabled = true; btn.textContent = 'Saving...';
@@ -11021,7 +11021,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v241 · Nov 21a';
+    var PP_BUILD = 'v242 · Nov 23a';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -17435,6 +17435,10 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     { a: 'Workspace', q: 'What is the weekly team update?', view: 'settings', role: 'super', s: ['<b>Settings, What changed this week</b> drafts an email each Monday about the week in the business: leads, shows and clients. It waits for you to read and send it.', 'It is not about changes to Front Office itself. Those are under <b>What\'s new</b> on this page.'], k: 'weekly update what changed email' }
   ];
   var NEWS = [
+    { id: '2026-11-23a', when: 'Nov 23, 2026', items: [
+      { t: 'Job title on a lead', view: 'leads', d: 'Add Lead and the lead window now have a Job title box, next to the name. It is saved with the lead and goes to Close with the contact.' },
+      { t: 'Emails are checked before they send', d: 'After Monday\'s empty client health email, every email the tool sends is checked first. One that comes out empty is rebuilt from its plain wording, and one meant for a district that cannot be rebuilt is held instead of sent.' }
+    ] },
     { id: '2026-11-21a', when: 'Nov 21, 2026', items: [
       { t: 'Tables that fit the page', d: 'Trade Shows, Landing Pages, Close CRM Insights and the Content Calendar list no longer run off the right edge. Each shows the columns used day to day, at widths that fit a laptop screen.' },
       { t: 'Leads at the right of every show', view: 'tradeshows', d: 'The last column on Trade Shows is now Leads: the leads recorded for the show or the ones that came in through Inbound Leads, whichever is higher, with demos and deals under it. Hotel and flight share one Travel column.' },
