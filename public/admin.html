@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="pp-build" content="v242 · Nov 23a">
+  <meta name="pp-build" content="v243 · Nov 23b">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Front Office · PracticePlan</title>
   <link rel="icon" type="image/svg+xml" href="https://practiceplan-onboarding.vercel.app/favicon.svg">
@@ -11021,7 +11021,7 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     // =====================================================================
     // BUILD BADGE + SERVER VERSION CHECK: you can always see which page build and which Extras are live
     // =====================================================================
-    var PP_BUILD = 'v242 · Nov 23a';
+    var PP_BUILD = 'v243 · Nov 23b';
     (function() {
       var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(function() {
         var old = document.getElementById('ppBuildTag'); if (old) old.remove(); var nav = document.querySelector('.nav-group.bottom') || document.querySelector('.view-tabs'); var tag = document.createElement('div'); tag.id = 'ppBuildTag'; tag.className = 'pp-build'; tag.textContent = PP_BUILD; tag.title = 'Page build and server version. Click to check again.'; tag.onclick = ppVersionCheck; if (nav) nav.insertAdjacentElement('afterend', tag); else document.body.appendChild(tag);
@@ -17388,6 +17388,8 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
   var HOW = [
     { a: 'Getting around', q: 'How do I find a client, a person, a lead or a show?', s: ['Use the search box at the top of any page. It looks through clients, people, prospects, leads, shows and signals, and through this help.', 'Pick a result to go straight to it.'], k: 'search find look up' },
     { a: 'Getting around', q: 'How do I know I am on the latest version?', s: ['You do not have to do anything. Front Office checks every few minutes whether a newer version is live.', 'If one is, a pill at the bottom says <b>A newer Front Office is ready</b>. Press <b>Refresh</b>, or leave it: the page refreshes by itself once the tab has been in the background for a minute, or untouched for ten, and comes back on the page you were on.', 'It never refreshes while a window or form is open, while something is saving, or right after you have been typing.', 'The version you are on is at the bottom of the menu.'], k: 'version update refresh reload old stale latest build cache' },
+    { a: 'Events', view: 'confhistory', q: 'How do I see a conference year over year?', s: ['Open Events, then Conference History. Each row is one conference, each column a year.', 'Shows are lined up as the same conference when one was renewed or rolled forward from the other, or when their codes match (TASBO-TX-2026 and TASBO-TX-2027).', 'If two look the same but were not joined, they appear at the top under "Same conference?". Press Same conference or Different; the answer is remembered.', 'If an edition is in the wrong row, click it and press Not part of this conference.'], k: 'conference history year over year series same conference renew compare leads cost per lead' },
+    { a: 'Events', view: 'confhistory', q: 'How do I see which states and associations we are missing?', s: ['Open Events, then Conference History, then Coverage.', 'Green is somewhere we have exhibited, blue is on the list or being considered, gold is a gap: an association we know of and have never exhibited with. A dashed box has not been researched.', 'Click a cell to add or correct the association, link it to a partner record, tick that you have checked it, or mark that the state has none.', 'A conference counts toward a cell once it has an organization: it is picked up from the show code when the acronym and state match, or set it with "set" under the conference name on Year over year.'], k: 'coverage gaps states associations asbo athletic directors superintendents school boards facilities technology national' },
     { a: 'Getting around', q: 'A column I used is not on the table. How do I get it back?', s: ['Trade Shows, Landing Pages, Close CRM Insights and the Content Calendar list show a shorter set of columns so they fit the page.', 'Press the small grid button at the top right of the table and tick the column you want. Your choice is kept on this browser, for you only.', 'The fields themselves are unchanged. They are also in the row\'s own window: press the open button at the end of the row.'], k: 'columns hide show missing column pre-show short name source key notes next play nearest status owner campaign links table too wide' },
     { a: 'Getting around', q: 'How do I know my change saved?', s: ['A pill under the header says <b>Saving</b> while a change is on its way, and shows a green tick and <b>Saved</b> when it lands.', 'The button you pressed dims until its answer is back, so there is no need to press twice.', 'If something fails, a red message says what happened.'], k: 'saving loading working spinner did it save twice' },
     { a: 'Getting around', q: 'What is Today?', view: 'today', s: ['Today lists what is waiting on you: replies to answer, sequences to approve, held leads, show to-dos and client check-ins, most urgent first.', 'The strip at the top of the Dashboard shows the count and the next item. Press it to open the full list.', 'Each row has a button that takes you to the place to deal with it.'], k: 'inbox to do needs me waiting' },
@@ -17435,6 +17437,10 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     { a: 'Workspace', q: 'What is the weekly team update?', view: 'settings', role: 'super', s: ['<b>Settings, What changed this week</b> drafts an email each Monday about the week in the business: leads, shows and clients. It waits for you to read and send it.', 'It is not about changes to Front Office itself. Those are under <b>What\'s new</b> on this page.'], k: 'weekly update what changed email' }
   ];
   var NEWS = [
+    { id: '2026-11-23b', when: 'Nov 23, 2026 · second update', items: [
+      { t: 'Conference History', view: 'confhistory', d: 'A new page under Events. Year over year puts every conference on one row with a column per year: whether we went, what it cost, and the leads, demos and deals. Coverage shows every state against the kinds of association (athletic directors, school business, superintendents, school boards, facilities, technology) so the gaps are easy to see.' },
+      { t: 'The association list is a starting point', view: 'confhistory', d: 'About 90 associations are filled in to begin with and none has been checked yet: a ? after a name means not checked. Click any cell on Coverage to correct it, add a missing one, or mark that a state has none.' }
+    ] },
     { id: '2026-11-23a', when: 'Nov 23, 2026', items: [
       { t: 'Job title on a lead', view: 'leads', d: 'Add Lead and the lead window now have a Job title box, next to the name. It is saved with the lead and goes to Close with the contact.' },
       { t: 'Emails are checked before they send', d: 'After Monday\'s empty client health email, every email the tool sends is checked first. One that comes out empty is rebuilt from its plain wording, and one meant for a district that cannot be rebuilt is held instead of sent.' }
@@ -18096,6 +18102,8 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
       leadMemo = { key: key, map: m }; return m;
     } catch (e) { return {}; }
   }
+  // v243: the one leads number for a show, shared with Conference History
+  window.ppShowLeadNumber = function(s) { if (!s) return 0; var c = showLeadCounts(); return Math.max(Number(String(s.leads == null ? '' : s.leads).replace(/[^0-9.]/g, '')) || 0, c[s.name] || 0); };
   function travelChip(s, field, icon, word) {
     var list = typeof TS_TRAVEL !== 'undefined' ? TS_TRAVEL : [], val = s[field] || '', item = list.find(function(x) { return x.val === val; }) || { label: 'Not set' };
     return '<span class="pp-chip pick ' + (val || 'unset') + '" title="' + word + ': ' + esc(item.label) + '. Click to change." onclick="event.stopPropagation();tsCellEdit(\'' + esc(s.id) + '\',\'' + field + '\',this)">' + icon + esc(val ? (item.short || item.label) : word) + '</span>';
@@ -18194,6 +18202,154 @@ function ppOrgGroupKey_(name) { return ppOrgCore_(name).join(' '); }
     colgroup(t, heads.map(function(h) { return h[2]; }), 300); spans(t, heads.length);
   }
   if (typeof renderContent === 'function') { var _rc = renderContent; renderContent = function() { var out = _rc.apply(this, arguments); try { fitContent(); } catch (e) { console.warn('fitContent', e); } return out; }; }
+})();
+</script>
+<style>
+  /* v243: Conference history. Theme variables only (see the v238 note). */
+  .chx{display:flex;flex-direction:column;gap:14px}
+  .chx-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .chx-seg{display:inline-flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--card)}
+  .chx-seg button{border:0;background:transparent;padding:7px 14px;font:inherit;font-size:12.5px;font-weight:600;color:var(--text2);cursor:pointer}
+  .chx-seg button.on{background:var(--on,var(--text));color:#fff}
+  .chx-bar input,.chx-bar select{padding:7px 10px;border:1px solid var(--border);border-radius:9px;background:var(--card);color:var(--text);font:inherit;font-size:12.5px}
+  .chx-bar .sp{flex:1}.chx-note{font-size:12px;color:var(--text3)}
+  .chx-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+  .chx-tile{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px}
+  .chx-tile b{display:block;font-family:var(--font-display,inherit);font-size:22px;line-height:1.1;color:var(--text)}
+  .chx-tile span{font-size:11.5px;color:var(--text3)}
+  .chx-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:auto}
+  .chx-sug{padding:12px 16px;display:flex;flex-direction:column;gap:8px;border-left:3px solid var(--pp-gold,#c9a227)}
+  .chx-sug h4{margin:0;font-size:13px;color:var(--text)}.chx-sug p{margin:0;font-size:12px;color:var(--text3)}
+  .chx-sug-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--text);padding-top:8px;border-top:1px solid var(--border)}
+  .chx-sug-row small{color:var(--text3)}.chx-sug-row .sp{flex:1}
+  table.chx-t{width:100%;border-collapse:collapse;table-layout:fixed;min-width:880px}
+  table.chx-t th{position:sticky;top:0;background:var(--card);text-align:left;font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text3);padding:11px 12px;border-bottom:1px solid var(--border);white-space:nowrap;z-index:1}
+  table.chx-t td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:top;font-size:12.5px;color:var(--text)}
+  table.chx-t tr:last-child td{border-bottom:0}
+  .chx-name{font-weight:600;font-size:13px;color:var(--text)}
+  .chx-sub{margin-top:3px;font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .chx-link{border:0;background:transparent;padding:0;font:inherit;font-size:11px;color:var(--pp-blue);cursor:pointer}
+  .chx-flag{font-size:10px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--pp-gold-dk,#8a6d0b);border:1px solid currentColor;border-radius:999px;padding:1px 7px}
+  .chx-ed{cursor:pointer;border-radius:10px;margin:-5px -6px;padding:5px 6px}.chx-ed:hover{background:var(--card-2,rgba(127,127,127,.08))}
+  .chx-st{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--text2)}
+  .chx-st i{width:8px;height:8px;border-radius:50%;background:var(--c,var(--text3));flex:none}
+  .chx-st.went{--c:var(--pp-green)}.chx-st.next{--c:var(--pp-blue)}.chx-st.maybe{--c:var(--pp-gold,#c9a227)}.chx-st.no{--c:var(--pp-red,#b4312a)}
+  .chx-num{margin-top:4px;font-size:12.5px;font-weight:600;color:var(--text)}.chx-num small{font-weight:400;color:var(--text3)}
+  .chx-dim{color:var(--text3)}
+  table.chx-g{min-width:860px}
+  table.chx-g td.st{font-weight:700;width:64px;white-space:nowrap}
+  .chx-cell{display:block;width:100%;text-align:left;border:1px solid var(--border);border-left:3px solid var(--c,var(--border));border-radius:9px;background:transparent;padding:6px 8px;font:inherit;cursor:pointer;color:var(--text);min-height:44px}
+  .chx-cell:hover{background:var(--card-2,rgba(127,127,127,.08))}
+  .chx-cell b{display:block;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chx-cell span{display:block;font-size:10.5px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chx-cell.went{--c:var(--pp-green)}.chx-cell.next{--c:var(--pp-blue)}.chx-cell.maybe{--c:var(--pp-blue)}.chx-cell.gap{--c:var(--pp-gold,#c9a227)}.chx-cell.none{opacity:.55}.chx-cell.unknown{border-style:dashed}
+  .chx-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--text3);padding:0 2px}
+  .chx-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--c);margin-right:5px;vertical-align:-1px}
+  .chx-form{width:300px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+  .chx-form h4{margin:0;font-size:13px;color:var(--text)}
+  .chx-form label{font-size:11px;color:var(--text3);display:flex;flex-direction:column;gap:3px}
+  .chx-form label.row{flex-direction:row;align-items:center;gap:8px;font-size:12.5px;color:var(--text)}
+  .chx-form input[type=text],.chx-form select{padding:7px 9px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font:inherit;font-size:12.5px;width:100%;box-sizing:border-box}
+  .chx-form .act{display:flex;justify-content:flex-end;gap:8px;margin-top:4px}
+</style>
+<script>
+// v243: Conference history (needs Extras v203). One page, two views of the same data:
+//   Year over year: one row per series (a conference that recurs), one column per year, what each edition cost and brought in.
+//   Coverage: every state (and national) against the association types, showing where we have exhibited, where we plan to, and gaps.
+// Everything comes from one read, action confHistory. The page keeps no copy of which show belongs to which series or organization:
+// those live on the server (ShowLinks and Associations tabs) and every change here goes back through seriesJoin / seriesSplit /
+// seriesNotSame / seriesSetOrg / saveOrg, then the page reads again. The leads number is window.ppShowLeadNumber, the same one
+// the Trade Shows list shows.
+(function() {
+  var ch = { data: null, err: '', tab: 'years', loading: false, q: '', only: '' };
+  var esc = function(x) { return typeof ppEsc === 'function' ? ppEsc(x == null ? '' : x) : String(x == null ? '' : x); };
+  var num = function(x) { return Number(String(x == null ? '' : x).replace(/[^0-9.]/g, '')) || 0; };
+  var money = function(n) { return n ? '$' + Math.round(n).toLocaleString('en-US') : ''; };
+  async function load(quiet) { if (ch.loading) return; ch.loading = true; if (!quiet) draw(); try { var r = await ppApi('confHistory', {}, 150000); if (!r || !r.success) throw new Error((r && r.error) || 'No answer'); ch.data = r; ch.err = ''; } catch (e) { ch.err = String(e.message || e) + (/Unhandled|Unknown/i.test(String(e.message || e)) ? ' (needs Extras v203)' : ''); } ch.loading = false; draw(); }
+  async function act(action, params, done) { try { var r = await ppApi(action, params, 120000); if (!r || !r.success) throw new Error((r && r.error) || 'Did not save'); try { ppPopoverClose(); } catch (e) {} if (done) showToast(done, 'success'); await load(true); } catch (e) { showToast(String(e.message || e), 'error'); } }
+  function pop(anchor, html, opts) { var p = ppPopoverOpen(anchor, html, opts); try { var top = parseFloat(p.style.top) || 0, left = parseFloat(p.style.left) || 0, h = p.offsetHeight, w = p.offsetWidth; if (top + h > window.innerHeight - 8) p.style.top = Math.max(8, window.innerHeight - 8 - h) + 'px'; if (left + w > window.innerWidth - 8) p.style.left = Math.max(8, window.innerWidth - 8 - w) + 'px'; p.style.maxHeight = (window.innerHeight - 16) + 'px'; p.style.overflowY = 'auto'; } catch (e) {} return p; }
+  function leadsOf(e) { try { var s = (typeof tsList !== 'undefined' && tsList ? tsList : []).find(function(x) { return x.id === e.id; }) || (window.spList || []).find(function(x) { return x.id === e.id; }); if (typeof window.ppShowLeadNumber === 'function') return window.ppShowLeadNumber(s || e); } catch (err) {} return num(e.leads); }
+  function state(e, today) {
+    if (e.registration === 'missed') return ['no', 'Not attended']; if (e.registration === 'skip') return ['no', 'Skipped'];
+    if (e.pipeline) return e.stage === 'pass' ? ['no', 'Passed'] : ['maybe', 'Considering'];
+    if (e.end && e.end < today) return ['went', 'Attended']; return ['next', e.registration === 'paid' ? 'Registered' : 'Planned'];
+  }
+  function typeName(t) { var x = (ch.data.types || []).find(function(y) { return y[0] === t; }); return x ? x[1] : t; }
+  function orgLabel(o) { return o ? (o.acronym || o.name) + ' (' + (o.state === 'US' ? 'National' : o.state) + ', ' + typeName(o.type).toLowerCase() + ')' : ''; }
+  function orgOf(id) { return (ch.data.orgs || []).find(function(o) { return o.id === id; }); }
+  function edCell(s, y, today) {
+    var list = s.editions.filter(function(e) { return e.year === y; }); if (!list.length) return '<td class="chx-dim">-</td>';
+    return '<td>' + list.map(function(e) { var st = state(e, today), went = st[0] === 'went', leads = went || leadsOf(e) ? leadsOf(e) : 0, cost = num(e.cost), demos = num(e.demos), deals = num(e.deals);
+      var line = [money(cost), went || leads ? leads + ' lead' + (leads === 1 ? '' : 's') : ''].filter(Boolean).join(' &middot; '), sub = went ? [demos ? demos + ' demo' + (demos === 1 ? '' : 's') : '', deals ? deals + ' deal' + (deals === 1 ? '' : 's') : '', cost && leads ? money(cost / leads) + ' a lead' : ''].filter(Boolean).join(' &middot; ') : (e.start ? esc(e.start) : '');
+      return '<div class="chx-ed" title="' + esc(e.name) + '" onclick="chxEdition(\'' + esc(s.id) + '\',\'' + esc(e.id) + '\',this)"><span class="chx-st ' + st[0] + '"><i></i>' + st[1] + '</span>' + (line ? '<div class="chx-num">' + line + '</div>' : '') + (sub ? '<div class="chx-sub">' + sub + '</div>' : '') + '</div>'; }).join('<div style="height:8px"></div>') + '</td>';
+  }
+  function decision(s, today) {
+    var thisYear = Number(today.slice(0, 4)), next = s.editions.filter(function(e) { return Number(e.year) > thisYear || (e.end && e.end >= today); }), went = s.editions.filter(function(e) { return state(e, today)[0] === 'went'; }), last = went[went.length - 1];
+    var trend = ''; if (went.length >= 2) { var a = leadsOf(went[went.length - 2]), b = leadsOf(last); trend = b > a ? '<span class="chx-st went"><i></i>Leads up ' + a + ' to ' + b + '</span>' : b < a ? '<span class="chx-st no"><i></i>Leads down ' + a + ' to ' + b + '</span>' : '<span class="chx-st"><i></i>Leads level at ' + b + '</span>'; }
+    var d = ''; if (next.some(function(e) { return !e.pipeline && e.registration !== 'skip' && e.registration !== 'missed'; })) d = '<span class="chx-st next"><i></i>On the list</span>'; else if (next.some(function(e) { return e.pipeline && e.stage !== 'pass'; })) d = '<span class="chx-st maybe"><i></i>Being considered</span>'; else if (last && last.renewal === 'no') d = '<span class="chx-st no"><i></i>Not this year</span>'; else if (last && Number(last.year) >= thisYear - 1) d = '<span class="chx-st maybe"><i></i>Undecided</span>';
+    return [d, trend].filter(Boolean).join('<div style="height:6px"></div>') || '<span class="chx-dim">-</span>';
+  }
+  function yearsHtml() {
+    var d = ch.data, today = d.today, thisYear = Number(today.slice(0, 4)), q = ch.q.toLowerCase(), all = {}; d.series.forEach(function(s) { s.editions.forEach(function(e) { if (e.year) all[e.year] = 1; }); });
+    var years = Object.keys(all).filter(function(y) { return Number(y) <= thisYear + 1; }).sort().slice(-5); if (!years.length) years = [String(thisYear)];
+    var rows = d.series.filter(function(s) { var o = orgOf(s.orgId); if (ch.only === 'multi' && s.editions.length < 2) return false; if (ch.only === 'noorg' && s.orgId) return false; return !q || (s.name + ' ' + (o ? o.name + ' ' + o.acronym + ' ' + o.state : '') + ' ' + s.editions.map(function(e) { return e.code + ' ' + e.location; }).join(' ')).toLowerCase().indexOf(q) >= 0; });
+    var sug = (d.suggestions || []).length ? '<div class="chx-card chx-sug"><h4>Same conference? (' + d.suggestions.length + ')</h4><p>These look like the same event in different years, but not exactly enough to join by themselves. Your answer is remembered.</p>' + d.suggestions.map(function(x) { return '<div class="chx-sug-row"><span><b>' + esc(x.aName) + '</b> and <b>' + esc(x.bName) + '</b> <small>' + esc(x.why) + '</small></span><span class="sp"></span><button class="pp-btn primary" onclick="chxJoin(\'' + esc(x.a) + '\',\'' + esc(x.b) + '\')">Same conference</button><button class="pp-btn" onclick="chxNotSame(\'' + esc(x.a) + '\',\'' + esc(x.b) + '\')">Different</button></div>'; }).join('') + '</div>' : '';
+    var went = 0, spend = 0, leads = 0; d.series.forEach(function(s) { s.editions.forEach(function(e) { if (state(e, today)[0] === 'went') { went++; spend += num(e.cost); leads += leadsOf(e); } }); });
+    var tiles = '<div class="chx-tiles">' + [[d.series.length, 'conferences (series)'], [d.series.filter(function(s) { return s.editions.length > 1; }).length, 'with more than one year'], [went, 'editions attended'], [money(spend) || '$0', 'spent on them'], [leads, 'leads from them'], [leads ? money(spend / leads) : '-', 'a lead, overall']].map(function(t) { return '<div class="chx-tile"><b>' + t[0] + '</b><span>' + t[1] + '</span></div>'; }).join('') + '</div>';
+    var body = rows.map(function(s) { var o = orgOf(s.orgId);
+      return '<tr><td><div class="chx-name">' + esc(s.name) + '</div><div class="chx-sub">' + (o ? '<span title="' + esc(o.name) + (s.orgHow === 'code' ? ' (from the show code)' : '') + '">' + esc(orgLabel(o)) + '</span>' : '<span>No organization</span>') + '<button class="chx-link" onclick="chxOrgPick(\'' + esc(s.id) + '\',this)">' + (o ? 'change' : 'set') + '</button>' + (s.clash ? '<span class="chx-flag" title="Two editions in the same year. If they are different events, open one and take it out of the series.">two in one year</span>' : '') + '</div></td>' + years.map(function(y) { return edCell(s, y, today); }).join('') + '<td>' + decision(s, today) + '</td></tr>'; }).join('');
+    return tiles + sug + '<div class="chx-card"><table class="chx-t"><colgroup><col>' + years.map(function() { return '<col style="width:168px">'; }).join('') + '<col style="width:170px"></colgroup><thead><tr><th>Conference</th>' + years.map(function(y) { return '<th>' + y + '</th>'; }).join('') + '<th>Next year</th></tr></thead><tbody>' + (body || '<tr><td colspan="' + (years.length + 2) + '" class="chx-dim">Nothing matches.</td></tr>') + '</tbody></table></div>';
+  }
+  function cellInfo(type, st) {
+    var d = ch.data, today = d.today, id = 'org_' + type + '_' + st, o = orgOf(id), series = d.series.filter(function(s) { return s.orgId === id; }), eds = []; series.forEach(function(s) { s.editions.forEach(function(e) { eds.push(e); }); });
+    var went = eds.filter(function(e) { return state(e, today)[0] === 'went'; }).sort(function(a, b) { return String(a.year).localeCompare(String(b.year)); }), next = eds.filter(function(e) { return state(e, today)[0] === 'next'; }), maybe = eds.filter(function(e) { return state(e, today)[0] === 'maybe'; });
+    var k = !o ? 'unknown' : o.status === 'none' ? 'none' : next.length ? 'next' : went.length ? 'went' : maybe.length ? 'maybe' : 'gap';
+    var line = k === 'unknown' ? 'Not researched' : k === 'none' ? 'No association' : k === 'next' ? 'On the list' + (went.length ? ', last ' + went[went.length - 1].year : '') : k === 'went' ? 'Exhibited ' + went[went.length - 1].year : k === 'maybe' ? 'Being considered' : 'Gap: never exhibited';
+    return { id: id, org: o, kind: k, line: line, series: series };
+  }
+  function gridHtml() {
+    var d = ch.data, counts = { went: 0, next: 0, maybe: 0, gap: 0, unknown: 0, none: 0 }, q = ch.q.toLowerCase();
+    var rows = d.states.filter(function(st) { return !q || st.toLowerCase().indexOf(q) >= 0 || d.orgs.some(function(o) { return o.state === st && (o.name + ' ' + o.acronym).toLowerCase().indexOf(q) >= 0; }); }).map(function(st) {
+      return '<tr><td class="st">' + (st === 'US' ? 'National' : st) + '</td>' + d.types.map(function(t) { var c = cellInfo(t[0], st); counts[c.kind]++; if (ch.only && ch.only !== c.kind && ['went', 'next', 'maybe', 'gap', 'unknown', 'none'].indexOf(ch.only) >= 0) return '<td></td>';
+        return '<td><button class="chx-cell ' + c.kind + '" title="' + esc(c.org ? c.org.name + (c.org.event ? ' · ' + c.org.event : '') + (c.org.verified === 'yes' ? '' : ' · not checked yet') : 'Add this association') + '" onclick="chxCell(\'' + t[0] + '\',\'' + st + '\',this)"><b>' + esc(c.org ? (c.org.acronym || c.org.name) : '+') + (c.org && c.org.verified !== 'yes' && c.org.status !== 'none' ? ' ?' : '') + '</b><span>' + c.line + '</span></button></td>'; }).join('') + '</tr>'; }).join('');
+    var tiles = '<div class="chx-tiles">' + [[counts.went + counts.next, 'covered (exhibited or on the list)'], [counts.maybe, 'being considered'], [counts.gap, 'gaps: known, never exhibited'], [counts.unknown, 'not researched yet'], [d.orgs.filter(function(o) { return o.verified !== 'yes' && o.status !== 'none'; }).length, 'names not checked yet']].map(function(t) { return '<div class="chx-tile"><b>' + t[0] + '</b><span>' + t[1] + '</span></div>'; }).join('') + '</div>';
+    var legend = '<div class="chx-legend"><span><i style="--c:var(--pp-green)"></i>Exhibited</span><span><i style="--c:var(--pp-blue)"></i>On the list or being considered</span><span><i style="--c:var(--pp-gold,#c9a227)"></i>Gap</span><span>Dashed: not researched</span><span>A ? after a name: not checked yet</span></div>';
+    return tiles + legend + '<div class="chx-card"><table class="chx-t chx-g"><thead><tr><th style="width:64px">State</th>' + d.types.map(function(t) { return '<th>' + esc(t[1]) + '</th>'; }).join('') + '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+  }
+  function draw() {
+    var host = document.getElementById('chxHost'); if (!host) return;
+    if (ch.err && !ch.data) { host.innerHTML = typeof ppSetupEmpty === 'function' ? ppSetupEmpty('Conference history', ch.err) : '<div class="pp-empty">' + esc(ch.err) + '</div>'; return; }
+    if (!ch.data) { host.innerHTML = '<div class="pp-empty">Lining up every show by conference and year...</div>'; return; }
+    var keep = typeof pxFocusKeep === 'function' ? pxFocusKeep() : null, years = ch.tab === 'years';
+    var opts = years ? [['', 'All conferences'], ['multi', 'More than one year'], ['noorg', 'No organization yet']] : [['', 'Everything'], ['gap', 'Gaps'], ['went', 'Exhibited'], ['next', 'On the list'], ['maybe', 'Being considered'], ['unknown', 'Not researched']];
+    if (!opts.some(function(o) { return o[0] === ch.only; })) ch.only = '';
+    host.innerHTML = '<div class="chx"><div class="chx-bar"><div class="chx-seg"><button class="' + (years ? 'on' : '') + '" onclick="chxTab(\'years\')">Year over year</button><button class="' + (years ? '' : 'on') + '" onclick="chxTab(\'grid\')">Coverage</button></div><input id="chxQ" placeholder="' + (years ? 'Search conferences' : 'Search states or associations') + '" value="' + esc(ch.q) + '" oninput="chxQ(this.value)"><select onchange="chxOnly(this.value)">' + opts.map(function(o) { return '<option value="' + o[0] + '"' + (o[0] === ch.only ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select><span class="sp"></span><span class="chx-note">' + (years ? 'Click an edition to open the show or take it out of its series.' : 'Click a cell to add or correct an association.') + '</span><button class="pp-mini-btn" title="Read again" onclick="chxReload()">&#8635;</button></div>' + (years ? yearsHtml() : gridHtml()) + '</div>';
+    if (keep) try { keep(); } catch (e) {}
+  }
+  window.chxTab = function(t) { ch.tab = t; ch.only = ''; draw(); }; window.chxQ = function(v) { ch.q = v; draw(); }; window.chxOnly = function(v) { ch.only = v; draw(); }; window.chxReload = function() { load(false); };
+  window.chxJoin = function(a, b) { act('seriesJoin', { a: a, b: b }, 'Joined as one conference'); }; window.chxNotSame = function(a, b) { act('seriesNotSame', { a: a, b: b }, 'Kept apart'); };
+  window.chxEdition = function(sid, id, anchor) { var s = ch.data.series.find(function(x) { return x.id === sid; }), e = s && s.editions.find(function(x) { return x.id === id; }); if (!e) return; var onList = typeof tsList !== 'undefined' && tsList && tsList.some(function(x) { return x.id === id; });
+    pop(anchor, '<div class="chx-form"><h4>' + esc(e.name) + '</h4><div class="chx-sub">' + esc([e.start, e.location, e.code].filter(Boolean).join(' · ')) + '</div><div class="act" style="justify-content:flex-start">' + (onList ? '<button class="pp-btn primary" onclick="ppPopoverClose();openTsModal(\'' + esc(id) + '\')">Open the show</button>' : '<button class="pp-btn" onclick="ppPopoverClose();switchView(\'showpipeline\')">It is in the Show Pipeline</button>') + (s.editions.length > 1 ? '<button class="pp-btn" onclick="chxSplit(\'' + esc(id) + '\')">Not part of this conference</button>' : '') + '</div></div>', { focus: false }); };
+  window.chxSplit = function(id) { act('seriesSplit', { showId: id }, 'Taken out of the series'); };
+  window.chxOrgPick = function(sid, anchor) { var s = ch.data.series.find(function(x) { return x.id === sid; }); if (!s) return; var orgs = ch.data.orgs.filter(function(o) { return o.status !== 'none'; }).slice().sort(function(a, b) { return (a.state === 'US' ? ' ' : a.state).localeCompare(b.state === 'US' ? ' ' : b.state) || a.type.localeCompare(b.type); });
+    pop(anchor, '<div class="chx-form"><h4>Whose conference is ' + esc(s.name) + '?</h4><label>Organization<select id="chxOrgSel"><option value="">No organization</option>' + orgs.map(function(o) { return '<option value="' + esc(o.id) + '"' + (o.id === s.orgId ? ' selected' : '') + '>' + esc((o.state === 'US' ? 'National' : o.state) + ' · ' + typeName(o.type) + ' · ' + (o.acronym ? o.acronym + ', ' : '') + o.name) + '</option>'; }).join('') + '</select></label><div class="chx-sub">Not listed? Add it on the Coverage tab first. Applies to every year of this conference.</div><div class="act"><button class="pp-btn" onclick="ppPopoverClose()">Cancel</button><button class="pp-btn primary" onclick="chxOrgSet(\'' + esc(sid) + '\')">Save</button></div></div>', { focus: false }); };
+  window.chxOrgSet = function(sid) { act('seriesSetOrg', { seriesId: sid, orgId: document.getElementById('chxOrgSel').value }, 'Saved'); };
+  window.chxCell = function(type, st, anchor) { var c = cellInfo(type, st), o = c.org || {}, v = function(k) { return esc(o[k] || ''); };
+    pop(anchor, '<div class="chx-form"><h4>' + (st === 'US' ? 'National' : st) + ' · ' + esc(typeName(type)) + '</h4>' + (c.series.length ? '<div class="chx-sub">' + c.series.map(function(s) { return esc(s.name) + ' (' + s.editions.map(function(e) { return e.year; }).join(', ') + ')'; }).join('; ') + '</div>' : '')
+      + '<label>Association<input type="text" id="chxOName" value="' + v('name') + '" placeholder="Full name"></label><label>Acronym (matches the show code)<input type="text" id="chxOAcr" value="' + v('acronym') + '" placeholder="TASBO"></label><label>Website<input type="text" id="chxOUrl" value="' + v('url') + '" placeholder="https://"></label><label>Main event<input type="text" id="chxOEvent" value="' + v('event') + '" placeholder="Annual conference"></label><label>Usual month<input type="text" id="chxOMonth" value="' + v('eventMonth') + '" placeholder="March"></label>'
+      + '<label>Partner record<select id="chxOPartner"><option value="">None</option>' + (ch.data.partners || []).map(function(p) { return '<option value="' + esc(p.id) + '"' + (p.id === o.partnerId ? ' selected' : '') + '>' + esc(p.name) + '</option>'; }).join('') + '</select></label>'
+      + '<label class="row"><input type="checkbox" id="chxOVer"' + (o.verified === 'yes' ? ' checked' : '') + '>I have checked this is right</label><label class="row"><input type="checkbox" id="chxONone"' + (o.status === 'none' ? ' checked' : '') + '>No such association in this state</label>'
+      + '<div class="act"><button class="pp-btn" onclick="ppPopoverClose()">Cancel</button><button class="pp-btn primary" onclick="chxCellSave(\'' + type + '\',\'' + st + '\')">Save</button></div></div>', { focus: false }); };
+  window.chxCellSave = function(type, st) { var g = function(id) { return document.getElementById(id); }, none = g('chxONone').checked, name = g('chxOName').value.trim(); if (!none && !name) { showToast('Give the association a name, or tick that there is none', 'error'); return; }
+    act('saveOrg', { row: JSON.stringify({ type: type, state: st, name: name, acronym: g('chxOAcr').value.trim(), url: g('chxOUrl').value.trim(), event: g('chxOEvent').value.trim(), eventMonth: g('chxOMonth').value.trim(), partnerId: g('chxOPartner').value, verified: g('chxOVer').checked ? 'yes' : '', status: none ? 'none' : '' }) }, 'Saved'); };
+  window.chxState = function() { return ch; };
+  var anchor = document.getElementById('landingView') || document.getElementById('tradeshowsView'); if (!anchor) return;
+  var v = document.createElement('div'); v.className = 'view-content'; v.id = 'confhistoryView'; v.innerHTML = '<div id="chxHost"></div>'; anchor.insertAdjacentElement('afterend', v);
+  try { PP_VIEW_TITLES.confhistory = ['Events', 'Conference History']; PP_PAGE_META.confhistory = ['Events', 'Conference History', 'Every conference year over year, and where we do and do not have a presence by state and association.']; } catch (e) {}
+  function addTab() { if (document.querySelector('.view-tab[onclick="switchView(\'confhistory\')"]')) return; var after = document.querySelector('.view-tab[onclick="switchView(\'landing\')"]'); if (!after) return; var b = document.createElement('button'); b.className = 'view-tab'; b.setAttribute('onclick', "switchView('confhistory')"); b.setAttribute('data-short', 'History'); b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>Conference History'; after.insertAdjacentElement('afterend', b); }
+  var _fl = finishLoading; finishLoading = function(d, c) { _fl(d, c); setTimeout(addTab, 380); };
+  var _sv = switchView; switchView = function(view) { var r = _sv.apply(this, arguments); if (view === 'confhistory') { draw(); load(!!ch.data); } return r; };
+  try { window.PP_SEARCH_EXTRA = window.PP_SEARCH_EXTRA || []; window.PP_SEARCH_EXTRA.push(function(add) { add({ g: 'Pages', kind: 'page', title: 'Conference History', crumb: 'Events · Conference History', open: function() { switchView('confhistory'); } }, ['conference history', 'year over year', 'coverage', 'gaps', 'associations', 'asbo', 'athletic directors association']); }); } catch (e) {}
 })();
 </script>
 </body>
